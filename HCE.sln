@@ -7,15 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{F8E42236-6825-4BD7-B8C9-8B3512094EC2}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6EBF13A2-7483-4C3C-90E5-DA914430B0F2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL", "BL\BL.csproj", "{6C71AECC-65CC-4851-8346-E474F9E67F0E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PacienteWebApi", "PacienteWebApi\PacienteWebApi.csproj", "{5A2BC100-8CCB-4A5D-A560-58115879B2F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitaMedicaWebApi", "CitaMedicaWebApi\CitaMedicaWebApi.csproj", "{58604875-B40C-466C-9B5D-A8F6B0AF8A47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitaMedicaWebApi", "CitaMedicaWebApi\CitaMedicaWebApi.csproj", "{58604875-B40C-466C-9B5D-A8F6B0AF8A47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoriaClinicaWebApi", "HistoriaClinicaWebApi\HistoriaClinicaWebApi.csproj", "{E89205F4-D024-40B2-B40E-352B02B19199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HistoriaClinicaWebApi", "HistoriaClinicaWebApi\HistoriaClinicaWebApi.csproj", "{E89205F4-D024-40B2-B40E-352B02B19199}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{760F03BF-4C5C-424E-882A-FB89AFE00CE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		{F8E42236-6825-4BD7-B8C9-8B3512094EC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8E42236-6825-4BD7-B8C9-8B3512094EC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8E42236-6825-4BD7-B8C9-8B3512094EC2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6EBF13A2-7483-4C3C-90E5-DA914430B0F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6EBF13A2-7483-4C3C-90E5-DA914430B0F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6EBF13A2-7483-4C3C-90E5-DA914430B0F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6EBF13A2-7483-4C3C-90E5-DA914430B0F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C71AECC-65CC-4851-8346-E474F9E67F0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C71AECC-65CC-4851-8346-E474F9E67F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C71AECC-65CC-4851-8346-E474F9E67F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{E89205F4-D024-40B2-B40E-352B02B19199}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E89205F4-D024-40B2-B40E-352B02B19199}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E89205F4-D024-40B2-B40E-352B02B19199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{760F03BF-4C5C-424E-882A-FB89AFE00CE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{760F03BF-4C5C-424E-882A-FB89AFE00CE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{760F03BF-4C5C-424E-882A-FB89AFE00CE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{760F03BF-4C5C-424E-882A-FB89AFE00CE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
