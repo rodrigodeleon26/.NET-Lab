@@ -1,11 +1,11 @@
-﻿using DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Shared;
 
 namespace DAL
 {
     public class DBContext : DbContext
     {
-        private string _connectionString = "Server=sqlserver,1433;Database=PRACTICO4; User Id=sa; Password=Abc*123!;Encrypt=False;";
+        private string _connectionString = "Server=sqlserver,1433;Database=HCE; User Id=sa; Password=Abc*123!;Encrypt=False;";
 
         public DBContext() { }
 
@@ -21,9 +21,7 @@ namespace DAL
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Personas> Personas { get; set; }
-
-        public DbSet<Vehiculos> Vehiculos { get; set; }
+        public DbSet<Paciente> Pacientes { get; set; }
 
         public static void UpdateDatabase()
         {

@@ -1,0 +1,6 @@
+@PacienteWebApi_HostAddress = http://localhost:5206
+
+GET {{PacienteWebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
