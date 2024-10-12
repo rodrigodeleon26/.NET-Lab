@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Models
 {
-    public class Paciente
+    public class Pacientes
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]

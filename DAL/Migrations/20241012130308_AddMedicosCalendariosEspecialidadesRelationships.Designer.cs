@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20241012130308_AddMedicosCalendariosEspecialidadesRelationships")]
+    partial class AddMedicosCalendariosEspecialidadesRelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +36,7 @@ namespace DAL.Migrations
                     b.Property<int>("CantidadCitas")
                         .HasColumnType("int");
 
-                    b.Property<string>("DiasSemana")
+                    b.Property<string>("DiasRepeticion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -69,19 +72,10 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CalendarioId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CalendarioId");
 
                     b.ToTable("CitasMedicas");
                 });
@@ -377,22 +371,6 @@ namespace DAL.Migrations
                     b.Navigation("Especialidad");
 
                     b.Navigation("Medico");
-                });
-
-            modelBuilder.Entity("DAL.Models.CitasMedicas", b =>
-                {
-                    b.HasOne("Calendarios", "Calendario")
-                        .WithMany("CitasMedicas")
-                        .HasForeignKey("CalendarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Calendario");
-                });
-
-            modelBuilder.Entity("Calendarios", b =>
-                {
-                    b.Navigation("CitasMedicas");
                 });
 
             modelBuilder.Entity("DAL.Models.Especialidades", b =>
