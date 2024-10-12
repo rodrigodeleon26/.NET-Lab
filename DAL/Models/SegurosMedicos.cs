@@ -14,5 +14,11 @@ namespace DAL.Models
 
         [Required]
         public string Descripcion { get; set; } = "-- Sin Descripción --";
+
+        public virtual ICollection<Contratos> Contratos { get; set; } = new List<Contratos>();
+
+        public virtual ICollection<Copagos> Copagos { get; set; } = new List<Copagos>(); 
+
+        public virtual ICollection<Precios> Precios { get; set; } = new List<Precios>();
     }
 }

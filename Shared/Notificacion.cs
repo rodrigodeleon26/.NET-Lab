@@ -9,5 +9,7 @@
         public DateTime FechaEnvio { get; set; } = new DateTime();
 
         public bool Visto { get; set; } = false;
+
+        public Paciente Paciente { get; set; } = new Paciente();
     }
 }

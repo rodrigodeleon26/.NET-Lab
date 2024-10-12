@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20241012185528_AddCopagosTable")]
+    partial class AddCopagosTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -418,37 +421,6 @@ namespace DAL.Migrations
                     b.ToTable("Pacientes");
                 });
 
-            modelBuilder.Entity("DAL.Models.Precios", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("CopagoId")
-                        .IsRequired()
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime2");
-
-                    b.Property<float>("PrecioBase")
-                        .HasColumnType("real");
-
-                    b.Property<long?>("SeguroMedicoId")
-                        .IsRequired()
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CopagoId");
-
-                    b.HasIndex("SeguroMedicoId");
-
-                    b.ToTable("Precios");
-                });
-
             modelBuilder.Entity("DAL.Models.Recetas", b =>
                 {
                     b.Property<long>("Id")
@@ -501,6 +473,34 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SegurosMedicos");
+                });
+
+            modelBuilder.Entity("DAL.Models.Servicios", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ArticuloId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EspecialidadId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SeguroMedicoId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticuloId");
+
+                    b.HasIndex("EspecialidadId");
+
+                    b.HasIndex("SeguroMedicoId");
+
+                    b.ToTable("Servicios");
                 });
 
             modelBuilder.Entity("Calendarios", b =>
@@ -578,19 +578,19 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Models.Copagos", b =>
                 {
                     b.HasOne("DAL.Models.Articulos", "Articulo")
-                        .WithMany("Copagos")
+                        .WithMany()
                         .HasForeignKey("ArticuloId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Especialidades", "Especialidad")
-                        .WithMany("Copagos")
+                        .WithMany()
                         .HasForeignKey("EspecialidadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.SegurosMedicos", "SeguroMedico")
-                        .WithMany("Copagos")
+                        .WithMany()
                         .HasForeignKey("SeguroMedicoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -635,21 +635,6 @@ namespace DAL.Migrations
                     b.Navigation("Paciente");
                 });
 
-            modelBuilder.Entity("DAL.Models.Precios", b =>
-                {
-                    b.HasOne("DAL.Models.Copagos", "Copago")
-                        .WithMany("Precios")
-                        .HasForeignKey("CopagoId");
-
-                    b.HasOne("DAL.Models.SegurosMedicos", "SeguroMedico")
-                        .WithMany("Precios")
-                        .HasForeignKey("SeguroMedicoId");
-
-                    b.Navigation("Copago");
-
-                    b.Navigation("SeguroMedico");
-                });
-
             modelBuilder.Entity("DAL.Models.Recetas", b =>
                 {
                     b.HasOne("DAL.Models.ConsultasMedicas", "ConsultaMedica")
@@ -661,6 +646,33 @@ namespace DAL.Migrations
                     b.Navigation("ConsultaMedica");
                 });
 
+            modelBuilder.Entity("DAL.Models.Servicios", b =>
+                {
+                    b.HasOne("DAL.Models.Articulos", "Articulo")
+                        .WithMany("Servicios")
+                        .HasForeignKey("ArticuloId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.Especialidades", "Especialidad")
+                        .WithMany()
+                        .HasForeignKey("EspecialidadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.SegurosMedicos", "SeguroMedico")
+                        .WithMany()
+                        .HasForeignKey("SeguroMedicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Articulo");
+
+                    b.Navigation("Especialidad");
+
+                    b.Navigation("SeguroMedico");
+                });
+
             modelBuilder.Entity("Calendarios", b =>
                 {
                     b.Navigation("CitasMedicas");
@@ -668,7 +680,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Models.Articulos", b =>
                 {
-                    b.Navigation("Copagos");
+                    b.Navigation("Servicios");
                 });
 
             modelBuilder.Entity("DAL.Models.CitasMedicas", b =>
@@ -689,16 +701,9 @@ namespace DAL.Migrations
                     b.Navigation("CitasMedicas");
                 });
 
-            modelBuilder.Entity("DAL.Models.Copagos", b =>
-                {
-                    b.Navigation("Precios");
-                });
-
             modelBuilder.Entity("DAL.Models.Especialidades", b =>
                 {
                     b.Navigation("Calendarios");
-
-                    b.Navigation("Copagos");
                 });
 
             modelBuilder.Entity("DAL.Models.Medicos", b =>
@@ -721,10 +726,6 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Models.SegurosMedicos", b =>
                 {
                     b.Navigation("Contratos");
-
-                    b.Navigation("Copagos");
-
-                    b.Navigation("Precios");
                 });
 #pragma warning restore 612, 618
         }

@@ -9,5 +9,7 @@
         public string Descripcion { get; set; } = "-- Sin Descripción --";
 
         public List<Calendario> Calendarios { get; set; } = new List<Calendario>();
+
+        public List<Copago> Copagos { get; set; } = new List<Copago>();
     }
 }

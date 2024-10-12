@@ -14,5 +14,7 @@ namespace DAL.Models
 
         [Required]
         public int Piso { get; set; }
+
+        public virtual ICollection<CitasMedicas> CitasMedicas { get; set; } = new List<CitasMedicas>(); // Usar virtual si necesitas Lazy Loading
     }
 }

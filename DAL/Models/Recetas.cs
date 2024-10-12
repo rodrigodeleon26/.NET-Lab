@@ -20,5 +20,11 @@ namespace DAL.Models
 
         [Required]
         public string Frecuencia { get; set; } = "-- Sin Frecuencia --";
+
+        [Required]
+        public long ConsultaMedicaId { get; set; }
+
+        [ForeignKey(nameof(ConsultaMedicaId))]
+        public virtual ConsultasMedicas ConsultaMedica { get; set; }
     }
 }

@@ -33,5 +33,13 @@ namespace DAL.Models
         [EmailAddress]
         [MaxLength(100)]
         public string Email { get; set; } = "-- Sin Email --";
+
+        public virtual ICollection<CitasMedicas> CitasMedicas { get; set; } = new List<CitasMedicas>(); // Usar virtual si necesitas Lazy Loading
+
+        public virtual ICollection<Facturas> Facturas { get; set; } = new List<Facturas>(); // Usar virtual si necesitas Lazy Loading
+
+        public virtual ICollection<Notificaciones> Notificaciones { get; set; } = new List<Notificaciones>(); // Usar virtual si necesitas Lazy Loading
+
+        public virtual Contratos Contrato { get; set; } // Relación uno-a-uno
     }
 }

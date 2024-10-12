@@ -7,5 +7,11 @@
         public string Descripcion { get; set; } = "-- Sin Descripción --";
 
         public string Diagnostico { get; set; } = "-- Sin Descripción --";
+
+        public CitaMedica CitaMedica { get; set; } = new CitaMedica();  
+
+        public List<Estudio> Estudios { get; set; } = new List<Estudio>();
+
+        public List<Receta> Recetas { get; set; } = new List<Receta>();
     }
 }

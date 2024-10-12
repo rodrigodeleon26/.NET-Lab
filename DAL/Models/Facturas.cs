@@ -20,5 +20,11 @@ namespace DAL.Models
 
         [Required]
         public DateTime FechaPago { get; set; } = new DateTime();
+
+        [Required]
+        public long PacienteId { get; set; }
+
+        [ForeignKey(nameof(PacienteId))]
+        public virtual Pacientes Paciente { get; set; }
     }
 }

@@ -17,5 +17,11 @@ namespace DAL.Models
 
         [Required]
         public bool Visto { get; set; } = false;
+
+        [Required]
+        public long PacienteId { get; set; }
+
+        [ForeignKey(nameof(PacienteId))]
+        public virtual Pacientes Paciente { get; set; }
     }
 }

@@ -18,5 +18,7 @@ namespace DAL.Models
 
         public virtual ICollection<Calendarios> Calendarios { get; set; } = new List<Calendarios>(); // Virtual para Lazy Loading
 
+        public virtual ICollection<Copagos> Copagos { get; set; } = new List<Copagos>(); // Virtual para Lazy Loading
+
     }
 }

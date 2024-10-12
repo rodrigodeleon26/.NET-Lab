@@ -13,5 +13,7 @@
         public DateOnly FechaResultado { get; set; } = new DateOnly();
 
         public string Resultado { get; set; } = "-- Sin Resultado --";
+
+        public ConsultaMedica ConsultaMedica { get; set; } = new ConsultaMedica();
     }
 }

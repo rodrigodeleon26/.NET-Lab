@@ -17,5 +17,13 @@
         public string Telefono { get; set; } = "-- Sin Teléfono --";
 
         public string Email { get; set; } = "-- Sin Email --";
+
+        public List<CitaMedica> CitasMedicas { get; set; } = new List<CitaMedica>();
+
+        public List<Factura> Facturas { get; set; } = new List<Factura>();
+
+        public List<Notificacion> Notificaciones { get; set; } = new List<Notificacion>();
+
+        public Contrato Contrato { get; set; }
     }
 }

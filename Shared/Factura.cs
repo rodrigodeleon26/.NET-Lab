@@ -11,5 +11,7 @@
         public bool Pago { get; set; } = false;
 
         public DateTime FechaPago { get; set; } = new DateTime();
+
+        public Paciente Paciente { get; set; } = new Paciente();
     }
 }

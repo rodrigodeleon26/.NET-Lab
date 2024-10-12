@@ -11,5 +11,7 @@
         public int Cantidad { get; set; } = 0;
 
         public string Frecuencia { get; set; } = "-- Sin Frecuencia --";
+
+        public ConsultaMedica ConsultaMedica { get; set; } = new ConsultaMedica();
     }
 }

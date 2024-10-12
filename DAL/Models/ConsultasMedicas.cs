@@ -14,5 +14,15 @@ namespace DAL.Models
 
         [Required]
         public string Diagnostico { get; set; } = "-- Sin Diagnóstico --";
+
+        [Required]
+        public long CitaMedicaId { get; set; } 
+
+        [ForeignKey(nameof(CitaMedicaId))]
+        public virtual CitasMedicas CitaMedica { get; set; } 
+
+        public virtual ICollection<Estudios> Estudios { get; set; } = new List<Estudios>();
+
+        public virtual Recetas Receta { get; set; } = new Recetas(); 
     }
 }
