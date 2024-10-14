@@ -40,5 +40,20 @@ services:
       - sqlserver-data:/var/opt/mssql
     container_name: SQLServer_container
 
+  frontend:
+    build:
+      context: ./frontAdmin
+      dockerfile: Dockerfile  
+    ports:
+      - "8080:443"
+    volumes:
+      - ./frontAdmin/ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./frontAdmin/ssl/server.key:/etc/nginx/certs/server.key
+      - ./frontAdmin/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pacientewebapi
+      - citasmedicaswebapi
+      - historiaclinicawebapi
+
 volumes:
   sqlserver-data:

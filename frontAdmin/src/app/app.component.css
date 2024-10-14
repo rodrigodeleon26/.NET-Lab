@@ -1,0 +1,23 @@
+import { Component, OnInit } from '@angular/core';
+import { PacientesService } from './pacientes.service';
+
+@Component({
+  selector: 'app-pacientes',
+  templateUrl: './pacientes.component.html',
+  styleUrls: ['./pacientes.component.css']
+})
+export class PacientesComponent implements OnInit {
+
+  constructor(private pacientesService: PacientesService) {}
+
+  ngOnInit(): void {
+    this.pacientesService.getPacientes().subscribe(
+      (data) => {
+        console.log(data); // Imprime la respuesta en la consola
+      },
+      (error) => {
+        console.error('Error fetching pacientes:', error); // Maneja el error
+      }
+    );
+  }
+}
