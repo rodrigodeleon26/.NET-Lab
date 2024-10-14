@@ -1,23 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { PacientesService } from './services/pacientes.service';
+import { Component } from '@angular/core';
+import { PacienteService } from './services/paciente.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
-  title = 'frontAdmin';
+export class AppComponent {
+  title = 'frontCliente';
   pacientes: any[] = [];
 
-  constructor(private pacientesService: PacientesService) {}
+  constructor(private pacienteService: PacienteService) {}
 
   ngOnInit() {
     this.loadPacientes();
+    console.log('Holaaaaaaaaaaa');
   }
 
   loadPacientes() {
-    this.pacientesService.getPacientes().subscribe(
+    this.pacienteService.getPacientes().subscribe(
       (data) => {
         this.pacientes = data;
         console.log('Pacientes cargados', this.pacientes);

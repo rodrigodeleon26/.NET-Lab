@@ -15,7 +15,7 @@ try
         options.AddPolicy("AllowSpecificOrigin",
             builder =>
             {
-                builder.WithOrigins("https://localhost:8080")
+                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012")
                        .AllowAnyHeader()
                        .AllowAnyMethod();
             });
