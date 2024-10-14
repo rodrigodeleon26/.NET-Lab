@@ -40,5 +40,17 @@ services:
       - sqlserver-data:/var/opt/mssql
     container_name: SQLServer_container
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx_container
+    ports:
+      - "80:7020"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - citasmedicaswebapi
+      - pacientewebapi
+      - historiaclinicawebapi
+
 volumes:
   sqlserver-data:
