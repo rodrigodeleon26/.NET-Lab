@@ -29,6 +29,16 @@ services:
       - 5005:8081
     container_name: HistoriaClinicaWebApi_container
 
+  administrativowebapi:
+    image: ${DOCKER_REGISTRY-}administrativowebapi
+    build:
+      context: .
+      dockerfile: AdministrativoWebApi/Dockerfile
+    ports:
+      - 5006:8080
+      - 5007:8081
+    container_name: AdministrativoWebApi_container
+
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     ports:
