@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NGINX", "NGINX", "{E0E3FAD7
 		nginx.conf = nginx.conf
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdministrativoWebApi", "AdministrativoWebApi\AdministrativoWebApi.csproj", "{4A74D21B-3591-4D28-A3B5-C60139DB8732}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{4F10E676-218D-4EB8-A5B3-5E139D5C3435}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F10E676-218D-4EB8-A5B3-5E139D5C3435}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F10E676-218D-4EB8-A5B3-5E139D5C3435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A74D21B-3591-4D28-A3B5-C60139DB8732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A74D21B-3591-4D28-A3B5-C60139DB8732}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A74D21B-3591-4D28-A3B5-C60139DB8732}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A74D21B-3591-4D28-A3B5-C60139DB8732}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
