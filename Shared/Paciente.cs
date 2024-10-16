@@ -24,6 +24,7 @@
 
         public List<Notificacion> Notificaciones { get; set; } = new List<Notificacion>();
 
-        public Contrato Contrato { get; set; }
+        //puede ser null
+        public Contrato? Contrato { get; set; }
     }
 }

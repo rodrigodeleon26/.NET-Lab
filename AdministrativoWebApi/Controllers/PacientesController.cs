@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using BL.IBLs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL;
-using DAL.Models;
+using Shared;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AdministrativoWebApi.Controllers
 {
@@ -14,95 +10,83 @@ namespace AdministrativoWebApi.Controllers
     [ApiController]
     public class PacientesController : ControllerBase
     {
-        private readonly DBContext _context;
+        private readonly IBL_Administrativo _blAdministrativo;
 
-        public PacientesController(DBContext context)
+        public PacientesController(IBL_Administrativo blAdministrativo)
         {
-            _context = context;
+            _blAdministrativo = blAdministrativo;
         }
 
-        // GET: api/Pacientes
+        // GET: api/<PacienteController>
+        [ProducesResponseType(typeof(List<Paciente>), 200)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Pacientes>>> GetPacientes()
+        public IActionResult Get()
         {
-            return await _context.Pacientes.ToListAsync();
+            return Ok(_blAdministrativo.getPacientes());
         }
 
-        // GET: api/Pacientes/5
+        // GET api/<PacienteController>/5
+        [ProducesResponseType(typeof(Paciente), 200)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Pacientes>> GetPacientes(long id)
+        public IActionResult Get(int id)
         {
-            var pacientes = await _context.Pacientes.FindAsync(id);
-
-            if (pacientes == null)
+            var paciente = _blAdministrativo.getPacienteById(id);
+            if (paciente == null)
             {
                 return NotFound();
             }
-
-            return pacientes;
+            return Ok(paciente);
         }
 
-        // PUT: api/Pacientes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPacientes(long id, Pacientes pacientes)
+        // POST api/<PacienteController>
+        [ProducesResponseType(typeof(Paciente), 201)]
+        [HttpPost]
+        public IActionResult Post([FromBody] Paciente paciente)
         {
-            if (id != pacientes.Id)
+            if (paciente == null)
+            {
+                return BadRequest();
+            }
+            paciente.CitasMedicas = null;
+            paciente.Facturas = null;
+            paciente.Notificaciones = null;
+            paciente.Contrato = null;
+
+            _blAdministrativo.addPaciente(paciente);
+            return CreatedAtAction(nameof(Get), new { id = paciente.Id }, paciente);
+        }
+
+        // PUT api/<PacienteController>/5
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] Paciente paciente)
+        {
+            if (paciente == null || paciente.Id != id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(pacientes).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PacientesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Pacientes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Pacientes>> PostPacientes(Pacientes pacientes)
-        {
-            _context.Pacientes.Add(pacientes);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPacientes", new { id = pacientes.Id }, pacientes);
-        }
-
-        // DELETE: api/Pacientes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePacientes(long id)
-        {
-            var pacientes = await _context.Pacientes.FindAsync(id);
-            if (pacientes == null)
+            var existingPaciente = _blAdministrativo.getPacienteById(id);
+            if (existingPaciente == null)
             {
                 return NotFound();
             }
 
-            _context.Pacientes.Remove(pacientes);
-            await _context.SaveChangesAsync();
-
+            _blAdministrativo.updatePaciente(paciente);
             return NoContent();
         }
 
-        private bool PacientesExists(long id)
+        // DELETE api/<PacienteController>/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
         {
-            return _context.Pacientes.Any(e => e.Id == id);
+            var paciente = _blAdministrativo.getPacienteById(id);
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+
+            _blAdministrativo.deletePaciente(id);
+            return NoContent();
         }
     }
 }
