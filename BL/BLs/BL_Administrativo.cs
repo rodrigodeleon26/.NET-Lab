@@ -46,6 +46,29 @@ namespace BL.BLs
 			dal.UpdatePaciente(paciente);
 		}
 
+		public void ContratarSeguroMedico(int idPaciente, int idSeguroMedico)
+        {
+            var paciente = getPacienteById(idPaciente);
+			var seguroMedico = getSeguroMedicoById(idSeguroMedico);
+			if (paciente != null && seguroMedico != null)
+			{
+				Contrato contrato = new Contrato()
+                {
+                    Paciente = paciente,
+                    SeguroMedico = seguroMedico,
+                    FechaInicio = DateTime.Now,
+					Activo = false,
+                };
+				addContrato(contrato);
+
+				paciente.Contrato = contrato;
+				updatePaciente(paciente);
+
+				seguroMedico.Contratos.Add(contrato);
+				updateSeguroMedico(seguroMedico);
+			}
+        }
+
 		#endregion
 
 		//Seguros Medicos

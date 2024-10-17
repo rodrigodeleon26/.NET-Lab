@@ -15,6 +15,7 @@ namespace BL.IBLs
 		void addPaciente(Paciente paciente);
 		void updatePaciente(Paciente paciente);
 		void deletePaciente(int id);
+		void ContratarSeguroMedico(int idPaciente, int idSeguroMedico);
 
 		// Seguros Medicos
 		List<SeguroMedico> getSegurosMedicos();
