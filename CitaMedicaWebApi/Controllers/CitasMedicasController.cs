@@ -1,6 +1,7 @@
 ﻿using BL.IBLs;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,12 +18,78 @@ namespace PacienteWebApi.Controllers
             _blCitasMedicas = blCitasMedicas;
         }
 
-        // GET: api/<PacientesController>
+        // GET: api/<CitasMedicasController>
         [ProducesResponseType(typeof(List<CitaMedica>), 200)]
         [HttpGet]
         public IActionResult Get()
         {
             return Ok(_blCitasMedicas.getCitasMedicas());
+        }
+
+        // GET api/<CitasMedicasController>/5
+        [ProducesResponseType(typeof(CitaMedica), 200)]
+        [ProducesResponseType(404)]
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var cita = _blCitasMedicas.getCitaMedicaById(id);
+            if (cita == null)
+            {
+                return NotFound();
+            }
+            return Ok(cita);
+        }
+
+        // POST api/<CitasMedicasController>
+        [ProducesResponseType(typeof(CitaMedica), 201)]
+        [ProducesResponseType(400)]
+        [HttpPost]
+        public IActionResult Post([FromBody] CitaMedica nuevaCita)
+        {
+            if (nuevaCita == null)
+            {
+                return BadRequest();
+            }
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita);
+            return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
+        }
+
+        // PUT api/<CitasMedicasController>/5
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] CitaMedica citaActualizada)
+        {
+            if (citaActualizada == null || citaActualizada.Id != id)
+            {
+                return BadRequest();
+            }
+
+            var citaExistente = _blCitasMedicas.getCitaMedicaById(id);
+            if (citaExistente == null)
+            {
+                return NotFound();
+            }
+
+            _blCitasMedicas.updateCitaMedica(citaActualizada);
+            return NoContent();
+        }
+
+        // DELETE api/<CitasMedicasController>/5
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var citaExistente = _blCitasMedicas.getCitaMedicaById(id);
+            if (citaExistente == null)
+            {
+                return NotFound();
+            }
+
+            _blCitasMedicas.deleteCitaMedica(id);
+            return NoContent();
         }
     }
 }

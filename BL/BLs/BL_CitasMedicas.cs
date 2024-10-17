@@ -1,6 +1,7 @@
 ﻿using BL.IBLs;
 using DAL.IDALs;
 using Shared;
+using System.Collections.Generic;
 
 namespace BL.BLs
 {
@@ -13,9 +14,34 @@ namespace BL.BLs
             this.dal = dal;
         }
 
+        // Obtener todas las citas médicas
         public List<CitaMedica> getCitasMedicas()
         {
             return dal.getCitasMedicas();
+        }
+
+        // Obtener una cita médica por ID
+        public CitaMedica getCitaMedicaById(int id)
+        {
+            return dal.getCitaMedicaById(id);
+        }
+
+        // Crear una nueva cita médica
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita)
+        {
+            return dal.createCitaMedica(nuevaCita);
+        }
+
+        // Actualizar una cita médica existente
+        public void updateCitaMedica(CitaMedica citaActualizada)
+        {
+            dal.updateCitaMedica(citaActualizada);
+        }
+
+        // Eliminar una cita médica por ID
+        public void deleteCitaMedica(int id)
+        {
+            dal.deleteCitaMedica(id);
         }
     }
 }
