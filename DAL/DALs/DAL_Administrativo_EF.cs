@@ -110,17 +110,17 @@ namespace DAL.DALs
 			}
 		}
 
-        #endregion
+		#endregion
 
 
-        /**********************************************************/
-        /**                    Seguros                           **/
-        /**********************************************************/
+		/**********************************************************/
+		/**                    Seguros                           **/
+		/**********************************************************/
 
-        #region FUNCTIONES SEGUROS
+		#region FUNCTIONES SEGUROS
 
-        public List<SeguroMedico> GetSegurosMedicos()
-        {
+		public List<SeguroMedico> GetSegurosMedicos()
+		{
 			using (var _dbContext = new DBContext())
 			{
 				return _dbContext.SegurosMedicos
@@ -143,54 +143,54 @@ namespace DAL.DALs
 						}).ToList(),
 					}).ToList();
 			}
-        }
+		}
 
-        public SeguroMedico GetSeguroMedicoById(int id)
-        {
+		public SeguroMedico GetSeguroMedicoById(int id)
+		{
 			using (var _dbContext = new DBContext())
 			{
-                var seguro = _dbContext.SegurosMedicos.Find(id);
-                if (seguro != null)
-                {
-                    return new SeguroMedico
-                    {
-                        Id = seguro.Id,
-                        Nombre = seguro.Nombre,
-                        Descripcion = seguro.Descripcion,
-                        Contratos = seguro.Contratos.Select(c => new Contrato
-                        {
-                            Id = c.Id,
-                            FechaInicio = c.FechaInicio,
-                            Activo = c.Activo
-                        }).ToList(),
-                        Precios = seguro.Precios.Select(p => new Precio
-                        {
-                            Id = p.Id,
-                            PrecioBase = p.PrecioBase,
-                            FechaInicio = p.FechaInicio
-                        }).ToList(),
-                    };
-                }
-                return null;
-            }
-        }
+				var seguro = _dbContext.SegurosMedicos.Find(id);
+				if (seguro != null)
+				{
+					return new SeguroMedico
+					{
+						Id = seguro.Id,
+						Nombre = seguro.Nombre,
+						Descripcion = seguro.Descripcion,
+						Contratos = seguro.Contratos.Select(c => new Contrato
+						{
+							Id = c.Id,
+							FechaInicio = c.FechaInicio,
+							Activo = c.Activo
+						}).ToList(),
+						Precios = seguro.Precios.Select(p => new Precio
+						{
+							Id = p.Id,
+							PrecioBase = p.PrecioBase,
+							FechaInicio = p.FechaInicio
+						}).ToList(),
+					};
+				}
+				return null;
+			}
+		}
 
-        public void AddSeguroMedico(SeguroMedico seguroMedico)
-        {
+		public void AddSeguroMedico(SeguroMedico seguroMedico)
+		{
 			using (var _dbContext = new DBContext())
-            {
-                var nuevoSeguro = new SegurosMedicos
-                {
-                    Nombre = seguroMedico.Nombre,
-                    Descripcion = seguroMedico.Descripcion
-                };
-                _dbContext.SegurosMedicos.Add(nuevoSeguro);
-                _dbContext.SaveChanges();
-            }
-        }
+			{
+				var nuevoSeguro = new SegurosMedicos
+				{
+					Nombre = seguroMedico.Nombre,
+					Descripcion = seguroMedico.Descripcion
+				};
+				_dbContext.SegurosMedicos.Add(nuevoSeguro);
+				_dbContext.SaveChanges();
+			}
+		}
 
-        public void UpdateSeguroMedico(SeguroMedico seguroMedico)
-        {
+		public void UpdateSeguroMedico(SeguroMedico seguroMedico)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var seguroExistente = _dbContext.SegurosMedicos.Find(seguroMedico.Id);
@@ -201,18 +201,400 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        public void DeleteSeguroMedico(int id)
-        {
+		public void DeleteSeguroMedico(int id)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var seguro = _dbContext.SegurosMedicos.Find(id);
 				if (seguro != null)
+				{
+					_dbContext.SegurosMedicos.Remove(seguro);
+					_dbContext.SaveChanges();
+				}
+			}
+		}
+
+		#endregion
+
+		/**********************************************************/
+		/**                    Contratos                         **/
+		/**********************************************************/
+		#region FUNCTIONES CONTRATOS
+
+		public List<Contrato> GetContratos()
+        {
+			using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Contratos
+                    .Select(c => new Contrato
+                    {
+                        Id = c.Id,
+                        FechaInicio = c.FechaInicio,
+                        Activo = c.Activo,
+                        Paciente = new Paciente
+                        {
+                            Id = c.Paciente.Id,
+                            Nombres = c.Paciente.Nombres,
+                            Apellidos = c.Paciente.Apellidos,
+                            Documento = c.Paciente.Documento,
+                            FechaDeNacimiento = c.Paciente.FechaDeNacimiento,
+                            Direccion = c.Paciente.Direccion,
+                            Telefono = c.Paciente.Telefono,
+                            Email = c.Paciente.Email
+                        },
+						SeguroMedico = new SeguroMedico
+                        {
+                            Id = c.SeguroMedico.Id,
+                            Nombre = c.SeguroMedico.Nombre,
+                            Descripcion = c.SeguroMedico.Descripcion
+                        }
+                    }).ToList();
+            }
+        }
+
+        public Contrato GetContratoById(int id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var contrato = _dbContext.Contratos.Find(id);
+				if (contrato != null)
+				{
+					return new Contrato
+					{
+						Id = contrato.Id,
+						FechaInicio = contrato.FechaInicio,
+						Activo = contrato.Activo,
+						Paciente = new Paciente
+						{
+							Id = contrato.Paciente.Id,
+							Nombres = contrato.Paciente.Nombres,
+							Apellidos = contrato.Paciente.Apellidos,
+							Documento = contrato.Paciente.Documento,
+							FechaDeNacimiento = contrato.Paciente.FechaDeNacimiento,
+							Direccion = contrato.Paciente.Direccion,
+							Telefono = contrato.Paciente.Telefono,
+							Email = contrato.Paciente.Email
+						},
+						SeguroMedico = new SeguroMedico
+						{
+							Id = contrato.SeguroMedico.Id,
+							Nombre = contrato.SeguroMedico.Nombre,
+							Descripcion = contrato.SeguroMedico.Descripcion
+						}
+					};
+				}
+				return null;
+			}
+        }
+
+        public void AddContrato(Contrato contrato)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var nuevoContrato = new Contratos
                 {
-                    _dbContext.SegurosMedicos.Remove(seguro);
+                    Id = contrato.Id,
+                    FechaInicio = contrato.FechaInicio,
+                    Activo = contrato.Activo,
+					PacienteId = contrato.Paciente.Id,
+					SeguroMedicoId = contrato.SeguroMedico.Id
+                };
+                _dbContext.Contratos.Add(nuevoContrato);
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public void UpdateContrato(Contrato contrato)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                var contratoExistente = _dbContext.Contratos.Find(contrato.Id);
+                if (contratoExistente != null)
+                {
+                    contratoExistente.FechaInicio = contrato.FechaInicio;
+                    contratoExistente.Activo = contrato.Activo;
+					contratoExistente.PacienteId = contrato.Paciente.Id;
+					contratoExistente.SeguroMedicoId = contrato.SeguroMedico.Id;
                     _dbContext.SaveChanges();
                 }
+            }
+        }
+
+        public void DeleteContrato(int id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var contrato = _dbContext.Contratos.Find(id);
+                if (contrato != null)
+                {
+                    _dbContext.Contratos.Remove(contrato);
+                    _dbContext.SaveChanges();
+                }
+            }
+        }
+
+        #endregion
+
+        /**********************************************************/
+        /**                    Precios                           **/
+        /**********************************************************/
+        #region FUNCTIONES PRECIOS
+
+        public List<Precio> GetPrecios()
+        {
+			using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Precios
+                    .Select(p => new Precio
+                    {
+                        Id = p.Id,
+                        PrecioBase = p.PrecioBase,
+                        FechaInicio = p.FechaInicio,
+						Copago = new Copago
+                        {
+                            Id = p.Copago.Id,
+							Articulo = new Articulo
+							{
+								Id = p.Copago.Articulo.Id,
+								Nombre = p.Copago.Articulo.Nombre
+                            },
+							SeguroMedico = new SeguroMedico
+                            {
+                                Id = p.Copago.SeguroMedico.Id,
+                                Nombre = p.Copago.SeguroMedico.Nombre,
+                                Descripcion = p.Copago.SeguroMedico.Descripcion
+                            },
+							Especialidad = new Especialidad
+                            {
+                                Id = p.Copago.Especialidad.Id,
+                                Nombre = p.Copago.Especialidad.Nombre,
+                                Descripcion = p.Copago.Especialidad.Descripcion
+                            }
+                        },
+                        SeguroMedico = new SeguroMedico
+                        {
+                            Id = p.SeguroMedico.Id,
+                            Nombre = p.SeguroMedico.Nombre,
+                            Descripcion = p.SeguroMedico.Descripcion
+                        }
+                    }).ToList();
+            }
+        }
+
+        public Precio GetPrecioById(int id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var precio = _dbContext.Precios.Find(id);
+				if (precio != null)
+				{
+					return new Precio
+                    {
+                        Id = precio.Id,
+                        PrecioBase = precio.PrecioBase,
+                        FechaInicio = precio.FechaInicio,
+                        Copago = new Copago
+                        {
+                            Id = precio.Copago.Id,
+                            Articulo = new Articulo
+                            {
+                                Id = precio.Copago.Articulo.Id,
+                                Nombre = precio.Copago.Articulo.Nombre
+                            },
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = precio.Copago.SeguroMedico.Id,
+                                Nombre = precio.Copago.SeguroMedico.Nombre,
+                                Descripcion = precio.Copago.SeguroMedico.Descripcion
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = precio.Copago.Especialidad.Id,
+                                Nombre = precio.Copago.Especialidad.Nombre,
+                                Descripcion = precio.Copago.Especialidad.Descripcion
+                            }
+                        },
+                        SeguroMedico = new SeguroMedico
+                        {
+                            Id = precio.SeguroMedico.Id,
+                            Nombre = precio.SeguroMedico.Nombre,
+                            Descripcion = precio.SeguroMedico.Descripcion
+                        }
+                    };
+				}
+				return null;
+			}
+        }
+
+        public void AddPrecio(Precio precio)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var nuevoPrecio = new Precios
+				{
+					PrecioBase = precio.PrecioBase,
+					FechaInicio = precio.FechaInicio,
+					CopagoId = precio.Copago.Id,
+					SeguroMedicoId = precio.SeguroMedico.Id
+				};
+				_dbContext.Precios.Add(nuevoPrecio);
+				_dbContext.SaveChanges();
+			}
+        }
+
+        public void UpdatePrecio(Precio precio)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var precioExistente = _dbContext.Precios.Find(precio.Id);
+				if (precioExistente != null)
+				{
+					precioExistente.PrecioBase = precio.PrecioBase;
+					precioExistente.FechaInicio = precio.FechaInicio;
+					precioExistente.CopagoId = precio.Copago.Id;
+					precioExistente.SeguroMedicoId = precio.SeguroMedico.Id;
+					_dbContext.SaveChanges();
+				}
+			}
+        }
+
+        public void DeletePrecio(int id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var precio = _dbContext.Precios.Find(id);
+				if (precio != null)
+				{
+					_dbContext.Precios.Remove(precio);
+					_dbContext.SaveChanges();
+				}
+			}
+        }
+
+        #endregion
+
+        /**********************************************************/
+        /**                    Copagos                           **/
+        /**********************************************************/
+        #region FUNCTIONES COPAGOS
+
+
+        public List<Copago> GetCopagos()
+        {
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Copagos
+                    .Select(c => new Copago
+                    {
+                        Id = c.Id,
+                        Articulo = new Articulo
+                        {
+                            Id = c.Articulo.Id,
+                            Nombre = c.Articulo.Nombre
+                        },
+                        SeguroMedico = new SeguroMedico
+                        {
+                            Id = c.SeguroMedico.Id,
+                            Nombre = c.SeguroMedico.Nombre,
+                            Descripcion = c.SeguroMedico.Descripcion
+                        },
+                        Especialidad = new Especialidad
+                        {
+                            Id = c.Especialidad.Id,
+                            Nombre = c.Especialidad.Nombre,
+                            Descripcion = c.Especialidad.Descripcion
+                        },
+                        Precios = c.Precios.Select(p => new Precio
+                        {
+                            Id = p.Id,
+                            PrecioBase = p.PrecioBase,
+                            FechaInicio = p.FechaInicio
+                        }).ToList()
+                    }).ToList();
+			}
+        }
+
+        public Copago GetCopagoById(int id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var copago = _dbContext.Copagos.Find(id);
+				if (copago != null)
+				{
+					return new Copago
+					{
+						Id = copago.Id,
+						Articulo = new Articulo
+						{
+							Id = copago.Articulo.Id,
+							Nombre = copago.Articulo.Nombre
+						},
+						SeguroMedico = new SeguroMedico
+						{
+							Id = copago.SeguroMedico.Id,
+							Nombre = copago.SeguroMedico.Nombre,
+							Descripcion = copago.SeguroMedico.Descripcion
+						},
+						Especialidad = new Especialidad
+						{
+							Id = copago.Especialidad.Id,
+							Nombre = copago.Especialidad.Nombre,
+							Descripcion = copago.Especialidad.Descripcion
+						},
+						Precios = copago.Precios.Select(p => new Precio
+						{
+							Id = p.Id,
+							PrecioBase = p.PrecioBase,
+							FechaInicio = p.FechaInicio
+						}).ToList()
+					};
+				}
+				return null;
+			}
+        }
+
+        public void AddCopago(Copago copago)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var nuevoCopago = new Copagos
+				{
+					ArticuloId = copago.Articulo.Id,
+					SeguroMedicoId = copago.SeguroMedico.Id,
+					EspecialidadId = copago.Especialidad.Id
+				};
+				_dbContext.Copagos.Add(nuevoCopago);
+				_dbContext.SaveChanges();
+			}
+        }
+
+        public void UpdateCopago(Copago copago)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var copagoExistente = _dbContext.Copagos.Find(copago.Id);
+				if (copagoExistente != null)
+				{
+					copagoExistente.ArticuloId = copago.Articulo.Id;
+					copagoExistente.SeguroMedicoId = copago.SeguroMedico.Id;
+					copagoExistente.EspecialidadId = copago.Especialidad.Id;
+					_dbContext.SaveChanges();
+				}
+			}
+        }
+
+        public void DeleteCopago(int id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var copago = _dbContext.Copagos.Find(id);
+				if (copago != null)
+				{
+					_dbContext.Copagos.Remove(copago);
+					_dbContext.SaveChanges();
+				}
 			}
         }
 

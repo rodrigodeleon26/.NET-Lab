@@ -22,5 +22,28 @@ namespace DAL.IDALs
         public void AddSeguroMedico(SeguroMedico seguroMedico);
         public void UpdateSeguroMedico(SeguroMedico seguroMedico);
         public void DeleteSeguroMedico(int id);
+
+        // Contratos
+        public List<Contrato> GetContratos();
+        public Contrato GetContratoById(int id);
+        public void AddContrato(Contrato contrato);
+        public void UpdateContrato(Contrato contrato);
+        public void DeleteContrato(int id);
+
+        // Precios
+        public List<Precio> GetPrecios();
+        public Precio GetPrecioById(int id);
+        public void AddPrecio(Precio precio);
+        public void UpdatePrecio(Precio precio);
+        public void DeletePrecio(int id);
+
+        // Copagos
+        public List<Copago> GetCopagos();
+        public Copago GetCopagoById(int id);
+        public void AddCopago(Copago copago);
+        public void UpdateCopago(Copago copago);
+        public void DeleteCopago(int id);
+
+
     }
 }

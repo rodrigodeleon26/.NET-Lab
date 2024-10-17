@@ -46,34 +46,125 @@ namespace BL.BLs
 			dal.UpdatePaciente(paciente);
 		}
 
+		#endregion
+
+		//Seguros Medicos
+		#region SEGUROS MEDICOS
+
+		public void addSeguroMedico(SeguroMedico seguroMedico)
+		{
+			dal.AddSeguroMedico(seguroMedico);
+		}
+
+		public void deleteSeguroMedico(int id)
+		{
+			dal.DeleteSeguroMedico(id);
+		}
+
+		public SeguroMedico getSeguroMedicoById(int id)
+		{
+			return dal.GetSeguroMedicoById(id);
+		}
+
+		public List<SeguroMedico> getSegurosMedicos()
+		{
+			return dal.GetSegurosMedicos();
+		}
+
+		public void updateSeguroMedico(SeguroMedico seguroMedico)
+		{
+			dal.UpdateSeguroMedico(seguroMedico);
+		}
+
         #endregion
 
-        //Seguros Medicos
-        #region SEGUROS MEDICOS
+        //Contratos
+        #region CONTRATOS
 
-        public void addSeguroMedico(SeguroMedico seguroMedico)
+        public List<Contrato> getContratos()
         {
-			dal.AddSeguroMedico(seguroMedico);
+            return dal.GetContratos();
         }
 
-        public void deleteSeguroMedico(int id)
+        public Contrato getContratoById(int id)
         {
-			dal.DeleteSeguroMedico(id);
+            return dal.GetContratoById(id);
         }
 
-        public SeguroMedico getSeguroMedicoById(int id)
+        public void addContrato(Contrato contrato)
         {
-			return dal.GetSeguroMedicoById(id);
+            dal.AddContrato(contrato);
         }
 
-        public List<SeguroMedico> getSegurosMedicos()
+        public void updateContrato(Contrato contrato)
         {
-			return dal.GetSegurosMedicos();
+            dal.UpdateContrato(contrato);
         }
 
-        public void updateSeguroMedico(SeguroMedico seguroMedico)
+        public void deleteContrato(int id)
         {
-			dal.UpdateSeguroMedico(seguroMedico);
+            dal.DeleteContrato(id);
+        }
+
+        #endregion
+
+        //Precios
+        #region PRECIOS
+
+
+        public List<Precio> getPrecios()
+        {
+            return dal.GetPrecios();
+        }
+
+        public Precio getPrecioById(int id)
+        {
+            return dal.GetPrecioById(id);
+        }
+
+        public void addPrecio(Precio precio)
+        {
+            dal.AddPrecio(precio);
+        }
+
+        public void updatePrecio(Precio precio)
+        {
+            dal.UpdatePrecio(precio);
+        }
+
+        public void deletePrecio(int id)
+        {
+            dal.DeletePrecio(id);
+        }
+
+        #endregion
+
+        //Copagos
+        #region COPAGOS
+
+        public List<Copago> getCopagos()
+        {
+            return dal.GetCopagos();
+        }
+
+        public Copago getCopagoById(int id)
+        {
+            return dal.GetCopagoById(id);
+        }
+
+        public void addCopago(Copago copago)
+        {
+            dal.AddCopago(copago);
+        }
+
+        public void updateCopago(Copago copago)
+        {
+            dal.UpdateCopago(copago);
+        }
+
+        public void deleteCopago(int id)
+        {
+            dal.DeleteCopago(id);
         }
 
         #endregion
