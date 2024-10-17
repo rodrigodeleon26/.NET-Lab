@@ -76,95 +76,125 @@ namespace BL.BLs
 			dal.UpdateSeguroMedico(seguroMedico);
 		}
 
+		#endregion
+
+		//Contratos
+		#region CONTRATOS
+
+		public List<Contrato> getContratos()
+		{
+			return dal.GetContratos();
+		}
+
+		public Contrato getContratoById(int id)
+		{
+			return dal.GetContratoById(id);
+		}
+
+		public void addContrato(Contrato contrato)
+		{
+			dal.AddContrato(contrato);
+		}
+
+		public void updateContrato(Contrato contrato)
+		{
+			dal.UpdateContrato(contrato);
+		}
+
+		public void deleteContrato(int id)
+		{
+			dal.DeleteContrato(id);
+		}
+
+		#endregion
+
+		//Precios
+		#region PRECIOS
+
+
+		public List<Precio> getPrecios()
+		{
+			return dal.GetPrecios();
+		}
+
+		public Precio getPrecioById(int id)
+		{
+			return dal.GetPrecioById(id);
+		}
+
+		public void addPrecio(Precio precio)
+		{
+			dal.AddPrecio(precio);
+		}
+
+		public void updatePrecio(Precio precio)
+		{
+			dal.UpdatePrecio(precio);
+		}
+
+		public void deletePrecio(int id)
+		{
+			dal.DeletePrecio(id);
+		}
+
+		#endregion
+
+		//Copagos
+		#region COPAGOS
+
+		public List<Copago> getCopagos()
+		{
+			return dal.GetCopagos();
+		}
+
+		public Copago getCopagoById(int id)
+		{
+			return dal.GetCopagoById(id);
+		}
+
+		public void addCopago(Copago copago)
+		{
+			dal.AddCopago(copago);
+		}
+
+		public void updateCopago(Copago copago)
+		{
+			dal.UpdateCopago(copago);
+		}
+
+		public void deleteCopago(int id)
+		{
+			dal.DeleteCopago(id);
+		}
+
         #endregion
 
-        //Contratos
-        #region CONTRATOS
+        //Facturas
+        #region FACTURAS
 
-        public List<Contrato> getContratos()
+        public List<Factura> getFacturas()
         {
-            return dal.GetContratos();
+			return dal.GetFacturas();
         }
 
-        public Contrato getContratoById(int id)
+        public Factura getFacturaById(int id)
         {
-            return dal.GetContratoById(id);
+			return dal.GetFacturaById(id);
         }
 
-        public void addContrato(Contrato contrato)
+        public void addFactura(Factura factura)
         {
-            dal.AddContrato(contrato);
+			dal.AddFactura(factura);
         }
 
-        public void updateContrato(Contrato contrato)
+        public void updateFactura(Factura factura)
         {
-            dal.UpdateContrato(contrato);
+			dal.UpdateFactura(factura);
         }
 
-        public void deleteContrato(int id)
+        public void deleteFactura(int id)
         {
-            dal.DeleteContrato(id);
-        }
-
-        #endregion
-
-        //Precios
-        #region PRECIOS
-
-
-        public List<Precio> getPrecios()
-        {
-            return dal.GetPrecios();
-        }
-
-        public Precio getPrecioById(int id)
-        {
-            return dal.GetPrecioById(id);
-        }
-
-        public void addPrecio(Precio precio)
-        {
-            dal.AddPrecio(precio);
-        }
-
-        public void updatePrecio(Precio precio)
-        {
-            dal.UpdatePrecio(precio);
-        }
-
-        public void deletePrecio(int id)
-        {
-            dal.DeletePrecio(id);
-        }
-
-        #endregion
-
-        //Copagos
-        #region COPAGOS
-
-        public List<Copago> getCopagos()
-        {
-            return dal.GetCopagos();
-        }
-
-        public Copago getCopagoById(int id)
-        {
-            return dal.GetCopagoById(id);
-        }
-
-        public void addCopago(Copago copago)
-        {
-            dal.AddCopago(copago);
-        }
-
-        public void updateCopago(Copago copago)
-        {
-            dal.UpdateCopago(copago);
-        }
-
-        public void deleteCopago(int id)
-        {
-            dal.DeleteCopago(id);
+			dal.DeleteFactura(id);
         }
 
         #endregion

@@ -43,5 +43,12 @@ namespace BL.IBLs
 		void addCopago(Copago copago);
 		void updateCopago(Copago copago);
 		void deleteCopago(int id);
+
+		// Facturas
+		List<Factura> getFacturas();
+		Factura getFacturaById(int id);
+		void addFactura(Factura factura);
+		void updateFactura(Factura factura);
+		void deleteFactura(int id);
 	}
 }
