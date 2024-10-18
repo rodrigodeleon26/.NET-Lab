@@ -28,7 +28,7 @@ namespace AdministrativoWebApi.Controllers
         // GET api/<FacturasController>/5
         [ProducesResponseType(typeof(Factura), 200)]
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(long id)
         {
             var factura = _blAdministrativo.getFacturaById(id);
             if (factura == null)
@@ -54,7 +54,7 @@ namespace AdministrativoWebApi.Controllers
 
         // PUT api/<FacturasController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Factura factura)
+        public IActionResult Put(long id, [FromBody] Factura factura)
         {
             if (factura == null || factura.Id != id)
             {
@@ -73,7 +73,7 @@ namespace AdministrativoWebApi.Controllers
 
         // DELETE api/<FacturasController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(long id)
         {
             var factura = _blAdministrativo.getFacturaById(id);
             if (factura == null)

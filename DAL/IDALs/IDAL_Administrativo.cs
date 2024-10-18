@@ -11,44 +11,44 @@ namespace DAL.IDALs
 	{
 		// Pacientes
 		public List<Paciente> GetPacientes();
-		public Paciente GetPacienteById(int id);
+		public Paciente GetPacienteById(long id);
 		public void AddPaciente(Paciente paciente);
 		public void UpdatePaciente(Paciente paciente);
-		public void DeletePaciente(int id);
+		public void DeletePaciente(long id);
 
 		// Seguros Medicos
 		public List<SeguroMedico> GetSegurosMedicos();
-		public SeguroMedico GetSeguroMedicoById(int id);
+		public SeguroMedico GetSeguroMedicoById(long id);
 		public void AddSeguroMedico(SeguroMedico seguroMedico);
 		public void UpdateSeguroMedico(SeguroMedico seguroMedico);
-		public void DeleteSeguroMedico(int id);
+		public void DeleteSeguroMedico(long id);
 
 		// Contratos
 		public List<Contrato> GetContratos();
-		public Contrato GetContratoById(int id);
+		public Contrato GetContratoById(long id);
 		public void AddContrato(Contrato contrato);
 		public void UpdateContrato(Contrato contrato);
-		public void DeleteContrato(int id);
+		public void DeleteContrato(long id);
 
 		// Precios
 		public List<Precio> GetPrecios();
-		public Precio GetPrecioById(int id);
+		public Precio GetPrecioById(long id);
 		public void AddPrecio(Precio precio);
 		public void UpdatePrecio(Precio precio);
-		public void DeletePrecio(int id);
+		public void DeletePrecio(long id);
 
 		// Copagos
 		public List<Copago> GetCopagos();
-		public Copago GetCopagoById(int id);
+		public Copago GetCopagoById(long id);
 		public void AddCopago(Copago copago);
 		public void UpdateCopago(Copago copago);
-		public void DeleteCopago(int id);
+		public void DeleteCopago(long id);
 
 		// Facturas
 		public List<Factura> GetFacturas();
-		public Factura GetFacturaById(int id);
+		public Factura GetFacturaById(long id);
 		public void AddFactura(Factura factura);
 		public void UpdateFactura(Factura factura);
-		public void DeleteFactura(int id);
+		public void DeleteFactura(long id);
 	}
 }

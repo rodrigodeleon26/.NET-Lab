@@ -28,7 +28,7 @@ namespace AdministrativoWebApi.Controllers
         // GET api/<PreciosController>/5
         [ProducesResponseType(typeof(Precio), 200)]
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(long id)
         {
             var precio = _blAdministrativo.getPrecioById(id);
             if (precio == null)
@@ -54,7 +54,7 @@ namespace AdministrativoWebApi.Controllers
 
         // PUT api/<PreciosController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Precio precio)
+        public IActionResult Put(long id, [FromBody] Precio precio)
         {
             if (precio == null || precio.Id != id)
             {
@@ -73,7 +73,7 @@ namespace AdministrativoWebApi.Controllers
 
         // DELETE api/<PreciosController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(long id)
         {
             var precio = _blAdministrativo.getPrecioById(id);
             if (precio == null)

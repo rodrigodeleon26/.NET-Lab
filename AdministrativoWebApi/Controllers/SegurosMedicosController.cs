@@ -29,7 +29,7 @@ namespace AdministrativoWebApi.Controllers
         // GET api/<SegurosMedicosController>/5
         [ProducesResponseType(typeof(SeguroMedico), 200)]
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(long id)
         {
             var seguroMedico = _blAdministrativo.getSeguroMedicoById(id);
             if (seguroMedico == null)
@@ -58,7 +58,7 @@ namespace AdministrativoWebApi.Controllers
 
         // PUT api/<SegurosMedicosController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] SeguroMedico seguroMedico)
+        public IActionResult Put(long id, [FromBody] SeguroMedico seguroMedico)
         {
             if (seguroMedico == null || seguroMedico.Id != id)
             {
@@ -77,7 +77,7 @@ namespace AdministrativoWebApi.Controllers
 
         // DELETE api/<SegurosMedicosController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(long id)
         {
             var seguro = _blAdministrativo.getSeguroMedicoById(id);
             if (seguro == null)

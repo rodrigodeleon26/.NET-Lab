@@ -28,7 +28,7 @@ namespace AdministrativoWebApi.Controllers
         // GET api/<ContratosController>/5
         [ProducesResponseType(typeof(Contrato), 200)]
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(long id)
         {
             var contrato = _blAdministrativo.getContratoById(id);
             if (contrato == null)
@@ -54,7 +54,7 @@ namespace AdministrativoWebApi.Controllers
 
         // PUT api/<ContratosController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Contrato contrato)
+        public IActionResult Put(long id, [FromBody] Contrato contrato)
         {
             if (contrato == null || contrato.Id != id)
             {
@@ -73,7 +73,7 @@ namespace AdministrativoWebApi.Controllers
 
         // DELETE api/<ContratosController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(long id)
         {
             var contrato = _blAdministrativo.getContratoById(id);
             if (contrato == null)

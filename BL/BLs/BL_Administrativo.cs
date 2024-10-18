@@ -26,12 +26,12 @@ namespace BL.BLs
 			dal.AddPaciente(paciente);
 		}
 
-		public void deletePaciente(int id)
+		public void deletePaciente(long id)
 		{
 			dal.DeletePaciente(id);
 		}
 
-		public Paciente getPacienteById(int id)
+		public Paciente getPacienteById(long id)
 		{
 			return dal.GetPacienteById(id);
 		}
@@ -46,7 +46,7 @@ namespace BL.BLs
 			dal.UpdatePaciente(paciente);
 		}
 
-		public void ContratarSeguroMedico(int idPaciente, int idSeguroMedico)
+		public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
         {
             var paciente = getPacienteById(idPaciente);
 			var seguroMedico = getSeguroMedicoById(idSeguroMedico);
@@ -79,12 +79,12 @@ namespace BL.BLs
 			dal.AddSeguroMedico(seguroMedico);
 		}
 
-		public void deleteSeguroMedico(int id)
+		public void deleteSeguroMedico(long id)
 		{
 			dal.DeleteSeguroMedico(id);
 		}
 
-		public SeguroMedico getSeguroMedicoById(int id)
+		public SeguroMedico getSeguroMedicoById(long id)
 		{
 			return dal.GetSeguroMedicoById(id);
 		}
@@ -109,7 +109,7 @@ namespace BL.BLs
 			return dal.GetContratos();
 		}
 
-		public Contrato getContratoById(int id)
+		public Contrato getContratoById(long id)
 		{
 			return dal.GetContratoById(id);
 		}
@@ -124,7 +124,7 @@ namespace BL.BLs
 			dal.UpdateContrato(contrato);
 		}
 
-		public void deleteContrato(int id)
+		public void deleteContrato(long id)
 		{
 			dal.DeleteContrato(id);
 		}
@@ -140,7 +140,7 @@ namespace BL.BLs
 			return dal.GetPrecios();
 		}
 
-		public Precio getPrecioById(int id)
+		public Precio getPrecioById(long id)
 		{
 			return dal.GetPrecioById(id);
 		}
@@ -155,7 +155,7 @@ namespace BL.BLs
 			dal.UpdatePrecio(precio);
 		}
 
-		public void deletePrecio(int id)
+		public void deletePrecio(long id)
 		{
 			dal.DeletePrecio(id);
 		}
@@ -170,7 +170,7 @@ namespace BL.BLs
 			return dal.GetCopagos();
 		}
 
-		public Copago getCopagoById(int id)
+		public Copago getCopagoById(long id)
 		{
 			return dal.GetCopagoById(id);
 		}
@@ -185,7 +185,7 @@ namespace BL.BLs
 			dal.UpdateCopago(copago);
 		}
 
-		public void deleteCopago(int id)
+		public void deleteCopago(long id)
 		{
 			dal.DeleteCopago(id);
 		}
@@ -200,7 +200,7 @@ namespace BL.BLs
 			return dal.GetFacturas();
         }
 
-        public Factura getFacturaById(int id)
+        public Factura getFacturaById(long id)
         {
 			return dal.GetFacturaById(id);
         }
@@ -215,7 +215,7 @@ namespace BL.BLs
 			dal.UpdateFactura(factura);
         }
 
-        public void deleteFactura(int id)
+        public void deleteFactura(long id)
         {
 			dal.DeleteFactura(id);
         }

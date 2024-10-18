@@ -8,7 +8,7 @@ namespace Shared
 {
     public class Request_ContratarSeguro
     {
-        public int IdPaciente { get; set; }
-        public int IdSeguroMedico { get; set; }
+        public long IdPaciente { get; set; }
+        public long IdSeguroMedico { get; set; }
     }
 }

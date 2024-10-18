@@ -28,7 +28,7 @@ namespace AdministrativoWebApi.Controllers
 		// GET api/<CopagosController>/5
 		[ProducesResponseType(typeof(Copago), 200)]
 		[HttpGet("{id}")]
-		public IActionResult Get(int id)
+		public IActionResult Get(long id)
 		{
 			var copago = _blAdministrativo.getCopagoById(id);
 			if (copago == null)
@@ -54,7 +54,7 @@ namespace AdministrativoWebApi.Controllers
 
 		// PUT api/<CopagosController>/5
 		[HttpPut("{id}")]
-		public IActionResult Put(int id, [FromBody] Copago copago)
+		public IActionResult Put(long id, [FromBody] Copago copago)
         {
             if (copago == null || copago.Id != id)
             {
@@ -73,7 +73,7 @@ namespace AdministrativoWebApi.Controllers
 
 		// DELETE api/<CopagosController>/5
 		[HttpDelete("{id}")]
-		public IActionResult Delete(int id)
+		public IActionResult Delete(long id)
         {
             var precio = _blAdministrativo.getPrecioById(id);
             if (precio == null)

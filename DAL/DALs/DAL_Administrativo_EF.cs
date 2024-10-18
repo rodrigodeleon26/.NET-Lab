@@ -54,7 +54,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public void DeletePaciente(int id)
+		public void DeletePaciente(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -67,7 +67,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public Paciente GetPacienteById(int id)
+		public Paciente GetPacienteById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -145,7 +145,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public SeguroMedico GetSeguroMedicoById(int id)
+		public SeguroMedico GetSeguroMedicoById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -203,7 +203,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public void DeleteSeguroMedico(int id)
+		public void DeleteSeguroMedico(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -254,7 +254,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public Contrato GetContratoById(int id)
+		public Contrato GetContratoById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -322,7 +322,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public void DeleteContrato(int id)
+		public void DeleteContrato(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -383,7 +383,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public Precio GetPrecioById(int id)
+		public Precio GetPrecioById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -460,7 +460,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public void DeletePrecio(int id)
+		public void DeletePrecio(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -516,7 +516,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public Copago GetCopagoById(int id)
+		public Copago GetCopagoById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -585,7 +585,7 @@ namespace DAL.DALs
 			}
 		}
 
-		public void DeleteCopago(int id)
+		public void DeleteCopago(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -631,7 +631,7 @@ namespace DAL.DALs
 			}
         }
 
-        public Factura GetFacturaById(int id)
+        public Factura GetFacturaById(long id)
         {
 			using (var _dbContext = new DBContext())
 			{
@@ -696,7 +696,7 @@ namespace DAL.DALs
 			}
         }
 
-        public void DeleteFactura(int id)
+        public void DeleteFactura(long id)
         {
 			using (var _dbContext = new DBContext())
 			{

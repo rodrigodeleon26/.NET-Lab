@@ -28,7 +28,7 @@ namespace AdministrativoWebApi.Controllers
 		// GET api/<PacienteController>/5
 		[ProducesResponseType(typeof(Paciente), 200)]
 		[HttpGet("{id}")]
-		public IActionResult Get(int id)
+		public IActionResult Get(long id)
 		{
 			var paciente = _blAdministrativo.getPacienteById(id);
 			if (paciente == null)
@@ -58,7 +58,7 @@ namespace AdministrativoWebApi.Controllers
 
 		// PUT api/<PacienteController>/5
 		[HttpPut("{id}")]
-		public IActionResult Put(int id, [FromBody] Paciente paciente)
+		public IActionResult Put(long id, [FromBody] Paciente paciente)
 		{
 			if (paciente == null || paciente.Id != id)
 			{
@@ -77,7 +77,7 @@ namespace AdministrativoWebApi.Controllers
 
 		// DELETE api/<PacienteController>/5
 		[HttpDelete("{id}")]
-		public IActionResult Delete(int id)
+		public IActionResult Delete(long id)
 		{
 			var paciente = _blAdministrativo.getPacienteById(id);
 			if (paciente == null)

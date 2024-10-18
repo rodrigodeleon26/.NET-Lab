@@ -11,45 +11,45 @@ namespace BL.IBLs
 	{
 		// Pacientes
 		List<Paciente> getPacientes();
-		Paciente getPacienteById(int id);
+		Paciente getPacienteById(long id);
 		void addPaciente(Paciente paciente);
 		void updatePaciente(Paciente paciente);
-		void deletePaciente(int id);
-		void ContratarSeguroMedico(int idPaciente, int idSeguroMedico);
+		void deletePaciente(long id);
+		void ContratarSeguroMedico(long idPaciente, long idSeguroMedico);
 
 		// Seguros Medicos
 		List<SeguroMedico> getSegurosMedicos();
-		SeguroMedico getSeguroMedicoById(int id);
+		SeguroMedico getSeguroMedicoById(long id);
 		void addSeguroMedico(SeguroMedico seguroMedico);
 		void updateSeguroMedico(SeguroMedico seguroMedico);
-		void deleteSeguroMedico(int id);
+		void deleteSeguroMedico(long id);
 
 		// Contratos
 		List<Contrato> getContratos();
-		Contrato getContratoById(int id);
+		Contrato getContratoById(long id);
 		void addContrato(Contrato contrato);
 		void updateContrato(Contrato contrato);
-		void deleteContrato(int id);
+		void deleteContrato(long id);
 
 		// Precios
 		List<Precio> getPrecios();
-		Precio getPrecioById(int id);
+		Precio getPrecioById(long id);
 		void addPrecio(Precio precio);
 		void updatePrecio(Precio precio);
-		void deletePrecio(int id);
+		void deletePrecio(long id);
 
 		// Copagos
 		List<Copago> getCopagos();
-		Copago getCopagoById(int id);
+		Copago getCopagoById(long id);
 		void addCopago(Copago copago);
 		void updateCopago(Copago copago);
-		void deleteCopago(int id);
+		void deleteCopago(long id);
 
 		// Facturas
 		List<Factura> getFacturas();
-		Factura getFacturaById(int id);
+		Factura getFacturaById(long id);
 		void addFactura(Factura factura);
 		void updateFactura(Factura factura);
-		void deleteFactura(int id);
+		void deleteFactura(long id);
 	}
 }
