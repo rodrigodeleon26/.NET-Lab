@@ -12,9 +12,9 @@
 
         public string DiasSemana { get; set; } = "-- Sin Días --";
 
-        public Medico Medico { get; set; } = new Medico();
+        public Medico? Medico { get; set; } = new Medico();
 
-        public Especialidad Especialidad { get; set; } = new Especialidad();
+        public Especialidad? Especialidad { get; set; } = new Especialidad();
 
         public List<CitaMedica> CitasMedicas { get; set; } = new List<CitaMedica>();
     }

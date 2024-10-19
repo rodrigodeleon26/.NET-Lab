@@ -61,17 +61,22 @@ namespace PacienteWebApi.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] CitaMedica citaActualizada)
         {
-            if (citaActualizada == null || citaActualizada.Id != id)
+            if (citaActualizada == null)
             {
                 return BadRequest();
             }
 
+            // Verificar si la cita médica existe por su ID
             var citaExistente = _blCitasMedicas.getCitaMedicaById(id);
             if (citaExistente == null)
             {
                 return NotFound();
             }
 
+            // Asignar el ID recibido en la URL al objeto citaActualizada
+            citaActualizada.Id = id;
+
+            // Actualizar la cita médica
             _blCitasMedicas.updateCitaMedica(citaActualizada);
             return NoContent();
         }
