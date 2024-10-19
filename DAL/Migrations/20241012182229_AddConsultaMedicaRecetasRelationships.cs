@@ -20,8 +20,7 @@ namespace DAL.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Recetas_ConsultaMedicaId",
                 table: "Recetas",
-                column: "ConsultaMedicaId",
-                unique: true);
+                column: "ConsultaMedicaId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Recetas_ConsultasMedicas_ConsultaMedicaId",

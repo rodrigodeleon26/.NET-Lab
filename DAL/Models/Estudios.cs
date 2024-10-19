@@ -10,19 +10,18 @@ namespace DAL.Models
         public long Id { get; set; }
 
         [Required]
-        public string Nombre { get; set; } = "-- Sin Nombre --";    
+        public string Nombre { get; set; } 
 
         [Required]
-        public string Descripcion { get; set; } = "-- Sin Descripción --";
+        public string Descripcion { get; set; }
 
         [Required]
-        public DateOnly FechaRealizado { get; set; } = new DateOnly();
+        public DateOnly FechaRealizado { get; set; }
 
         [Required]
-        public DateOnly FechaResultado { get; set; } = new DateOnly();
-
+        public DateOnly? FechaResultado { get; set; }
         [Required]
-        public string Resultado { get; set; } = "-- Sin Resultado --";
+        public string? Resultado { get; set; }
 
         [Required]
         public long ConsultaMedicaId { get; set; }

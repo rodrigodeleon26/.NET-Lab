@@ -12,6 +12,6 @@
 
         public string Frecuencia { get; set; } = "-- Sin Frecuencia --";
 
-        public ConsultaMedica ConsultaMedica { get; set; } = new ConsultaMedica();
+        public long ConsultaMedicaId { get; set; }
     }
 }

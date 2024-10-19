@@ -19,10 +19,10 @@ namespace DAL.Models
         public long CitaMedicaId { get; set; } 
 
         [ForeignKey(nameof(CitaMedicaId))]
-        public virtual CitasMedicas CitaMedica { get; set; } 
+        public virtual CitasMedicas? CitaMedica { get; set; }
 
         public virtual ICollection<Estudios> Estudios { get; set; } = new List<Estudios>();
 
-        public virtual Recetas Receta { get; set; } = new Recetas(); 
+        public virtual ICollection<Recetas> Recetas { get; set; } = new List<Recetas>();
     }
 }
