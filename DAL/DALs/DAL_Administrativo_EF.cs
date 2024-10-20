@@ -1,5 +1,7 @@
 ﻿using DAL.IDALs;
 using DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -67,47 +69,84 @@ namespace DAL.DALs
 			}
 		}
 
-		public Paciente GetPacienteById(long id)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				var paciente = _dbContext.Pacientes.Find(id);
-				if (paciente != null)
-				{
-					return new Paciente
-					{
-						Id = paciente.Id,
-						Nombres = paciente.Nombres,
-						Apellidos = paciente.Apellidos,
-						Documento = paciente.Documento,
-						FechaDeNacimiento = paciente.FechaDeNacimiento,
-						Direccion = paciente.Direccion,
-						Telefono = paciente.Telefono,
-						Email = paciente.Email
-					};
-				}
-				return null;
-			}
-		}
+        public Paciente GetPacienteById(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var paciente = _dbContext.Pacientes.Find(id);
+                if (paciente != null)
+                {
+                    var contrato = paciente.Contrato != null ? new Contrato
+                    {
+                        Id = paciente.Contrato.Id,
+                        FechaInicio = paciente.Contrato.FechaInicio,
+                        Activo = paciente.Contrato.Activo
+                    } : null;
 
-		public void UpdatePaciente(Paciente paciente)
+                    return new Paciente
+                    {
+                        Id = paciente.Id,
+                        Nombres = paciente.Nombres,
+                        Apellidos = paciente.Apellidos,
+                        Documento = paciente.Documento,
+                        FechaDeNacimiento = paciente.FechaDeNacimiento,
+                        Direccion = paciente.Direccion,
+                        Telefono = paciente.Telefono,
+                        Email = paciente.Email,
+                        Contrato = contrato
+                    };
+                }
+                return null;
+            }
+        }
+
+        public void UpdatePaciente(Paciente paciente)
 		{
 			using (var _dbContext = new DBContext())
 			{
 				var existingPaciente = _dbContext.Pacientes.Find(paciente.Id);
-				if (existingPaciente != null)
-				{
-					existingPaciente.Nombres = paciente.Nombres;
-					existingPaciente.Apellidos = paciente.Apellidos;
-					existingPaciente.Documento = paciente.Documento;
-					existingPaciente.FechaDeNacimiento = paciente.FechaDeNacimiento;
-					existingPaciente.Direccion = paciente.Direccion;
-					existingPaciente.Telefono = paciente.Telefono;
-					existingPaciente.Email = paciente.Email;
 
-					_dbContext.SaveChanges();
-				}
-			}
+                if (existingPaciente != null)
+                {
+                    existingPaciente.Nombres = paciente.Nombres;
+                    existingPaciente.Apellidos = paciente.Apellidos;
+                    existingPaciente.Documento = paciente.Documento;
+                    existingPaciente.FechaDeNacimiento = paciente.FechaDeNacimiento;
+                    existingPaciente.Direccion = paciente.Direccion;
+                    existingPaciente.Telefono = paciente.Telefono;
+                    existingPaciente.Email = paciente.Email;
+                    // Update Contrato
+                    if (paciente.Contrato != null)
+                    {
+                        var existingContrato = _dbContext.Contratos
+                            .FirstOrDefault(c => c.PacienteId == paciente.Id);
+
+                        if (existingContrato != null)
+                        {
+                            existingContrato.FechaInicio = paciente.Contrato.FechaInicio;
+                            existingContrato.Activo = paciente.Contrato.Activo;
+                            existingContrato.SeguroMedicoId = paciente.Contrato.SeguroMedico.Id;
+                        }
+                        else
+                        {
+                            existingPaciente.Contrato = new Contratos
+                            {
+                                Id = paciente.Contrato.Id,
+                                FechaInicio = paciente.Contrato.FechaInicio,
+                                Activo = paciente.Contrato.Activo,
+                                PacienteId = paciente.Id,
+                                SeguroMedicoId = paciente.Contrato.SeguroMedico.Id
+                            };
+                        }
+                    }
+                    else
+                    {
+                        existingPaciente.Contrato = null;
+                    }
+
+                    _dbContext.SaveChanges();
+                }
+            }
 		}
 
 		#endregion
@@ -261,29 +300,34 @@ namespace DAL.DALs
 				var contrato = _dbContext.Contratos.Find(id);
 				if (contrato != null)
 				{
-					return new Contrato
+					var paciente = _dbContext.Pacientes.Find(contrato.PacienteId);
+					var seguroMedico = _dbContext.SegurosMedicos.Find(contrato.SeguroMedicoId);
+					if (seguroMedico != null && paciente != null)
 					{
-						Id = contrato.Id,
-						FechaInicio = contrato.FechaInicio,
-						Activo = contrato.Activo,
-						Paciente = new Paciente
+						return new Contrato
 						{
-							Id = contrato.Paciente.Id,
-							Nombres = contrato.Paciente.Nombres,
-							Apellidos = contrato.Paciente.Apellidos,
-							Documento = contrato.Paciente.Documento,
-							FechaDeNacimiento = contrato.Paciente.FechaDeNacimiento,
-							Direccion = contrato.Paciente.Direccion,
-							Telefono = contrato.Paciente.Telefono,
-							Email = contrato.Paciente.Email
-						},
-						SeguroMedico = new SeguroMedico
-						{
-							Id = contrato.SeguroMedico.Id,
-							Nombre = contrato.SeguroMedico.Nombre,
-							Descripcion = contrato.SeguroMedico.Descripcion
-						}
-					};
+							Id = contrato.Id,
+							FechaInicio = contrato.FechaInicio,
+							Activo = contrato.Activo,
+							Paciente = new Paciente
+							{
+								Id = paciente.Id,
+								Nombres = paciente.Nombres,
+								Apellidos = paciente.Apellidos,
+								Documento = paciente.Documento,
+								FechaDeNacimiento = paciente.FechaDeNacimiento,
+								Direccion = paciente.Direccion,
+								Telefono = paciente.Telefono,
+								Email = paciente.Email
+							},
+							SeguroMedico = new SeguroMedico
+							{
+								Id = seguroMedico.Id,
+								Nombre = seguroMedico.Nombre,
+								Descripcion = seguroMedico.Descripcion
+							}
+						};
+					}
 				}
 				return null;
 			}
@@ -597,15 +641,15 @@ namespace DAL.DALs
 				}
 			}
 		}
-        #endregion
+		#endregion
 
-        /**********************************************************/
-        /**                    Facturas                          **/
-        /**********************************************************/
-        #region FUNCTIONES FACTURAS
+		/**********************************************************/
+		/**                    Facturas                          **/
+		/**********************************************************/
+		#region FUNCTIONES FACTURAS
 
-        public List<Factura> GetFacturas()
-        {
+		public List<Factura> GetFacturas()
+		{
 			using (var _dbContext = new DBContext())
 			{
 				return _dbContext.Facturas
@@ -629,10 +673,10 @@ namespace DAL.DALs
 						}
 					}).ToList();
 			}
-        }
+		}
 
-        public Factura GetFacturaById(long id)
-        {
+		public Factura GetFacturaById(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var factura = _dbContext.Facturas.Find(id);
@@ -660,10 +704,10 @@ namespace DAL.DALs
 				}
 				return null;
 			}
-        }
+		}
 
-        public void AddFactura(Factura factura)
-        {
+		public void AddFactura(Factura factura)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var nuevaFactura = new Facturas
@@ -677,10 +721,10 @@ namespace DAL.DALs
 				_dbContext.Facturas.Add(nuevaFactura);
 				_dbContext.SaveChanges();
 			}
-        }
+		}
 
-        public void UpdateFactura(Factura factura)
-        {
+		public void UpdateFactura(Factura factura)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var facturaExistente = _dbContext.Facturas.Find(factura.Id);
@@ -694,10 +738,10 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        public void DeleteFactura(long id)
-        {
+		public void DeleteFactura(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var factura = _dbContext.Facturas.Find(id);
@@ -707,8 +751,8 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

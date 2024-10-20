@@ -46,29 +46,6 @@ namespace BL.BLs
 			dal.UpdatePaciente(paciente);
 		}
 
-		public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
-        {
-            var paciente = getPacienteById(idPaciente);
-			var seguroMedico = getSeguroMedicoById(idSeguroMedico);
-			if (paciente != null && seguroMedico != null)
-			{
-				Contrato contrato = new Contrato()
-                {
-                    Paciente = paciente,
-                    SeguroMedico = seguroMedico,
-                    FechaInicio = DateTime.Now,
-					Activo = false,
-                };
-				addContrato(contrato);
-
-				paciente.Contrato = contrato;
-				updatePaciente(paciente);
-
-				seguroMedico.Contratos.Add(contrato);
-				updateSeguroMedico(seguroMedico);
-			}
-        }
-
 		#endregion
 
 		//Seguros Medicos
@@ -129,13 +106,43 @@ namespace BL.BLs
 			dal.DeleteContrato(id);
 		}
 
-		#endregion
+        public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
+        {
+            var paciente = getPacienteById(idPaciente);
+            var seguroMedico = getSeguroMedicoById(idSeguroMedico);
+            if (paciente != null && seguroMedico != null)
+            {
 
-		//Precios
-		#region PRECIOS
+                // Verificar si el paciente ya tiene un contrato asociado
+                if (paciente.Contrato != null)
+                {
+                    throw new InvalidOperationException("El paciente ya tiene un contrato existente.");
+                }
+
+                Contrato contrato = new Contrato()
+                {
+                    Paciente = paciente,
+                    SeguroMedico = seguroMedico,
+                    FechaInicio = DateTime.Now,
+                    Activo = false,
+                };
+                addContrato(contrato);
+
+                paciente.Contrato = contrato;
+                updatePaciente(paciente);
+
+                seguroMedico.Contratos.Add(contrato);
+                updateSeguroMedico(seguroMedico);
+            }
+        }
+
+        #endregion
+
+        //Precios
+        #region PRECIOS
 
 
-		public List<Precio> getPrecios()
+        public List<Precio> getPrecios()
 		{
 			return dal.GetPrecios();
 		}

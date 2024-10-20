@@ -88,20 +88,5 @@ namespace AdministrativoWebApi.Controllers
 			_blAdministrativo.deletePaciente(id);
 			return NoContent();
 		}
-
-		// POST api/<PacienteController>/5/contratar-seguro
-		[HttpPost("/contratar-seguro")]
-		public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
-		{
-			var paciente = _blAdministrativo.getPacienteById(request.IdPaciente);
-			var seguro = _blAdministrativo.getContratoById(request.IdSeguroMedico);
-			if (paciente == null || seguro == null)
-            {
-                return NotFound();
-            }
-
-			_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
-			return NoContent();
-		}
 	}
 }
