@@ -1,6 +1,7 @@
 ﻿using DAL;
 using DAL.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
@@ -57,6 +58,11 @@ namespace AuthWebApi.Extensions
                     ValidateAudience = false
                 };
             });
+            services.AddAuthorization(options =>
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .Build());
             return services;
         }
 

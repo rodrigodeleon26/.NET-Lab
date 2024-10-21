@@ -1,4 +1,5 @@
 ﻿using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -32,6 +33,7 @@ namespace AuthWebApi.Controllers
             return app;
         }
 
+        [AllowAnonymous]
         private static async Task<IResult> RegisterUser(UserManager<AppUsers> userManager,
             [FromBody] UserRegistrationModel userRegistrationModel)
         {
@@ -51,6 +53,7 @@ namespace AuthWebApi.Controllers
                 return Results.BadRequest(result.Errors);
         }
 
+        [AllowAnonymous]
         private static async Task<IResult> LoginUser(
             UserManager<AppUsers> userManager,
                 [FromBody] UserLoginModel userLoginModel)

@@ -12,18 +12,18 @@
 
         public DateOnly FechaDeNacimiento { get; set; } = new DateOnly();
 
-        public string Direccion { get; set; } = "-- Sin Dirección --";
+        public string? Direccion { get; set; } = "-- Sin Dirección --";
 
-        public string Telefono { get; set; } = "-- Sin Teléfono --";
+        public string? Telefono { get; set; } = "-- Sin Teléfono --";
 
-        public string Email { get; set; } = "-- Sin Email --";
+        public string? Email { get; set; } = "-- Sin Email --";
 
-        public List<CitaMedica> CitasMedicas { get; set; } = new List<CitaMedica>();
+        public List<CitaMedica>? CitasMedicas { get; set; } = new List<CitaMedica>();
 
-        public List<Factura> Facturas { get; set; } = new List<Factura>();
+        public List<Factura>? Facturas { get; set; } = new List<Factura>();
 
-        public List<Notificacion> Notificaciones { get; set; } = new List<Notificacion>();
+        public List<Notificacion>? Notificaciones { get; set; } = new List<Notificacion>();
 
-        public Contrato Contrato { get; set; }
+        public Contrato? Contrato { get; set; }
     }
 }

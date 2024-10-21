@@ -35,5 +35,6 @@ app.MapControllers();
 // Endpoints nativos de Identity
 //app.MapIdentityApi<AppUsers>();
 app.MapAuthEndpoints();
+app.MapPruebaEndpoints();
 
 app.Run();
