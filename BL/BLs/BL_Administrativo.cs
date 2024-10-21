@@ -1,5 +1,6 @@
 ﻿using BL.IBLs;
 using DAL.IDALs;
+using DAL.Models;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -106,43 +107,43 @@ namespace BL.BLs
 			dal.DeleteContrato(id);
 		}
 
-        public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
-        {
-            var paciente = getPacienteById(idPaciente);
-            var seguroMedico = getSeguroMedicoById(idSeguroMedico);
-            if (paciente != null && seguroMedico != null)
-            {
+		public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
+		{
+			var paciente = getPacienteById(idPaciente);
+			var seguroMedico = getSeguroMedicoById(idSeguroMedico);
+			if (paciente != null && seguroMedico != null)
+			{
 
-                // Verificar si el paciente ya tiene un contrato asociado
-                if (paciente.Contrato != null)
-                {
-                    throw new InvalidOperationException("El paciente ya tiene un contrato existente.");
-                }
+				// Verificar si el paciente ya tiene un contrato asociado
+				if (paciente.Contrato != null)
+				{
+					throw new InvalidOperationException("El paciente ya tiene un contrato existente.");
+				}
 
-                Contrato contrato = new Contrato()
-                {
-                    Paciente = paciente,
-                    SeguroMedico = seguroMedico,
-                    FechaInicio = DateTime.Now,
-                    Activo = false,
-                };
-                addContrato(contrato);
+				Contrato contrato = new Contrato()
+				{
+					Paciente = paciente,
+					SeguroMedico = seguroMedico,
+					FechaInicio = DateTime.Now,
+					Activo = false,
+				};
+				addContrato(contrato);
 
-                paciente.Contrato = contrato;
-                updatePaciente(paciente);
+				paciente.Contrato = contrato;
+				updatePaciente(paciente);
 
-                seguroMedico.Contratos.Add(contrato);
-                updateSeguroMedico(seguroMedico);
-            }
-        }
+				seguroMedico.Contratos.Add(contrato);
+				updateSeguroMedico(seguroMedico);
+			}
+		}
 
-        #endregion
+		#endregion
 
-        //Precios
-        #region PRECIOS
+		//Precios
+		#region PRECIOS
 
 
-        public List<Precio> getPrecios()
+		public List<Precio> getPrecios()
 		{
 			return dal.GetPrecios();
 		}
@@ -197,36 +198,126 @@ namespace BL.BLs
 			dal.DeleteCopago(id);
 		}
 
-        #endregion
+		#endregion
 
-        //Facturas
-        #region FACTURAS
+		//Facturas
+		#region FACTURAS
 
-        public List<Factura> getFacturas()
-        {
+		public List<Factura> getFacturas()
+		{
 			return dal.GetFacturas();
-        }
+		}
 
-        public Factura getFacturaById(long id)
-        {
+		public Factura getFacturaById(long id)
+		{
 			return dal.GetFacturaById(id);
-        }
+		}
 
-        public void addFactura(Factura factura)
-        {
+		public void addFactura(Factura factura)
+		{
 			dal.AddFactura(factura);
-        }
+		}
 
-        public void updateFactura(Factura factura)
-        {
+		public void updateFactura(Factura factura)
+		{
 			dal.UpdateFactura(factura);
+		}
+
+		public void deleteFactura(long id)
+		{
+			dal.DeleteFactura(id);
+		}
+
+        #endregion
+
+        //Medicos
+        #region MEDICOS
+
+        public List<Medico> getMedicos()
+		{
+			return dal.GetMedicos();
+		}
+
+        public Medico getMedicoById(long id)
+		{
+			return dal.GetMedicoById(id);
+		}
+
+        public void addMedico(Medico medico)
+		{
+			dal.AddMedico(medico);
+		}
+
+		public void updateMedico(Medico medico)
+		{
+			dal.UpdateMedico(medico);
+		}
+
+		public void deleteMedico(long id)
+		{
+			dal.DeleteMedico(id);
+		}
+
+        #endregion
+
+        //Citas Medicas
+        #region CITAS MEDICAS
+
+        public List<CitaMedica> getCitasMedicas()
+        {
+            return dal.GetCitasMedicas();
         }
 
-        public void deleteFactura(long id)
+        public CitaMedica getCitaMedicaById(long id)
         {
-			dal.DeleteFactura(id);
+			return dal.GetCitasMedicasById(id);
+        }
+
+        public void addCitaMedica(CitaMedica citaMedica)
+        {
+			dal.AddCitasMedicas(citaMedica);
+        }
+
+        public void updateCitaMedica(CitaMedica citaMedica)
+        {
+			dal.UpdateCitasMedicas(citaMedica);
+        }
+
+        public void deleteCitaMedica(long id)
+        {
+			dal.DeleteCitasMedicas(id);
         }
 
         #endregion
+
+        //Calendarios
+        #region CALENDARIOS
+
+        public List<Calendario> getCalendarios()
+        {
+			return dal.GetCalendarios();
+        }
+
+        public Calendario getCalendarioById(long id)
+        {
+			return dal.GetCalendarioById(id);
+        }
+
+        public void addCalendario(Calendario calendario)
+        {
+			dal.AddCalendario(calendario);
+        }
+
+        public void updateCalendario(Calendario calendario)
+        {
+			dal.UpdateCalendario(calendario);
+        }
+
+        public void deleteCalendario(long id)
+        {
+			dal.DeleteCalendario(id);
+        }
+
+		#endregion
     }
 }

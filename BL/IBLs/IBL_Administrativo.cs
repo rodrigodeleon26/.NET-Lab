@@ -51,5 +51,26 @@ namespace BL.IBLs
 		void addFactura(Factura factura);
 		void updateFactura(Factura factura);
 		void deleteFactura(long id);
+
+		// Medicos
+		List<Medico> getMedicos();
+		Medico getMedicoById(long id);
+		void addMedico(Medico medico);
+		void updateMedico(Medico medico);
+		void deleteMedico(long id);
+
+		// Citas Medicas
+		List<CitaMedica> getCitasMedicas();
+		CitaMedica getCitaMedicaById(long id);
+		void addCitaMedica(CitaMedica citaMedica);
+		void updateCitaMedica(CitaMedica citaMedica);
+		void deleteCitaMedica(long id);
+
+		// Calendarios
+		List<Calendario> getCalendarios();
+		Calendario getCalendarioById(long id);
+		void addCalendario(Calendario calendario);
+		void updateCalendario(Calendario calendario);
+		void deleteCalendario(long id);
 	}
 }

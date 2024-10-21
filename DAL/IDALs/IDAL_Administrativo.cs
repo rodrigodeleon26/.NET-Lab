@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using DAL.Models;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,5 +51,26 @@ namespace DAL.IDALs
 		public void AddFactura(Factura factura);
 		public void UpdateFactura(Factura factura);
 		public void DeleteFactura(long id);
+
+		// Medicos
+		public List<Medico> GetMedicos();
+		public Medico GetMedicoById(long id);
+		public void AddMedico(Medico medico);
+		public void UpdateMedico(Medico medico);
+		public void DeleteMedico(long id);
+
+		// CitasMedicas
+		public List<CitaMedica> GetCitasMedicas();
+		public CitaMedica GetCitasMedicasById(long id);
+		public void AddCitasMedicas(CitaMedica citaMedica);
+		public void UpdateCitasMedicas(CitaMedica citaMedica);
+		public void DeleteCitasMedicas(long id);
+
+		// Calendarios
+		public List<Calendario> GetCalendarios();
+		public Calendario GetCalendarioById(long id);
+		public void AddCalendario(Calendario calendario);
+		public void UpdateCalendario(Calendario calendario);
+		public void DeleteCalendario(long id);
 	}
 }
