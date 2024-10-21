@@ -80,16 +80,16 @@ services:
   #     - citasmedicaswebapi
   #     - historiaclinicawebapi
   
-  frontendc:
-    build:
-      context: ./frontCliente
-      dockerfile: Dockerfile  
-    ports:
-      - "5012:445"
-    volumes:
-      - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
-      - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
-      - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+  # frontendc:
+  #   build:
+  #     context: ./frontCliente
+  #     dockerfile: Dockerfile  
+  #   ports:
+  #     - "5012:445"
+  #   volumes:
+  #     - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
+  #     - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
+  #     - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
     # depends_on:
     #   # - pacientewebapi
     #   # - citasmedicaswebapi

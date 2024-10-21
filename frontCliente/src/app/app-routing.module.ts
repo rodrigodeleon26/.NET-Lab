@@ -4,6 +4,7 @@ import { UserComponent } from './components/user/user.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { RegisterComponent } from './components/user/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { authGuard } from './shared/auth.guard';
 
 const routes: Routes = [
   { path: '', component: UserComponent,
@@ -13,7 +14,9 @@ const routes: Routes = [
     ]
   },
 
-  {path: 'dashboard', component: DashboardComponent},
+  {path: 'dashboard', component: DashboardComponent,
+    canActivate: [authGuard]
+  },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirigir a login por defecto
   { path: '**', redirectTo: '/login' }, // Redirigir a login para rutas no encontradas

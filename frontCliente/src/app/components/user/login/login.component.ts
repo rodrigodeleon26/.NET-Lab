@@ -19,6 +19,9 @@ export class LoginComponent implements OnInit {
     private router: Router) {}
 
   ngOnInit(): void {
+    if(this.authService.isLoggedIn()){
+      this.router.navigateByUrl('/dashboard');
+    }
     this.form = this.formBuilder.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
@@ -31,7 +34,7 @@ export class LoginComponent implements OnInit {
       this.authService.loginUser(this.form.value)
       .subscribe({
         next: (res:any) => {
-          localStorage.setItem('token', res.token);
+          this.authService.saveToken(res.token);
           this.router.navigateByUrl('/dashboard');
           this.toastr.success('Login exitoso', 'Bienvenido');
         },

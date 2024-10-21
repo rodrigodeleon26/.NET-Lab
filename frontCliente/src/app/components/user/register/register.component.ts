@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     public formBuilder: FormBuilder, 
     private toastr: ToastrService, 
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private router: Router) {}
 
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): null => {
     const password = control.get('password');
@@ -30,6 +32,9 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(this.authService.isLoggedIn()){
+      this.router.navigateByUrl('/dashboard');
+    }
     this.form = this.formBuilder.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
