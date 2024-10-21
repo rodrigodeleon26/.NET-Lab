@@ -1,12 +1,15 @@
 ﻿using DAL.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Shared;
 
 namespace DAL
 {
-    public class DBContext : DbContext
+    public class DBContext : IdentityDbContext<AppUsers>
     {
-        private string _connectionString = "Server=sqlserver,1433;Database=HCE; User Id=sa; Password=Abc*123!;Encrypt=False;";
+        private string _connectionString = GlobalFunctions.GetConnectionString();
         //private string _connectionString = "Server=localhost,1433;Database=HCE; User Id=sa; Password=1234;Encrypt=False;";
 
         public DBContext() { }

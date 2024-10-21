@@ -12,20 +12,20 @@ export class AppComponent {
 
   constructor(private pacienteService: PacienteService) {}
 
-  ngOnInit() {
-    this.loadPacientes();
-    console.log('Holaaaaaaaaaaa');
-  }
+  // ngOnInit() {
+  //   this.loadPacientes();
+  //   console.log('Holaaaaaaaaaaa');
+  // }
 
-  loadPacientes() {
-    this.pacienteService.getPacientes().subscribe(
-      (data) => {
-        this.pacientes = data;
-        console.log('Pacientes cargados', this.pacientes);
-      },
-      (error) => {
-        console.error('Error al cargar los pacientes', error);
-      }
-    );
-  }
+  // loadPacientes() {
+  //   this.pacienteService.getPacientes().subscribe(
+  //     (data) => {
+  //       this.pacientes = data;
+  //       console.log('Pacientes cargados', this.pacientes);
+  //     },
+  //     (error) => {
+  //       console.error('Error al cargar los pacientes', error);
+  //     }
+  //   );
+  // }
 }
