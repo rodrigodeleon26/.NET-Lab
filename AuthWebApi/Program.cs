@@ -4,6 +4,11 @@ using DAL;
 using Shared;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +42,23 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseSqlServer(GlobalFunctions.GetConnectionString()));
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =
+    options.DefaultChallengeScheme =
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(options2 =>
+    {
+        options2.SaveToken = false;
+        options2.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey())),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -48,9 +70,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-# region Condig. CORS
+# region Config. CORS
 app.UseCors(options =>
-    options.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200")  
+    options.WithOrigins(GlobalFunctions.GetAllowedOrigins())
            .AllowAnyHeader()
            .AllowAnyMethod());
 # endregion
@@ -83,6 +105,40 @@ app.MapPost("api/auth/register", async (
         return Results.BadRequest(result.Errors);
 });
 
+app.MapPost("api/auth/login", async (
+    UserManager<AppUsers> userManager,
+    [FromBody] UserLoginModel userLoginModel) =>
+{
+    var user = await userManager.FindByEmailAsync(userLoginModel.Email);
+    if (user != null && await userManager.CheckPasswordAsync(user, userLoginModel.Password))
+    {
+        var signInKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey() ?? "DefaultSecretKey")
+        );
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new Claim("userId", user.Id.ToString())
+            }),
+            Expires = DateTime.UtcNow.AddMinutes(30),
+            SigningCredentials = new SigningCredentials(
+                signInKey,
+                SecurityAlgorithms.HmacSha256Signature
+            )
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+        var token = tokenHandler.WriteToken(securityToken);
+        return Results.Ok(new { token });
+    }
+    else
+    {
+        return Results.BadRequest(new { message = "Usuario o contraseña incorrectos" });
+    }
+});
+
 app.Run();
 
 public class UserRegistrationModel
@@ -90,4 +146,10 @@ public class UserRegistrationModel
     public string Email { get; set; }
     public string Password { get; set; }
     public string FullName { get; set; }
+}
+
+public class UserLoginModel
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

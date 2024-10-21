@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,8 @@ export class LoginComponent implements OnInit {
   constructor(
     public formBuilder: FormBuilder, 
     private toastr: ToastrService, 
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private router: Router) {}
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -24,6 +26,25 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log(this.form.value);
+    if (this.form.valid) {
+      console.log(this.form.value);
+      this.authService.loginUser(this.form.value)
+      .subscribe({
+        next: (res:any) => {
+          localStorage.setItem('token', res.token);
+          this.router.navigateByUrl('/dashboard');
+          this.toastr.success('Login exitoso', 'Bienvenido');
+        },
+        error: (err:any) => {
+          if (err.status === 400) {
+            this.toastr.error(err.error.message, 'Login fallido');
+            
+          }
+          else
+            console.log('error during login:\n', err);
+        }
+      });
+
+    }
   }
 }
