@@ -60,40 +60,41 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
-                var citaEntity = _dbContext.CitasMedicas.FirstOrDefault(p => p.Id == id);
-                if (citaEntity == null) return null;
-
-                return new CitaMedica
-                {
-                    Id = citaEntity.Id,
-                    Fecha = citaEntity.Fecha,
-                    Estado = citaEntity.Estado,
-                    PacienteId = citaEntity.PacienteId,
-                    ConsultorioId = citaEntity.ConsultorioId,
-                    Calendario = new Calendario
+                return _dbContext.CitasMedicas
+                    .Where(p => p.Id == id)
+                    .Select(p => new CitaMedica
                     {
-                        HoraInicio = citaEntity.Calendario.HoraInicio,
-                        HoraFin = citaEntity.Calendario.HoraFin,
-                        TiempoCita = citaEntity.Calendario.TiempoCita,
-                        CantidadCitas = citaEntity.Calendario.CantidadCitas,
-                        DiasSemana = citaEntity.Calendario.DiasSemana,
-                        Medico = new Medico
+                        Id = p.Id,
+                        Fecha = p.Fecha,
+                        Estado = p.Estado,
+                        PacienteId = p.PacienteId,
+                        ConsultorioId = p.ConsultorioId,
+                        // Mapeo del calendario relacionado
+                        Calendario = new Calendario
                         {
-                            Id = citaEntity.Calendario.Medico.Id,
-                            Nombres = citaEntity.Calendario.Medico.Nombres,
-                            Apellidos = citaEntity.Calendario.Medico.Apellidos,
-                            Documento = citaEntity.Calendario.Medico.Documento,
-                            Email = citaEntity.Calendario.Medico.Email,
-                            Telefono = citaEntity.Calendario.Medico.Telefono
-                        },
-                        Especialidad = new Especialidad
-                        {
-                            Id = citaEntity.Calendario.Especialidad.Id,
-                            Nombre = citaEntity.Calendario.Especialidad.Nombre,
-                            Descripcion = citaEntity.Calendario.Especialidad.Descripcion
+                            HoraInicio = p.Calendario.HoraInicio,
+                            HoraFin = p.Calendario.HoraFin,
+                            TiempoCita = p.Calendario.TiempoCita,
+                            CantidadCitas = p.Calendario.CantidadCitas,
+                            DiasSemana = p.Calendario.DiasSemana,
+                            Medico = new Medico
+                            {
+                                Id = p.Calendario.Medico.Id,
+                                Nombres = p.Calendario.Medico.Nombres,
+                                Apellidos = p.Calendario.Medico.Apellidos,
+                                Documento = p.Calendario.Medico.Documento,
+                                Email = p.Calendario.Medico.Email,
+                                Telefono = p.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = p.Calendario.Especialidad.Id,
+                                Nombre = p.Calendario.Especialidad.Nombre,
+                                Descripcion = p.Calendario.Especialidad.Descripcion
+                            }
                         }
-                    }
-                };
+                    })
+                    .FirstOrDefault(); // Obtener la primera cita que coincida con el ID
             }
         }
 
