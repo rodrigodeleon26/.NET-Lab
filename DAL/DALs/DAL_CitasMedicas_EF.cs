@@ -26,7 +26,31 @@ namespace DAL.DALs
                         Id = p.Id,
                         Fecha = p.Fecha,
                         Estado = p.Estado,
-                        PacienteId = p.PacienteId
+                        PacienteId = p.PacienteId,
+                        ConsultorioId = p.ConsultorioId,
+                        Calendario = new Calendario
+                        {
+                            HoraInicio = p.Calendario.HoraInicio,
+                            HoraFin = p.Calendario.HoraFin,
+                            TiempoCita = p.Calendario.TiempoCita,
+                            CantidadCitas = p.Calendario.CantidadCitas,
+                            DiasSemana = p.Calendario.DiasSemana,
+                            Medico = new Medico
+                            {
+                                Id = p.Calendario.Medico.Id,
+                                Nombres = p.Calendario.Medico.Nombres,
+                                Apellidos = p.Calendario.Medico.Apellidos,
+                                Documento = p.Calendario.Medico.Documento,
+                                Email = p.Calendario.Medico.Email,
+                                Telefono = p.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = p.Calendario.Especialidad.Id,
+                                Nombre = p.Calendario.Especialidad.Nombre,
+                                Descripcion = p.Calendario.Especialidad.Descripcion
+                            }
+                        }
                     }).ToList();
             }
         }
@@ -44,21 +68,54 @@ namespace DAL.DALs
                     Id = citaEntity.Id,
                     Fecha = citaEntity.Fecha,
                     Estado = citaEntity.Estado,
-                    PacienteId = citaEntity.PacienteId
+                    PacienteId = citaEntity.PacienteId,
+                    ConsultorioId = citaEntity.ConsultorioId,
+                    Calendario = new Calendario
+                    {
+                        HoraInicio = citaEntity.Calendario.HoraInicio,
+                        HoraFin = citaEntity.Calendario.HoraFin,
+                        TiempoCita = citaEntity.Calendario.TiempoCita,
+                        CantidadCitas = citaEntity.Calendario.CantidadCitas,
+                        DiasSemana = citaEntity.Calendario.DiasSemana,
+                        Medico = new Medico
+                        {
+                            Id = citaEntity.Calendario.Medico.Id,
+                            Nombres = citaEntity.Calendario.Medico.Nombres,
+                            Apellidos = citaEntity.Calendario.Medico.Apellidos,
+                            Documento = citaEntity.Calendario.Medico.Documento,
+                            Email = citaEntity.Calendario.Medico.Email,
+                            Telefono = citaEntity.Calendario.Medico.Telefono
+                        },
+                        Especialidad = new Especialidad
+                        {
+                            Id = citaEntity.Calendario.Especialidad.Id,
+                            Nombre = citaEntity.Calendario.Especialidad.Nombre,
+                            Descripcion = citaEntity.Calendario.Especialidad.Descripcion
+                        }
+                    }
                 };
             }
         }
 
-        // Crear una nueva cita médica
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId)
         {
             using (var _dbContext = new DBContext())
             {
+                // Obtener el calendario existente
+                var calendarioExistente = _dbContext.Calendarios.FirstOrDefault(c => c.Id == calendarioId);
+
+                if (calendarioExistente == null)
+                {
+                    throw new Exception("El calendario no existe.");
+                }
+
                 var citaEntity = new CitasMedicas
                 {
                     Fecha = nuevaCita.Fecha,
                     Estado = nuevaCita.Estado,
-                    PacienteId = nuevaCita.PacienteId
+                    PacienteId = nuevaCita.PacienteId,
+                    ConsultorioId = nuevaCita.ConsultorioId ?? 0,
+                    CalendarioId = calendarioId
                 };
 
                 _dbContext.CitasMedicas.Add(citaEntity);
@@ -80,6 +137,7 @@ namespace DAL.DALs
                     citaEntity.Fecha = citaActualizada.Fecha;
                     citaEntity.Estado = citaActualizada.Estado;
                     citaEntity.PacienteId= citaActualizada.PacienteId;
+                    citaEntity.ConsultorioId = citaActualizada.ConsultorioId ?? 0;
 
                     _dbContext.CitasMedicas.Update(citaEntity);
                     _dbContext.SaveChanges();
@@ -305,6 +363,7 @@ namespace DAL.DALs
                 return _dbContext.Calendarios
                     .Select(c => new Calendario
                     {
+                        Id = c.Id,
                         HoraInicio = c.HoraInicio,
                         HoraFin = c.HoraFin,
                         TiempoCita = c.TiempoCita,
@@ -335,45 +394,85 @@ namespace DAL.DALs
             }
         }
 
-        // Obtener un calendario por ID (MedicoId y EspecialidadId)
-        public Calendario GetCalendarioById(long medicoId, long especialidadId)
+        // Obtener un calendario por (MedicoId y EspecialidadId)
+        public Calendario GetCalendarioByMedicoEspecialidad(long medicoId, long especialidadId)
         {
             using (var _dbContext = new DBContext())
             {
-                var calendarioEntity = _dbContext.Calendarios
-                    .FirstOrDefault(c => c.MedicoId == medicoId && c.EspecialidadId == especialidadId);
+                return _dbContext.Calendarios
+                    .Where(c => c.MedicoId == medicoId && c.EspecialidadId == especialidadId)
+                    .Select(c => new Calendario
+                    {
+                        Id = c.Id,
+                        HoraInicio = c.HoraInicio,
+                        HoraFin = c.HoraFin,
+                        TiempoCita = c.TiempoCita,
+                        CantidadCitas = c.CantidadCitas,
+                        DiasSemana = c.DiasSemana,
+                        Medico = new Medico
+                        {
+                            Id = c.Medico.Id,
+                            Nombres = c.Medico.Nombres,
+                            Apellidos = c.Medico.Apellidos,
+                            Documento = c.Medico.Documento,
+                            Email = c.Medico.Email,
+                            Telefono = c.Medico.Telefono
+                        }, // Mapeo del médico con las propiedades adicionales
+                        Especialidad = new Especialidad
+                        {
+                            Id = c.Especialidad.Id,
+                            Nombre = c.Especialidad.Nombre,
+                            Descripcion = c.Especialidad.Descripcion
+                        }, // Mapeo de la especialidad con Descripción
+                        CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
+                        {
+                            Id = cm.Id,
+                            Fecha = cm.Fecha,
+                            Estado = cm.Estado
+                        }).ToList() // Mapeo de las citas médicas
+                    })
+                    .FirstOrDefault(); // Obtener el primer calendario que coincide con MedicoId y EspecialidadId
+            }
+        }
 
-                if (calendarioEntity == null) return null;
-
-                return new Calendario
-                {
-                    HoraInicio = calendarioEntity.HoraInicio,
-                    HoraFin = calendarioEntity.HoraFin,
-                    TiempoCita = calendarioEntity.TiempoCita,
-                    CantidadCitas = calendarioEntity.CantidadCitas,
-                    DiasSemana = calendarioEntity.DiasSemana,
-                    Medico = new Medico
+        public Calendario GetCalendarioById(long calendarioId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                // Buscar el calendario por su Id único utilizando Select
+                return _dbContext.Calendarios
+                    .Where(c => c.Id == calendarioId)
+                    .Select(c => new Calendario
                     {
-                        Id = calendarioEntity.Medico.Id,
-                        Nombres = calendarioEntity.Medico.Nombres,
-                        Apellidos = calendarioEntity.Medico.Apellidos,
-                        Documento = calendarioEntity.Medico.Documento,
-                        Email = calendarioEntity.Medico.Email,
-                        Telefono = calendarioEntity.Medico.Telefono
-                    },
-                    Especialidad = new Especialidad
-                    {
-                        Id = calendarioEntity.Especialidad.Id,
-                        Nombre = calendarioEntity.Especialidad.Nombre,
-                        Descripcion = calendarioEntity.Especialidad.Descripcion
-                    },
-                    CitasMedicas = calendarioEntity.CitasMedicas.Select(cm => new CitaMedica
-                    {
-                        Id = cm.Id,
-                        Fecha = cm.Fecha,
-                        Estado = cm.Estado
-                    }).ToList()
-                };
+                        Id = c.Id,
+                        HoraInicio = c.HoraInicio,
+                        HoraFin = c.HoraFin,
+                        TiempoCita = c.TiempoCita,
+                        CantidadCitas = c.CantidadCitas,
+                        DiasSemana = c.DiasSemana,
+                        Medico = new Medico
+                        {
+                            Id = c.Medico.Id,
+                            Nombres = c.Medico.Nombres,
+                            Apellidos = c.Medico.Apellidos,
+                            Documento = c.Medico.Documento,
+                            Email = c.Medico.Email,
+                            Telefono = c.Medico.Telefono
+                        }, // Mapeo del médico con las propiedades adicionales
+                        Especialidad = new Especialidad
+                        {
+                            Id = c.Especialidad.Id,
+                            Nombre = c.Especialidad.Nombre,
+                            Descripcion = c.Especialidad.Descripcion
+                        }, // Mapeo de la especialidad con Descripción
+                        CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
+                        {
+                            Id = cm.Id,
+                            Fecha = cm.Fecha,
+                            Estado = cm.Estado
+                        }).ToList() // Mapeo de las citas médicas
+                    })
+                    .FirstOrDefault(); // Obtener el primer (y único) calendario que coincide con el Id
             }
         }
 

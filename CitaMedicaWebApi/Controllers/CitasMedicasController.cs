@@ -41,16 +41,16 @@ namespace PacienteWebApi.Controllers
         }
 
         // POST api/<CitasMedicasController>
+        [HttpPost("{calendarioId}")]
         [ProducesResponseType(typeof(CitaMedica), 201)]
         [ProducesResponseType(400)]
-        [HttpPost]
-        public IActionResult Post([FromBody] CitaMedica nuevaCita)
+        public IActionResult Post([FromBody] CitaMedica nuevaCita, long calendarioId)
         {
             if (nuevaCita == null)
             {
                 return BadRequest();
             }
-            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita);
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId);
             return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
         }
 

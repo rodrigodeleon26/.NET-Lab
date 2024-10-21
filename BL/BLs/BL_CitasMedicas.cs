@@ -27,9 +27,9 @@ namespace BL.BLs
         }
 
         // Crear una nueva cita médica
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId)
         {
-            return dal.createCitaMedica(nuevaCita);
+            return dal.createCitaMedica(nuevaCita, calendarioId);
         }
 
         // Actualizar una cita médica existente
@@ -102,9 +102,14 @@ namespace BL.BLs
             return dal.GetCalendarios();
         }
 
-        public Calendario GetCalendarioById(long medicoId, long especialidadId)
+        public Calendario GetCalendarioById(long calendarioId)
         {
-            return dal.GetCalendarioById(medicoId, especialidadId);
+            return dal.GetCalendarioById(calendarioId);
+        }
+
+        public Calendario GetCalendarioByMedicoEspecialidad(long medicoId, long especialidadId)
+        {
+            return dal.GetCalendarioByMedicoEspecialidad(medicoId, especialidadId);
         }
 
         public Calendario CreateCalendario(Calendario nuevoCalendario, long medicoId, long especialidadId)

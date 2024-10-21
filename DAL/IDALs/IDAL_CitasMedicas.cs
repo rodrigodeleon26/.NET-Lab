@@ -12,7 +12,7 @@ namespace DAL.IDALs
         CitaMedica getCitaMedicaById(int id);
 
         // Crear una nueva cita médica
-        CitaMedica createCitaMedica(CitaMedica nuevaCita);
+        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId);
 
         // Actualizar una cita médica existente
         void updateCitaMedica(CitaMedica citaActualizada);
@@ -36,7 +36,8 @@ namespace DAL.IDALs
 
         // CALENDARIOS
         List<Calendario> GetCalendarios(); // Obtener todos los calendarios
-        Calendario GetCalendarioById(long medicoId, long especialidadId); // Obtener un calendario por MedicoId y EspecialidadId
+        Calendario GetCalendarioById(long calendarioId); // Obtener un calendario por Id
+        Calendario GetCalendarioByMedicoEspecialidad(long medicoId, long especialidadId); // Obtener un calendario por MedicoId y EspecialidadId
         Calendario CreateCalendario(Calendario nuevoCalendario, long medicoId, long especialidadId); // Crear un nuevo calendario, asociándolo a un médico y una especialidad
         void UpdateCalendario(Calendario calendarioActualizado, long medicoId, long especialidadId); // Actualizar un calendario existente
         void DeleteCalendario(long medicoId, long especialidadId); // Eliminar un calendario por MedicoId y EspecialidadId

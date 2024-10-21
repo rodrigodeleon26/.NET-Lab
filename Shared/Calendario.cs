@@ -2,6 +2,7 @@
 {
     public class Calendario
     {
+        public long Id { get; set; }
         public TimeSpan HoraInicio { get; set; } = new TimeSpan();
 
         public TimeSpan HoraFin { get; set; } = new TimeSpan();

@@ -25,13 +25,26 @@ namespace CitaMedicaWebApi.Controllers
             return Ok(calendarios);
         }
 
+        // GET api/Calendario/calendarioId
+        [HttpGet("{calendarioId}")]
+        [ProducesResponseType(typeof(Calendario), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult Get(long calendarioId) {
+            var calendario = _blCitasMedicas.GetCalendarioById(calendarioId);
+            if (calendario == null)
+            {
+                return NotFound();
+            }
+            return Ok(calendario);
+        }
+
         // GET api/Calendario/medicoId/especialidadId
         [HttpGet("{medicoId}/{especialidadId}")]
         [ProducesResponseType(typeof(Calendario), 200)]
         [ProducesResponseType(404)]
         public IActionResult Get(long medicoId, long especialidadId)
         {
-            var calendario = _blCitasMedicas.GetCalendarioById(medicoId, especialidadId);
+            var calendario = _blCitasMedicas.GetCalendarioByMedicoEspecialidad(medicoId, especialidadId);
             if (calendario == null)
             {
                 return NotFound();
@@ -66,7 +79,7 @@ namespace CitaMedicaWebApi.Controllers
                 return BadRequest();
             }
 
-            var calendarioExistente = _blCitasMedicas.GetCalendarioById(medicoId, especialidadId);
+            var calendarioExistente = _blCitasMedicas.GetCalendarioByMedicoEspecialidad(medicoId, especialidadId);
             if (calendarioExistente == null)
             {
                 return NotFound();
@@ -82,7 +95,7 @@ namespace CitaMedicaWebApi.Controllers
         [ProducesResponseType(404)]
         public IActionResult Delete(long medicoId, long especialidadId)
         {
-            var calendarioExistente = _blCitasMedicas.GetCalendarioById(medicoId, especialidadId);
+            var calendarioExistente = _blCitasMedicas.GetCalendarioByMedicoEspecialidad(medicoId, especialidadId);
             if (calendarioExistente == null)
             {
                 return NotFound();
