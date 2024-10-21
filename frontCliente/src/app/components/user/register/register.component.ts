@@ -11,7 +11,10 @@ import { AuthService } from '../../../services/auth.service';
 export class RegisterComponent implements OnInit {
   form!: FormGroup; // Usar el operador de aserción no nulo
 
-  constructor(public formBuilder: FormBuilder, private toastr: ToastrService, private authService: AuthService) {}
+  constructor(
+    public formBuilder: FormBuilder, 
+    private toastr: ToastrService, 
+    private authService: AuthService) {}
 
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): null => {
     const password = control.get('password');

@@ -1,15 +1,14 @@
-
-<div class="container mx-auto">
-    <div class="flex items-center justify-center min-h-screen">
-      <div class="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl">
-        <div class="bg-blue-50 rounded-lg shadow-lg custom-min-height">
-          <div class="flex justify-start items-center">
-            <div class="p-5 w-full">
-              <app-register></app-register>
-            </div>
-          </div>
-        </div>
+<div class="container mx-auto p-4 md:p-0">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-4xl bg-blue-100 rounded-lg shadow-2xl flex overflow-hidden">
+      <!-- Imagen del hospital -->
+      <div class="hidden md:flex md:items-center md:justify-center w-1/2 bg-blue-50"> <!-- Fondo de color agregado -->
+        <img src="images/equipo-medico.png" alt="Hospital" class="h-4/6 w-4/6 object-contain">
+      </div>
+      <!-- Contenido principal -->
+      <div class="w-full md:w-1/2 p-8">
+        <router-outlet></router-outlet>
       </div>
     </div>
   </div>
-  
+</div>
