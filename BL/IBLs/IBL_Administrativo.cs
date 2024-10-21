@@ -72,5 +72,26 @@ namespace BL.IBLs
 		void addCalendario(Calendario calendario);
 		void updateCalendario(Calendario calendario);
 		void deleteCalendario(long id);
-	}
+
+		// Consultorios
+		List<Consultorio> getConsultorios();
+		Consultorio getConsultorioById(long id);
+		void addConsultorio(Consultorio consultorio);
+		void updateConsultorio(Consultorio consultorio);
+		void deleteConsultorio(long id);
+
+        // Especialidades
+		List<Especialidad> getEspecialidades();
+		Especialidad getEspecialidadById(long id);
+		void addEspecialidad(Especialidad especialidad);
+		void updateEspecialidad(Especialidad especialidad);
+		void deleteEspecialidad(long id);
+
+		// Articulos
+		List<Articulo> getArticulos();
+		Articulo getArticuloById(long id);
+		void addArticulo(Articulo articulo);
+		void updateArticulo(Articulo articulo);
+		void deleteArticulo(long id);
+    }
 }

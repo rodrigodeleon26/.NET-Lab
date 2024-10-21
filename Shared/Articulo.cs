@@ -6,6 +6,6 @@
 
         public string Nombre { get; set; } = "-- Sin Nombre --";
 
-        public List<Articulo> Articulos { get; set; } = new List<Articulo>();
+        public List<Copago> Copagos{ get; set; } = new List<Copago>();
     }
 }

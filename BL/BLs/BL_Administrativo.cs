@@ -318,6 +318,97 @@ namespace BL.BLs
 			dal.DeleteCalendario(id);
         }
 
-		#endregion
+        #endregion
+
+        //Consultorios
+        #region CONSULTORIOS
+
+
+        public List<Consultorio> getConsultorios()
+        {
+			return dal.GetConsultorios();
+        }
+
+        public Consultorio getConsultorioById(long id)
+        {
+			return dal.GetConsultorioById(id);
+        }
+
+        public void addConsultorio(Consultorio consultorio)
+        {
+			dal.AddConsultorio(consultorio);
+        }
+
+        public void updateConsultorio(Consultorio consultorio)
+        {
+			dal.UpdateConsultorio(consultorio);
+        }
+
+        public void deleteConsultorio(long id)
+        {
+			dal.DeleteConsultorio(id);
+        }
+
+        #endregion
+
+        //Especialidades
+        #region ESPECIALIDADES
+
+        public List<Especialidad> getEspecialidades()
+        {
+			return dal.GetEspecialidades();
+        }
+
+        public Especialidad getEspecialidadById(long id)
+        {
+			return dal.GetEspecialidadById(id);
+        }
+
+        public void addEspecialidad(Especialidad especialidad)
+        {
+			dal.AddEspecialidad(especialidad);
+        }
+
+        public void updateEspecialidad(Especialidad especialidad)
+        {
+			dal.UpdateEspecialidad(especialidad);
+        }
+
+        public void deleteEspecialidad(long id)
+        {
+			dal.DeleteEspecialidad(id);
+        }
+
+        #endregion
+
+        //Articulos
+        #region ARTICULOS
+
+        public List<Articulo> getArticulos()
+        {
+			return dal.GetArticulos();	
+        }
+
+        public Articulo getArticuloById(long id)
+        {
+			return dal.GetArticuloById(id);
+        }
+
+        public void addArticulo(Articulo articulo)
+        {
+			dal.AddArticulo(articulo);
+        }
+
+        public void updateArticulo(Articulo articulo)
+        {
+			dal.UpdateArticulo(articulo);
+        }
+
+        public void deleteArticulo(long id)
+        {
+			dal.DeleteArticulo(id);
+        }
+
+        #endregion
     }
 }

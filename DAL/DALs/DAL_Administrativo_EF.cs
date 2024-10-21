@@ -2,6 +2,7 @@
 using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -163,7 +164,6 @@ namespace DAL.DALs
 		/**********************************************************/
 		/**                    Seguros                           **/
 		/**********************************************************/
-
 		#region FUNCTIONES SEGUROS
 
 		public List<SeguroMedico> GetSegurosMedicos()
@@ -264,6 +264,7 @@ namespace DAL.DALs
 		}
 
 		#endregion
+
 
 		/**********************************************************/
 		/**                    Contratos                         **/
@@ -388,6 +389,7 @@ namespace DAL.DALs
 		}
 
 		#endregion
+
 
 		/**********************************************************/
 		/**                    Precios                           **/
@@ -527,6 +529,7 @@ namespace DAL.DALs
 
 		#endregion
 
+
 		/**********************************************************/
 		/**                    Copagos                           **/
 		/**********************************************************/
@@ -651,6 +654,7 @@ namespace DAL.DALs
 		}
 		#endregion
 
+
 		/**********************************************************/
 		/**                    Facturas                          **/
 		/**********************************************************/
@@ -761,31 +765,32 @@ namespace DAL.DALs
 			}
 		}
 
-        #endregion
+		#endregion
 
-        /**********************************************************/
-        /**                     Medicos                          **/
-        /**********************************************************/
-        #region FUNCTIONES MEDICOS
 
-        public List<Medico> GetMedicos()
+		/**********************************************************/
+		/**                     Medicos                          **/
+		/**********************************************************/
+		#region FUNCTIONES MEDICOS
+
+		public List<Medico> GetMedicos()
 		{
 			using (var _dbContext = new DBContext())
-            {
-                return _dbContext.Medicos
-                    .Select(m => new Medico
-                    {
-                        Id = m.Id,
-                        Nombres = m.Nombres,
-                        Apellidos = m.Apellidos,
-                        Documento = m.Documento,
-                        Email = m.Email,
-                        Telefono = m.Telefono
-                    }).ToList();
-            }
+			{
+				return _dbContext.Medicos
+					.Select(m => new Medico
+					{
+						Id = m.Id,
+						Nombres = m.Nombres,
+						Apellidos = m.Apellidos,
+						Documento = m.Documento,
+						Email = m.Email,
+						Telefono = m.Telefono
+					}).ToList();
+			}
 		}
 
-        public Medico GetMedicoById(long id)
+		public Medico GetMedicoById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -804,9 +809,9 @@ namespace DAL.DALs
 				}
 				return null;
 			}
-        }
+		}
 
-        public void AddMedico(Medico medico)
+		public void AddMedico(Medico medico)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -821,9 +826,9 @@ namespace DAL.DALs
 				_dbContext.Medicos.Add(nuevoMedico);
 				_dbContext.SaveChanges();
 			}
-        }
+		}
 
-        public void UpdateMedico(Medico medico)
+		public void UpdateMedico(Medico medico)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -838,9 +843,9 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        public void DeleteMedico(long id)
+		public void DeleteMedico(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -851,54 +856,193 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        #endregion
+		#endregion
 
-        /**********************************************************/
-        /**                 Citas Medicas                        **/
-        /**********************************************************/
-        #region FUNCTIONES CITAS MEDICAS
 
-        public List<CitaMedica> GetCitasMedicas()
-        {
-            throw new NotImplementedException();
-        }
+		/**********************************************************/
+		/**                 Citas Medicas                        **/
+		/**********************************************************/
+		#region FUNCTIONES CITAS MEDICAS
 
-        public CitaMedica GetCitasMedicasById(long id)
-        {
-            throw new NotImplementedException();
-        }
+		public List<CitaMedica> GetCitasMedicas()
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.CitasMedicas
+					.Select(c => new CitaMedica
+					{
+						Id = c.Id,
+						Fecha = c.Fecha,
+						Estado = c.Estado,
+						Consultorio = new Consultorio
+						{
+							Id = c.Consultorio.Id,
+							Numero = c.Consultorio.Numero,
+							Piso = c.Consultorio.Piso
+						},
+						Calendario = new Calendario
+						{
+							Id = c.Calendario.Id,
+							HoraInicio = c.Calendario.HoraInicio,
+							HoraFin = c.Calendario.HoraFin,
+							TiempoCita = c.Calendario.TiempoCita,
+							CantidadCitas = c.Calendario.CantidadCitas,
+							DiasSemana = c.Calendario.DiasSemana,
+							Medico = new Medico
+							{
+								Id = c.Calendario.Medico.Id,
+								Nombres = c.Calendario.Medico.Nombres,
+								Apellidos = c.Calendario.Medico.Apellidos,
+								Documento = c.Calendario.Medico.Documento,
+								Email = c.Calendario.Medico.Email,
+								Telefono = c.Calendario.Medico.Telefono
+							},
+							Especialidad = new Especialidad
+							{
+								Id = c.Calendario.Especialidad.Id,
+								Nombre = c.Calendario.Especialidad.Nombre,
+								Descripcion = c.Calendario.Especialidad.Descripcion
+							},
+						},
+						Paciente = c.Paciente != null ? new Paciente
+						{
+							Id = c.Paciente.Id,
+							Nombres = c.Paciente.Nombres,
+							Apellidos = c.Paciente.Apellidos,
+							Documento = c.Paciente.Documento,
+							FechaDeNacimiento = c.Paciente.FechaDeNacimiento,
+							Direccion = c.Paciente.Direccion,
+							Telefono = c.Paciente.Telefono,
+							Email = c.Paciente.Email
+						} : null
+					}).ToList();
+			}
+		}
 
-        public void AddCitasMedicas(CitaMedica citasMedicas)
-        {
-            throw new NotImplementedException();
-        }
+		public CitaMedica GetCitasMedicasById(long id)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var cita = _dbContext.CitasMedicas.Find(id);
+				if ( cita != null)
+				{
 
-        public void UpdateCitasMedicas(CitaMedica citasMedicas)
-        {
-            throw new NotImplementedException();
-        }
+					return new CitaMedica
+					{
+						Id = cita.Id,
+						Fecha = cita.Fecha,
+						Estado = cita.Estado,
+						Consultorio = new Consultorio
+                        {
+                            Id = cita.Consultorio.Id,
+                            Numero = cita.Consultorio.Numero,
+                            Piso = cita.Consultorio.Piso
+                        },
+						Calendario = new Calendario
+						{
+							Id = cita.Calendario.Id,
+							HoraInicio = cita.Calendario.HoraInicio,
+							HoraFin = cita.Calendario.HoraFin,
+							TiempoCita = cita.Calendario.TiempoCita,
+							CantidadCitas = cita.Calendario.CantidadCitas,
+							DiasSemana = cita.Calendario.DiasSemana,
+							Medico = new Medico
+							{
+								Id = cita.Calendario.Medico.Id,
+								Nombres = cita.Calendario.Medico.Nombres,
+								Apellidos = cita.Calendario.Medico.Apellidos,
+								Documento = cita.Calendario.Medico.Documento,
+								Email = cita.Calendario.Medico.Email,
+								Telefono = cita.Calendario.Medico.Telefono
+							},
+							Especialidad = new Especialidad
+							{
+								Id = cita.Calendario.Especialidad.Id,
+								Nombre = cita.Calendario.Especialidad.Nombre,
+								Descripcion = cita.Calendario.Especialidad.Descripcion
+							},
+						},
+						Paciente = cita.Paciente != null ? new Paciente
+						{
+							Id = cita.Paciente.Id,
+							Nombres = cita.Paciente.Nombres,
+							Apellidos = cita.Paciente.Apellidos,
+							Documento = cita.Paciente.Documento,
+							FechaDeNacimiento = cita.Paciente.FechaDeNacimiento,
+							Direccion = cita.Paciente.Direccion,
+							Telefono = cita.Paciente.Telefono,
+							Email = cita.Paciente.Email
+						} : null
+					};
+				}
+				return null;
+			}
+		}
 
-        public void DeleteCitasMedicas(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        /**********************************************************/
-        /**                 Calendarios                          **/
-        /**********************************************************/
-        #region FUNCTIONES CALENDARIOS
-
-        public List<Calendario> GetCalendarios()
-        {
-            using (var _dbContext = new DBContext())
+		public void AddCitasMedicas(CitaMedica citasMedicas)
+		{
+			using (var _dbContext = new DBContext())
             {
-                return _dbContext.Calendarios
-                    .Select(c => new Calendario
-                    {
+                var nuevaCita = new CitasMedicas
+                {
+                    Fecha = citasMedicas.Fecha,
+                    Estado = citasMedicas.Estado,
+                    CalendarioId = citasMedicas.Calendario.Id,
+                    PacienteId = citasMedicas.Paciente != null ? citasMedicas.Paciente.Id : null,
+					ConsultorioId = citasMedicas.Consultorio.Id
+                };
+                _dbContext.CitasMedicas.Add(nuevaCita);
+                _dbContext.SaveChanges();
+            }
+		}
+
+		public void UpdateCitasMedicas(CitaMedica citasMedicas)
+		{
+			using (var _dbContext = new DBContext())
+            {
+                var citaExistente = _dbContext.CitasMedicas.Find(citasMedicas.Id);
+                if (citaExistente != null)
+                {
+                    citaExistente.Fecha = citasMedicas.Fecha;
+                    citaExistente.Estado = citasMedicas.Estado;
+                    citaExistente.CalendarioId = citasMedicas.Calendario.Id;
+					citaExistente.ConsultorioId = citasMedicas.Consultorio.Id;
+                    citaExistente.PacienteId = citasMedicas.Paciente != null ? citasMedicas.Paciente.Id : null;
+                    _dbContext.SaveChanges();
+                }
+            }
+		}
+
+		public void DeleteCitasMedicas(long id)
+		{
+			using (var _dbContext = new DBContext())
+            {
+                var cita = _dbContext.CitasMedicas.Find(id);
+                if (cita != null)
+                {
+                    _dbContext.CitasMedicas.Remove(cita);
+                    _dbContext.SaveChanges();
+                }
+            }
+		}
+
+		#endregion
+
+
+		/**********************************************************/
+		/**                 Calendarios                          **/
+		/**********************************************************/
+		#region FUNCTIONES CALENDARIOS
+
+		public List<Calendario> GetCalendarios()
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Calendarios
+					.Select(c => new Calendario
+					{
 						Id = c.Id,
 						HoraInicio = c.HoraInicio,
 						HoraFin = c.HoraFin,
@@ -921,27 +1065,32 @@ namespace DAL.DALs
 							Descripcion = c.Especialidad.Descripcion
 						},
 						CitasMedicas = c.CitasMedicas.Select(c => new CitaMedica
-                        {
-                            Id = c.Id,
-                            Fecha = c.Fecha,
-                            Estado = c.Estado
+						{
+							Id = c.Id,
+							Fecha = c.Fecha,
+							Estado = c.Estado
 
-                        }).ToList(),
-                    }).ToList();
-            }
-        }
+						}).ToList(),
+					}).ToList();
+			}
+		}
 
-        public Calendario GetCalendarioById(long id)
-        {
+		public Calendario GetCalendarioById(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
-				var c = _dbContext.Calendarios.Find(id);
+				var c = _dbContext.Calendarios.Include(c => c.Medico).Include(c => c.Especialidad).FirstOrDefault(c => c.Id == id);
 
-				if (c != null)
+                if (c != null)
 				{
+					var citas = _dbContext.CitasMedicas
+                        .Include(cm => cm.Paciente)
+                        .Where(cm => cm.CalendarioId == c.Id)
+                        .ToList();
+
 					return new Calendario
 					{
-                        Id = c.Id,
+						Id = c.Id,
 						HoraInicio = c.HoraInicio,
 						HoraFin = c.HoraFin,
 						TiempoCita = c.TiempoCita,
@@ -962,48 +1111,50 @@ namespace DAL.DALs
 							Nombre = c.Especialidad.Nombre,
 							Descripcion = c.Especialidad.Descripcion
 						},
-                        CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
-                        {
-                            Id = cm.Id,
-							Fecha = cm.Fecha,
-							Estado = cm.Estado,
+						CitasMedicas = !citas.IsNullOrEmpty() ? citas.Select(cm => new CitaMedica
+						{
+							Id = cm.Id,
+                            Fecha = cm.Fecha,
+                            Estado = cm.Estado,
 							Paciente = cm.Paciente != null ? new Paciente
-							{
-								Id = cm.Paciente.Id,
-								Nombres = cm.Paciente.Nombres,
-								Apellidos = cm.Paciente.Apellidos,
-								Documento = cm.Paciente.Documento,
-								FechaDeNacimiento = cm.Paciente.FechaDeNacimiento,
+                            {
+                                Id = cm.Paciente.Id,
+                                Nombres = cm.Paciente.Nombres,
+                                Apellidos = cm.Paciente.Apellidos,
+                                Documento = cm.Paciente.Documento,
+                                FechaDeNacimiento = cm.Paciente.FechaDeNacimiento,
                                 Direccion = cm.Paciente.Direccion,
                                 Telefono = cm.Paciente.Telefono,
                                 Email = cm.Paciente.Email
                             } : null
-                        }).ToList(),
-                    };
-				}
+						}).ToList() : new List<CitaMedica>()
+					};
+                }
 				return null;
 			}
-        }
+		}
 
-        public void AddCalendario(Calendario calendario)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var nuevoCalendario = new Calendarios
-                {
-                    HoraInicio = calendario.HoraInicio,
-                    HoraFin = calendario.HoraFin,
-                    TiempoCita = calendario.TiempoCita,
-                    CantidadCitas = calendario.CantidadCitas,
-                    DiasSemana = calendario.DiasSemana
-                };
-                _dbContext.Calendarios.Add(nuevoCalendario);
-                _dbContext.SaveChanges();
-            }
-        }
+		public void AddCalendario(Calendario calendario)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var nuevoCalendario = new Calendarios
+				{
+					HoraInicio = calendario.HoraInicio,
+					HoraFin = calendario.HoraFin,
+					TiempoCita = calendario.TiempoCita,
+					CantidadCitas = calendario.CantidadCitas,
+					DiasSemana = calendario.DiasSemana,
+					MedicoId = calendario.Medico.Id,
+					EspecialidadId = calendario.Especialidad.Id
+				};
+				_dbContext.Calendarios.Add(nuevoCalendario);
+				_dbContext.SaveChanges();
+			}
+		}
 
-        public void UpdateCalendario(Calendario calendario)
-        {
+		public void UpdateCalendario(Calendario calendario)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var ExistCalendario = _dbContext.Calendarios.Find(calendario.Id);
@@ -1012,24 +1163,24 @@ namespace DAL.DALs
 				{
 					ExistCalendario.HoraInicio = calendario.HoraInicio;
 					ExistCalendario.HoraFin = calendario.HoraFin;
-                    ExistCalendario.TiempoCita = calendario.TiempoCita;
+					ExistCalendario.TiempoCita = calendario.TiempoCita;
 					ExistCalendario.CantidadCitas = calendario.CantidadCitas;
 					ExistCalendario.DiasSemana = calendario.DiasSemana;
 					_dbContext.SaveChanges();
-                }
+				}
 			}
-        }
+		}
 
-        public void DeleteCalendario(long id)
-        {
+		public void DeleteCalendario(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
-                var medico = _dbContext.Medicos.Find(id);
-                if (medico != null)
-                {
-                    _dbContext.Medicos.Remove(medico);
-                    _dbContext.SaveChanges();
-                }
+				var medico = _dbContext.Medicos.Find(id);
+				if (medico != null)
+				{
+					_dbContext.Medicos.Remove(medico);
+					_dbContext.SaveChanges();
+				}
 
 				var calendario = _dbContext.Calendarios.Find(id);
 				if (calendario != null)
@@ -1037,9 +1188,313 @@ namespace DAL.DALs
 					_dbContext.Calendarios.Remove(calendario);
 					_dbContext.SaveChanges();
 				}
+			}
+		}
+
+        #endregion
+
+
+        /**********************************************************/
+        /**                 Consultorios                         **/
+        /**********************************************************/
+        #region FUNCTIONES CONSULTORIOS
+
+        public List<Consultorio> GetConsultorios()
+        {
+			using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Consultorios
+                    .Select(c => new Consultorio
+                    {
+                        Id = c.Id,
+                        Numero = c.Numero,
+                        Piso = c.Piso
+                    }).ToList();
             }
         }
 
-		#endregion
+        public Consultorio GetConsultorioById(long id)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                var consultorio = _dbContext.Consultorios.Find(id);
+                if (consultorio != null)
+                {
+                    return new Consultorio
+                    {
+                        Id = consultorio.Id,
+                        Numero = consultorio.Numero,
+                        Piso = consultorio.Piso
+                    };
+                }
+                return null;
+            }
+        }
+
+        public void AddConsultorio(Consultorio consultorio)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                var nuevoConsultorio = new Consultorios
+                {
+                    Numero = consultorio.Numero,
+                    Piso = consultorio.Piso
+                };
+                _dbContext.Consultorios.Add(nuevoConsultorio);
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public void UpdateConsultorio(Consultorio consultorio)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                var consultorioExistente = _dbContext.Consultorios.Find(consultorio.Id);
+                if (consultorioExistente != null)
+                {
+                    consultorioExistente.Numero = consultorio.Numero;
+                    consultorioExistente.Piso = consultorio.Piso;
+                    _dbContext.SaveChanges();
+                }
+            }
+        }
+
+        public void DeleteConsultorio(long id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var consultorio = _dbContext.Consultorios.Find(id);
+				if (consultorio != null)
+				{
+					_dbContext.Consultorios.Remove(consultorio);
+					_dbContext.SaveChanges();
+				}
+			}
+        }
+
+        #endregion
+
+
+        /**********************************************************/
+        /**                 Especialidades                       **/
+        /**********************************************************/
+        #region FUNCTIONES ESPECIALIDADES
+
+        public List<Especialidad> GetEspecialidades()
+        {
+			using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Especialidades
+                    .Select(e => new Especialidad
+                    {
+                        Id = e.Id,
+                        Nombre = e.Nombre,
+                        Descripcion = e.Descripcion
+                    }).ToList();
+            }
+        }
+
+        public Especialidad GetEspecialidadById(long id)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                var especialidad = _dbContext.Especialidades.Find(id);
+                if (especialidad != null)
+                {
+                    return new Especialidad
+                    {
+                        Id = especialidad.Id,
+                        Nombre = especialidad.Nombre,
+                        Descripcion = especialidad.Descripcion
+                    };
+                }
+                return null;
+            }
+        }
+
+        public void AddEspecialidad(Especialidad especialidad)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                var nuevaEspecialidad = new Especialidades
+                {
+                    Nombre = especialidad.Nombre,
+                    Descripcion = especialidad.Descripcion
+                };
+                _dbContext.Especialidades.Add(nuevaEspecialidad);
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public void UpdateEspecialidad(Especialidad especialidad)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                var especialidadExistente = _dbContext.Especialidades.Find(especialidad.Id);
+                if (especialidadExistente != null)
+                {
+                    especialidadExistente.Nombre = especialidad.Nombre;
+                    especialidadExistente.Descripcion = especialidad.Descripcion;
+                    _dbContext.SaveChanges();
+                }
+            }
+        }
+
+        public void DeleteEspecialidad(long id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var especialidad = _dbContext.Especialidades.Find(id);
+				if (especialidad != null)
+				{
+					_dbContext.Especialidades.Remove(especialidad);
+					_dbContext.SaveChanges();
+				}
+			}
+        }
+
+        #endregion
+
+
+        /**********************************************************/
+        /**                 Articulos                            **/
+        /**********************************************************/
+        #region FUNCTIONES ARTICULOS
+
+        public List<Articulo> GetArticulos()
+        {
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Articulos.Include(a => a.Copagos)
+					.Select(a => new Articulo
+					{
+						Id = a.Id,
+						Nombre = a.Nombre,
+						Copagos = a.Copagos.Select(c => new Copago
+                        {
+                            Id = c.Id,
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = c.SeguroMedico.Id,
+                                Nombre = c.SeguroMedico.Nombre,
+                                Descripcion = c.SeguroMedico.Descripcion
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Especialidad.Id,
+                                Nombre = c.Especialidad.Nombre,
+                                Descripcion = c.Especialidad.Descripcion
+                            },
+                            Precios = c.Precios.Select(p => new Precio
+                            {
+                                Id = p.Id,
+                                PrecioBase = p.PrecioBase,
+                                FechaInicio = p.FechaInicio
+                            }).ToList()
+                        }).ToList()
+					}).ToList();
+			}
+        }
+
+        public Articulo GetArticuloById(long id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var articulo = _dbContext.Articulos.Include(a => a.Copagos).FirstOrDefault(a => a.Id == id);
+
+				if (articulo != null)
+				{
+					return new Articulo
+					{
+						Id = articulo.Id,
+						Nombre = articulo.Nombre,
+						Copagos = articulo.Copagos.Select(c => new Copago
+						{
+							Id = c.Id,
+							SeguroMedico = new SeguroMedico
+							{
+								Id = c.SeguroMedico.Id,
+								Nombre = c.SeguroMedico.Nombre,
+								Descripcion = c.SeguroMedico.Descripcion
+							},
+							Especialidad = new Especialidad
+							{
+								Id = c.Especialidad.Id,
+								Nombre = c.Especialidad.Nombre,
+								Descripcion = c.Especialidad.Descripcion
+							},
+							Precios = c.Precios.Select(p => new Precio
+							{
+								Id = p.Id,
+								PrecioBase = p.PrecioBase,
+								FechaInicio = p.FechaInicio
+							}).ToList()
+						}).ToList()
+					};
+				}
+				return null;
+			}
+        }
+
+        public void AddArticulo(Articulo articulo)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var nuevoArticulo = new Articulos
+				{
+					Nombre = articulo.Nombre,
+					Copagos = articulo.Copagos.Select(c => new Copagos
+					{
+						SeguroMedicoId = c.SeguroMedico.Id,
+						EspecialidadId = c.Especialidad.Id,
+                        ArticuloId = c.Id,
+						Precios = c.Precios.Select(p => new Precios
+						{
+                            PrecioBase = p.PrecioBase,
+                            FechaInicio = p.FechaInicio
+                        }).ToList()
+					}).ToList(),
+				};
+			}
+        }
+
+        public void UpdateArticulo(Articulo articulo)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var articuloExistente = _dbContext.Articulos.Find(articulo.Id);
+				if (articuloExistente != null)
+				{
+					articuloExistente.Nombre = articulo.Nombre;
+					articuloExistente.Copagos = articulo.Copagos.Select(c => new Copagos
+					{
+						SeguroMedicoId = c.SeguroMedico.Id,
+						EspecialidadId = c.Especialidad.Id,
+						ArticuloId = c.Id,
+						Precios = c.Precios.Select(p => new Precios
+						{
+							PrecioBase = p.PrecioBase,
+							FechaInicio = p.FechaInicio
+						}).ToList()
+					}).ToList();
+					_dbContext.SaveChanges();
+				}
+			}
+        }
+
+        public void DeleteArticulo(long id)
+        {
+			using (var _dbContext = new DBContext())
+			{
+				var articulo = _dbContext.Articulos.Find(id);
+				if (articulo != null)
+				{
+					_dbContext.Articulos.Remove(articulo);
+					_dbContext.SaveChanges();
+				}
+			}
+        }
+
+        #endregion
     }
 }

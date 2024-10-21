@@ -72,5 +72,27 @@ namespace DAL.IDALs
 		public void AddCalendario(Calendario calendario);
 		public void UpdateCalendario(Calendario calendario);
 		public void DeleteCalendario(long id);
+
+		// Consultorios
+		public List<Consultorio> GetConsultorios();
+		public Consultorio GetConsultorioById(long id);
+		public void AddConsultorio(Consultorio consultorio);
+		public void UpdateConsultorio(Consultorio consultorio);
+		public void DeleteConsultorio(long id);
+
+		// Especialidades
+		public List<Especialidad> GetEspecialidades();
+		public Especialidad GetEspecialidadById(long id);
+		public void AddEspecialidad(Especialidad especialidad);
+		public void UpdateEspecialidad(Especialidad especialidad);
+		public void DeleteEspecialidad(long id);
+
+		// Articulo
+		public List<Articulo> GetArticulos();
+		public Articulo GetArticuloById(long id);
+		public void AddArticulo(Articulo articulo);
+		public void UpdateArticulo(Articulo articulo);
+		public void DeleteArticulo(long id);
+
 	}
 }
