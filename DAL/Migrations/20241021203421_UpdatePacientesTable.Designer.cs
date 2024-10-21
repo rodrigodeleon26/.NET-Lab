@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20241021203421_UpdatePacientesTable")]
+    partial class UpdatePacientesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,7 +61,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MedicoId");
 
-                    b.ToTable("Calendarios", (string)null);
+                    b.ToTable("Calendarios");
                 });
 
             modelBuilder.Entity("DAL.Models.AppUsers", b =>
@@ -149,7 +152,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Articulos", (string)null);
+                    b.ToTable("Articulos");
                 });
 
             modelBuilder.Entity("DAL.Models.CitasMedicas", b =>
@@ -184,7 +187,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("CitasMedicas", (string)null);
+                    b.ToTable("CitasMedicas");
                 });
 
             modelBuilder.Entity("DAL.Models.ConsultasMedicas", b =>
@@ -211,7 +214,7 @@ namespace DAL.Migrations
                     b.HasIndex("CitaMedicaId")
                         .IsUnique();
 
-                    b.ToTable("ConsultasMedicas", (string)null);
+                    b.ToTable("ConsultasMedicas");
                 });
 
             modelBuilder.Entity("DAL.Models.Consultorios", b =>
@@ -230,7 +233,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Consultorios", (string)null);
+                    b.ToTable("Consultorios");
                 });
 
             modelBuilder.Entity("DAL.Models.Contratos", b =>
@@ -260,7 +263,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("SeguroMedicoId");
 
-                    b.ToTable("Contratos", (string)null);
+                    b.ToTable("Contratos");
                 });
 
             modelBuilder.Entity("DAL.Models.Copagos", b =>
@@ -288,7 +291,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("SeguroMedicoId");
 
-                    b.ToTable("Copagos", (string)null);
+                    b.ToTable("Copagos");
                 });
 
             modelBuilder.Entity("DAL.Models.Especialidades", b =>
@@ -311,7 +314,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Especialidades", (string)null);
+                    b.ToTable("Especialidades");
                 });
 
             modelBuilder.Entity("DAL.Models.Estudios", b =>
@@ -348,7 +351,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("ConsultaMedicaId");
 
-                    b.ToTable("Estudios", (string)null);
+                    b.ToTable("Estudios");
                 });
 
             modelBuilder.Entity("DAL.Models.Facturas", b =>
@@ -378,7 +381,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("Facturas", (string)null);
+                    b.ToTable("Facturas");
                 });
 
             modelBuilder.Entity("DAL.Models.Medicos", b =>
@@ -416,7 +419,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medicos", (string)null);
+                    b.ToTable("Medicos");
                 });
 
             modelBuilder.Entity("DAL.Models.Notificaciones", b =>
@@ -444,7 +447,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("Notificaciones", (string)null);
+                    b.ToTable("Notificaciones");
                 });
 
             modelBuilder.Entity("DAL.Models.Pacientes", b =>
@@ -487,7 +490,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pacientes", (string)null);
+                    b.ToTable("Pacientes");
                 });
 
             modelBuilder.Entity("DAL.Models.Precios", b =>
@@ -518,7 +521,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("SeguroMedicoId");
 
-                    b.ToTable("Precios", (string)null);
+                    b.ToTable("Precios");
                 });
 
             modelBuilder.Entity("DAL.Models.Recetas", b =>
@@ -550,7 +553,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("ConsultaMedicaId");
 
-                    b.ToTable("Recetas", (string)null);
+                    b.ToTable("Recetas");
                 });
 
             modelBuilder.Entity("DAL.Models.SegurosMedicos", b =>
@@ -571,7 +574,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SegurosMedicos", (string)null);
+                    b.ToTable("SegurosMedicos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

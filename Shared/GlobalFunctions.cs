@@ -3,8 +3,8 @@
     public static class GlobalFunctions
     {
         private static string _connectionString = "Server=sqlserver,1433;Database=HCE;User Id=sa;Password=Abc*123!;Encrypt=False;";
-        private static string _secretKey = "Se_viene_la_Sexta_de_la_mano_de_la_Fiera_y_el_Leo"; // Define tu clave secreta aquí
-        private static string[] _allowedOrigins = new string[]
+        private static string _secretKey = "Se_viene_la_Sexta_de_la_mano_de_la_Fiera_y_el_Leo"; 
+        private static string[] _allowedOrigins =
         {
             "https://localhost:5010",
             "https://localhost:5011",
@@ -14,6 +14,7 @@
 
         public static string GetConnectionString()
         {
+
             return _connectionString;
         }
 

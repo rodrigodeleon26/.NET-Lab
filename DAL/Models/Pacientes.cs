@@ -21,25 +21,24 @@ namespace DAL.Models
         [MaxLength(20)]
         public string Documento { get; set; } = "-- Sin Documento --";
 
-        [Required]
-        public DateOnly FechaDeNacimiento { get; set; } = new DateOnly();
+        public DateOnly? FechaDeNacimiento { get; set; } = null;
 
         [MaxLength(200)]
-        public string Direccion { get; set; } = "-- Sin Dirección --";
+        public string? Direccion { get; set; } = null;
 
         [MaxLength(20)]
-        public string Telefono { get; set; } = "-- Sin Teléfono --";
+        public string? Telefono { get; set; } = null;
 
         [EmailAddress]
         [MaxLength(100)]
-        public string Email { get; set; } = "-- Sin Email --";
+        public string? Email { get; set; } = null;
 
-        public virtual ICollection<CitasMedicas> CitasMedicas { get; set; } = new List<CitasMedicas>(); // Usar virtual si necesitas Lazy Loading
+        public virtual ICollection<CitasMedicas>? CitasMedicas { get; set; } = new List<CitasMedicas>(); // Usar virtual si necesitas Lazy Loading
 
-        public virtual ICollection<Facturas> Facturas { get; set; } = new List<Facturas>(); // Usar virtual si necesitas Lazy Loading
+        public virtual ICollection<Facturas>? Facturas { get; set; } = new List<Facturas>(); // Usar virtual si necesitas Lazy Loading
 
-        public virtual ICollection<Notificaciones> Notificaciones { get; set; } = new List<Notificaciones>(); // Usar virtual si necesitas Lazy Loading
+        public virtual ICollection<Notificaciones>? Notificaciones { get; set; } = new List<Notificaciones>(); // Usar virtual si necesitas Lazy Loading
 
-        public virtual Contratos Contrato { get; set; } // Relación uno-a-uno
+        public virtual Contratos? Contrato { get; set; } // Relación uno-a-uno
     }
 }

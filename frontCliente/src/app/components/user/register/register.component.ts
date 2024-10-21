@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   form!: FormGroup; // Usar el operador de aserción no nulo
+  isLoading = false; // Variable de estado para el spinner
 
   constructor(
     public formBuilder: FormBuilder, 
@@ -36,7 +37,9 @@ export class RegisterComponent implements OnInit {
       this.router.navigateByUrl('/dashboard');
     }
     this.form = this.formBuilder.group({
-      fullName: ['', Validators.required],
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      documento: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8), Validators.pattern('^[0-9]*$')]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required]
@@ -45,15 +48,18 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
-      const { email, password, fullName } = this.form.value;
-      const requestPayload = { email, password, fullName };
+      this.isLoading = true; // Mostrar el spinner
+      const { nombres, apellidos, documento, email, password } = this.form.value;
+      const requestPayload = { nombres, apellidos, documento, email, password };
 
       this.authService.registerUser(requestPayload)
       .subscribe({
         next: (res: any) => {
+          this.isLoading = false; // Ocultar el spinner
           if (res.succeeded) {
             this.form.reset();
             this.toastr.success('Nuevo usuario creado', 'Registro exitoso');
+            this.router.navigate(['/login']);
           } else {
             res.errors.forEach((x: any) => {
               switch (x.code) {
@@ -62,6 +68,10 @@ export class RegisterComponent implements OnInit {
                   break;
 
                 case "DuplicateEmail":
+                  this.toastr.error(x.description, 'Registro fallido');
+                  break;
+
+                case "DuplicateDocumento":
                   this.toastr.error(x.description, 'Registro fallido');
                   break;
 
@@ -75,10 +85,17 @@ export class RegisterComponent implements OnInit {
           console.log('response:', res);
         },
         error: (err: any) => {
-          if (err.status === 400 && err.error) {
-            err.error.forEach((x: any) => {
-              this.toastr.error(x.description, 'Registro fallido');
-            });
+          this.isLoading = false; // Ocultar el spinner
+          if (err.status === 400) {
+            if (Array.isArray(err.error)) {
+              err.error.forEach((x: any) => {
+                this.toastr.error(x.description, 'Registro fallido');
+              });
+            } else if (err.error && err.error.code && err.error.description) {
+              this.toastr.error(err.error.description, 'Registro fallido');
+            } else {
+              this.toastr.error('Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.', 'Error');
+            }
           } else {
             console.log('error', err);
             this.toastr.error('Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.', 'Error');

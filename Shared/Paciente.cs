@@ -10,13 +10,13 @@
 
         public string Documento { get; set; } = "-- Sin Documento --";
 
-        public DateOnly FechaDeNacimiento { get; set; } = new DateOnly();
+        public DateOnly? FechaDeNacimiento { get; set; } = null;
 
-        public string? Direccion { get; set; } = "-- Sin Dirección --";
+        public string? Direccion { get; set; } = null;
 
-        public string? Telefono { get; set; } = "-- Sin Teléfono --";
+        public string? Telefono { get; set; } = null;
 
-        public string? Email { get; set; } = "-- Sin Email --";
+        public string? Email { get; set; } = null;
 
         public List<CitaMedica>? CitasMedicas { get; set; } = new List<CitaMedica>();
 

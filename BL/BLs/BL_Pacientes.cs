@@ -17,5 +17,20 @@ namespace BL.BLs
         {
             return dal.getPacientes();
         }
+
+        public void addPaciente(Paciente paciente)
+        {
+            dal.addPaciente(paciente);
+        }
+
+        public Paciente getXDocumento(string documento)
+        {
+            return dal.getXDocumento(documento);
+        }
+
+        public Paciente GetPaciente(long id)
+        {
+            return dal.GetPaciente(id);
+        }
     }
 }

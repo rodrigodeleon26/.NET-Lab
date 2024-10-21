@@ -10,5 +10,11 @@ namespace BL.IBLs
     public interface IBL_Pacientes
     {
         List <Paciente> getPacientes();
+
+        public void addPaciente(Paciente paciente);
+
+        public Paciente getXDocumento(string documento);
+
+        public Paciente GetPaciente(long id);
     }
 }

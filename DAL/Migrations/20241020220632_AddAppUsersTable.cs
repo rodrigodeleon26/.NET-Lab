@@ -29,6 +29,10 @@ namespace DAL.Migrations
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('1', 'Admin', 'ADMIN')");
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('2', 'Medico', 'MEDICO')");
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('3', 'Paciente', 'PACIENTE')");
+
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new

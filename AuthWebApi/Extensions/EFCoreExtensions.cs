@@ -1,4 +1,8 @@
 ﻿using DAL;
+using DAL.IDALs;
+using DAL.DALs;
+using BL.IBLs;
+using BL.BLs;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
@@ -10,6 +14,17 @@ namespace AuthWebApi.Extensions
         {
             services.AddDbContext<DBContext>(options =>
                 options.UseSqlServer(GlobalFunctions.GetConnectionString()));
+            return services;
+        }
+
+        public static IServiceCollection InjectDALandBL(this IServiceCollection services)
+        {
+            //  DALs
+            services.AddTransient<IDAL_Pacientes, DAL_Pacientes_EF>();
+
+            //  BLs
+            services.AddTransient<IBL_Pacientes, BL_Pacientes>();
+                    
             return services;
         }
     }

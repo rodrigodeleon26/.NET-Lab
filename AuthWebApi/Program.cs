@@ -20,6 +20,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddSwaggerExplorer()
                 .InjectDBContext()
+                .InjectDALandBL()
                 .AddIdentityHandlersAndStores()
                 .ConfigureIdentityOptions()
                 .AddIdentityAuth();
