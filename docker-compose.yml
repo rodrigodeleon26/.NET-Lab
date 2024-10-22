@@ -61,6 +61,55 @@ services:
       - citasmedicaswebapi
       - pacientewebapi
       - historiaclinicawebapi
+      - administrativowebapi
+
+  frontenda:
+    build:
+      context: ./frontAdmin
+      dockerfile: Dockerfile  
+    ports:
+      - "5010:443"
+    volumes:
+      - ./frontAdmin/ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./frontAdmin/ssl/server.key:/etc/nginx/certs/server.key
+      - ./frontAdmin/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pacientewebapi
+      - citasmedicaswebapi
+      - historiaclinicawebapi
+      - administrativowebapi
+  
+  frontendm:
+    build:
+      context: ./frontMedico
+      dockerfile: Dockerfile  
+    ports:
+      - "5011:444"
+    volumes:
+      - ./frontMedico/ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./frontMedico/ssl/server.key:/etc/nginx/certs/server.key
+      - ./frontMedico/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pacientewebapi
+      - citasmedicaswebapi
+      - historiaclinicawebapi
+      - administrativowebapi
+  
+  frontendc:
+    build:
+      context: ./frontCliente
+      dockerfile: Dockerfile  
+    ports:
+      - "5012:445"
+    volumes:
+      - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
+      - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pacientewebapi
+      - citasmedicaswebapi
+      - historiaclinicawebapi
+      - administrativowebapi
 
 volumes:
   sqlserver-data:

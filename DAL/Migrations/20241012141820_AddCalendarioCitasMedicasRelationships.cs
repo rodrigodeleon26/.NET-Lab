@@ -14,7 +14,7 @@ namespace DAL.Migrations
                 name: "CalendarioId",
                 table: "CitasMedicas",
                 type: "bigint",
-                nullable: false,
+                nullable: true,
                 defaultValue: 0L);
 
             migrationBuilder.CreateIndex(

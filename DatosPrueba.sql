@@ -10,3 +10,43 @@ VALUES
 ('Sofía Verónica', 'Méndez Jiménez', '44332211', '1995-05-18', 'Avenida Libertador 99', '092345678', 'sofia.veronica@example.com'),
 ('Jorge Enrique', 'Pérez García', '33221144', '1980-02-25', 'Calle del Sol 876', '091098765', 'jorge.enrique@example.com'),
 ('Claudia Patricia', 'López Ruiz', '12344321', '1999-08-07', 'Calle 8 de Octubre 543', '094567890', 'claudia.patricia@example.com');
+
+INSERT INTO CitasMedicas (Fecha, Estado, CalendarioId, ConsultorioId, PacienteId)
+VALUES 
+(GETDATE(), 'Completada', NULL, NULL, 1),
+(GETDATE(), 'Completada', NULL, NULL, 2),
+(GETDATE(), 'Agendada', NULL, NULL, 3),
+(GETDATE(), 'Agendada', NULL, NULL, 4),
+(GETDATE(), 'Agendada', NULL, NULL, 5),
+(GETDATE(), 'Agendada', NULL, NULL, 6),
+(GETDATE(), 'Agendada', NULL, NULL, 7),
+(GETDATE(), 'Agendada', NULL, NULL, 8),
+(GETDATE(), 'Agendada', NULL, NULL, 9),
+(GETDATE(), 'Agendada', NULL, NULL, 10);
+
+INSERT INTO ConsultasMedicas (Descripcion, Diagnostico, CitaMedicaId)
+VALUES 
+('Consulta general sobre dolor de cabeza', 'Diagnóstico de migraña leve', 1),
+('Revisión de control post-operatorio', 'Diagnóstico de recuperación satisfactoria', 2);
+
+-- Insertar dos estudios para la consulta médica con Id = 2
+INSERT INTO Estudios (Nombre, Descripcion, FechaRealizado, FechaResultado, Resultado, ConsultaMedicaId)
+VALUES 
+('Radiografía de Tórax', 'Estudio de imagen del tórax', '2024-10-01', '2024-10-02', 'Sin alteraciones', 1),
+('Examen de Sangre', 'Prueba completa de laboratorio', '2024-10-01', '2024-10-02', 'Niveles normales', 1);
+
+-- Insertar un estudio para la consulta médica con Id = 3
+INSERT INTO Estudios (Nombre, Descripcion, FechaRealizado, FechaResultado, Resultado, ConsultaMedicaId)
+VALUES 
+('Ultrasonido Abdominal', 'Exploración del abdomen', '2024-10-05', '2024-10-06', 'Resultados normales', 2);
+
+-- Insertar una receta para la consulta médica con Id = 2
+INSERT INTO Recetas (Vencimiento, NombreMedicamento, Cantidad, Frecuencia, ConsultaMedicaId)
+VALUES 
+('2024-12-01', 'Ibuprofeno', 20, 'Cada 8 horas', 1);
+
+-- Insertar dos recetas para la consulta médica con Id = 3
+INSERT INTO Recetas (Vencimiento, NombreMedicamento, Cantidad, Frecuencia, ConsultaMedicaId)
+VALUES 
+('2024-11-01', 'Paracetamol', 30, 'Cada 6 horas', 2),
+('2024-11-01', 'Flodifrip', 15, 'Cada 8 horas', 2);

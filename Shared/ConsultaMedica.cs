@@ -8,7 +8,9 @@
 
         public string Diagnostico { get; set; } = "-- Sin Descripción --";
 
-        public CitaMedica CitaMedica { get; set; } = new CitaMedica();  
+        //public CitaMedica CitaMedica { get; set; } = new CitaMedica();  
+
+        public long CitaMedicaId { get; set; }
 
         public List<Estudio> Estudios { get; set; } = new List<Estudio>();
 

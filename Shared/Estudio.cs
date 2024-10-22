@@ -10,10 +10,10 @@
 
         public DateOnly FechaRealizado { get; set; } = new DateOnly();
 
-        public DateOnly FechaResultado { get; set; } = new DateOnly();
+        public DateOnly? FechaResultado { get; set; } = new DateOnly();
 
-        public string Resultado { get; set; } = "-- Sin Resultado --";
+        public string? Resultado { get; set; } = "-- Sin Resultado --";
 
-        public ConsultaMedica ConsultaMedica { get; set; } = new ConsultaMedica();
+        public long ConsultaMedicaId { get; set; }
     }
 }

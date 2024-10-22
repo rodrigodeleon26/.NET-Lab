@@ -20,8 +20,8 @@ namespace DAL.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FechaRealizado = table.Column<DateOnly>(type: "date", nullable: false),
-                    FechaResultado = table.Column<DateOnly>(type: "date", nullable: false),
-                    Resultado = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FechaResultado = table.Column<DateOnly>(type: "date", nullable: true),
+                    Resultado = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
