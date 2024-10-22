@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using DAL;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -37,9 +38,10 @@ namespace AuthWebApi.Controllers
 
         [AllowAnonymous]
         private static async Task<IResult> RegisterUser(
-    UserManager<AppUsers> userManager,
-    IBL_Pacientes blPacientes,
-    [FromBody] UserRegistrationModel userRegistrationModel)
+        UserManager<AppUsers> userManager,
+        IBL_Pacientes blPacientes,
+        DBContext db,
+        [FromBody] UserRegistrationModel userRegistrationModel)
         {
             Paciente paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
 
@@ -54,12 +56,12 @@ namespace AuthWebApi.Controllers
                 };
                 blPacientes.addPaciente(paciente);
 
-                // Asegúrate de que el paciente se ha guardado correctamente y tiene un Id asignado
-                paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
-                if (paciente == null)
-                {
-                    return Results.BadRequest(new { message = "Error al guardar el paciente." });
-                }
+                //// Asegúrate de que el paciente se ha guardado correctamente y tiene un Id asignado
+                //paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
+                //if (paciente == null)
+                //{
+                //    return Results.BadRequest(new { message = "Error al guardar el paciente." });
+                //}
             }
             else
             {
@@ -79,16 +81,17 @@ namespace AuthWebApi.Controllers
                 Email = userRegistrationModel.Email,
                 UserName = userRegistrationModel.Email,
                 FullName = $"{userRegistrationModel.Nombres.ToUpper()} {userRegistrationModel.Apellidos.ToUpper()}",
-                PacienteId = paciente.Id
             };
+
+            user.Paciente = db.Pacientes.Find(paciente.Id);
             var result = await userManager.CreateAsync(user, userRegistrationModel.Password);
 
+            await userManager.AddToRoleAsync(user, "PACIENTE");
             if (result.Succeeded)
                 return Results.Ok(result);
             else
                 return Results.BadRequest(result.Errors);
         }
-
 
         [AllowAnonymous]
         private static async Task<IResult> LoginUser(
@@ -98,16 +101,23 @@ namespace AuthWebApi.Controllers
             var user = await userManager.FindByEmailAsync(userLoginModel.Email);
             if (user != null && await userManager.CheckPasswordAsync(user, userLoginModel.Password))
             {
+                var roles = await userManager.GetRolesAsync(user);
+
                 var signInKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey() ?? "DefaultSecretKey")
                 );
 
+                ClaimsIdentity claims = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("userId", user.Id.ToString()),
+                    new Claim("email", user.Email!),
+                    new Claim("fullName", user.FullName),
+                    new Claim(ClaimTypes.Role, roles.First()),
+                });
+
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim("userId", user.Id.ToString())
-                    }),
+                    Subject = claims,
                     Expires = DateTime.UtcNow.AddMinutes(30),
                     SigningCredentials = new SigningCredentials(
                         signInKey,

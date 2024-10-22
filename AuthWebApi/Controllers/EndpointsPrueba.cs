@@ -13,7 +13,7 @@ namespace AuthWebApi.Controllers
             return app;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         private static async Task<IResult> datosPersonales(
             ClaimsPrincipal user,
             UserManager <AppUsers> userManager)

@@ -15,6 +15,7 @@ namespace AuthWebApi.Extensions
         {
             services
                 .AddIdentityApiEndpoints<AppUsers>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DBContext>();
             return services;
         }
@@ -63,6 +64,9 @@ namespace AuthWebApi.Extensions
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                     .RequireAuthenticatedUser()
                     .Build());
+
+                //  Acá agrego politicas en caso de que precise
+
             return services;
         }
 
