@@ -1,3 +1,4 @@
+using AuthWebApi.Extensions;
 using BL.BLs;
 using BL.IBLs;
 using DAL;
@@ -9,54 +10,21 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
-
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowSpecificOrigin",
-            builder =>
-            {
-                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012")
-                       .AllowAnyHeader()
-                       .AllowAnyMethod();
-            });
-    });
-
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
 
-    /**********************************************************/
-    /** Add Dependencies                                     **/
-    /**********************************************************/
-    #region Inyeccion de dependencias
-
-    // DALs
-    builder.Services.AddTransient<IDAL_Pacientes, DAL_Pacientes_EF>();
-
-    // BLs
-    builder.Services.AddTransient<IBL_Pacientes, BL_Pacientes>();
-
-    #endregion
+    builder.Services.AddSwaggerExplorer()
+                .InjectDBContext()
+                .InjectDALandBL()
+                .AddIdentityAuth();
 
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    app.UseHttpsRedirection();
-
-    app.UseCors("AllowSpecificOrigin");
-
-    app.UseAuthorization();
+    app.ConfigureSwaggerExplorer()
+   .ConfigureCORS()
+   .AddIdentityAuthMiddlewares()
+   .UseHttpsRedirection();
 
     app.MapControllers();
-
-    DBContext.UpdateDatabase();
 
     app.Run();
 

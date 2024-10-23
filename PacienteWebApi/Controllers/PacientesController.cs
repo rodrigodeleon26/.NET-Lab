@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -6,6 +7,7 @@ using Shared;
 
 namespace PacienteWebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PacientesController : ControllerBase
@@ -18,6 +20,7 @@ namespace PacienteWebApi.Controllers
         }
 
         // GET: api/<PacientesController>
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(List<Paciente>), 200)]
         [HttpGet]
         public IActionResult Get()

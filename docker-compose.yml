@@ -1,13 +1,13 @@
 services:
-  # pacientewebapi:
-  #   image: ${DOCKER_REGISTRY-}pacientewebapi
-  #   build:
-  #     context: .
-  #     dockerfile: PacienteWebApi/Dockerfile
-  #   ports:
-  #     - 5000:8080
-  #     - 5001:8081
-  #   container_name: PacienteWebApi_container
+  pacientewebapi:
+    image: ${DOCKER_REGISTRY-}pacientewebapi
+    build:
+      context: .
+      dockerfile: PacienteWebApi/Dockerfile
+    ports:
+      - 5000:8080
+      - 5001:8081
+    container_name: PacienteWebApi_container
 
   # citasmedicaswebapi:
   #   image: ${DOCKER_REGISTRY-}citasmedicaswebapi
