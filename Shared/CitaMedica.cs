@@ -16,7 +16,7 @@
 
         //public Paciente? Paciente { get; set; } = new Paciente();
 
-        public long? ConsultorioId { get; set; }
+        //public long? ConsultorioId { get; set; }
 
         public long? PacienteId { get; set; }
     }

@@ -27,7 +27,6 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        ConsultorioId = p.ConsultorioId,
                         Calendario = new Calendario
                         {
                             HoraInicio = p.Calendario.HoraInicio,
@@ -68,7 +67,6 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        ConsultorioId = p.ConsultorioId,
                         // Mapeo del calendario relacionado
                         Calendario = new Calendario
                         {
@@ -98,7 +96,7 @@ namespace DAL.DALs
             }
         }
 
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
         {
             using (var _dbContext = new DBContext())
             {
@@ -110,12 +108,34 @@ namespace DAL.DALs
                     throw new Exception("El calendario no existe.");
                 }
 
+                // Verificar si ya existe una cita con la misma combinación de CalendarioId y Fecha
+                // ((Tambien tengo que cambiar para que verifique intervalos de hora para que
+                // por ejemplo si el calendario usa intervalos de 15 minutos, y hay una agendada a las 10
+                // no permita agendar entre las 10 y las 10:15))
+                var citaExistente = _dbContext.CitasMedicas
+                    .FirstOrDefault(c => c.CalendarioId == calendarioId && c.Fecha == nuevaCita.Fecha);
+
+                if (citaExistente != null)
+                {
+                    throw new Exception("Ya existe una cita agendada en esa hora para ese dia.");
+                }
+
+                // Verificar si el mismo paciente ya tiene una cita en el mismo calendario y día
+                // ((Luego tengo que cambiarlo para que solo revise la ESPECIALIDAD, ya que como está permite registrarse dos veces para por ejemplo
+                // el odontologo si son medicos distintos y eso no está bien))
+                var citaPacienteExistente = _dbContext.CitasMedicas
+                    .FirstOrDefault(c => c.PacienteId == pacienteId && c.CalendarioId == calendarioId && c.Fecha.Date == nuevaCita.Fecha.Date);
+
+                if (citaPacienteExistente != null)
+                {
+                    throw new Exception("El paciente ya tiene una cita en el mismo calendario y día.");
+                }
+
                 var citaEntity = new CitasMedicas
                 {
                     Fecha = nuevaCita.Fecha,
-                    Estado = nuevaCita.Estado,
-                    PacienteId = nuevaCita.PacienteId,
-                    ConsultorioId = nuevaCita.ConsultorioId ?? 0,
+                    Estado = nuevaCita.Estado ?? "AGENDADA",
+                    PacienteId = pacienteId,
                     CalendarioId = calendarioId
                 };
 
@@ -138,7 +158,6 @@ namespace DAL.DALs
                     citaEntity.Fecha = citaActualizada.Fecha;
                     citaEntity.Estado = citaActualizada.Estado;
                     citaEntity.PacienteId= citaActualizada.PacienteId;
-                    citaEntity.ConsultorioId = citaActualizada.ConsultorioId ?? 0;
 
                     _dbContext.CitasMedicas.Update(citaEntity);
                     _dbContext.SaveChanges();

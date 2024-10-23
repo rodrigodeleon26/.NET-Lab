@@ -12,7 +12,7 @@ namespace DAL.IDALs
         CitaMedica getCitaMedicaById(int id);
 
         // Crear una nueva cita médica
-        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId);
+        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
 
         // Actualizar una cita médica existente
         void updateCitaMedica(CitaMedica citaActualizada);

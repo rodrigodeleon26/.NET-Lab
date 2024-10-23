@@ -18,6 +18,7 @@ namespace PacienteWebApi.Controllers
             _blCitasMedicas = blCitasMedicas;
         }
 
+        // TRAE TODAS LAS CITAS MEDICAS. Formato:
         // GET: api/<CitasMedicasController>
         [ProducesResponseType(typeof(List<CitaMedica>), 200)]
         [HttpGet]
@@ -26,7 +27,8 @@ namespace PacienteWebApi.Controllers
             return Ok(_blCitasMedicas.getCitasMedicas());
         }
 
-        // GET api/<CitasMedicasController>/5
+        // TRAE UNA CITA MEDICA. Formato:
+        // GET api/<CitasMedicasController>/[idCita]
         [ProducesResponseType(typeof(CitaMedica), 200)]
         [ProducesResponseType(404)]
         [HttpGet("{id}")]
@@ -40,21 +42,43 @@ namespace PacienteWebApi.Controllers
             return Ok(cita);
         }
 
-        // POST api/<CitasMedicasController>
-        [HttpPost("{calendarioId}")]
+        // CREA UNA CITA MEDICA. Formato:
+        // POST api/<CitasMedicasController>/[idCalendario]/[idPaciente] (con el objeto en el body, sobre todo para la fecha)
+        [HttpPost("{calendarioId}/{pacienteId}")]
         [ProducesResponseType(typeof(CitaMedica), 201)]
         [ProducesResponseType(400)]
-        public IActionResult Post([FromBody] CitaMedica nuevaCita, long calendarioId)
+        public IActionResult Post([FromBody] CitaMedica nuevaCita, long calendarioId, long pacienteId)
         {
             if (nuevaCita == null)
             {
                 return BadRequest();
             }
-            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId);
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, pacienteId);
             return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
         }
 
-        // PUT api/<CitasMedicasController>/5
+        // CAMBIA EL ESTADO. Formato:
+        // PUT api/<CitasMedicasController>/[idCita]/[estado]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [HttpPut("{id}/{estado}")]
+        public IActionResult EditarEstado(int id, string estado)
+        {
+
+            var citaExistente = _blCitasMedicas.getCitaMedicaById(id);
+            if (citaExistente == null)
+            {
+                return NotFound();
+            }
+            citaExistente.Estado = estado;
+            _blCitasMedicas.updateCitaMedica(citaExistente);
+
+            return NoContent();
+        }
+
+        // ACTUALIZA UNA CITA MEDICA. Formato:
+        // PUT api/<CitasMedicasController>/[idCita] (con el objeto en el body)
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -66,22 +90,20 @@ namespace PacienteWebApi.Controllers
                 return BadRequest();
             }
 
-            // Verificar si la cita médica existe por su ID
             var citaExistente = _blCitasMedicas.getCitaMedicaById(id);
             if (citaExistente == null)
             {
                 return NotFound();
             }
 
-            // Asignar el ID recibido en la URL al objeto citaActualizada
             citaActualizada.Id = id;
 
-            // Actualizar la cita médica
             _blCitasMedicas.updateCitaMedica(citaActualizada);
             return NoContent();
         }
 
-        // DELETE api/<CitasMedicasController>/5
+        // ELIMINA UNA CITA MEDICA DE LA BASE DE DATOS. Formato:
+        // DELETE api/<CitasMedicasController>/[idCita]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [HttpDelete("{id}")]
