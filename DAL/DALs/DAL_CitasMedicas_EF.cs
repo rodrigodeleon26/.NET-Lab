@@ -134,7 +134,7 @@ namespace DAL.DALs
                 var citaEntity = new CitasMedicas
                 {
                     Fecha = nuevaCita.Fecha,
-                    Estado = nuevaCita.Estado ?? "Agendada",
+                    Estado = nuevaCita.Estado ?? "AGENDADA",
                     PacienteId = pacienteId,
                     CalendarioId = calendarioId
                 };
