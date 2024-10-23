@@ -21,11 +21,11 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore HCE.sln
     - name: Build
-      run: dotnet build
+      run: dotnet build HCE.sln
     - name: Test
-      run: dotnet test
+      run: dotnet test HCE.sln
     - name: Upload dotnet test results
       uses: actions/upload-artifact@v4
       with:
