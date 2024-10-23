@@ -5,6 +5,9 @@ import { LoginComponent } from './components/user/login/login.component';
 import { RegisterComponent } from './components/user/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { authGuard } from './shared/auth.guard';
+import { AdminOnlyComponent } from './components/dashboard/admin-only/admin-only.component';
+import { AdminOrMedicoComponent } from './components/dashboard/admin-or-medico/admin-or-medico.component';
+import { AdminOrMedicoOrPacienteComponent } from './components/dashboard/admin-or-medico-or-paciente/admin-or-medico-or-paciente.component';
 
 const routes: Routes = [
   { path: '', component: UserComponent,
@@ -18,8 +21,20 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirigir a login por defecto
-  { path: '**', redirectTo: '/login' }, // Redirigir a login para rutas no encontradas
+  {path: 'admin-only', component: AdminOnlyComponent,
+    canActivate: [authGuard]
+  },
+
+  {path: 'admin-or-medico', component: AdminOrMedicoComponent,
+    canActivate: [authGuard]
+  },
+
+  {path: 'admin-or-medico-or-paciente', component: AdminOrMedicoOrPacienteComponent,
+    canActivate: [authGuard]
+  },
+
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, 
+  { path: '**', redirectTo: '/login' },
 
 ];
 

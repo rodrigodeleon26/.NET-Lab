@@ -13,6 +13,9 @@ import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { authInterceptor } from './shared/auth.interceptor';
+import { AdminOnlyComponent } from './components/dashboard/admin-only/admin-only.component';
+import { AdminOrMedicoComponent } from './components/dashboard/admin-or-medico/admin-or-medico.component';
+import { AdminOrMedicoOrPacienteComponent } from './components/dashboard/admin-or-medico-or-paciente/admin-or-medico-or-paciente.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +24,9 @@ import { authInterceptor } from './shared/auth.interceptor';
     LoginComponent,
     RegisterComponent,
     DashboardComponent,
+    AdminOnlyComponent,
+    AdminOrMedicoComponent,
+    AdminOrMedicoOrPacienteComponent,
   ],
   imports: [
     BrowserModule,

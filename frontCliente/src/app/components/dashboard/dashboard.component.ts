@@ -21,7 +21,6 @@ export class DashboardComponent implements OnInit{
     this.userService.getDatosPersonales().subscribe({
       next: (res:any) => this.fullName = res.fullName,
       error: (err:any) => console.log("Error al obtener los datos personales:\n", err)
-
     });
   }
 

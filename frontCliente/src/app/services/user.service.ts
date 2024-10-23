@@ -14,6 +14,6 @@ export class UserService {
   ) { }
 
   getDatosPersonales() {
-    return this.http.get(environment.AuthWebApiBaseUrl + '/datosPersonales')
+    return this.http.get(environment.AuthWebApiBaseUrl + '/prueba/datosPersonales')
   }
 }
