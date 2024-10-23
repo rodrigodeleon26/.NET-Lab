@@ -135,6 +135,7 @@ namespace DAL.DALs
                 {
                     Fecha = nuevaCita.Fecha,
                     Estado = nuevaCita.Estado ?? "Agendada",
+                    HOLA QUIERO ROMPER TODO JAJA SALU2
                     PacienteId = pacienteId,
                     CalendarioId = calendarioId
                 };
