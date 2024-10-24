@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
+using Shared.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -35,15 +36,43 @@ namespace AuthWebApi.Controllers
         public string RefreshToken { get; set; }
     }
 
-    public static class Auth
+    public class ResetPasswordModel
+    {
+        public string Email { get; set; }
+        public string Token { get; set; }
+        public string NewPassword { get; set; }
+    }
+
+    public class ForgotPasswordModel
+    {
+        public string Email { get; set; }
+    }
+
+    public class ResendConfirmationEmailModel
+    {
+        public string Email { get; set; }
+    }
+
+    public class ConfirmEmailModel
+    {
+        public string Email { get; set; }
+        public string Token { get; set; }
+    }
+
+        public static class Auth
     {
         public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost("api/auth/register", RegisterUser);
             app.MapPost("api/auth/login", LoginUser);
             app.MapPost("api/auth/refreshToken", RefreshToken);
+            app.MapPost("api/auth/resendConfirmationEmail", ResendConfirmationEmail);
+            app.MapGet("api/auth/confirmEmail", ConfirmEmail);
+            app.MapPost("api/auth/forgotPassword", ForgotPassword); // Nuevo endpoint
+            app.MapPost("api/auth/resetPassword", ResetPassword); // Nuevo endpoint
             return app;
         }
+
 
         [AllowAnonymous]
         private static async Task<IResult> RegisterUser(
@@ -159,6 +188,111 @@ namespace AuthWebApi.Controllers
             catch (Exception ex)
             {
                 return Results.Unauthorized();
+            }
+        }
+
+        [AllowAnonymous]
+        private static async Task<IResult> ResendConfirmationEmail(
+            UserManager<AppUsers> userManager,
+            EmailService emailService,
+            [FromBody] ResendConfirmationEmailModel resendConfirmationEmailModel)
+        {
+            var user = await userManager.FindByEmailAsync(resendConfirmationEmailModel.Email);
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"https://localhost:5001/api/auth/confirmEmail?&token={token}";
+
+            var htmlMessage = $@"
+            <h1>Confirmación de Email</h1>
+            <p>Hola {user.FullName},</p>
+            <p>Gracias por registrarte. Por favor, confirma tu email haciendo clic en el siguiente enlace:</p>
+            <a href='{confirmationLink}'>Confirmar Email</a>
+            <p>Si no puedes hacer clic en el enlace, copia y pega la siguiente URL en tu navegador:</p>
+            <p>{confirmationLink}</p>
+            <p>Saludos,</p>
+            <p>El equipo de AuthWebApi</p>";
+
+            await emailService.SendEmailAsync(user.Email, "Confirmación de Email", htmlMessage);
+
+            return Results.Ok(new { message = "Email de confirmación enviado" });
+        }
+
+        [AllowAnonymous]
+        private static async Task<IResult> ConfirmEmail(
+            UserManager<AppUsers> userManager,
+            [FromBody] ConfirmEmailModel confirmEmailModel)
+        {
+            var user = await userManager.FindByEmailAsync(confirmEmailModel.Email);
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            var result = await userManager.ConfirmEmailAsync(user, confirmEmailModel.Token);
+            if (result.Succeeded)
+            {
+                return Results.Ok(new { message = "Email confirmado exitosamente" });
+            }
+            else
+            {
+                return Results.BadRequest(new { message = "Error al confirmar el email" });
+            }
+        }
+
+        [AllowAnonymous]
+        private static async Task<IResult> ForgotPassword(
+            UserManager<AppUsers> userManager,
+            EmailService emailService,
+            [FromBody] ForgotPasswordModel forgotPasswordModel)
+        {
+            var user = await userManager.FindByEmailAsync(forgotPasswordModel.Email);
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = $"https://localhost:5001/api/auth/resetPassword?&token={token}";
+
+            var htmlMessage = $@"
+            <h1>Restablecimiento de Contraseña</h1>
+            <p>Hola {user.FullName},</p>
+            <p>Has solicitado restablecer tu contraseña. Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+            <a href='{resetLink}'>Restablecer Contraseña</a>
+            <p>Si no puedes hacer clic en el enlace, copia y pega la siguiente URL en tu navegador:</p>
+            <p>{resetLink}</p>
+            <p>Saludos,</p>
+            <p>El equipo de AuthWebApi</p>";
+
+            await emailService.SendEmailAsync(user.Email, "Restablecimiento de Contraseña", htmlMessage);
+
+            return Results.Ok(new { message = "Email de restablecimiento de contraseña enviado" });
+        }
+
+
+        [AllowAnonymous]
+        private static async Task<IResult> ResetPassword(
+            UserManager<AppUsers> userManager,
+            [FromBody] ResetPasswordModel resetPasswordModel)
+        {
+            var user = await userManager.FindByEmailAsync(resetPasswordModel.Email);
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            var result = await userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.NewPassword);
+            if (result.Succeeded)
+            {
+                return Results.Ok(new { message = "Contraseña restablecida exitosamente" });
+            }
+            else
+            {
+                return Results.BadRequest(new { message = "Error al restablecer la contraseña", errors = result.Errors });
             }
         }
 

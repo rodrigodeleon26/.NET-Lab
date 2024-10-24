@@ -5,6 +5,7 @@ using BL.IBLs;
 using BL.BLs;
 using Microsoft.EntityFrameworkCore;
 using Shared;
+using Shared.Services;
 
 namespace AuthWebApi.Extensions
 {
@@ -25,6 +26,12 @@ namespace AuthWebApi.Extensions
             //  BLs
             services.AddTransient<IBL_Pacientes, BL_Pacientes>();
                     
+            return services;
+        }
+
+        public static IServiceCollection AddEmailService(this IServiceCollection services) {
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<EmailService>();
             return services;
         }
     }

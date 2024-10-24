@@ -1,30 +1,29 @@
-﻿using DAL;
-using DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Shared.Services;
+using System;
+using System.Threading.Tasks;
 
-namespace Pruebas
+namespace ConsoleApp
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            //DBContext.UpdateDatabase();
+            var emailService = new EmailService();
+
+            var email = "rd6209965@gmail.com";
+            var subject = "Test Subject";
+            var htmlMessage = "<h1>Test Message</h1>";
 
             try
             {
-                    
-                Console.WriteLine("Esto se usa para pruebas...");
-
+                await emailService.SendEmailAsync(email, subject, htmlMessage);
+                Console.WriteLine("Email enviado exitosamente.");
             }
-
             catch (Exception ex)
             {
-                Console.WriteLine($"Ocurrió un error: {ex.Message}");
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Excepción interna: {ex.InnerException.Message}");
-                }
+                Console.WriteLine($"Error al enviar el email: {ex.Message}");
             }
         }
     }
 }
+

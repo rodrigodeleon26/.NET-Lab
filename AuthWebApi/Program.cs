@@ -1,6 +1,7 @@
 using DAL;
 using AuthWebApi.Extensions;
 using AuthWebApi.Controllers;
+using DAL.Models;
 
 try
 {
@@ -14,6 +15,7 @@ try
     builder.Services.AddSwaggerExplorer()
                     .InjectDBContext()
                     .InjectDALandBL()
+                    .AddEmailService()
                     .AddIdentityHandlersAndStores()
                     .ConfigureIdentityOptions()
                     .AddIdentityAuth();
@@ -27,7 +29,7 @@ try
 
     app.MapControllers();
     // Endpoints nativos de Identity
-    //app.MapIdentityApi<AppUsers>();
+    app.MapIdentityApi<AppUsers>();
     app.MapAuthEndpoints();
     app.MapPruebaEndpoints();
 

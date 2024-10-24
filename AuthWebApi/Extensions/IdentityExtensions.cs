@@ -59,14 +59,15 @@ namespace AuthWebApi.Extensions
                     ValidateAudience = false
                 };
             });
-            services.AddAuthorization(options =>
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser()
-                    .Build());
+            //services.AddAuthorization(options =>
+            //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+            //        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+            //        .RequireAuthenticatedUser()
+            //        .Build());
 
-                //  Acá agrego politicas en caso de que precise
+            //  Acá agrego politicas en caso de que precise
 
+            services.AddAuthorization();
             return services;
         }
 

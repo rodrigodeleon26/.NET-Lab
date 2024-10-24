@@ -36,6 +36,7 @@ namespace AuthWebApi.Extensions
                 options.Password.RequiredLength = 8;
                 // Requerimientos del usuario
                 options.User.RequireUniqueEmail = true;
+                //options.SignIn.RequireConfirmedEmail = true;
             });
             return services;
         }
