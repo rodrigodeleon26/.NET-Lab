@@ -117,6 +117,11 @@ namespace DAL.DALs
 
 				if (existingPaciente != null)
 				{
+					if(nuevaCedulaOcupada(paciente.Documento, paciente.Id))
+                    {
+                        throw new Exception("Ya existe un paciente con la cedula ingresada");
+                    }
+
 					existingPaciente.Nombres = paciente.Nombres;
 					existingPaciente.Apellidos = paciente.Apellidos;
 					existingPaciente.Documento = paciente.Documento;
@@ -156,6 +161,14 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
+		}
+
+		public bool nuevaCedulaOcupada(string nuevaCi, long pacienteId)
+        {
+			using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Pacientes.Any(p => p.Documento == nuevaCi && p.Id != pacienteId);
+            }
 		}
 
 		#endregion
@@ -388,15 +401,15 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
+        #endregion
 
 
-		/**********************************************************/
-		/**                    Precios                           **/
-		/**********************************************************/
-		#region FUNCTIONES PRECIOS
+        /**********************************************************/
+        /**                    Precios                           **/
+        /**********************************************************/
+        #region FUNCTIONES PRECIOS
 
-		public List<Precio> GetPrecios()
+        public List<Precio> GetPrecios()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -785,8 +798,14 @@ namespace DAL.DALs
 						Apellidos = m.Apellidos,
 						Documento = m.Documento,
 						Email = m.Email,
-						Telefono = m.Telefono
-					}).ToList();
+						Telefono = m.Telefono,
+                        Especialidades = m.EspecialidadesMedicos.Select(em => new Especialidad
+                        {
+                            Id = em.Especialidad.Id,
+                            Nombre = em.Especialidad.Nombre,
+                            Descripcion = em.Especialidad.Descripcion
+                        }).ToList()
+                    }).ToList();
 			}
 		}
 
@@ -794,8 +813,12 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var medico = _dbContext.Medicos.Find(id);
-				if (medico != null)
+                var medico = _dbContext.Medicos
+                               .Include(m => m.EspecialidadesMedicos)
+                               .ThenInclude(me => me.Especialidad)
+                               .FirstOrDefault(m => m.Id == id);
+
+                if (medico != null)
 				{
 					return new Medico
 					{
@@ -804,8 +827,14 @@ namespace DAL.DALs
 						Apellidos = medico.Apellidos,
 						Documento = medico.Documento,
 						Email = medico.Email,
-						Telefono = medico.Telefono
-					};
+						Telefono = medico.Telefono,
+                        Especialidades = medico.EspecialidadesMedicos.Select(em => new Especialidad
+                        {
+                            Id = em.Especialidad.Id,
+                            Nombre = em.Especialidad.Nombre,
+                            Descripcion = em.Especialidad.Descripcion
+                        }).ToList()
+                    };
 				}
 				return null;
 			}
@@ -840,6 +869,11 @@ namespace DAL.DALs
 					medicoExistente.Documento = medico.Documento;
 					medicoExistente.Email = medico.Email;
 					medicoExistente.Telefono = medico.Telefono;
+					medicoExistente.EspecialidadesMedicos = medico.Especialidades.Select(e => new EspecialidadesMedicos
+                    {
+                        MedicoId = medico.Id,
+                        EspecialidadId = e.Id
+                    }).ToList();
 					_dbContext.SaveChanges();
 				}
 			}
@@ -876,12 +910,6 @@ namespace DAL.DALs
 						Id = c.Id,
 						Fecha = c.Fecha,
 						Estado = c.Estado,
-						Consultorio = new Consultorio
-						{
-							Id = c.Consultorio.Id,
-							Numero = c.Consultorio.Numero,
-							Piso = c.Consultorio.Piso
-						},
 						Calendario = new Calendario
 						{
 							Id = c.Calendario.Id,
@@ -934,12 +962,6 @@ namespace DAL.DALs
 						Id = cita.Id,
 						Fecha = cita.Fecha,
 						Estado = cita.Estado,
-						Consultorio = new Consultorio
-                        {
-                            Id = cita.Consultorio.Id,
-                            Numero = cita.Consultorio.Numero,
-                            Piso = cita.Consultorio.Piso
-                        },
 						Calendario = new Calendario
 						{
 							Id = cita.Calendario.Id,
@@ -991,14 +1013,13 @@ namespace DAL.DALs
                     Estado = citasMedicas.Estado,
                     CalendarioId = citasMedicas.Calendario.Id,
                     PacienteId = citasMedicas.Paciente != null ? citasMedicas.Paciente.Id : null,
-					ConsultorioId = citasMedicas.Consultorio.Id
                 };
                 _dbContext.CitasMedicas.Add(nuevaCita);
                 _dbContext.SaveChanges();
             }
 		}
 
-		public void UpdateCitasMedicas(CitaMedica citasMedicas)
+        public void UpdateCitasMedicas(CitaMedica citasMedicas)
 		{
 			using (var _dbContext = new DBContext())
             {
@@ -1008,7 +1029,6 @@ namespace DAL.DALs
                     citaExistente.Fecha = citasMedicas.Fecha;
                     citaExistente.Estado = citasMedicas.Estado;
                     citaExistente.CalendarioId = citasMedicas.Calendario.Id;
-					citaExistente.ConsultorioId = citasMedicas.Consultorio.Id;
                     citaExistente.PacienteId = citasMedicas.Paciente != null ? citasMedicas.Paciente.Id : null;
                     _dbContext.SaveChanges();
                 }
@@ -1049,7 +1069,13 @@ namespace DAL.DALs
 						TiempoCita = c.TiempoCita,
 						CantidadCitas = c.CantidadCitas,
 						DiasSemana = c.DiasSemana,
-						Medico = new Medico
+                        Consultorio = new Consultorio
+                        {
+                            Id = c.Consultorio.Id,
+                            Numero = c.Consultorio.Numero,
+                            Piso = c.Consultorio.Piso
+                        },
+                        Medico = new Medico
 						{
 							Id = c.Medico.Id,
 							Nombres = c.Medico.Nombres,
@@ -1079,7 +1105,10 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var c = _dbContext.Calendarios.Include(c => c.Medico).Include(c => c.Especialidad).FirstOrDefault(c => c.Id == id);
+				var c = _dbContext.Calendarios.Include(c => c.Medico)
+					.Include(c => c.Especialidad)
+					.Include(c => c.Consultorio)
+					.FirstOrDefault(c => c.Id == id);
 
                 if (c != null)
 				{
@@ -1096,7 +1125,13 @@ namespace DAL.DALs
 						TiempoCita = c.TiempoCita,
 						CantidadCitas = c.CantidadCitas,
 						DiasSemana = c.DiasSemana,
-						Medico = new Medico
+                        Consultorio = new Consultorio
+                        {
+                            Id = c.Consultorio.Id,
+                            Numero = c.Consultorio.Numero,
+                            Piso = c.Consultorio.Piso
+                        },
+                        Medico = new Medico
 						{
 							Id = c.Medico.Id,
 							Nombres = c.Medico.Nombres,
@@ -1138,6 +1173,11 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
+				//chequeo que no exista un calendario con el medico y la especialidad
+				if(_dbContext.Calendarios.Any(c => c.MedicoId == calendario.Medico.Id && c.EspecialidadId == calendario.Especialidad.Id)){
+					throw new Exception("Ya existe un calendario para el medico y especialidad seleccionados");
+				}
+
 				var nuevoCalendario = new Calendarios
 				{
 					HoraInicio = calendario.HoraInicio,
@@ -1146,8 +1186,9 @@ namespace DAL.DALs
 					CantidadCitas = calendario.CantidadCitas,
 					DiasSemana = calendario.DiasSemana,
 					MedicoId = calendario.Medico.Id,
-					EspecialidadId = calendario.Especialidad.Id
-				};
+					EspecialidadId = calendario.Especialidad.Id,
+					ConsultorioId = calendario.Consultorio.Id
+                };
 				_dbContext.Calendarios.Add(nuevoCalendario);
 				_dbContext.SaveChanges();
 			}
@@ -1166,7 +1207,8 @@ namespace DAL.DALs
 					ExistCalendario.TiempoCita = calendario.TiempoCita;
 					ExistCalendario.CantidadCitas = calendario.CantidadCitas;
 					ExistCalendario.DiasSemana = calendario.DiasSemana;
-					_dbContext.SaveChanges();
+                    ExistCalendario.ConsultorioId = calendario.Consultorio.Id;
+                    _dbContext.SaveChanges();
 				}
 			}
 		}

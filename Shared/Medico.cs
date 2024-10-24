@@ -15,5 +15,7 @@
         public string Telefono { get; set; } = "-- Sin Teléfono --";
 
         public List<Calendario> Calendarios { get; set; } = new List<Calendario>();
+
+        public List<Especialidad> Especialidades { get; set; } = new List<Especialidad>();
     }
 }

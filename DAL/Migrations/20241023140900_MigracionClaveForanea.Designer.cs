@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20241023140900_MigracionClaveForanea")]
+    partial class MigracionClaveForanea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,29 +246,6 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Especialidades");
-                });
-
-            modelBuilder.Entity("DAL.Models.EspecialidadesMedicos", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("EspecialidadId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("MedicoId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EspecialidadId");
-
-                    b.HasIndex("MedicoId");
-
-                    b.ToTable("EspecialidadesMedicos");
                 });
 
             modelBuilder.Entity("DAL.Models.Estudios", b =>
@@ -632,25 +612,6 @@ namespace DAL.Migrations
                     b.Navigation("Especialidad");
 
                     b.Navigation("SeguroMedico");
-                });
-
-            modelBuilder.Entity("DAL.Models.EspecialidadesMedicos", b =>
-                {
-                    b.HasOne("DAL.Models.Especialidades", "Especialidad")
-                        .WithMany()
-                        .HasForeignKey("EspecialidadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DAL.Models.Medicos", "Medico")
-                        .WithMany()
-                        .HasForeignKey("MedicoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Especialidad");
-
-                    b.Navigation("Medico");
                 });
 
             modelBuilder.Entity("DAL.Models.Estudios", b =>

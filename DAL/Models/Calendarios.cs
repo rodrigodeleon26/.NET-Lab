@@ -18,10 +18,23 @@ public class Calendarios
     public int TiempoCita { get; set; } = 0;
 
     [Required]
-    public int CantidadCitas { get; set; } = 0;
+    public long ConsultorioId { get; set; }
+
+    [ForeignKey(nameof(ConsultorioId))]
+    public virtual Consultorios Consultorio { get; set; }
 
     [Required]
-    public string DiasSemana { get; set; } = "-- Sin Días de la Semana --";
+    public int CantidadCitas { get; set; } = 0;
+
+    [NotMapped]
+    public string[] DiasSemana { get; set; } = new string[] { "-- Sin Días de la Semana --" };
+
+    [Required]
+    public string DiasSemanaString
+    {
+        get => string.Join(",", DiasSemana);
+        set => DiasSemana = value.Split(',');
+    }
 
     [Required]
     public long EspecialidadId { get; set; }

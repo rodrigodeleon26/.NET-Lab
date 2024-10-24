@@ -10,8 +10,6 @@
 
         public Calendario Calendario { get; set; } = new Calendario();
 
-        public Consultorio Consultorio { get; set; } = new Consultorio();
-
         public Paciente? Paciente { get; set; } = new Paciente();
 
         public ConsultaMedica? ConsultaMedica { get; set; }

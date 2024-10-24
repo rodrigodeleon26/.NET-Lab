@@ -47,9 +47,9 @@ namespace AdministrativoWebApi.Controllers
 			{
 				return BadRequest();
 			}
-			paciente.CitasMedicas = null;
-			paciente.Facturas = null;
-			paciente.Notificaciones = null;
+			paciente.CitasMedicas = [];
+			paciente.Facturas = [];
+			paciente.Notificaciones = [];
 			paciente.Contrato = null;
 
 			_blAdministrativo.addPaciente(paciente);

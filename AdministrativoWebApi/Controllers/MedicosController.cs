@@ -85,5 +85,17 @@ namespace AdministrativoWebApi.Controllers
             _blAdministrativo.deleteMedico(id);
             return NoContent();
         }
+
+        // POST api/<MedicosController>/asignarEspecialidad/5/3
+        [HttpPost("asignarEspecialidad/{medId}/{espId}")]
+        public IActionResult AsignarEspecialidad(long medId, long espId)
+        {
+            if(medId == 0 || espId == 0)
+            {
+                return BadRequest();
+            }
+            _blAdministrativo.asignarEspecialidad(medId, espId);
+            return NoContent();
+        }
     }
 }

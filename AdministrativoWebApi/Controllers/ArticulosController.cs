@@ -6,83 +6,83 @@ using Shared;
 
 namespace AdministrativoWebApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ArticulosController : ControllerBase
-    {
-        private readonly IBL_Administrativo _blAdministrativo;
+	[Route("api/[controller]")]
+	[ApiController]
+	public class ArticulosController : ControllerBase
+	{
+		private readonly IBL_Administrativo _blAdministrativo;
 
-        public ArticulosController(IBL_Administrativo blAdministrativo)
-        {
-            _blAdministrativo = blAdministrativo;
-        }
+		public ArticulosController(IBL_Administrativo blAdministrativo)
+		{
+			_blAdministrativo = blAdministrativo;
+		}
 
-        // GET: api/<ArticulosController>
-        [ProducesResponseType(typeof(List<Articulo>), 200)]
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok(_blAdministrativo.getArticulos());
-        }
+		// GET: api/<ArticulosController>
+		[ProducesResponseType(typeof(List<Articulo>), 200)]
+		[HttpGet]
+		public IActionResult Get()
+		{
+			return Ok(_blAdministrativo.getArticulos());
+		}
 
-        // GET api/<ArticulosController>/5
-        [ProducesResponseType(typeof(Articulo), 200)]
-        [HttpGet("{id}")]
-        public IActionResult Get(long id)
-        {
-            var articulo = _blAdministrativo.getArticuloById(id);
-            if (articulo == null)
-            {
-                return NotFound();
-            }
-            return Ok(articulo);
-        }
+		// GET api/<ArticulosController>/5
+		[ProducesResponseType(typeof(Articulo), 200)]
+		[HttpGet("{id}")]
+		public IActionResult Get(long id)
+		{
+			var articulo = _blAdministrativo.getArticuloById(id);
+			if (articulo == null)
+			{
+				return NotFound();
+			}
+			return Ok(articulo);
+		}
 
-        // POST api/<ArticulosController>
-        [ProducesResponseType(typeof(Articulo), 201)]
-        [HttpPost]
-        public IActionResult Post([FromBody] Articulo articulo)
-        {
-            if (articulo == null)
-            {
-                return BadRequest();
-            }
+		// POST api/<ArticulosController>
+		[ProducesResponseType(typeof(Articulo), 201)]
+		[HttpPost]
+		public IActionResult Post([FromBody] Articulo articulo)
+		{
+			if (articulo == null)
+			{
+				return BadRequest();
+			}
 
-            _blAdministrativo.addArticulo(articulo);
-            return CreatedAtAction(nameof(Get), new { id = articulo.Id }, articulo);
-        }
+			_blAdministrativo.addArticulo(articulo);
+			return CreatedAtAction(nameof(Get), new { id = articulo.Id }, articulo);
+		}
 
-        // PUT api/<ArticulosController>/5
-        [HttpPut("{id}")]
-        public IActionResult Put(long id, [FromBody] Articulo articulo)
-        {
-            if (articulo == null || articulo.Id != id)
-            {
-                return BadRequest();
-            }
+		// PUT api/<ArticulosController>/5
+		[HttpPut("{id}")]
+		public IActionResult Put(long id, [FromBody] Articulo articulo)
+		{
+			if (articulo == null || articulo.Id != id)
+			{
+				return BadRequest();
+			}
 
-            var existingA = _blAdministrativo.getArticuloById(id);
-            if (existingA == null)
-            {
-                return NotFound();
-            }
+			var existingA = _blAdministrativo.getArticuloById(id);
+			if (existingA == null)
+			{
+				return NotFound();
+			}
 
-            _blAdministrativo.updateArticulo(articulo);
-            return NoContent();
-        }
+			_blAdministrativo.updateArticulo(articulo);
+			return NoContent();
+		}
 
-        // DELETE api/<ArticulosController>/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
-        {
-            var articulo = _blAdministrativo.getArticuloById(id);
-            if (articulo == null)
-            {
-                return NotFound();
-            }
+		// DELETE api/<ArticulosController>/5
+		[HttpDelete("{id}")]
+		public IActionResult Delete(long id)
+		{
+			var articulo = _blAdministrativo.getArticuloById(id);
+			if (articulo == null)
+			{
+				return NotFound();
+			}
 
-            _blAdministrativo.deleteArticulo(id);
-            return NoContent();
-        }
-    }
+			_blAdministrativo.deleteArticulo(id);
+			return NoContent();
+		}
+	}
 }

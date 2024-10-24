@@ -86,5 +86,28 @@ namespace AdministrativoWebApi.Controllers
             _blAdministrativo.deleteCalendario(id);
             return NoContent();
         }
+
+        // POST api/<CalendariosController>/crearCalendario
+        [HttpPost("crearCalendario")]
+        public IActionResult crearCalendario([FromBody] Request_CrearCalendario request)
+        {
+            long medId = request.MedicoId;
+            long espId = request.EspecialidadId;
+            long conId = request.ConsultorioId;
+            TimeSpan horaInicio = request.HoraInicio;
+            TimeSpan horaFin = request.HoraFin;
+            int tiempo = request.Tiempo;
+            int cant = request.Cantidad;
+            string[]? dias = request.Dias;
+
+            if (medId == 0 || espId == 0 || conId == 0 || tiempo <= 0 || cant <= 0 || dias == null || dias.Length == 0)
+            {
+                return BadRequest();
+            }
+
+            _blAdministrativo.crearCalendario(medId, espId, conId, horaInicio, horaFin, tiempo, cant, dias);
+
+            return NoContent();
+        }
     }
 }

@@ -21,12 +21,6 @@ namespace DAL.Models
         [ForeignKey(nameof(CalendarioId))]
         public virtual Calendarios Calendario { get; set; }
 
-        [Required]
-        public long ConsultorioId { get; set; }
-
-        [ForeignKey(nameof(ConsultorioId))]
-        public virtual Consultorios Consultorio { get; set; }
-
         public long? PacienteId { get; set; } // Hacer nullable
 
         [ForeignKey(nameof(PacienteId))]

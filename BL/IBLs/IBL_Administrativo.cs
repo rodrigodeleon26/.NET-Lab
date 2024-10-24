@@ -30,6 +30,7 @@ namespace BL.IBLs
 		void addContrato(Contrato contrato);
 		void updateContrato(Contrato contrato);
 		void deleteContrato(long id);
+		void activarContrato(long id);
 
 		// Precios
 		List<Precio> getPrecios();
@@ -58,6 +59,7 @@ namespace BL.IBLs
 		void addMedico(Medico medico);
 		void updateMedico(Medico medico);
 		void deleteMedico(long id);
+		void asignarEspecialidad(long medId, long espId);
 
 		// Citas Medicas
 		List<CitaMedica> getCitasMedicas();
@@ -66,12 +68,13 @@ namespace BL.IBLs
 		void updateCitaMedica(CitaMedica citaMedica);
 		void deleteCitaMedica(long id);
 
-		// Calendarios
-		List<Calendario> getCalendarios();
+        // Calendarios
+        List<Calendario> getCalendarios();
 		Calendario getCalendarioById(long id);
 		void addCalendario(Calendario calendario);
 		void updateCalendario(Calendario calendario);
 		void deleteCalendario(long id);
+		void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias);
 
 		// Consultorios
 		List<Consultorio> getConsultorios();

@@ -16,9 +16,10 @@ namespace DAL.IDALs
 		public void AddPaciente(Paciente paciente);
 		public void UpdatePaciente(Paciente paciente);
 		public void DeletePaciente(long id);
+		public bool nuevaCedulaOcupada(string nuevaCi, long pacienteId);
 
-		// Seguros Medicos
-		public List<SeguroMedico> GetSegurosMedicos();
+        // Seguros Medicos
+        public List<SeguroMedico> GetSegurosMedicos();
 		public SeguroMedico GetSeguroMedicoById(long id);
 		public void AddSeguroMedico(SeguroMedico seguroMedico);
 		public void UpdateSeguroMedico(SeguroMedico seguroMedico);
@@ -93,6 +94,5 @@ namespace DAL.IDALs
 		public void AddArticulo(Articulo articulo);
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
-
 	}
 }

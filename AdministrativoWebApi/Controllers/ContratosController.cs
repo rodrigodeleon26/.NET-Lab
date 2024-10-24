@@ -90,8 +90,8 @@ namespace AdministrativoWebApi.Controllers
 		}
 
 
-		// POST api/<PacienteController>/5/contratar-seguro
-		[HttpPost("/contratar-seguro")]
+        // POST api/<ContratosController>/contratar-seguro
+        [HttpPost("/contratar-seguro")]
 		public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
 		{
 			_logger.LogInformation("Entro a la funcion");
@@ -111,5 +111,20 @@ namespace AdministrativoWebApi.Controllers
 			_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
 			return NoContent();
 		}
+
+        // POST api/<ContratosController>/activar-contrato
+        [HttpPost("/activar-contrato")]
+		public IActionResult ActivarContrato([FromBody] long idContrato)
+        {
+            var contrato = _blAdministrativo.getContratoById(idContrato);
+
+            if (contrato == null)
+            {
+                return BadRequest("El contrato no existe");
+            }
+
+            _blAdministrativo.activarContrato(idContrato);
+            return NoContent();
+        }
 	}
 }

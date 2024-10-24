@@ -137,13 +137,23 @@ namespace BL.BLs
 			}
 		}
 
-		#endregion
+		public void activarContrato(long id)
+		{
+			var contrato = getContratoById(id);
+			if (contrato != null)
+			{
+				contrato.Activo = true;
+				updateContrato(contrato);
+			}
+		}
 
-		//Precios
-		#region PRECIOS
+        #endregion
+
+        //Precios
+        #region PRECIOS
 
 
-		public List<Precio> getPrecios()
+        public List<Precio> getPrecios()
 		{
 			return dal.GetPrecios();
 		}
@@ -258,6 +268,18 @@ namespace BL.BLs
 			dal.DeleteMedico(id);
 		}
 
+		public void asignarEspecialidad(long medId, long espId)
+		{
+			var medico = dal.GetMedicoById(medId);
+			var especialidad = dal.GetEspecialidadById(espId);
+
+			if (medico != null && especialidad != null)
+			{
+				medico.Especialidades.Add(especialidad);
+				dal.UpdateMedico(medico);
+			}
+		}
+
         #endregion
 
         //Citas Medicas
@@ -317,6 +339,40 @@ namespace BL.BLs
         {
 			dal.DeleteCalendario(id);
         }
+
+		public void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias)
+		{
+			var medico = getMedicoById(medId);
+			var especialidad = getEspecialidadById(espId);
+			var consultorio = getConsultorioById(conId);
+			if (medico != null && especialidad != null && consultorio != null)
+			{
+
+                //verificar que la especialidad sea una de las del medico
+                if (!medico.Especialidades.Any(e => e.Id == espId))
+                {
+                    throw new InvalidOperationException("La especialidad no está asociada con el médico.");
+                }
+
+                Calendario calendario = new Calendario()
+				{
+					Medico = medico,
+					Especialidad = especialidad,
+					Consultorio = consultorio,
+					HoraInicio = horaInicio,
+					HoraFin = horaFin,
+					TiempoCita = tiempo,
+					CantidadCitas = cant,
+					DiasSemana = dias
+				};
+				addCalendario(calendario);
+				return;
+			}
+			else
+			{
+				throw new InvalidOperationException("No se pudo crear el calendario.");
+			}
+		}
 
         #endregion
 
