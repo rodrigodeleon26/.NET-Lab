@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
       this.authService.loginUser(this.form.value)
       .subscribe({
         next: (res:any) => {
-          this.authService.saveToken(res.token);
+          this.authService.saveToken(res.token, res.refreshToken);
           this.router.navigateByUrl('/dashboard');
           // this.toastr.success('Login exitoso', 'Bienvenido');
         },

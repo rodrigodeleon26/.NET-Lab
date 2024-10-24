@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { PacienteService } from '../../services/paciente.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,15 +13,15 @@ export class DashboardComponent implements OnInit{
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private pacienteService: PacienteService
   ) {}
 
-  fullName: string = '';
+  pacientes: any[] = [];
 
   ngOnInit(): void {
-    this.userService.getDatosPersonales().subscribe({
-      next: (res:any) => this.fullName = res.fullName,
-      error: (err:any) => console.log("Error al obtener los datos personales:\n", err)
+    this.pacienteService.getPacientes().subscribe((data: any[]) => {
+      this.pacientes = data;
     });
   }
 

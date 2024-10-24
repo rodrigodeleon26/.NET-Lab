@@ -4,10 +4,12 @@ using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AuthWebApi.Controllers
@@ -27,12 +29,19 @@ namespace AuthWebApi.Controllers
         public string Password { get; set; }
     }
 
+    public class RefreshTokenModel
+    {
+        public string Token { get; set; }
+        public string RefreshToken { get; set; }
+    }
+
     public static class Auth
     {
         public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost("api/auth/register", RegisterUser);
             app.MapPost("api/auth/login", LoginUser);
+            app.MapPost("api/auth/refreshToken", RefreshToken);
             return app;
         }
 
@@ -101,37 +110,103 @@ namespace AuthWebApi.Controllers
             var user = await userManager.FindByEmailAsync(userLoginModel.Email);
             if (user != null && await userManager.CheckPasswordAsync(user, userLoginModel.Password))
             {
-                var roles = await userManager.GetRolesAsync(user);
-
-                var signInKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey() ?? "DefaultSecretKey")
-                );
-
-                ClaimsIdentity claims = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim("userId", user.Id.ToString()),
-                    new Claim("email", user.Email!),
-                    new Claim("fullName", user.FullName),
-                    new Claim(ClaimTypes.Role, roles.First()),
-                });
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = claims,
-                    Expires = DateTime.UtcNow.AddMinutes(30),
-                    SigningCredentials = new SigningCredentials(
-                        signInKey,
-                        SecurityAlgorithms.HmacSha256Signature
-                    )
-                };
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-                var token = tokenHandler.WriteToken(securityToken);
-                return Results.Ok(new { token });
+                var tokens = await GenerateTokens(user, userManager);
+                return Results.Ok(tokens);
             }
             else
             {
                 return Results.BadRequest(new { message = "Usuario o contraseña incorrectos" });
+            }
+        }
+
+        [AllowAnonymous]
+        private static async Task<IResult> RefreshToken(
+            UserManager<AppUsers> userManager,
+            [FromBody] RefreshTokenModel tokenRefreshModel)
+        {
+            var user = await userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == tokenRefreshModel.RefreshToken);
+
+            if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return Results.Unauthorized();
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey() ?? "DefaultSecretKey");
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(tokenRefreshModel.Token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    //ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var expiration = jwtToken.ValidTo;
+
+                var tokens = await GenerateTokens(user, userManager);
+                return Results.Ok(tokens);
+            }
+            catch (SecurityTokenException ex)
+            {
+                return Results.Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return Results.Unauthorized();
+            }
+        }
+
+        private static async Task<object> GenerateTokens(AppUsers user, UserManager<AppUsers> userManager)
+        {
+            var roles = await userManager.GetRolesAsync(user);
+
+            var signInKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey() ?? "DefaultSecretKey")
+            );
+
+            ClaimsIdentity claims = new ClaimsIdentity(new Claim[]
+            {
+                new Claim("userId", user.Id.ToString()),
+                new Claim("email", user.Email!),
+                new Claim("fullName", user.FullName),
+                new Claim(ClaimTypes.Role, roles.First()),
+            });
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = claims,
+                Expires = DateTime.UtcNow.AddSeconds(5),
+                SigningCredentials = new SigningCredentials(
+                    signInKey,
+                    SecurityAlgorithms.HmacSha256Signature
+                )
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            var token = tokenHandler.WriteToken(securityToken);
+
+            // Generar el refresh token
+            var refreshToken = GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await userManager.UpdateAsync(user);
+
+            return new { token, refreshToken };
+        }
+
+        private static string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
             }
         }
     }

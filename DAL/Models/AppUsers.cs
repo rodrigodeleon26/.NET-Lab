@@ -15,6 +15,11 @@ namespace DAL.Models
         [ForeignKey("PacienteId")]
         public Pacientes? Paciente { get; set; }
 
+        public bool Activo { get; set; } = false;
+
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; } 
+
         //// Relación con Medico (opcional)
         //[PersonalData]
         //public int? MedicoId { get; set; }

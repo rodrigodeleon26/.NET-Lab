@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TOKEN_KEY } from '../shared/constants';
+import { REFRESH_TOKEN_KEY, TOKEN_KEY } from '../shared/constants';
 import { environment } from '../shared/constants';
 
 @Injectable({
@@ -13,9 +13,15 @@ export class AuthService {
   registerUser(formData:any){
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/register', formData);
   }
-
+  
   loginUser(formData:any){
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/login', formData);
+  }
+  
+  refreshToken() {
+    const token = this.getToken();
+    const refreshToken = this.getRefreshToken();
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/refreshToken', { token, refreshToken });
   }
 
   isLoggedIn(){
@@ -24,13 +30,20 @@ export class AuthService {
 
   deleteToken(){
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
   }
 
-  saveToken(token:string){
+  saveToken(token:string, refreshToken:string){
     localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   }
 
   getToken(){
     return localStorage.getItem(TOKEN_KEY);
   }
+
+  getRefreshToken(){
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
+  }
+
 }

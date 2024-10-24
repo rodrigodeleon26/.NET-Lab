@@ -7,7 +7,7 @@ using Shared;
 
 namespace PacienteWebApi.Controllers
 {
-    [Authorize]
+    [Authorize (Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class PacientesController : ControllerBase

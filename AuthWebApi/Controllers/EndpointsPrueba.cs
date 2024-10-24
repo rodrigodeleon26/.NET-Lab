@@ -19,24 +19,8 @@ namespace AuthWebApi.Controllers
     {
         public static IEndpointRouteBuilder MapPruebaEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("api/prueba/datosPersonales", datosPersonales);
             app.MapPost("api/prueba/register", RegisterUserWithRoles);
             return app;
-        }
-
-        [Authorize(Roles = "Admin")]
-        private static async Task<IResult> datosPersonales(
-            ClaimsPrincipal user,
-            UserManager <AppUsers> userManager)
-        {
-            string userID = user.Claims.First(x => x.Type == "userId").Value;
-            var userDetails = await userManager.FindByIdAsync(userID);
-            return Results.Ok(
-                new 
-                {
-                    Email = userDetails?.Email,
-                    FullName = userDetails?.FullName
-                });
         }
 
         [AllowAnonymous]
