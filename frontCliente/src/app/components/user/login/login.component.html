@@ -1,25 +1,83 @@
+<h2 class="text-2xl font-bold text-center text-gray-700 mb-6">Iniciar Sesión</h2>
+<p class="text-center text-gray-600 mb-6">
+  ¿No tienes una cuenta?
+  <a routerLink="/register" class="text-blue-500 hover:underline">Regístrate!</a>
+</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+  <div>
+    <label for="email" class="block text-gray-700 font-bold mb-2">Correo Electrónico</label>
+    <input type="email" id="email" formControlName="email" placeholder="Correo electrónico"
+      class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-red-500 text-sm mt-2">
+      <div *ngIf="form.get('email')?.errors?.['required']">El correo electrónico es requerido.</div>
+    </div>
+  </div>
+  <div>
+    <label for="password" class="block text-gray-700 font-bold mb-2">Contraseña</label>
+    <input type="password" id="password" formControlName="password" placeholder="Contraseña"
+      class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-red-500 text-sm mt-2">
+      <div *ngIf="form.get('password')?.errors?.['required']">La contraseña es requerida.</div>
+    </div>
+  </div>
+  <div>
+    <button type="submit"
+      class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Iniciar
+      Sesión</button>
+  </div>
+  <div class="text-center mt-4">
+    <a (click)="openForgotPasswordModal()" class="text-blue-500 hover:underline cursor-pointer">¿Olvidaste tu
+      contraseña?</a>
+  </div>
+</form>
 
-  <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">Iniciar Sesión</h2>
-  <p class="text-center text-gray-600 mb-6">
-    ¿No tienes una cuenta? 
-    <a routerLink="/register" class="text-blue-500 hover:underline">Regístrate!</a>
-  </p>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
-    <div>
-      <label for="email" class="block text-gray-700 font-bold mb-2">Correo Electrónico</label>
-      <input type="email" id="email" formControlName="email" placeholder="Correo electrónico" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-red-500 text-sm mt-2">
-        <div *ngIf="form.get('email')?.errors?.['required']">El correo electrónico es requerido.</div>        
+<!-- Modal -->
+<div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 px-4 sm:px-0">
+  <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all w-full sm:max-w-lg">
+
+    <!-- Header -->
+    <div class="border-b border-gray-300 bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex items-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Restablecer Contraseña
+      </h3>
+    </div>
+
+    <!-- Body -->
+    <div class="border-b border-gray-300 bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+      <form [formGroup]="forgotPasswordForm">
+        <div>
+          <input type="email" id="forgot-email" formControlName="email" placeholder="Ingrese su correo electrónico"
+            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <div *ngIf="forgotPasswordForm.get('email')?.invalid && forgotPasswordForm.get('email')?.touched"
+            class="text-red-500 text-sm mt-2">
+            <div *ngIf="forgotPasswordForm.get('email')?.errors?.['required']">
+              El correo electrónico es requerido.
+            </div>
+            <div *ngIf="forgotPasswordForm.get('email')?.errors?.['email']">
+              El correo electrónico no es válido.
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+      <button *ngIf="!isLoading" (click)="onForgotPasswordSubmit()" [disabled]="forgotPasswordForm.invalid"
+        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+        Enviar
+      </button>
+      <div *ngIf="isLoading"
+        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm">
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
       </div>
+      <button (click)="closeForgotPasswordModal()"
+        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm">
+        Cancelar
+      </button>
     </div>
-    <div>
-      <label for="password" class="block text-gray-700 font-bold mb-2">Contraseña</label>
-      <input type="password" id="password" formControlName="password" placeholder="Contraseña" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-red-500 text-sm mt-2">
-        <div *ngIf="form.get('password')?.errors?.['required']">La contraseña es requerida.</div>
-      </div>
-    </div>
-    <div>
-        <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Iniciar Sesión</button>
-    </div>
-  </form>
+  </div>
+</div>

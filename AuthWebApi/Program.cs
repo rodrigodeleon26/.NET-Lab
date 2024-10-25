@@ -29,7 +29,7 @@ try
 
     app.MapControllers();
     // Endpoints nativos de Identity
-    app.MapIdentityApi<AppUsers>();
+    //app.MapIdentityApi<AppUsers>();
     app.MapAuthEndpoints();
     app.MapPruebaEndpoints();
 

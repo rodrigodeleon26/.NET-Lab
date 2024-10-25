@@ -11,6 +11,9 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   form!: FormGroup; // Usar el operador de aserción no nulo
+  forgotPasswordForm!: FormGroup;
+  showModal: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     public formBuilder: FormBuilder, 
@@ -18,15 +21,19 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router) {}
 
-  ngOnInit(): void {
-    if(this.authService.isLoggedIn()){
-      this.router.navigateByUrl('/dashboard');
+    ngOnInit(): void {
+      if (this.authService.isLoggedIn()) {
+        this.router.navigateByUrl('/dashboard');
+      }
+      this.form = this.formBuilder.group({
+        email: ['', Validators.required],
+        password: ['', Validators.required]
+      });
+  
+      this.forgotPasswordForm = this.formBuilder.group({
+        email: ['', [Validators.required, Validators.email]]
+      });
     }
-    this.form = this.formBuilder.group({
-      email: ['', Validators.required],
-      password: ['', Validators.required]
-    });
-  }
 
   onSubmit(): void {
     if (this.form.valid) {
@@ -48,6 +55,35 @@ export class LoginComponent implements OnInit {
         }
       });
 
+    }
+  }
+
+  openForgotPasswordModal(): void {
+    this.showModal = true;
+  }
+
+  closeForgotPasswordModal(): void {
+    this.showModal = false;
+    this.forgotPasswordForm.reset();
+  }
+
+  onForgotPasswordSubmit(): void {
+    if (this.forgotPasswordForm.valid) {
+      this.isLoading = true; // Iniciar el spinner
+      const email = this.forgotPasswordForm.value.email;
+      this.authService.forgotPassword(email)
+        .subscribe({
+          next: (res: any) => {
+            this.toastr.success('Correo de restablecimiento de contraseña enviado', '¡Correo enviado!');
+            this.closeForgotPasswordModal(); // Cerrar el modal después de enviar el correo
+            this.isLoading = false; // Detener el spinner
+            this.forgotPasswordForm.reset(); // Restablecer el formulario
+          },
+          error: (err: any) => {
+            this.toastr.error(err.error.message, 'Error');
+            this.isLoading = false; // Detener el spinner
+          }
+        });
     }
   }
 }

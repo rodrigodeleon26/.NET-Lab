@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared;
 using Shared.Services;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -256,7 +257,9 @@ namespace AuthWebApi.Controllers
             }
 
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
-            var resetLink = $"https://localhost:5001/api/auth/resetPassword?&token={token}";
+            var encodedEmail = WebUtility.UrlEncode(user.Email);
+            var encodedToken = WebUtility.UrlEncode(token);
+            var resetLink = $"http://localhost:4200/resetPassword?email={encodedEmail}&token={encodedToken}";
 
             var htmlMessage = $@"
             <h1>Restablecimiento de Contraseña</h1>
@@ -272,7 +275,6 @@ namespace AuthWebApi.Controllers
 
             return Results.Ok(new { message = "Email de restablecimiento de contraseña enviado" });
         }
-
 
         [AllowAnonymous]
         private static async Task<IResult> ResetPassword(

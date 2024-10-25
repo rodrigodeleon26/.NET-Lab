@@ -17,12 +17,14 @@ export class AuthService {
   loginUser(formData:any){
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/login', formData);
   }
-  
+
   refreshToken() {
     const token = this.getToken();
     const refreshToken = this.getRefreshToken();
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/refreshToken', { token, refreshToken });
   }
+
+  
 
   isLoggedIn(){
     return this.getToken() != null ? true : false;
@@ -36,6 +38,14 @@ export class AuthService {
   saveToken(token:string, refreshToken:string){
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+  }
+
+  forgotPassword(email: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/forgotPassword', { email });
+  }
+
+  resetPassword(email: string, token: string, newPassword: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/resetPassword', { email, token, newPassword });
   }
 
   getToken(){

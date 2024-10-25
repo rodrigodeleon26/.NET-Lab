@@ -16,6 +16,7 @@ import { AuthInterceptor } from './shared/auth.interceptor';
 import { AdminOnlyComponent } from './components/dashboard/admin-only/admin-only.component';
 import { AdminOrMedicoComponent } from './components/dashboard/admin-or-medico/admin-or-medico.component';
 import { AdminOrMedicoOrPacienteComponent } from './components/dashboard/admin-or-medico-or-paciente/admin-or-medico-or-paciente.component';
+import { ResetPasswordComponent } from './components/user/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { AdminOrMedicoOrPacienteComponent } from './components/dashboard/admin-o
     AdminOnlyComponent,
     AdminOrMedicoComponent,
     AdminOrMedicoOrPacienteComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule,
