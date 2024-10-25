@@ -23,15 +23,17 @@ export class LoginComponent implements OnInit {
 
     ngOnInit(): void {
       if (this.authService.isLoggedIn()) {
-        this.router.navigateByUrl('/dashboard');
+        if (this.authService.getEmailConfirmedStatus()) {
+          this.router.navigateByUrl('/dashboard');
+        } else {
+          this.toastr.warning('Por favor, confirma tu correo electrónico para continuar.', 'Correo no confirmado');
+          this.router.navigateByUrl('/resendEmailConfirmation');
+        }
       }
+  
       this.form = this.formBuilder.group({
         email: ['', Validators.required],
         password: ['', Validators.required]
-      });
-  
-      this.forgotPasswordForm = this.formBuilder.group({
-        email: ['', [Validators.required, Validators.email]]
       });
     }
 
@@ -42,13 +44,16 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (res:any) => {
           this.authService.saveToken(res.token, res.refreshToken);
-          this.router.navigateByUrl('/dashboard');
-          // this.toastr.success('Login exitoso', 'Bienvenido');
+          if (this.authService.getEmailConfirmedStatus()) {
+            this.router.navigateByUrl('/dashboard');
+          } else {
+            this.router.navigateByUrl('/resendEmailConfirmation');
+          }
+          this.isLoading = false;
         },
         error: (err:any) => {
           if (err.status === 400) {
             this.toastr.error(err.error.message, 'Login fallido');
-            
           }
           else
             console.log('error during login:\n', err);

@@ -68,7 +68,7 @@ namespace AuthWebApi.Controllers
             app.MapPost("api/auth/login", LoginUser);
             app.MapPost("api/auth/refreshToken", RefreshToken);
             app.MapPost("api/auth/resendConfirmationEmail", ResendConfirmationEmail);
-            app.MapGet("api/auth/confirmEmail", ConfirmEmail);
+            app.MapPost("api/auth/confirmEmail", ConfirmEmail);
             app.MapPost("api/auth/forgotPassword", ForgotPassword); // Nuevo endpoint
             app.MapPost("api/auth/resetPassword", ResetPassword); // Nuevo endpoint
             return app;
@@ -205,7 +205,8 @@ namespace AuthWebApi.Controllers
             }
 
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"https://localhost:5001/api/auth/confirmEmail?&token={token}";
+            var encodedToken = WebUtility.UrlEncode(token);
+            var confirmationLink = $"http://localhost:4200/confirmEmail?&token={encodedToken}";
 
             var htmlMessage = $@"
             <h1>Confirmación de Email</h1>
@@ -236,7 +237,8 @@ namespace AuthWebApi.Controllers
             var result = await userManager.ConfirmEmailAsync(user, confirmEmailModel.Token);
             if (result.Succeeded)
             {
-                return Results.Ok(new { message = "Email confirmado exitosamente" });
+                var tokens = await GenerateTokens(user, userManager);
+                return Results.Ok(new { message = "Email confirmado exitosamente", tokens});
             }
             else
             {
@@ -312,6 +314,7 @@ namespace AuthWebApi.Controllers
                 new Claim("email", user.Email!),
                 new Claim("fullName", user.FullName),
                 new Claim(ClaimTypes.Role, roles.First()),
+                new Claim("emailConfirmed", user.EmailConfirmed.ToString()) // Añadir esta línea
             });
 
             var tokenDescriptor = new SecurityTokenDescriptor

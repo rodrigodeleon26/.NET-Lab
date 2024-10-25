@@ -13,10 +13,9 @@ import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { AuthInterceptor } from './shared/auth.interceptor';
-import { AdminOnlyComponent } from './components/dashboard/admin-only/admin-only.component';
-import { AdminOrMedicoComponent } from './components/dashboard/admin-or-medico/admin-or-medico.component';
-import { AdminOrMedicoOrPacienteComponent } from './components/dashboard/admin-or-medico-or-paciente/admin-or-medico-or-paciente.component';
 import { ResetPasswordComponent } from './components/user/reset-password/reset-password.component';
+import { ConfirmEmailComponent } from './components/user/confirm-email/confirm-email.component';
+import { ResendEmailConfirmationComponent } from './components/user/resend-email-confirmation/resend-email-confirmation.component';
 
 @NgModule({
   declarations: [
@@ -25,10 +24,9 @@ import { ResetPasswordComponent } from './components/user/reset-password/reset-p
     LoginComponent,
     RegisterComponent,
     DashboardComponent,
-    AdminOnlyComponent,
-    AdminOrMedicoComponent,
-    AdminOrMedicoOrPacienteComponent,
     ResetPasswordComponent,
+    ConfirmEmailComponent,
+    ResendEmailConfirmationComponent,
   ],
   imports: [
     BrowserModule,

@@ -22,6 +22,7 @@ export class DashboardComponent implements OnInit{
   ngOnInit(): void {
     this.pacienteService.getPacientes().subscribe((data: any[]) => {
       this.pacientes = data;
+      console.log(this.authService.getClaims());
     });
   }
 

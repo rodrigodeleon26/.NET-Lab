@@ -17,14 +17,28 @@ export class AuthService {
   loginUser(formData:any){
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/login', formData);
   }
-
+  
   refreshToken() {
     const token = this.getToken();
     const refreshToken = this.getRefreshToken();
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/refreshToken', { token, refreshToken });
   }
-
   
+  forgotPassword(email: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/forgotPassword', { email });
+  }
+
+  resetPassword(email: string, token: string, newPassword: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/resetPassword', { email, token, newPassword });
+  }
+
+  confirmEmail(email: string, token: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/confirmEmail', { email, token });
+  }
+
+  resendEmailConfirmation(email: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/resendConfirmationEmail', { email });
+  }
 
   isLoggedIn(){
     return this.getToken() != null ? true : false;
@@ -40,14 +54,6 @@ export class AuthService {
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   }
 
-  forgotPassword(email: string) {
-    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/forgotPassword', { email });
-  }
-
-  resetPassword(email: string, token: string, newPassword: string) {
-    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/resetPassword', { email, token, newPassword });
-  }
-
   getToken(){
     return localStorage.getItem(TOKEN_KEY);
   }
@@ -56,4 +62,17 @@ export class AuthService {
     return localStorage.getItem(REFRESH_TOKEN_KEY);
   }
 
+  getClaims(){
+    return JSON.parse(atob(this.getToken()!.split('.')[1]));
+  }
+
+  getEmailConfirmedStatus(): boolean {
+    const claims = this.getClaims();
+    return claims ? claims.emailConfirmed === 'True' : false;
+  }
+
+  getEmail(): string {
+    const claims = this.getClaims();
+    return claims ? claims.email : '';
+  }
 }

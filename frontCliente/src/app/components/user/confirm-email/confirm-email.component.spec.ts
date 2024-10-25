@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminOnlyComponent } from './admin-only.component';
+import { ConfirmEmailComponent } from './confirm-email.component';
 
-describe('AdminOnlyComponent', () => {
-  let component: AdminOnlyComponent;
-  let fixture: ComponentFixture<AdminOnlyComponent>;
+describe('ConfirmEmailComponent', () => {
+  let component: ConfirmEmailComponent;
+  let fixture: ComponentFixture<ConfirmEmailComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AdminOnlyComponent]
+      declarations: [ConfirmEmailComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdminOnlyComponent);
+    fixture = TestBed.createComponent(ConfirmEmailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
