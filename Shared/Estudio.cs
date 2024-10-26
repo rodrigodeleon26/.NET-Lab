@@ -8,11 +8,11 @@
 
         public string Descripcion { get; set; } = "-- Sin Descripción --";
 
-        public DateOnly FechaRealizado { get; set; } = new DateOnly();
+        public DateOnly? FechaRealizado { get; set; }
 
-        public DateOnly? FechaResultado { get; set; } = new DateOnly();
+        public DateOnly? FechaResultado { get; set; }
 
-        public string? Resultado { get; set; } = "-- Sin Resultado --";
+        public string? ImagenUrl { get; set; }
 
         public long ConsultaMedicaId { get; set; }
     }

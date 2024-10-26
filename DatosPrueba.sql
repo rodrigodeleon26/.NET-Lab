@@ -30,15 +30,15 @@ VALUES
 ('Revisión de control post-operatorio', 'Diagnóstico de recuperación satisfactoria', 2);
 
 -- Insertar dos estudios para la consulta médica con Id = 2
-INSERT INTO Estudios (Nombre, Descripcion, FechaRealizado, FechaResultado, Resultado, ConsultaMedicaId)
+INSERT INTO Estudios (Nombre, Descripcion, FechaRealizado, FechaResultado, ConsultaMedicaId, ImagenUrl)
 VALUES 
-('Radiografía de Tórax', 'Estudio de imagen del tórax', '2024-10-01', '2024-10-02', 'Sin alteraciones', 1),
-('Examen de Sangre', 'Prueba completa de laboratorio', '2024-10-01', '2024-10-02', 'Niveles normales', 1);
+('Radiografía de Tórax', 'Estudio de imagen del tórax', '2024-10-01', '2024-10-02', 1, 'DSADFASD'),
+('Examen de Sangre', 'Prueba completa de laboratorio', '2024-10-01', '2024-10-02', 1, 'ASDASDASD');
 
 -- Insertar un estudio para la consulta médica con Id = 3
-INSERT INTO Estudios (Nombre, Descripcion, FechaRealizado, FechaResultado, Resultado, ConsultaMedicaId)
+INSERT INTO Estudios (Nombre, Descripcion, FechaRealizado, FechaResultado, ConsultaMedicaId, ImagenUrl)
 VALUES 
-('Ultrasonido Abdominal', 'Exploración del abdomen', '2024-10-05', '2024-10-06', 'Resultados normales', 2);
+('Ultrasonido Abdominal', 'Exploración del abdomen', '2024-10-05', '2024-10-06', 2, 'ASDASDASD');
 
 -- Insertar una receta para la consulta médica con Id = 2
 INSERT INTO Recetas (Vencimiento, NombreMedicamento, Cantidad, Frecuencia, ConsultaMedicaId)

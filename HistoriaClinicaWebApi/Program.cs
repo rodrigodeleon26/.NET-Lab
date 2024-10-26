@@ -3,6 +3,7 @@ using BL.IBLs;
 using DAL;
 using DAL.DALs;
 using DAL.IDALs;
+using HistoriaClinicaWebApi.Controllers;
 
 try
 {
@@ -15,7 +16,7 @@ try
         options.AddPolicy("AllowSpecificOrigin",
             builder =>
             {
-                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012")
+                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200")
                        .AllowAnyHeader()
                        .AllowAnyMethod();
             });
@@ -36,6 +37,8 @@ try
 
     // BLs
     builder.Services.AddTransient<IBL_HistoriasClinicas, BL_HistoriasClinicas>();
+
+    builder.Services.AddTransient<S3Service>();
 
     #endregion
 
@@ -62,4 +65,3 @@ catch (Exception ex)
 {
     Console.WriteLine("Error: " + ex.Message);
 }
-

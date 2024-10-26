@@ -19,9 +19,9 @@ namespace DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaRealizado = table.Column<DateOnly>(type: "date", nullable: false),
+                    FechaRealizado = table.Column<DateOnly>(type: "date", nullable: true),
                     FechaResultado = table.Column<DateOnly>(type: "date", nullable: true),
-                    Resultado = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ImagenUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {

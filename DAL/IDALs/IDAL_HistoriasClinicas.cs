@@ -7,8 +7,8 @@ namespace DAL.IDALs
     {
         public List<ConsultaMedica> getConsultasMedicas();
         public ConsultaMedica getConsultaMedica(int id);
-        public ConsultaMedica createConsultaMedica(ConsultaMedica consultaMedica);
-        public ConsultaMedica createConsultaMedicaSimple(ConsultaMedica consultaMedica);
+        public ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica);
+        public ConsultaMedica createConsultaMedicaSD(long consultaMedicaId);
         public ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica);
         public ConsultaMedica addReceta(int idConsultaMedica, Receta receta);
         public ConsultaMedica updateReceta(int idConsultaMedica, Receta receta);
@@ -16,6 +16,6 @@ namespace DAL.IDALs
         public ConsultaMedica addEstudio(int idConsultaMedica, Estudio estudio);
         public ConsultaMedica updateEstudio(int idConsultaMedica, Estudio estudio);
         public ConsultaMedica deleteEstudio(int idConsultaMedica, int idEstudio);
-        public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, string resultado, DateOnly fechaResultado);
+        public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, DateOnly fechaResultado, string imagenUrl);
     }
 }

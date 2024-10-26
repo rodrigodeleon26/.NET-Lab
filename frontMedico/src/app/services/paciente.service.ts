@@ -6,12 +6,12 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PacienteService {
-  private apiUrl = 'https://localhost:5001/api/pacientes'; // URL del microservicio
+  private apiUrl = 'https://localhost:5005/api/ConsultaMedica/HistoriasClinicas';
 
   constructor(private http: HttpClient) {}
 
-  getPacientes(): Observable<any[]> {
-    console.log('Obteniendo pacientes');
-    return this.http.get<any[]>(this.apiUrl);
+  getPacientes(id: number): Observable<any[]> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<any[]>(url);
   }
 }

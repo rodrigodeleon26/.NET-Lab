@@ -24,14 +24,14 @@ namespace BL.BLs
             return dal.getConsultaMedica(id);
         }
 
-        public ConsultaMedica createConsultaMedica(ConsultaMedica consultaMedica)
+        public ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica)
         {
             return dal.createConsultaMedica(consultaMedica);
         }
 
-        public ConsultaMedica createConsultaMedicaSimple(ConsultaMedica consultaMedica)
+        public ConsultaMedica createConsultaMedicaSD(long consultaMedicaId)
         {
-            return dal.createConsultaMedicaSimple(consultaMedica);
+            return dal.createConsultaMedicaSD(consultaMedicaId);
         }
 
         public ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica)
@@ -69,9 +69,9 @@ namespace BL.BLs
             return dal.deleteEstudio(idConsultaMedica, idEstudio);
         }
 
-        public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, string resultado, DateOnly fechaResultado)
+        public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, DateOnly fechaResultado, string imagenUrl)
         {
-            return dal.addResultadoEstudio(idConsultaMedica, idEstudio, resultado, fechaResultado);
+            return dal.addResultadoEstudio(idConsultaMedica, idEstudio, fechaResultado, imagenUrl);
         }
     }
 }
