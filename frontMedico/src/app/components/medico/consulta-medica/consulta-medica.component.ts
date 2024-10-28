@@ -12,6 +12,9 @@ export class ConsultaMedicaComponent implements OnInit {
   consultaMedica: any = {};
   consultaMeciaDatos = false;
 
+  modalEliminarConsultaMedica = false;
+  modalGuardarConsultaMedica = false;
+
   medicamentos = [
     { id: 1, name: 'Medicamento 1' },
     { id: 2, name: 'Medicamento 2' },
@@ -47,19 +50,25 @@ export class ConsultaMedicaComponent implements OnInit {
       estudios: [''],
     });
     this.recetaForm = this.fb.group({
-      id: [''],
+      id: [0],
       nombreMedicamento: ['', Validators.required],
-      cantidad: ['', [Validators.required, Validators.min(1)]],
-      frecuencia: ['', Validators.required],
+      cantidad: [
+        '', 
+        [Validators.required, Validators.pattern('^[1-9]\\d*$')] // Solo números positivos mayores que 0
+      ],
+      frecuencia: [
+        '', 
+        [Validators.required, Validators.pattern('^[1-9]\\d*$')] // Solo números positivos mayores que 0
+      ],
       vencimiento: ['', Validators.required],
     });
     this.estudioForm = this.fb.group({
-      id: [''],
+      id: [0],
       nombre: ['', Validators.required],
       descripcion: ['', Validators.required],
-      fechaRealizado: [''],
-      fechaResultado: [''],
-      imagenUrl: [''],
+      fechaRealizado: [null],
+      fechaResultado: [null],
+      imagenUrl: [null],
     });
   }
 
@@ -92,7 +101,12 @@ export class ConsultaMedicaComponent implements OnInit {
     this.recetaForm.reset();
   }
   openModalEditarReceta(receta: any) {
-    this.recetaForm.patchValue(receta);
+    const frecuencia = receta.frecuencia.match(/\d+/); 
+    const frecuenciaNumero = frecuencia ? +frecuencia[0] : null; 
+    this.recetaForm.patchValue({
+        ...receta,
+        frecuencia: frecuenciaNumero
+    });
     this.modalEditarReceta = true;
     this.modalReceta = true;
   }
@@ -127,6 +141,52 @@ export class ConsultaMedicaComponent implements OnInit {
     this.estudioForm.reset();
   }
 
+  openModalEliminarConsultaMedica() {
+    this.modalEliminarConsultaMedica = true;
+  }
+  closeModalEliminarConsultaMedica() { 
+    this.modalEliminarConsultaMedica = false;
+  }
+
+  openModalGuardarConsultaMedica() {
+    this.modalGuardarConsultaMedica = true;
+  }
+  closeModalGuardarConsultaMedica() {
+    this.modalGuardarConsultaMedica = false;
+  }
+
+  guardarConsultaMedica() {
+    // if (this.consultaMedicaForm.invalid) {
+    //   this.errorMessage = 'Debe completar todos los campos';
+    //   setTimeout(() => {
+    //     this.errorMessage = '';
+    //   }, 3000);
+    //   return;
+    // }
+    // this.loading = true;
+    // const consultaMedicaGuardar = this.consultaMedicaForm.value;
+    // this.consultaMedicaService.actualizarCosultaMedica(consultaMedicaGuardar).subscribe(
+    //   response => {
+    //     this.loading = false;
+    //     this.consultaMedica = response;
+    //     this.consultaMedicaForm.patchValue(this.consultaMedica);
+    //     this.consultaMeciaDatos = true;
+    //     this.modalGuardarConsultaMedica = false;
+    //     this.successMessage = 'Consulta médica guardada correctamente';
+    //     setTimeout(() => {
+    //       this.successMessage = '';
+    //     }, 3000);
+    //   },
+    //   error => {
+    //     this.loading = false;
+    //     this.errorMessage = 'Error al guardar la consulta médica';
+    //     setTimeout(() => {
+    //       this.errorMessage = '';
+    //     }, 3000);
+    //   }
+    // );
+  }
+
   actualizarCosultaMedica() {
     if (this.consultaMedicaForm.invalid) {
       this.errorMessage = 'Debe completar todos los campos';
@@ -158,25 +218,47 @@ export class ConsultaMedicaComponent implements OnInit {
     );
   }
 
-  agregarReceta() {
-    this.modalReceta = false;
-    if (this.recetaForm.invalid) {
-      this.errorMessage = 'Debe completar todos los campos correctamente';
-      setTimeout(() => {
+  eliminarConsultaMedica() {
+    this.loading = true;
+    this.consultaMedicaService.eliminarConsultaMedica(this.consultaMedica.id).subscribe(
+      response => {
+        this.loading = false;
+        this.successMessage = 'Consulta médica eliminada correctamente';
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error => {
+        this.loading = false;
+        this.errorMessage = 'Error al eliminar la consulta médica';
+        setTimeout(() => {
           this.errorMessage = '';
-      }, 3000);
+        }, 3000);
+      }
+    );
+  }
+
+  agregarReceta() {
+    if (this.recetaForm.invalid) {
+      this.recetaForm.markAllAsTouched(); 
       return;
     }
+    this.modalReceta = false;
     this.loading = true;
+    const frecuencia = this.recetaForm.get('frecuencia')?.value;
+    const frecuenciaString = `Cada ${frecuencia} horas`;
     const recetaAgregar = {
       ...this.recetaForm.value,
-      consultaMedicaId: this.consultaMedica.id 
+      consultaMedicaId: this.consultaMedica.id,
+      frecuencia: frecuenciaString,
+      id: 0
     };
     this.consultaMedicaService.agregarReceta(this.consultaMedica.id, recetaAgregar).subscribe(
       response => {
         this.loading = false;
         this.consultaMedica = response; 
         this.recetaForm.reset();
+        console.log(this.recetaForm);
         this.successMessage = 'Receta agregada correctamente';
         setTimeout(() => {
           this.successMessage = '';
@@ -193,17 +275,19 @@ export class ConsultaMedicaComponent implements OnInit {
   }
 
   editarReceta() {
-    this.modalReceta = false;
-    this.modalEditarReceta = false;
     if (this.recetaForm.invalid) {
-        this.errorMessage = 'Debe completar todos los campos correctamente';
-        setTimeout(() => {
-            this.errorMessage = '';
-        }, 3000);
-        return;
+      this.recetaForm.markAllAsTouched(); 
+      return;
     }
+    this.modalEditarReceta = false;
+    this.modalReceta = false;
     this.loading = true;
-    const recetaActualizada = this.recetaForm.value;
+    const frecuencia = this.recetaForm.get('frecuencia')?.value;
+    const frecuenciaString = `Cada ${frecuencia} horas`;
+    const recetaActualizada = {
+        ...this.recetaForm.value,
+        frecuencia: frecuenciaString 
+    };
     this.consultaMedicaService.editarReceta(this.consultaMedica.id, recetaActualizada).subscribe(
         response => {
             this.loading = false;
@@ -232,7 +316,7 @@ export class ConsultaMedicaComponent implements OnInit {
       response => {
         this.loading = false;
         this.consultaMedica = response;
-        this.recetaForm.reset();    
+        this.recetaForm.reset();
         this.successMessage = 'Receta eliminada correctamente';
         setTimeout(() => {
           this.successMessage = '';
@@ -249,18 +333,16 @@ export class ConsultaMedicaComponent implements OnInit {
   }
 
   agregarEstudio() {
-    this.modalEstudio = false;
     if (this.estudioForm.invalid) {
-      this.errorMessage = 'Debe completar todos los campos correctamente';
-      setTimeout(() => {
-          this.errorMessage = '';
-      }, 3000);
+      this.recetaForm.markAllAsTouched(); 
       return;
     }
+    this.modalEstudio = false;
     this.loading = true;
     const estudioAgregar = {
       ...this.estudioForm.value,
-      consultaMedicaId: this.consultaMedica.id 
+      consultaMedicaId: this.consultaMedica.id,
+      id: 0 
     };
     this.consultaMedicaService.agregarEstudio(this.consultaMedica.id, estudioAgregar).subscribe(
       response => {

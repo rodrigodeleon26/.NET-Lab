@@ -18,12 +18,17 @@ export class ConsultaMedicaService {
   }
 
   actualizarCosultaMedica(consultaMedica: any): Observable<any> {
-    console.log(consultaMedica);
     const url = `${this.apiUrl}/${consultaMedica.id}`;
     return this.http.put<any>(url, consultaMedica);
   }
 
+  eliminarConsultaMedica(id: number): Observable<any> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<any>(url);
+  }
+
   agregarReceta(consultaMedicaId: number, receta: any): Observable<any> {
+    console.log(receta);
     const url = `${this.apiUrl}/${consultaMedicaId}/receta`;
     return this.http.post<any>(url, receta);
   }
@@ -39,9 +44,10 @@ export class ConsultaMedicaService {
   }
 
   agregarEstudio(consultaMedicaId: number, estudio: any): Observable<any> {
+    console.log(estudio);
     const url = `${this.apiUrl}/${consultaMedicaId}/estudio`;
     return this.http.post<any>(url, estudio);
-}
+  }
 
 
   editarEstudio(consultaMedicaId: number, estudio: any): Observable<any> {

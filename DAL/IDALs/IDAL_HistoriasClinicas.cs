@@ -10,6 +10,7 @@ namespace DAL.IDALs
         public ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica);
         public ConsultaMedica createConsultaMedicaSD(long consultaMedicaId);
         public ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica);
+        public ConsultaMedica deleteConsultaMedica(int id);
         public ConsultaMedica addReceta(int idConsultaMedica, Receta receta);
         public ConsultaMedica updateReceta(int idConsultaMedica, Receta receta);
         public ConsultaMedica deleteReceta(int idConsultaMedica, int idReceta);

@@ -15,6 +15,7 @@ namespace BL.IBLs
         ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica);
         ConsultaMedica createConsultaMedicaSD(long consultaMedicaId);
         ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica);
+        ConsultaMedica deleteConsultaMedica(int id);
         ConsultaMedica addReceta(int idConsultaMedica, Receta receta);
         ConsultaMedica updateReceta(int idConsultaMedica, Receta receta);
         ConsultaMedica deleteReceta(int idConsultaMedica, int idReceta);

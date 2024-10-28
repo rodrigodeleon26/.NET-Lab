@@ -222,6 +222,48 @@ namespace DAL.DALs
             }
         }
 
+        //Eliminar consulta medica
+        public ConsultaMedica deleteConsultaMedica(int id)
+        {
+            using (var context = new DBContext())
+            {
+                var consultaMedicaEF = context.ConsultasMedicas
+                    .Include(c => c.Recetas)
+                    .Include(c => c.Estudios)
+                    .FirstOrDefault(c => c.Id == id);
+                if (consultaMedicaEF == null)
+                {
+                    return null;
+                }
+                context.ConsultasMedicas.Remove(consultaMedicaEF);
+                context.SaveChanges();
+                return new ConsultaMedica
+                {
+                    Id = consultaMedicaEF.Id,
+                    Descripcion = consultaMedicaEF.Descripcion,
+                    Diagnostico = consultaMedicaEF.Diagnostico,
+                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
+                    Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
+                    {
+                        Id = r.Id,
+                        NombreMedicamento = r.NombreMedicamento,
+                        Cantidad = r.Cantidad,
+                        Frecuencia = r.Frecuencia,
+                        Vencimiento = r.Vencimiento
+                    }).ToList(),
+                    Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
+                    {
+                        Id = e.Id,
+                        Nombre = e.Nombre,
+                        Descripcion = e.Descripcion,
+                        FechaRealizado = e.FechaRealizado,
+                        FechaResultado = e.FechaResultado,
+                        ImagenUrl = e.ImagenUrl,
+                    }).ToList()
+                };
+            }
+        }
+
         //Agregar receta a consulta medica
         public ConsultaMedica addReceta(int idConsultaMedica, Receta receta)
         {

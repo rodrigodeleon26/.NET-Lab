@@ -105,6 +105,20 @@ namespace HistoriaClinicaWebApi.Controllers
             }
         }
 
+        //DELETE api/<HistoriasClinicasController>/5
+        [ProducesResponseType(typeof(ConsultaMedica), 200)]
+        [ProducesResponseType(404)]
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var consultaMedicaEliminada = _blHistoriasClinicas.deleteConsultaMedica(id);
+            if (consultaMedicaEliminada == null)
+            {
+                return NotFound(new { Message = "No existe consulta médica con ese ID" });
+            }
+            return Ok(consultaMedicaEliminada);
+        }
+
         // POST api/<HistoriasClinicasController>/5/Receta
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(400)]

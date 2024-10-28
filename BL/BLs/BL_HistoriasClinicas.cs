@@ -39,6 +39,11 @@ namespace BL.BLs
             return dal.updateConsultaMedica(consultaMedica);
         }
 
+        public ConsultaMedica deleteConsultaMedica(int id)
+        {
+            return dal.deleteConsultaMedica(id);
+        }
+
         public ConsultaMedica addReceta(int idConsultaMedica, Receta receta)
         {
             return dal.addReceta(idConsultaMedica, receta);
