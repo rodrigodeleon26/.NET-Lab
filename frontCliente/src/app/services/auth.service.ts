@@ -7,7 +7,7 @@ import { environment } from '../shared/constants';
   providedIn: 'root'
 })
 export class AuthService {
-  private twoFactorAuthenticated: boolean = false; // Estado para rastrear la autenticación 2FA
+  private twoFactorAuthenticated: boolean = false;
 
   constructor(private http:HttpClient) { }
 
@@ -49,6 +49,14 @@ export class AuthService {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/validateTwoFactorCode', { email, code });
   }
 
+  enableTwoFactorAuth(email: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/enableTwoFactorAuth', { email });
+  }
+
+  disableTwoFactorAuth(email: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/disableTwoFactorAuth', { email });
+  }
+
   isLoggedIn(){
     return this.getToken() != null ? true : false;
   }
@@ -56,6 +64,7 @@ export class AuthService {
   deleteToken(){
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    this.setTwoFactorAuthenticated(false);
   }
 
   saveToken(token:string, refreshToken:string){

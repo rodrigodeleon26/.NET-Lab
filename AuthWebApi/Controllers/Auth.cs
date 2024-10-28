@@ -72,6 +72,11 @@ namespace AuthWebApi.Controllers
         public string Code { get; set; }
     }
 
+    public class TwoFactorAuthModel
+    {
+        public string Email { get; set; }
+    }
+
     public static class Auth
     {
         public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
@@ -81,10 +86,12 @@ namespace AuthWebApi.Controllers
             app.MapPost("api/auth/refreshToken", RefreshToken);
             app.MapPost("api/auth/resendConfirmationEmail", ResendConfirmationEmail);
             app.MapPost("api/auth/confirmEmail", ConfirmEmail);
-            app.MapPost("api/auth/forgotPassword", ForgotPassword); // Nuevo endpoint
-            app.MapPost("api/auth/resetPassword", ResetPassword); // Nuevo endpoint
-            app.MapPost("api/auth/generateQrCode", GenerateQrCode); // Nuevo endpoint
-            app.MapPost("api/auth/validateTwoFactorCode", ValidateTwoFactorCode); // Nuevo endpoint
+            app.MapPost("api/auth/forgotPassword", ForgotPassword);
+            app.MapPost("api/auth/resetPassword", ResetPassword); 
+            app.MapPost("api/auth/generateQrCode", GenerateQrCode); 
+            app.MapPost("api/auth/validateTwoFactorCode", ValidateTwoFactorCode);
+            app.MapPost("api/auth/enableTwoFactorAuth", EnableTwoFactorAuth); 
+            app.MapPost("api/auth/disableTwoFactorAuth", DisableTwoFactorAuth); 
             return app;
         }
 
@@ -326,6 +333,11 @@ namespace AuthWebApi.Controllers
                 return Results.BadRequest(new { message = "Usuario no encontrado" });
             }
 
+            if (!user.TwoFactorEnabled)
+            {
+                return Results.BadRequest(new { message = "La autenticación de dos factores no está habilitada" });
+            }
+
             var (qrCodeImageUrl, manualEntrySetupCode) = await twoFactorAuthService.GenerateQrCodeAsync(user);
             return Results.Ok(new { qrCodeImageUrl, manualEntrySetupCode });
         }
@@ -342,6 +354,11 @@ namespace AuthWebApi.Controllers
                 return Results.BadRequest(new { message = "Usuario no encontrado" });
             }
 
+            if (!user.TwoFactorEnabled)
+            {
+                return Results.BadRequest(new { message = "La autenticación de dos factores no está habilitada" });
+            }
+
             var isValid = twoFactorAuthService.ValidateTwoFactorCode(user, twoFactorCodeModel.Code);
             if (isValid)
             {
@@ -351,6 +368,56 @@ namespace AuthWebApi.Controllers
             {
                 return Results.BadRequest(new { message = "Código 2FA inválido" });
             }
+        }
+
+        [AllowAnonymous]
+        private static async Task<IResult> EnableTwoFactorAuth(
+        UserManager<AppUsers> userManager,
+        TwoFactorAuthService twoFactorAuthService,
+        [FromBody] TwoFactorAuthModel twoFactorAuthModel)
+        {
+            var user = await userManager.FindByEmailAsync(twoFactorAuthModel.Email);
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            if (user.TwoFactorEnabled)
+            {
+                return Results.BadRequest(new { message = "La autenticación de dos factores ya está habilitada" });
+            }
+
+            user.TwoFactorEnabled = true;
+            await userManager.UpdateAsync(user);
+
+            var tokens = await GenerateTokens(user, userManager);
+
+            return Results.Ok(new { message = "Autenticación de dos factores habilitada", tokens});
+        }
+
+        [AllowAnonymous]
+        private static async Task<IResult> DisableTwoFactorAuth(
+            UserManager<AppUsers> userManager,
+            [FromBody] TwoFactorAuthModel twoFactorAuthModel)
+        {
+            var user = await userManager.FindByEmailAsync(twoFactorAuthModel.Email);
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            if (!user.TwoFactorEnabled)
+            {
+                return Results.BadRequest(new { message = "La autenticación de dos factores no está habilitada" });
+            }
+
+            user.TwoFactorAuthKey = null;
+            user.TwoFactorEnabled = false;
+            await userManager.UpdateAsync(user);
+
+            var tokens = await GenerateTokens(user, userManager);
+
+            return Results.Ok(new { message = "Autenticación de dos factores desactivada", tokens });
         }
 
         private static async Task<object> GenerateTokens(AppUsers user, UserManager<AppUsers> userManager)
