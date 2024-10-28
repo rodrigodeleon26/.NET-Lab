@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { UserComponent } from './components/user/user.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { RegisterComponent } from './components/user/register/register.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -16,6 +16,7 @@ import { AuthInterceptor } from './shared/auth.interceptor';
 import { ResetPasswordComponent } from './components/user/reset-password/reset-password.component';
 import { ConfirmEmailComponent } from './components/user/confirm-email/confirm-email.component';
 import { ResendEmailConfirmationComponent } from './components/user/resend-email-confirmation/resend-email-confirmation.component';
+import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-factor-auth.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { ResendEmailConfirmationComponent } from './components/user/resend-email
     ResetPasswordComponent,
     ConfirmEmailComponent,
     ResendEmailConfirmationComponent,
+    TwoFactorAuthComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,6 +37,7 @@ import { ResendEmailConfirmationComponent } from './components/user/resend-email
     HttpClientModule,
     ReactiveFormsModule,
     RouterModule,
+    FormsModule, // Agrega FormsModule aquí
     BrowserAnimationsModule, 
     ToastrModule.forRoot(), 
   ],

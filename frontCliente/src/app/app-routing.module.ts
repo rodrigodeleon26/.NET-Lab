@@ -8,6 +8,7 @@ import { ResetPasswordComponent } from './components/user/reset-password/reset-p
 import { ConfirmEmailComponent } from './components/user/confirm-email/confirm-email.component';
 import { ResendEmailConfirmationComponent } from './components/user/resend-email-confirmation/resend-email-confirmation.component';
 import { authGuard } from './shared/auth.guard';
+import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-factor-auth.component';
 
 const routes: Routes = [
   { path: '', component: UserComponent,
@@ -16,7 +17,8 @@ const routes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'resetPassword', component: ResetPasswordComponent },
       { path: 'confirmEmail', component: ConfirmEmailComponent, canActivate: [authGuard] },
-      { path: 'resendEmailConfirmation', component: ResendEmailConfirmationComponent, canActivate: [authGuard] }
+      { path: 'resendEmailConfirmation', component: ResendEmailConfirmationComponent, canActivate: [authGuard] },
+      { path: 'twoFactorAuth', component: TwoFactorAuthComponent, canActivate: [authGuard] }
     ]
   },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },

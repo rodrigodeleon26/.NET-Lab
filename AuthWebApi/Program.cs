@@ -15,7 +15,7 @@ try
     builder.Services.AddSwaggerExplorer()
                     .InjectDBContext()
                     .InjectDALandBL()
-                    .AddEmailService()
+                    .AddEmailand2FAService()
                     .AddIdentityHandlersAndStores()
                     .ConfigureIdentityOptions()
                     .AddIdentityAuth();

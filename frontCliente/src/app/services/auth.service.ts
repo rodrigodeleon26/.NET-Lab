@@ -7,6 +7,7 @@ import { environment } from '../shared/constants';
   providedIn: 'root'
 })
 export class AuthService {
+  private twoFactorAuthenticated: boolean = false; // Estado para rastrear la autenticación 2FA
 
   constructor(private http:HttpClient) { }
 
@@ -38,6 +39,14 @@ export class AuthService {
 
   resendEmailConfirmation(email: string) {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/resendConfirmationEmail', { email });
+  }
+
+  generateQrCode(email: string)  {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/generateQrCode', { email });
+  }
+
+  validateTwoFactorCode(email: string, code: string) {
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/validateTwoFactorCode', { email, code });
   }
 
   isLoggedIn(){
@@ -74,5 +83,18 @@ export class AuthService {
   getEmail(): string {
     const claims = this.getClaims();
     return claims ? claims.email : '';
+  }
+
+  getTwoFactorEnabledStatus(): boolean {
+    const claims = this.getClaims();
+    return claims ? claims.TwoFactorEnabled === 'True' : false;
+  }
+
+  setTwoFactorAuthenticated(status: boolean) {
+    this.twoFactorAuthenticated = status;
+  }
+
+  isTwoFactorAuthenticated(): boolean {
+    return this.twoFactorAuthenticated;
   }
 }

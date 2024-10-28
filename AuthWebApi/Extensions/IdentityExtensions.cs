@@ -16,7 +16,8 @@ namespace AuthWebApi.Extensions
             services
                 .AddIdentityApiEndpoints<AppUsers>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<DBContext>();
+                .AddEntityFrameworkStores<DBContext>()
+                .AddDefaultTokenProviders();
             return services;
         }
 

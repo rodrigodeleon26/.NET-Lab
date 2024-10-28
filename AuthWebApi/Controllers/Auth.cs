@@ -1,4 +1,5 @@
-﻿using BL.IBLs;
+﻿using AuthWebApi.Services;
+using BL.IBLs;
 using DAL;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -60,7 +61,18 @@ namespace AuthWebApi.Controllers
         public string Token { get; set; }
     }
 
-        public static class Auth
+    public class GenerateQrCodeModel
+    {
+        public string Email { get; set; }
+    }
+
+    public class TwoFactorCodeModel
+    {
+        public string Email { get; set; }
+        public string Code { get; set; }
+    }
+
+    public static class Auth
     {
         public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
         {
@@ -71,6 +83,8 @@ namespace AuthWebApi.Controllers
             app.MapPost("api/auth/confirmEmail", ConfirmEmail);
             app.MapPost("api/auth/forgotPassword", ForgotPassword); // Nuevo endpoint
             app.MapPost("api/auth/resetPassword", ResetPassword); // Nuevo endpoint
+            app.MapPost("api/auth/generateQrCode", GenerateQrCode); // Nuevo endpoint
+            app.MapPost("api/auth/validateTwoFactorCode", ValidateTwoFactorCode); // Nuevo endpoint
             return app;
         }
 
@@ -300,6 +314,45 @@ namespace AuthWebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
+        private static async Task<IResult> GenerateQrCode(
+            UserManager<AppUsers> userManager,
+            TwoFactorAuthService twoFactorAuthService,
+            [FromBody] GenerateQrCodeModel generateQrCodeModel)
+        {
+            var user = await userManager.FindByEmailAsync(generateQrCodeModel.Email);
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            var (qrCodeImageUrl, manualEntrySetupCode) = await twoFactorAuthService.GenerateQrCodeAsync(user);
+            return Results.Ok(new { qrCodeImageUrl, manualEntrySetupCode });
+        }
+
+        [AllowAnonymous]
+        private static IResult ValidateTwoFactorCode(
+            UserManager<AppUsers> userManager,
+            TwoFactorAuthService twoFactorAuthService,
+            [FromBody] TwoFactorCodeModel twoFactorCodeModel)
+        {
+            var user = userManager.FindByEmailAsync(twoFactorCodeModel.Email).Result;
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado" });
+            }
+
+            var isValid = twoFactorAuthService.ValidateTwoFactorCode(user, twoFactorCodeModel.Code);
+            if (isValid)
+            {
+                return Results.Ok(new { message = "Código 2FA válido" });
+            }
+            else
+            {
+                return Results.BadRequest(new { message = "Código 2FA inválido" });
+            }
+        }
+
         private static async Task<object> GenerateTokens(AppUsers user, UserManager<AppUsers> userManager)
         {
             var roles = await userManager.GetRolesAsync(user);
@@ -314,13 +367,14 @@ namespace AuthWebApi.Controllers
                 new Claim("email", user.Email!),
                 new Claim("fullName", user.FullName),
                 new Claim(ClaimTypes.Role, roles.First()),
-                new Claim("emailConfirmed", user.EmailConfirmed.ToString()) // Añadir esta línea
+                new Claim("emailConfirmed", user.EmailConfirmed.ToString()),
+                new Claim("TwoFactorEnabled", user.TwoFactorEnabled.ToString())
             });
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddSeconds(5),
+                Expires = DateTime.UtcNow.AddMinutes(30),
                 SigningCredentials = new SigningCredentials(
                     signInKey,
                     SecurityAlgorithms.HmacSha256Signature

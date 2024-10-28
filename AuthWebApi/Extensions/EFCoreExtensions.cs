@@ -6,6 +6,7 @@ using BL.BLs;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.Services;
+using AuthWebApi.Services;
 
 namespace AuthWebApi.Extensions
 {
@@ -29,9 +30,10 @@ namespace AuthWebApi.Extensions
             return services;
         }
 
-        public static IServiceCollection AddEmailService(this IServiceCollection services) {
+        public static IServiceCollection AddEmailand2FAService(this IServiceCollection services) {
             services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<EmailService>();
+            services.AddScoped<TwoFactorAuthService>();
             return services;
         }
     }

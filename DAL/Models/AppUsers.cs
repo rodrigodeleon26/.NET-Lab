@@ -18,7 +18,10 @@ namespace DAL.Models
         public bool Activo { get; set; } = false;
 
         public string? RefreshToken { get; set; }
-        public DateTime RefreshTokenExpiryTime { get; set; } 
+        public DateTime RefreshTokenExpiryTime { get; set; }
+
+        // Nueva propiedad para almacenar la clave de autenticación de dos factores
+        public string? TwoFactorAuthKey { get; set; }
 
         //// Relación con Medico (opcional)
         //[PersonalData]

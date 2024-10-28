@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit{
 
   onLogout() {
     this.authService.deleteToken(); 
+    this.authService.setTwoFactorAuthenticated(false); // Actualizar el estado de autenticación 2FA
     this.router.navigateByUrl('/login');
   }
 }
