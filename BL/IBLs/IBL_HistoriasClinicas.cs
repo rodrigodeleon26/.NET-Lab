@@ -12,15 +12,16 @@ namespace BL.IBLs
     {
         List<ConsultaMedica> getConsultasMedicas();
         ConsultaMedica getConsultaMedica(int id);
-        ConsultaMedica createConsultaMedica(ConsultaMedica consultaMedica);
-        ConsultaMedica createConsultaMedicaSimple(ConsultaMedica consultaMedica);
+        ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica);
+        ConsultaMedica createConsultaMedicaSD(long consultaMedicaId);
         ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica);
+        ConsultaMedica deleteConsultaMedica(int id);
         ConsultaMedica addReceta(int idConsultaMedica, Receta receta);
         ConsultaMedica updateReceta(int idConsultaMedica, Receta receta);
         ConsultaMedica deleteReceta(int idConsultaMedica, int idReceta);
         ConsultaMedica addEstudio(int idConsultaMedica, Estudio estudio);
         ConsultaMedica updateEstudio(int idConsultaMedica, Estudio estudio);
         ConsultaMedica deleteEstudio(int idConsultaMedica, int idEstudio);
-        ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, string resultado, DateOnly fechaResultado);
+        ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, DateOnly fechaResultado, string imagenUrl);
     }
 }

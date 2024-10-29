@@ -16,4 +16,12 @@
 
         public List<Receta> Recetas { get; set; } = new List<Receta>();
     }
+
+    public class ConsultaMedicaDTO
+    {
+        public long Id { get; set; }
+        public string Descripcion { get; set; }
+        public string Diagnostico { get; set; }
+        public long CitaMedicaId { get; set; }
+    }
 }

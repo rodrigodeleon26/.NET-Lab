@@ -16,17 +16,19 @@ namespace DAL.Models
         public string Descripcion { get; set; }
 
         [Required]
-        public DateOnly FechaRealizado { get; set; }
+        public DateOnly? FechaRealizado { get; set; }
 
         [Required]
         public DateOnly? FechaResultado { get; set; }
+
         [Required]
-        public string? Resultado { get; set; }
+        public string? ImagenUrl { get; set; }
 
         [Required]
         public long ConsultaMedicaId { get; set; }
 
         [ForeignKey(nameof(ConsultaMedicaId))]
         public virtual ConsultasMedicas ConsultaMedica { get; set; } 
+
     }
 }

@@ -34,7 +34,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
+                        ImagenUrl = e.ImagenUrl,
                         ConsultaMedicaId = e.ConsultaMedicaId
                     }).ToList(),
                     Recetas = c.Recetas.Select(r => new Receta
@@ -69,7 +69,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
+                        ImagenUrl = e.ImagenUrl,
                         ConsultaMedicaId = e.ConsultaMedicaId
                     }).ToList(),
                     Recetas = c.Recetas.Select(r => new Receta
@@ -85,67 +85,13 @@ namespace DAL.DALs
             }
         }
 
-        //Crear consulta medica
-        public ConsultaMedica createConsultaMedica(ConsultaMedica consultaMedica)
-        {
-            using (var context = new DBContext())
-            {
-                var consultaMedicaEF = new ConsultasMedicas
-                {
-                    Descripcion = consultaMedica.Descripcion,
-                    Diagnostico = consultaMedica.Diagnostico,
-                    CitaMedicaId = consultaMedica.CitaMedicaId,
-                    Recetas = consultaMedica.Recetas.Select(r => new Recetas
-                    {
-                        Vencimiento = r.Vencimiento,
-                        NombreMedicamento = r.NombreMedicamento,
-                        Cantidad = r.Cantidad,
-                        Frecuencia = r.Frecuencia
-                        // No es necesario asignar ConsultaMedicaId aquí, ya que se maneja automáticamente por la relación
-                    }).ToList(),
-                    Estudios = consultaMedica.Estudios.Select(e => new Estudios
-                    {
-                        Nombre = e.Nombre,
-                        Descripcion = e.Descripcion,
-                        FechaRealizado = e.FechaRealizado,
-                        FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado
-                        // No es necesario asignar ConsultaMedicaId aquí, ya que se maneja automáticamente por la relación
-                    }).ToList()
-                };
-                context.ConsultasMedicas.Add(consultaMedicaEF);
-                context.SaveChanges();
-                return new ConsultaMedica
-                {
-                    Id = consultaMedicaEF.Id,
-                    Descripcion = consultaMedicaEF.Descripcion,
-                    Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
-                    Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
-                    {
-                        Id = r.Id,
-                        Vencimiento = r.Vencimiento,
-                        NombreMedicamento = r.NombreMedicamento,
-                        Cantidad = r.Cantidad,
-                        Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
-                    }).ToList(),
-                    Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
-                    {
-                        Id = e.Id,
-                        Nombre = e.Nombre,
-                        Descripcion = e.Descripcion,
-                        FechaRealizado = e.FechaRealizado,
-                        FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
-                    }).ToList()
-                };
-            }
-        }
+        //public static string GeneratePseudonym()
+        //{
+        //    return Guid.NewGuid().ToString();
+        //}
 
-        //Crear consulta medica sin recetas ni estudios
-        public ConsultaMedica createConsultaMedicaSimple(ConsultaMedica consultaMedica)
+        //Crear consulta medica
+        public ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica)
         {
             using (var context = new DBContext())
             {
@@ -162,46 +108,40 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId
+                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
+                    Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
+                    {
+                        Id = r.Id,
+                        NombreMedicamento = r.NombreMedicamento,
+                        Cantidad = r.Cantidad,
+                        Frecuencia = r.Frecuencia,
+                        Vencimiento = r.Vencimiento
+                    }).ToList(),
+                    Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
+                    {
+                        Id = e.Id,
+                        Nombre = e.Nombre,
+                        Descripcion = e.Descripcion,
+                        FechaRealizado = e.FechaRealizado,
+                        FechaResultado = e.FechaResultado,
+                        ImagenUrl = e.ImagenUrl,
+                    }).ToList()
                 };
             }
         }
 
-        //Actualizar consulta medica
-        public ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica)
+        //Crear consulta medica sin datos solo CitamMedicaID
+        public ConsultaMedica createConsultaMedicaSD(long citeMedicaId)
         {
             using (var context = new DBContext())
             {
-                var consultaMedicaEF = context.ConsultasMedicas
-                .Include(c => c.Recetas)
-                .Include(c => c.Estudios)
-                .FirstOrDefault(c => c.Id == consultaMedica.Id);
-                if (consultaMedicaEF == null)
+                var consultaMedicaEF = new ConsultasMedicas
                 {
-                    return null;
-                }
-                consultaMedicaEF.Descripcion = consultaMedica.Descripcion;
-                consultaMedicaEF.Diagnostico = consultaMedica.Diagnostico;
-                consultaMedicaEF.CitaMedicaId = consultaMedica.CitaMedicaId;
-                consultaMedicaEF.Recetas = consultaMedica.Recetas.Select(r => new Recetas
-                {
-                    Id = r.Id,
-                    Vencimiento = r.Vencimiento,
-                    NombreMedicamento = r.NombreMedicamento,
-                    Cantidad = r.Cantidad,
-                    Frecuencia = r.Frecuencia,
-                    ConsultaMedicaId = r.ConsultaMedicaId
-                }).ToList();
-                consultaMedicaEF.Estudios = consultaMedica.Estudios.Select(e => new Estudios
-                {
-                    Id = e.Id,
-                    Nombre = e.Nombre,
-                    Descripcion = e.Descripcion,
-                    FechaRealizado = e.FechaRealizado,
-                    FechaResultado = e.FechaResultado,
-                    Resultado = e.Resultado,
-                    ConsultaMedicaId = e.ConsultaMedicaId
-                }).ToList();
+                    Descripcion = "",
+                    Diagnostico = "",
+                    CitaMedicaId = citeMedicaId
+                };
+                context.ConsultasMedicas.Add(consultaMedicaEF);
                 context.SaveChanges();
                 return new ConsultaMedica
                 {
@@ -212,10 +152,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -224,7 +164,101 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
+                        ImagenUrl = e.ImagenUrl,
+                    }).ToList()
+                };
+            }
+        }
+
+        //Actualizar consulta medica
+        public ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica)
+        {
+            try
+            {
+                using (var context = new DBContext())
+                {
+                    var consultaMedicaEF = context.ConsultasMedicas
+                        .Include(c => c.Recetas)
+                        .Include(c => c.Estudios)
+                        .FirstOrDefault(c => c.Id == consultaMedica.Id);
+                    if (consultaMedicaEF == null)
+                    {
+                        return null;
+                    }
+                    consultaMedicaEF.Descripcion = consultaMedica.Descripcion;
+                    consultaMedicaEF.Diagnostico = consultaMedica.Diagnostico;
+                    consultaMedicaEF.CitaMedicaId = consultaMedica.CitaMedicaId;
+                    context.SaveChanges();
+                    return new ConsultaMedica
+                    {
+                        Id = consultaMedicaEF.Id,
+                        Descripcion = consultaMedicaEF.Descripcion,
+                        Diagnostico = consultaMedicaEF.Diagnostico,
+                        CitaMedicaId = consultaMedicaEF.CitaMedicaId,
+                        Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
+                        {
+                            Id = r.Id,
+                            NombreMedicamento = r.NombreMedicamento,
+                            Cantidad = r.Cantidad,
+                            Frecuencia = r.Frecuencia,
+                            Vencimiento = r.Vencimiento
+                        }).ToList(),
+                        Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
+                        {
+                            Id = e.Id,
+                            Nombre = e.Nombre,
+                            Descripcion = e.Descripcion,
+                            FechaRealizado = e.FechaRealizado,
+                            FechaResultado = e.FechaResultado,
+                            ImagenUrl = e.ImagenUrl,
+                        }).ToList()
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                // Aquí puedes hacer logging del error o devolver una respuesta más detallada
+                throw new Exception("Error al actualizar la consulta médica", ex);
+            }
+        }
+
+        //Eliminar consulta medica
+        public ConsultaMedica deleteConsultaMedica(int id)
+        {
+            using (var context = new DBContext())
+            {
+                var consultaMedicaEF = context.ConsultasMedicas
+                    .Include(c => c.Recetas)
+                    .Include(c => c.Estudios)
+                    .FirstOrDefault(c => c.Id == id);
+                if (consultaMedicaEF == null)
+                {
+                    return null;
+                }
+                context.ConsultasMedicas.Remove(consultaMedicaEF);
+                context.SaveChanges();
+                return new ConsultaMedica
+                {
+                    Id = consultaMedicaEF.Id,
+                    Descripcion = consultaMedicaEF.Descripcion,
+                    Diagnostico = consultaMedicaEF.Diagnostico,
+                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
+                    Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
+                    {
+                        Id = r.Id,
+                        NombreMedicamento = r.NombreMedicamento,
+                        Cantidad = r.Cantidad,
+                        Frecuencia = r.Frecuencia,
+                        Vencimiento = r.Vencimiento
+                    }).ToList(),
+                    Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
+                    {
+                        Id = e.Id,
+                        Nombre = e.Nombre,
+                        Descripcion = e.Descripcion,
+                        FechaRealizado = e.FechaRealizado,
+                        FechaResultado = e.FechaResultado,
+                        ImagenUrl = e.ImagenUrl,
                     }).ToList()
                 };
             }
@@ -237,6 +271,7 @@ namespace DAL.DALs
             {
                 var consultaMedicaEF = context.ConsultasMedicas
                 .Include(c => c.Recetas)
+                .Include(c => c.Estudios)
                 .FirstOrDefault(c => c.Id == idConsultaMedica);
                 if (consultaMedicaEF == null)
                 {
@@ -261,11 +296,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -274,8 +308,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
+                        ImagenUrl = e.ImagenUrl,
                     }).ToList()
                 };
             }
@@ -288,6 +321,7 @@ namespace DAL.DALs
             {
                 var consultaMedicaEF = context.ConsultasMedicas
                     .Include(c => c.Recetas)
+                    .Include(c => c.Estudios)
                     .FirstOrDefault(c => c.Id == idConsultaMedica);
                 if (consultaMedicaEF == null)
                 {
@@ -312,11 +346,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -325,8 +358,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
+                        ImagenUrl = e.ImagenUrl,
                     }).ToList()
                 };
             }
@@ -339,6 +371,7 @@ namespace DAL.DALs
             {
                 var consultaMedicaEF = context.ConsultasMedicas
                     .Include(c => c.Recetas)
+                    .Include(c => c.Estudios)
                     .FirstOrDefault(c => c.Id == idConsultaMedica);
                 if (consultaMedicaEF == null)
                 {
@@ -360,11 +393,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -373,8 +405,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
+                        ImagenUrl = e.ImagenUrl,
                     }).ToList()
                 };
             }
@@ -387,22 +418,31 @@ namespace DAL.DALs
             {
                 var consultaMedicaEF = context.ConsultasMedicas
                 .Include(c => c.Estudios)
+                .Include(c => c.Recetas)
                 .FirstOrDefault(c => c.Id == idConsultaMedica);
                 if (consultaMedicaEF == null)
                 {
                     return null;
                 }
+                //var encryptedImagenUrl = "";
+                //if (estudio.ImagenUrl != null || estudio.ImagenUrl != "")
+                //{
+                //    encryptedImagenUrl = EncryptionHelper.Encrypt(estudio.ImagenUrl);
+                //} 
                 var estudioEF = new Estudios
                 {
                     Nombre = estudio.Nombre,
                     Descripcion = estudio.Descripcion,
                     FechaRealizado = estudio.FechaRealizado,
                     FechaResultado = estudio.FechaResultado,
-                    Resultado = estudio.Resultado,
+                    ImagenUrl = estudio.ImagenUrl,
                     ConsultaMedicaId = idConsultaMedica
                 };
                 consultaMedicaEF.Estudios.Add(estudioEF);
                 context.SaveChanges();
+
+                //var decryptedImagenUrl = EncryptionHelper.Decrypt(estudioEF.ImagenUrl);
+
                 return new ConsultaMedica
                 {
                     Id = consultaMedicaEF.Id,
@@ -412,11 +452,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -425,8 +464,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
+                        ImagenUrl = e.ImagenUrl,
                     }).ToList()
                 };
             }
@@ -439,6 +477,7 @@ namespace DAL.DALs
             {
                 var consultaMedicaEF = context.ConsultasMedicas
                     .Include(c => c.Estudios)
+                    .Include(c => c.Recetas)
                     .FirstOrDefault(c => c.Id == idConsultaMedica);
                 if (consultaMedicaEF == null)
                 {
@@ -453,7 +492,7 @@ namespace DAL.DALs
                 estudioEF.Descripcion = estudio.Descripcion;
                 estudioEF.FechaRealizado = estudio.FechaRealizado;
                 estudioEF.FechaResultado = estudio.FechaResultado;
-                estudioEF.Resultado = estudio.Resultado;
+                estudioEF.ImagenUrl = estudio.ImagenUrl;
                 context.SaveChanges();
                 return new ConsultaMedica
                 {
@@ -464,11 +503,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -477,8 +515,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
+                        ImagenUrl = e.ImagenUrl,
                     }).ToList()
                 };
             }
@@ -491,6 +528,7 @@ namespace DAL.DALs
             {
                 var consultaMedicaEF = context.ConsultasMedicas
                     .Include(c => c.Estudios)
+                    .Include(c => c.Recetas)
                     .FirstOrDefault(c => c.Id == idConsultaMedica);
                 if (consultaMedicaEF == null)
                 {
@@ -512,11 +550,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -525,20 +562,20 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
+                        ImagenUrl = e.ImagenUrl,
                     }).ToList()
                 };
             }
         }
 
         //Agregar resultado a estudio de consulta medica
-        public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, string resultado, DateOnly fechaResultado)
+        public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, DateOnly fechaResultado, string imagenUrl)
         {
             using (var context = new DBContext())
             {
                 var consultaMedicaEF = context.ConsultasMedicas
                     .Include(c => c.Estudios)
+                    .Include(c => c.Recetas)
                     .FirstOrDefault(c => c.Id == idConsultaMedica);
                 if (consultaMedicaEF == null)
                 {
@@ -549,8 +586,13 @@ namespace DAL.DALs
                 {
                     return null;
                 }
+                var encryptedImagenUrl = "";
+                if (imagenUrl != null || imagenUrl != "")
+                {
+                    encryptedImagenUrl = EncryptionHelper.Encrypt(imagenUrl);
+                }
                 estudioEF.FechaResultado = fechaResultado;
-                estudioEF.Resultado = resultado;
+                estudioEF.ImagenUrl = encryptedImagenUrl;
                 context.SaveChanges();
                 return new ConsultaMedica
                 {
@@ -561,11 +603,10 @@ namespace DAL.DALs
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
-                        Vencimiento = r.Vencimiento,
                         NombreMedicamento = r.NombreMedicamento,
                         Cantidad = r.Cantidad,
                         Frecuencia = r.Frecuencia,
-                        ConsultaMedicaId = r.ConsultaMedicaId
+                        Vencimiento = r.Vencimiento
                     }).ToList(),
                     Estudios = consultaMedicaEF.Estudios.Select(e => new Estudio
                     {
@@ -574,8 +615,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        Resultado = e.Resultado,
-                        ConsultaMedicaId = e.ConsultaMedicaId
+                        ImagenUrl = EncryptionHelper.TryDecrypt(e.ImagenUrl)
                     }).ToList()
                 };
             }

@@ -4,11 +4,11 @@ import { PacienteService } from './services/paciente.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'frontMedico';
   pacientes: any[] = [];
+  pacienteId: number = 3;
 
   constructor(private pacienteService: PacienteService) {}
 
@@ -17,9 +17,9 @@ export class AppComponent {
   }
 
   loadPacientes() {
-    this.pacienteService.getPacientes().subscribe(
+    this.pacienteService.getPacientes(this.pacienteId).subscribe(
       (data) => {
-        this.pacientes = data;
+        this.pacientes = data || []; // Si no hay datos, usar un array vacío
         console.log('Pacientes cargados', this.pacientes);
       },
       (error) => {
