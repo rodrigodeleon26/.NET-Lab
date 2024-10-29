@@ -29,5 +29,7 @@ namespace DAL.Models
         public string Telefono { get; set; } = "-- Sin Teléfono --";
 
         public virtual ICollection<Calendarios> Calendarios { get; set; } = new List<Calendarios>(); // Virtual para Lazy Loading
+
+        public virtual ICollection<EspecialidadesMedicos> EspecialidadesMedicos { get; set; } = new List<EspecialidadesMedicos>(); // Virtual para Lazy Loading
     }
 }

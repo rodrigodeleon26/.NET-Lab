@@ -79,5 +79,7 @@ namespace DAL
         public DbSet<Articulos> Articulos { get; set; }
         public DbSet<Copagos> Copagos { get; set; }
         public DbSet<Precios> Precios { get; set; }
+        public DbSet<EspecialidadesMedicos> EspecialidadesMedicos { get; set; }
+
     }
 }
