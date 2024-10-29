@@ -18,6 +18,8 @@
 
         //public long? ConsultorioId { get; set; }
 
+        public long? ConsultaMedicaId { get; set; }
+
         public long? PacienteId { get; set; }
     }
 }

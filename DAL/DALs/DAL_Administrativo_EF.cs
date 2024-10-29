@@ -934,17 +934,7 @@ namespace DAL.DALs
 								Descripcion = c.Calendario.Especialidad.Descripcion
 							},
 						},
-						Paciente = c.Paciente != null ? new Paciente
-						{
-							Id = c.Paciente.Id,
-							Nombres = c.Paciente.Nombres,
-							Apellidos = c.Paciente.Apellidos,
-							Documento = c.Paciente.Documento,
-							FechaDeNacimiento = c.Paciente.FechaDeNacimiento,
-							Direccion = c.Paciente.Direccion,
-							Telefono = c.Paciente.Telefono,
-							Email = c.Paciente.Email
-						} : null
+						PacienteId = c.Paciente.Id
 					}).ToList();
 			}
 		}
@@ -986,17 +976,7 @@ namespace DAL.DALs
 								Descripcion = cita.Calendario.Especialidad.Descripcion
 							},
 						},
-						Paciente = cita.Paciente != null ? new Paciente
-						{
-							Id = cita.Paciente.Id,
-							Nombres = cita.Paciente.Nombres,
-							Apellidos = cita.Paciente.Apellidos,
-							Documento = cita.Paciente.Documento,
-							FechaDeNacimiento = cita.Paciente.FechaDeNacimiento,
-							Direccion = cita.Paciente.Direccion,
-							Telefono = cita.Paciente.Telefono,
-							Email = cita.Paciente.Email
-						} : null
+						PacienteId = cita.Paciente.Id
 					};
 				}
 				return null;
@@ -1012,7 +992,7 @@ namespace DAL.DALs
                     Fecha = citasMedicas.Fecha,
                     Estado = citasMedicas.Estado,
                     CalendarioId = citasMedicas.Calendario.Id,
-                    PacienteId = citasMedicas.Paciente != null ? citasMedicas.Paciente.Id : null,
+                    PacienteId = citasMedicas.PacienteId
                 };
                 _dbContext.CitasMedicas.Add(nuevaCita);
                 _dbContext.SaveChanges();
@@ -1029,7 +1009,7 @@ namespace DAL.DALs
                     citaExistente.Fecha = citasMedicas.Fecha;
                     citaExistente.Estado = citasMedicas.Estado;
                     citaExistente.CalendarioId = citasMedicas.Calendario.Id;
-                    citaExistente.PacienteId = citasMedicas.Paciente != null ? citasMedicas.Paciente.Id : null;
+					citaExistente.PacienteId = citasMedicas.PacienteId;
                     _dbContext.SaveChanges();
                 }
             }
@@ -1151,17 +1131,7 @@ namespace DAL.DALs
 							Id = cm.Id,
                             Fecha = cm.Fecha,
                             Estado = cm.Estado,
-							Paciente = cm.Paciente != null ? new Paciente
-                            {
-                                Id = cm.Paciente.Id,
-                                Nombres = cm.Paciente.Nombres,
-                                Apellidos = cm.Paciente.Apellidos,
-                                Documento = cm.Paciente.Documento,
-                                FechaDeNacimiento = cm.Paciente.FechaDeNacimiento,
-                                Direccion = cm.Paciente.Direccion,
-                                Telefono = cm.Paciente.Telefono,
-                                Email = cm.Paciente.Email
-                            } : null
+							PacienteId = cm.Paciente.Id
 						}).ToList() : new List<CitaMedica>()
 					};
                 }
