@@ -33,6 +33,8 @@ try
     app.MapAuthEndpoints();
     app.MapPruebaEndpoints();
 
+
+    // Este comentario se borra
     app.Run();
 }
 catch (Exception ex)
