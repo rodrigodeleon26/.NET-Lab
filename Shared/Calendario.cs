@@ -16,9 +16,9 @@
 
         public string[] DiasSemana { get; set; } = new string[] { "-- Sin Días de la Semana --" };
 
-        public Medico Medico { get; set; } = new Medico();
+        public Medico? Medico { get; set; } = new Medico();
 
-        public Especialidad Especialidad { get; set; } = new Especialidad();
+        public Especialidad? Especialidad { get; set; } = new Especialidad();
 
         public List<CitaMedica> CitasMedicas { get; set; } = new List<CitaMedica>();
     }

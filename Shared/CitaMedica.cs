@@ -10,8 +10,14 @@
 
         public Calendario Calendario { get; set; } = new Calendario();
 
-        public Paciente? Paciente { get; set; } = new Paciente();
+        public long CalendarioId { get; set; }
 
-        public ConsultaMedica? ConsultaMedica { get; set; }
-    }   
+        //public ConsultaMedica? ConsultaMedica { get; set; }
+
+        //public Paciente? Paciente { get; set; } = new Paciente();
+
+        //public long? ConsultorioId { get; set; }
+
+        public long? PacienteId { get; set; }
+    }
 }
