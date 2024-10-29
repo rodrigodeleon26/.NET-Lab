@@ -18,7 +18,14 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pruebas", "Pruebas\Pruebas.csproj", "{4F10E676-218D-4EB8-A5B3-5E139D5C3435}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthWebApi", "AuthWebApi\AuthWebApi.csproj", "{C82A60E6-83C3-421B-8B5F-82F6503F6CD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthWebApi", "AuthWebApi\AuthWebApi.csproj", "{C82A60E6-83C3-421B-8B5F-82F6503F6CD9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdministrativoWebApi", "AdministrativoWebApi\AdministrativoWebApi.csproj", "{622208DB-069F-4FF1-AC34-6D5D1D6BAB7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NGINX", "NGINX", "{1EABB4F8-646D-4846-A130-86C5A0BD5F55}"
+	ProjectSection(SolutionItems) = preProject
+		nginx.conf = nginx.conf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +69,10 @@ Global
 		{C82A60E6-83C3-421B-8B5F-82F6503F6CD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C82A60E6-83C3-421B-8B5F-82F6503F6CD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C82A60E6-83C3-421B-8B5F-82F6503F6CD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{622208DB-069F-4FF1-AC34-6D5D1D6BAB7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{622208DB-069F-4FF1-AC34-6D5D1D6BAB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{622208DB-069F-4FF1-AC34-6D5D1D6BAB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{622208DB-069F-4FF1-AC34-6D5D1D6BAB7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
