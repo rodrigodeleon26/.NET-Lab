@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EspecialidadesService } from '../../services/especialidades.service';
 import { MedicosService } from '../../services/medicos.service';
 
@@ -23,16 +23,17 @@ export class GenerarMedicoComponent implements OnInit {
     private medicosService: MedicosService,
   ) {
     this.DatosMedicoForm = this.fb.group({
-      nombres: [''],
-      apellidos: [''],
-      documento: [''],
-      telefono: [''],
-      email: [''],
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      documento: ['', Validators.required],
+      telefono: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       especialidades: this.fb.array([]),
     });
   }
 
   ngOnInit(): void {
+    
     this.especialidadesService.getEspecialidades()
       .subscribe({
         next: (data) => {
@@ -81,7 +82,22 @@ export class GenerarMedicoComponent implements OnInit {
   }
 
   agregarMedico(){
-    console.log(this.DatosMedicoForm.value);
-
+    if (this.DatosMedicoForm.valid) {
+      console.log(this.DatosMedicoForm.value);
+      const medico = {
+        Nombres: this.DatosMedicoForm.value.nombres,
+        Apellidos: this.DatosMedicoForm.value.apellidos,
+        Documento: this.DatosMedicoForm.value.documento,
+        Telefono: this.DatosMedicoForm.value.telefono,
+        Email: this.DatosMedicoForm.value.email,
+        Especialidades: this.DatosMedicoForm.value.especialidades,
+      }
+      console.log(medico);
+      this.showSuccessMessage('Médico agregado exitosamente');
+    } else {
+      this.showErrorMessage('Por favor, complete todos los campos');
+    }
   }
+
+  
 }

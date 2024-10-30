@@ -7,12 +7,17 @@ import { Observable } from 'rxjs';
 })
 export class MedicosService {
 
-  private apiUrl = 'https://localhost:5007/api/Medicos';
+  private apiUrl = 'https://localhost:5009/api/Medicos';
 
   constructor( private http: HttpClient ) { }
 
   getMedicos(): Observable<any[]> {
     console.log('Obteniendo médicos');
     return this.http.get<any[]>(this.apiUrl);
+  }
+
+  addMedico(medico: any): Observable<any> {
+    console.log('Agregando médico');
+    return this.http.post<any>(this.apiUrl, medico);
   }
 }

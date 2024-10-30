@@ -23,23 +23,46 @@
                         </h1>
                         <div class="flex flex-col">
                             <label for="nombres" class="text-sm font-medium">Nombres</label>
-                            <input type="text" id="nombres" formControlName="nombres" class="border rounded-md p-2" placeholder="Ingrese Los Nombres Aquí...">
+                            <input type="text" id="nombres" formControlName="nombres" class="border rounded-md p-2" placeholder="Ingrese Los Nombres Aquí..." required>
                         </div>
                         <div class="flex flex-col">
                             <label for="apellidos" class="text-sm font-medium">Apellidos</label>
-                            <input type="text" id="apellidos" formControlName="apellidos" class="border rounded-md p-2" placeholder="Ingrese Los Apellidos Aquí...">
+                            <input type="text" id="apellidos" formControlName="apellidos" class="border rounded-md p-2" placeholder="Ingrese Los Apellidos Aquí..." required>
                         </div>
                         <div class="flex flex-col">
                             <label for="documento" class="text-sm font-medium">Documento</label>
-                            <input type="text" id="documento" formControlName="documento" class="border rounded-md p-2" placeholder="Ingrese El Documento Aquí...">
+                            <input 
+                            required
+                            type="text" 
+                            id="documento" 
+                            formControlName="documento" 
+                            class="border rounded-md p-2" 
+                            placeholder="Ingrese El Documento Aquí..."
+                            min="1" 
+                            pattern="^[1-9]\d*$"
+                            inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                            maxlength="8"
+                            />
                         </div>
                         <div class="flex flex-col">
 							<label for="telefono" class="text-sm font-medium">Telefono</label>
-							<input type="text" id="telefono" formControlName="telefono" class="border rounded-md p-2" placeholder="Ingrese El telefono Aquí...">
+                            <input 
+                            required
+                            type="text" 
+                            id="telefono" 
+                            formControlName="telefono" 
+                            class="border rounded-md p-2" 
+                            placeholder="Ingrese El Telefono Aquí..."
+                            min="1" 
+                            pattern="^[1-9]\d*$"
+                            inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                            />
 						</div>
 						<div class="flex flex-col">
                             <label for="email" class="text-sm font-medium">Email</label>
-                            <input type="text" id="email" formControlName="email" class="border rounded-md p-2" placeholder="Ingrese El Email Aquí...">
+                            <input type="email" id="email" formControlName="email" class="border rounded-md p-2" placeholder="Ingrese El Email Aquí..." required>
                         </div>
                     </div>
     
