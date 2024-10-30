@@ -1,0 +1,18 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class EspecialidadesService {
+
+  private apiUrl = 'https://localhost:5007/api/especialidades'; // URL del microservicio
+
+  constructor(private http: HttpClient) { }
+
+  getEspecialidades(): Observable<any[]> {
+    console.log('Obteniendo especialidades');
+    return this.http.get<any[]>(this.apiUrl);
+  }
+}

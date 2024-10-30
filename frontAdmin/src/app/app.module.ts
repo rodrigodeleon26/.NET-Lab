@@ -5,10 +5,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-
+import { FormsModule } from '@angular/forms'; 
+import { ReactiveFormsModule } from '@angular/forms';
+import { NavComponent } from './components/web/nav/nav.component';
+import { GenerarMedicoComponent } from './components/generar-medico/generar-medico.component';
 @NgModule({
   declarations: [
     AppComponent,
+    NavComponent,
+    GenerarMedicoComponent,
   ],
   imports: [
     BrowserModule,
@@ -16,6 +21,8 @@ import { RouterModule } from '@angular/router';
     AppRoutingModule,
     HttpClientModule,
     RouterModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [], 
   bootstrap: [AppComponent]
