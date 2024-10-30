@@ -43,13 +43,14 @@
                             inputmode="numeric"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                             maxlength="8"
+                            minlength="8"
                             />
                         </div>
                         <div class="flex flex-col">
 							<label for="telefono" class="text-sm font-medium">Telefono</label>
                             <input 
                             required
-                            type="text" 
+                            type="tel" 
                             id="telefono" 
                             formControlName="telefono" 
                             class="border rounded-md p-2" 

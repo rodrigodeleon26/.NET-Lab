@@ -59,7 +59,7 @@ export class GenerarMedicoComponent implements OnInit {
   showSuccessMessage(message: string) {
     this.successMessage = message;
       setTimeout(() => {
-        this.errorMessage = '';
+        this.successMessage = '';
       }, 3000);
   }
 
@@ -83,21 +83,42 @@ export class GenerarMedicoComponent implements OnInit {
 
   agregarMedico(){
     if (this.DatosMedicoForm.valid) {
-      console.log(this.DatosMedicoForm.value);
       const medico = {
         Nombres: this.DatosMedicoForm.value.nombres,
         Apellidos: this.DatosMedicoForm.value.apellidos,
         Documento: this.DatosMedicoForm.value.documento,
         Telefono: this.DatosMedicoForm.value.telefono,
         Email: this.DatosMedicoForm.value.email,
-        Especialidades: this.DatosMedicoForm.value.especialidades,
+        //guardar especialidades como un arreglo de objetos con el id de la especialidad
+        Especialidades: this.DatosMedicoForm.value.especialidades.map((id: string) => ({ id })),
       }
       console.log(medico);
-      this.showSuccessMessage('Médico agregado exitosamente');
+      this.medicosService.addMedico(medico)
+        .subscribe({
+          next: (data) => {
+            console.log(data);
+            this.showSuccessMessage('Médico agregado exitosamente');
+            this.DatosMedicoForm.reset();
+          },
+          error: (error) => {
+            console.error(error);
+            const errorMessage = this.extractErrorMessage(error);
+                    this.showErrorMessage(errorMessage);
+          }
+        });
     } else {
       this.showErrorMessage('Por favor, complete todos los campos');
     }
   }
 
-  
+  private extractErrorMessage(error: any): string {
+    if (error && error.error && typeof error.error === 'string') {
+        const match = error.error.match(/System\.Exception: (.+?)\n/);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+    return 'Ocurrió un error inesperado';
+  }
+
 }

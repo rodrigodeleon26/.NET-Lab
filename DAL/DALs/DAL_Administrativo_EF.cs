@@ -844,6 +844,12 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
+				//chequear que no existan con la misma ci
+				if (_dbContext.Medicos.Any(m => m.Documento == medico.Documento))
+                {
+                    throw new Exception("Ya existe un medico con la cedula ingresada");
+                }
+
 				var nuevoMedico = new Medicos
 				{
 					Nombres = medico.Nombres,
@@ -852,6 +858,14 @@ namespace DAL.DALs
 					Email = medico.Email,
 					Telefono = medico.Telefono
 				};
+				if (!medico.Especialidades.IsNullOrEmpty())
+				{
+					nuevoMedico.EspecialidadesMedicos = medico.Especialidades.Select(e => new EspecialidadesMedicos
+					{
+						MedicoId = medico.Id,
+						EspecialidadId = e.Id
+					}).ToList();
+				}
 				_dbContext.Medicos.Add(nuevoMedico);
 				_dbContext.SaveChanges();
 			}
