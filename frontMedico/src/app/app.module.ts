@@ -10,7 +10,8 @@ import { NavComponent } from './components/web/nav/nav.component';
 import { ConsultaMedicaComponent } from './components/medico/consulta-medica/consulta-medica.component';
 import { FormsModule } from '@angular/forms'; 
 import { NgSelectModule } from '@ng-select/ng-select';
-import { ReactiveFormsModule } from '@angular/forms'; // Importa ReactiveFormsModule
+import { ReactiveFormsModule } from '@angular/forms';
+import { CitaMedicaComponent } from './components/medico/cita-medica/cita-medica.component'; // Importa ReactiveFormsModule
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms'; // Importa ReactiveFormsMo
     PruebaImagenComponent,
     NavComponent,
     ConsultaMedicaComponent,
+    CitaMedicaComponent,
   ],
   imports: [
     BrowserModule,
