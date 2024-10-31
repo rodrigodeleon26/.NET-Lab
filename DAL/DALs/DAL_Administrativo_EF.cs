@@ -875,20 +875,25 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var medicoExistente = _dbContext.Medicos.Find(medico.Id);
-				if (medicoExistente != null)
+                // Asegurarse de borrar las especialidades para poner las nuevas
+                var medicoExistente = _dbContext.Medicos
+                    .Include(m => m.EspecialidadesMedicos)
+                    .FirstOrDefault(m => m.Id == medico.Id);
+                if (medicoExistente != null)
 				{
 					medicoExistente.Nombres = medico.Nombres;
 					medicoExistente.Apellidos = medico.Apellidos;
 					medicoExistente.Documento = medico.Documento;
 					medicoExistente.Email = medico.Email;
 					medicoExistente.Telefono = medico.Telefono;
-					medicoExistente.EspecialidadesMedicos = medico.Especialidades.Select(e => new EspecialidadesMedicos
+                    medicoExistente.EspecialidadesMedicos.Clear();
+                    medicoExistente.EspecialidadesMedicos = medico.Especialidades.Select(e => new EspecialidadesMedicos
                     {
                         MedicoId = medico.Id,
                         EspecialidadId = e.Id
                     }).ToList();
-					_dbContext.SaveChanges();
+
+                    _dbContext.SaveChanges();
 				}
 			}
 		}

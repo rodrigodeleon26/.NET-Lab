@@ -55,8 +55,7 @@
                             formControlName="telefono" 
                             class="border rounded-md p-2" 
                             placeholder="Ingrese El Telefono Aquí..."
-                            min="1" 
-                            pattern="^[1-9]\d*$"
+                            pattern="^[0-9]\d*$"
                             inputmode="numeric"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                             />
@@ -72,12 +71,13 @@
                         <h1 class="flex justify-center text-lg">
                             Especialidades
                         </h1>
-						<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 place-items-center">
-							<div *ngFor="let especilidad of this.especialidades" class="flex">
-								<input type="checkbox" [id]="especilidad.nombre" [value]="especilidad.id" (change)="onCheckboxChange($event)">
-								<label [for]="especilidad.nombre" class="text-sm font-medium">{{especilidad.nombre}}</label>
-							</div>
-						</div>
+                        <!-- en caso de que ya hayan especialidades en el arreglo, asegurarme que se apliquen en los checkbox -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 place-items-center">
+                            <div *ngFor="let especialidad of this.especialidades" class="flex">
+                                <input type="checkbox" [id]="especialidad.nombre" [value]="especialidad.id" (change)="onCheckboxChange($event)" [checked]="DatosMedicoForm.value.especialidades.includes(especialidad.id)">
+                                <label [for]="especialidad.nombre" class="text-sm font-medium">{{especialidad.nombre}}</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

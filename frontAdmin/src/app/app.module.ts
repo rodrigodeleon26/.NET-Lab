@@ -9,11 +9,15 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavComponent } from './components/web/nav/nav.component';
 import { GenerarMedicoComponent } from './components/generar-medico/generar-medico.component';
+import { AddEspecialidadComponent } from './components/add-especialidad/add-especialidad.component';
+import { ListMedicosComponent } from './components/list-medicos/list-medicos.component';
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
     GenerarMedicoComponent,
+    AddEspecialidadComponent,
+    ListMedicosComponent,
   ],
   imports: [
     BrowserModule,
