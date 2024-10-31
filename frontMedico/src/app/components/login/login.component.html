@@ -1,0 +1,37 @@
+<div class="container mx-auto p-4 m-4 md:p-0">
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="w-full max-w-4xl bg-blue-100 rounded-lg shadow-2xl flex overflow-hidden">
+        <!-- Imagen del hospital -->
+        <div class="hidden md:flex md:items-center md:justify-center w-1/2 bg-blue-50"> <!-- Fondo de color agregado -->
+          <img src="images/equipo-medico.png" alt="Hospital" class="h-4/6 w-4/6 object-contain">
+        </div>
+        <!-- Contenido principal -->
+        <div class="w-full md:w-1/2 p-8">
+            <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">Iniciar Sesión</h2>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+              <div>
+                <label for="email" class="block text-gray-700 font-bold mb-2">Correo Electrónico</label>
+                <input type="email" id="email" formControlName="email" placeholder="Correo electrónico"
+                  class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-red-500 text-sm mt-2">
+                  <div *ngIf="form.get('email')?.errors?.['required']">El correo electrónico es requerido.</div>
+                </div>
+              </div>
+              <div>
+                <label for="password" class="block text-gray-700 font-bold mb-2">Contraseña</label>
+                <input type="password" id="password" formControlName="password" placeholder="Contraseña"
+                  class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-red-500 text-sm mt-2">
+                  <div *ngIf="form.get('password')?.errors?.['required']">La contraseña es requerida.</div>
+                </div>
+              </div>
+              <div>
+                <button type="submit"
+                  class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Iniciar
+                  Sesión</button>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>

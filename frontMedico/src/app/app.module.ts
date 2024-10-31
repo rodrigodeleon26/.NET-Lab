@@ -3,14 +3,18 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { PruebaImagenComponent } from './prueba-imagen/prueba-imagen.component';
 import { NavComponent } from './components/web/nav/nav.component';
 import { ConsultaMedicaComponent } from './components/medico/consulta-medica/consulta-medica.component';
 import { FormsModule } from '@angular/forms'; 
 import { NgSelectModule } from '@ng-select/ng-select';
-import { ReactiveFormsModule } from '@angular/forms'; // Importa ReactiveFormsModule
+import { ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './components/login/login.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+import { AuthInterceptor } from './shared/auth.interceptor';
 
 
 @NgModule({
@@ -19,6 +23,7 @@ import { ReactiveFormsModule } from '@angular/forms'; // Importa ReactiveFormsMo
     PruebaImagenComponent,
     NavComponent,
     ConsultaMedicaComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,9 +33,17 @@ import { ReactiveFormsModule } from '@angular/forms'; // Importa ReactiveFormsMo
     RouterModule,
     NgSelectModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule, 
+    ToastrModule.forRoot(), 
   ],
-  providers: [], 
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ], 
   bootstrap: [AppComponent]
 })
 export class AppModule { }
