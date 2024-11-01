@@ -20,8 +20,8 @@
             <h1 class="text-center text-xl mt-5">Medicos</h1>
             
             <div class="flex flex-col md:flex-row p-5">
-                <div class="border-gray-intermedio bg-gray-intermedio rounded w-full shadow-md">
-                    <div *ngFor="let medico of medicos" class="m-2 p-2 border-gray-oscuro border flex-col">
+                <div class="border-gray-intermedio bg-gray-claro rounded w-full shadow-md">
+                    <div *ngFor="let medico of medicos" class="m-2 p-2 border-gray-oscuro border flex-col rounded">
 
                         <div class="flex justify-between">
                             <div class="flex w-full md:w-3/4 justify-between flex-wrap">
@@ -63,7 +63,7 @@
                             </div>
                         </div>
                         <!-- Mostrar solo los que tengan ver detalle para == medico.id -->
-                        <div *ngIf="verDetallePara === medico.id" class="flex border-t border-gray-oscuro flex-wrap pt-1 w-full justify-around">
+                        <div *ngIf="verDetallePara === medico.id" class="flex border-t border-gray-oscuro flex-wrap mt-2 w-full justify-around">
                             <div *ngFor="let especialidad of medico.especialidades" class="w-fit">
                                 <p>
                                     {{ especialidad.nombre }}
