@@ -16,6 +16,8 @@ export class ListMedicosComponent implements OnInit{
   isModalVisible: boolean = false;
   medicoBorrarId: string | null = null;
 
+  busqueda: string = '';
+
   medicos: any[] = [];
 
   constructor(
@@ -103,5 +105,9 @@ export class ListMedicosComponent implements OnInit{
     }
     this.isModalVisible = false;
     this.medicoBorrarId = null;
+  }
+
+  buscar(){
+    console.log(this.busqueda);
   }
 }
