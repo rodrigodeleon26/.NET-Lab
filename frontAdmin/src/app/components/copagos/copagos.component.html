@@ -1,0 +1,21 @@
+<div class="container mx-auto px-4 mt-4 md:mt-8 md:p-0">
+    <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white text-lg">Cargando...</p>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
+            <div *ngIf="successMessage" class="w-full bg-green-intermedio text-center text-white text-lg max-h-10">
+                {{ successMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="w-full bg-red-500 text-center text-white text-lg max-h-10">
+                {{ errorMessage }}
+            </div> 
+
+            
+            <div class="max-w-64">
+                <app-articulos></app-articulos>
+            </div>
+        </div>
+    </div>
+</div>

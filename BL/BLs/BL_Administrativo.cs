@@ -471,6 +471,11 @@ namespace BL.BLs
 			dal.DeleteArticulo(id);
 		}
 
+		public List<Articulo> getArticulosFiltrados(string filtro)
+        {
+            return dal.GetArticulosFiltrados(filtro);
+        }
+
 		#endregion
 	}
 }

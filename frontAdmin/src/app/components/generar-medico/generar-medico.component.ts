@@ -29,7 +29,7 @@ export class GenerarMedicoComponent implements OnInit {
     this.DatosMedicoForm = this.fb.group({
       nombres: ['', Validators.required],
       apellidos: ['', Validators.required],
-      documento: ['', Validators.required, Validators.pattern('^[0-9]*$')],
+      documento: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       email: ['', [Validators.required, Validators.email]],
       especialidades: this.fb.array([]),

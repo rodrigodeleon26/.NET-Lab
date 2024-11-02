@@ -12,6 +12,8 @@ import { GenerarMedicoComponent } from './components/generar-medico/generar-medi
 import { AddEspecialidadComponent } from './components/add-especialidad/add-especialidad.component';
 import { ListMedicosComponent } from './components/list-medicos/list-medicos.component';
 import { ConsultoriosComponent } from './components/consultorios/consultorios.component';
+import { CopagosComponent } from './components/copagos/copagos.component';
+import { ArticulosComponent } from './components/articulos/articulos.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,6 +22,8 @@ import { ConsultoriosComponent } from './components/consultorios/consultorios.co
     AddEspecialidadComponent,
     ListMedicosComponent,
     ConsultoriosComponent,
+    CopagosComponent,
+    ArticulosComponent,
   ],
   imports: [
     BrowserModule,

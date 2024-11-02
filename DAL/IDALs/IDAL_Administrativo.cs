@@ -96,5 +96,6 @@ namespace DAL.IDALs
 		public void AddArticulo(Articulo articulo);
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
+		public List<Articulo> GetArticulosFiltrados(string filtro);
 	}
 }

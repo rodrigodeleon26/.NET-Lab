@@ -97,5 +97,6 @@ namespace BL.IBLs
 		void addArticulo(Articulo articulo);
 		void updateArticulo(Articulo articulo);
 		void deleteArticulo(long id);
+		List<Articulo> getArticulosFiltrados(string filtro);
     }
 }

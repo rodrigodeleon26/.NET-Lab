@@ -1506,19 +1506,20 @@ namespace DAL.DALs
 				var nuevoArticulo = new Articulos
 				{
 					Nombre = articulo.Nombre,
-					Copagos = articulo.Copagos.Select(c => new Copagos
-					{
-						SeguroMedicoId = c.SeguroMedico.Id,
-						EspecialidadId = c.Especialidad.Id,
-                        ArticuloId = c.Id,
-						Precios = c.Precios.Select(p => new Precios
-						{
+					Copagos = nameof(articulo.Copagos) != null ? articulo.Copagos.Select(c => new Copagos
+                    {
+                        SeguroMedicoId = c.SeguroMedico.Id,
+                        EspecialidadId = c.Especialidad.Id,
+                        Precios = c.Precios.Select(p => new Precios
+                        {
                             PrecioBase = p.PrecioBase,
                             FechaInicio = p.FechaInicio
                         }).ToList()
-					}).ToList(),
+                    }).ToList() : new List<Copagos>()
 				};
-			}
+                _dbContext.Articulos.Add(nuevoArticulo);
+                _dbContext.SaveChanges();
+            }
         }
 
         public void UpdateArticulo(Articulo articulo)
@@ -1555,6 +1556,48 @@ namespace DAL.DALs
 					_dbContext.Articulos.Remove(articulo);
 					_dbContext.SaveChanges();
 				}
+			}
+        }
+
+        public List<Articulo> GetArticulosFiltrados(string filtro)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var query = _dbContext.Articulos.AsQueryable();
+
+				if (!string.IsNullOrEmpty(filtro))
+				{
+					query = query.Where(m => m.Nombre.Contains(filtro));
+				}
+
+				return query
+                    .Select(a => new Articulo
+                    {
+                        Id = a.Id,
+                        Nombre = a.Nombre,
+                        Copagos = a.Copagos.Select(c => new Copago
+                        {
+                            Id = c.Id,
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = c.SeguroMedico.Id,
+                                Nombre = c.SeguroMedico.Nombre,
+                                Descripcion = c.SeguroMedico.Descripcion
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Especialidad.Id,
+                                Nombre = c.Especialidad.Nombre,
+                                Descripcion = c.Especialidad.Descripcion
+                            },
+                            Precios = c.Precios.Select(p => new Precio
+                            {
+                                Id = p.Id,
+                                PrecioBase = p.PrecioBase,
+                                FechaInicio = p.FechaInicio
+                            }).ToList()
+                        }).ToList()
+                    }).ToList();
 			}
         }
 
