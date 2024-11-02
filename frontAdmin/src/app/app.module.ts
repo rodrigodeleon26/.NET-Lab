@@ -11,6 +11,7 @@ import { NavComponent } from './components/web/nav/nav.component';
 import { GenerarMedicoComponent } from './components/generar-medico/generar-medico.component';
 import { AddEspecialidadComponent } from './components/add-especialidad/add-especialidad.component';
 import { ListMedicosComponent } from './components/list-medicos/list-medicos.component';
+import { ConsultoriosComponent } from './components/consultorios/consultorios.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -18,6 +19,7 @@ import { ListMedicosComponent } from './components/list-medicos/list-medicos.com
     GenerarMedicoComponent,
     AddEspecialidadComponent,
     ListMedicosComponent,
+    ConsultoriosComponent,
   ],
   imports: [
     BrowserModule,
