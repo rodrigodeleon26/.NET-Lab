@@ -60,9 +60,10 @@ namespace BL.IBLs
 		void updateMedico(Medico medico);
 		void deleteMedico(long id);
 		void asignarEspecialidad(long medId, long espId);
+        List<Medico>getMedicosPaginadosYFiltrados(int numPagina, string filtro);
 
-		// Citas Medicas
-		List<CitaMedica> getCitasMedicas();
+        // Citas Medicas
+        List<CitaMedica> getCitasMedicas();
 		CitaMedica getCitaMedicaById(long id);
 		void addCitaMedica(CitaMedica citaMedica);
 		void updateCitaMedica(CitaMedica citaMedica);

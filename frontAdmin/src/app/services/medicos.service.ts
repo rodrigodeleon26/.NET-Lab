@@ -35,4 +35,9 @@ export class MedicosService {
     console.log('Eliminando médico');
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  getMedicosPaginadosYFiltrados(pagina: number, filtro: string): Observable<any> {
+    console.log('Obteniendo médicos paginados y filtrados');
+    return this.http.get<any>(`${this.apiUrl}/getMedicosPaginadosYFiltrados/${pagina}?filtro=${filtro}`);
+  }
 }

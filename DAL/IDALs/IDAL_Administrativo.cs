@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using Amazon.S3.Model;
+using DAL.Models;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -59,9 +60,10 @@ namespace DAL.IDALs
 		public void AddMedico(Medico medico);
 		public void UpdateMedico(Medico medico);
 		public void DeleteMedico(long id);
+		public List<Medico> GetMedicosPaginadosYFiltrados(int numPagina, string filtro);
 
-		// CitasMedicas
-		public List<CitaMedica> GetCitasMedicas();
+        // CitasMedicas
+        public List<CitaMedica> GetCitasMedicas();
 		public CitaMedica GetCitasMedicasById(long id);
 		public void AddCitasMedicas(CitaMedica citaMedica);
 		public void UpdateCitasMedicas(CitaMedica citaMedica);

@@ -911,15 +911,47 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
+        public List<Medico> GetMedicosPaginadosYFiltrados(int numPagina, string filtro)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.Medicos.AsQueryable();
+
+                if (!string.IsNullOrEmpty(filtro))
+                {
+                    query = query.Where(m => m.Nombres.Contains(filtro) || m.Apellidos.Contains(filtro) || m.Documento.Contains(filtro));
+                }
+
+                return query
+                    .Skip((numPagina - 1) * 10)
+                    .Take(10)
+                    .Select(m => new Medico
+                    {
+                        Id = m.Id,
+                        Nombres = m.Nombres,
+                        Apellidos = m.Apellidos,
+                        Documento = m.Documento,
+                        Email = m.Email,
+                        Telefono = m.Telefono,
+                        Especialidades = m.EspecialidadesMedicos.Select(em => new Especialidad
+                        {
+                            Id = em.Especialidad.Id,
+                            Nombre = em.Especialidad.Nombre,
+                            Descripcion = em.Especialidad.Descripcion
+                        }).ToList()
+                    }).ToList();
+            }
+        }
+
+        #endregion
 
 
-		/**********************************************************/
-		/**                 Citas Medicas                        **/
-		/**********************************************************/
-		#region FUNCTIONES CITAS MEDICAS
+        /**********************************************************/
+        /**                 Citas Medicas                        **/
+        /**********************************************************/
+        #region FUNCTIONES CITAS MEDICAS
 
-		public List<CitaMedica> GetCitasMedicas()
+        public List<CitaMedica> GetCitasMedicas()
 		{
 			using (var _dbContext = new DBContext())
 			{

@@ -14,7 +14,10 @@ export class ListMedicosComponent implements OnInit{
   successMessage: string = '';
   verDetallePara: number | null = null;
   isModalVisible: boolean = false;
+  isModalVisibleDetalle: boolean = false;
   medicoBorrarId: string | null = null;
+  medicoSeleccionado: any | null = null;
+  paginaActual: number = 1;
 
   busqueda: string = '';
 
@@ -26,7 +29,8 @@ export class ListMedicosComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.medicosService.getMedicos()
+    this.loading = true;
+    this.medicosService.getMedicosPaginadosYFiltrados(1, '')
       .subscribe({
         next: (data) => {
           console.log(data);
@@ -34,6 +38,9 @@ export class ListMedicosComponent implements OnInit{
         },
         error: (error) => {
           console.error(error);
+        },
+        complete: () => {
+          this.loading = false;
         }
       });
   }
@@ -67,7 +74,9 @@ export class ListMedicosComponent implements OnInit{
   onModalContainerClick(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('fixed')) {
       this.isModalVisible = false;
+      this.isModalVisibleDetalle = false;
       this.medicoBorrarId = null;
+      this.verDetallePara = null;
     }
   }
 
@@ -81,7 +90,7 @@ export class ListMedicosComponent implements OnInit{
           console.log(data);
           this.showSuccessMessage('Medico eliminado correctamente');
           //reiniciar la lista de medicos
-          this.medicosService.getMedicos()
+          this.medicosService.getMedicosPaginadosYFiltrados(this.paginaActual, '')
             .subscribe({
               next: (data) => {
                 console.log(data);
@@ -107,7 +116,60 @@ export class ListMedicosComponent implements OnInit{
     this.medicoBorrarId = null;
   }
 
+  seleccionarMedico(){
+    this.medicoSeleccionado = this.medicos.find(medico => medico.id === this.verDetallePara);
+  }
+
   buscar(){
     console.log(this.busqueda);
+    this.medicosService.getMedicosPaginadosYFiltrados(1, this.busqueda).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.medicos = data;
+        this.paginaActual = 1;
+      },
+      error: (error) => {
+        console.error(error);
+      },
+      complete: () => {
+      }
+    });
+  }
+
+  cambiarPagina(pagina: number){
+    if(pagina < 1){
+      return;
+    }
+    this.medicosService.getMedicosPaginadosYFiltrados(pagina, this.busqueda).subscribe({
+        next: (data) => {
+          console.log(data);
+          if(data.length === 0){
+            return;
+          }
+          this.medicos = data;
+          this.paginaActual = pagina;
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+        }
+      });
+  }
+
+  LimpiarBusqueda(){
+    this.busqueda = '';
+    this.medicosService.getMedicosPaginadosYFiltrados(1, '').subscribe({
+      next: (data) => {
+        console.log(data);
+        this.medicos = data;
+        this.paginaActual = 1;
+      },
+      error: (error) => {
+        console.error(error);
+      },
+      complete: () => {
+      }
+    });
   }
 }

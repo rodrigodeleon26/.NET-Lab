@@ -147,13 +147,13 @@ namespace BL.BLs
 			}
 		}
 
-        #endregion
+		#endregion
 
-        //Precios
-        #region PRECIOS
+		//Precios
+		#region PRECIOS
 
 
-        public List<Precio> getPrecios()
+		public List<Precio> getPrecios()
 		{
 			return dal.GetPrecios();
 		}
@@ -238,22 +238,22 @@ namespace BL.BLs
 			dal.DeleteFactura(id);
 		}
 
-        #endregion
+		#endregion
 
-        //Medicos
-        #region MEDICOS
+		//Medicos
+		#region MEDICOS
 
-        public List<Medico> getMedicos()
+		public List<Medico> getMedicos()
 		{
 			return dal.GetMedicos();
 		}
 
-        public Medico getMedicoById(long id)
+		public Medico getMedicoById(long id)
 		{
 			return dal.GetMedicoById(id);
 		}
 
-        public void addMedico(Medico medico)
+		public void addMedico(Medico medico)
 		{
 			dal.AddMedico(medico);
 		}
@@ -280,65 +280,71 @@ namespace BL.BLs
 			}
 		}
 
-        #endregion
+		public List<Medico> getMedicosPaginadosYFiltrados(int numPagina, string filtro)
+		{
+			return dal.GetMedicosPaginadosYFiltrados(numPagina, filtro);
+		}
 
-        //Citas Medicas
-        #region CITAS MEDICAS
 
-        public List<CitaMedica> getCitasMedicas()
-        {
-            return dal.GetCitasMedicas();
-        }
+		#endregion
 
-        public CitaMedica getCitaMedicaById(long id)
-        {
+		//Citas Medicas
+		#region CITAS MEDICAS
+
+		public List<CitaMedica> getCitasMedicas()
+		{
+			return dal.GetCitasMedicas();
+		}
+
+		public CitaMedica getCitaMedicaById(long id)
+		{
 			return dal.GetCitasMedicasById(id);
-        }
+		}
 
-        public void addCitaMedica(CitaMedica citaMedica)
-        {
+		public void addCitaMedica(CitaMedica citaMedica)
+		{
 			dal.AddCitasMedicas(citaMedica);
-        }
+		}
 
-        public void updateCitaMedica(CitaMedica citaMedica)
-        {
+		public void updateCitaMedica(CitaMedica citaMedica)
+		{
 			dal.UpdateCitasMedicas(citaMedica);
-        }
+		}
 
-        public void deleteCitaMedica(long id)
-        {
+		public void deleteCitaMedica(long id)
+		{
 			dal.DeleteCitasMedicas(id);
-        }
+		}
 
-        #endregion
+		#endregion
 
-        //Calendarios
-        #region CALENDARIOS
+		//Calendarios
+		#region CALENDARIOS
 
-        public List<Calendario> getCalendarios()
-        {
+		public List<Calendario> getCalendarios()
+		{
 			return dal.GetCalendarios();
-        }
+		}
 
-        public Calendario getCalendarioById(long id)
-        {
+		public Calendario getCalendarioById(long id)
+		{
 			return dal.GetCalendarioById(id);
-        }
+		}
 
-        public void addCalendario(Calendario calendario)
-        {
+		public void addCalendario(Calendario calendario)
+		{
 			dal.AddCalendario(calendario);
-        }
+		}
 
-        public void updateCalendario(Calendario calendario)
-        {
+		public void updateCalendario(Calendario calendario)
+		{
 			dal.UpdateCalendario(calendario);
-        }
+		}
 
-        public void deleteCalendario(long id)
-        {
+		public void deleteCalendario(long id)
+		{
 			dal.DeleteCalendario(id);
-        }
+		}
 
 		public void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias)
 		{
@@ -348,13 +354,13 @@ namespace BL.BLs
 			if (medico != null && especialidad != null && consultorio != null)
 			{
 
-                //verificar que la especialidad sea una de las del medico
-                if (!medico.Especialidades.Any(e => e.Id == espId))
-                {
-                    throw new InvalidOperationException("La especialidad no está asociada con el médico.");
-                }
+				//verificar que la especialidad sea una de las del medico
+				if (!medico.Especialidades.Any(e => e.Id == espId))
+				{
+					throw new InvalidOperationException("La especialidad no está asociada con el médico.");
+				}
 
-                Calendario calendario = new Calendario()
+				Calendario calendario = new Calendario()
 				{
 					Medico = medico,
 					Especialidad = especialidad,
@@ -374,97 +380,97 @@ namespace BL.BLs
 			}
 		}
 
-        #endregion
+		#endregion
 
-        //Consultorios
-        #region CONSULTORIOS
+		//Consultorios
+		#region CONSULTORIOS
 
 
-        public List<Consultorio> getConsultorios()
-        {
+		public List<Consultorio> getConsultorios()
+		{
 			return dal.GetConsultorios();
-        }
+		}
 
-        public Consultorio getConsultorioById(long id)
-        {
+		public Consultorio getConsultorioById(long id)
+		{
 			return dal.GetConsultorioById(id);
-        }
+		}
 
-        public void addConsultorio(Consultorio consultorio)
-        {
+		public void addConsultorio(Consultorio consultorio)
+		{
 			dal.AddConsultorio(consultorio);
-        }
+		}
 
-        public void updateConsultorio(Consultorio consultorio)
-        {
+		public void updateConsultorio(Consultorio consultorio)
+		{
 			dal.UpdateConsultorio(consultorio);
-        }
+		}
 
-        public void deleteConsultorio(long id)
-        {
+		public void deleteConsultorio(long id)
+		{
 			dal.DeleteConsultorio(id);
-        }
+		}
 
-        #endregion
+		#endregion
 
-        //Especialidades
-        #region ESPECIALIDADES
+		//Especialidades
+		#region ESPECIALIDADES
 
-        public List<Especialidad> getEspecialidades()
-        {
+		public List<Especialidad> getEspecialidades()
+		{
 			return dal.GetEspecialidades();
-        }
+		}
 
-        public Especialidad getEspecialidadById(long id)
-        {
+		public Especialidad getEspecialidadById(long id)
+		{
 			return dal.GetEspecialidadById(id);
-        }
+		}
 
-        public void addEspecialidad(Especialidad especialidad)
-        {
+		public void addEspecialidad(Especialidad especialidad)
+		{
 			dal.AddEspecialidad(especialidad);
-        }
+		}
 
-        public void updateEspecialidad(Especialidad especialidad)
-        {
+		public void updateEspecialidad(Especialidad especialidad)
+		{
 			dal.UpdateEspecialidad(especialidad);
-        }
+		}
 
-        public void deleteEspecialidad(long id)
-        {
+		public void deleteEspecialidad(long id)
+		{
 			dal.DeleteEspecialidad(id);
-        }
+		}
 
-        #endregion
+		#endregion
 
-        //Articulos
-        #region ARTICULOS
+		//Articulos
+		#region ARTICULOS
 
-        public List<Articulo> getArticulos()
-        {
+		public List<Articulo> getArticulos()
+		{
 			return dal.GetArticulos();	
-        }
+		}
 
-        public Articulo getArticuloById(long id)
-        {
+		public Articulo getArticuloById(long id)
+		{
 			return dal.GetArticuloById(id);
-        }
+		}
 
-        public void addArticulo(Articulo articulo)
-        {
+		public void addArticulo(Articulo articulo)
+		{
 			dal.AddArticulo(articulo);
-        }
+		}
 
-        public void updateArticulo(Articulo articulo)
-        {
+		public void updateArticulo(Articulo articulo)
+		{
 			dal.UpdateArticulo(articulo);
-        }
+		}
 
-        public void deleteArticulo(long id)
-        {
+		public void deleteArticulo(long id)
+		{
 			dal.DeleteArticulo(id);
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
