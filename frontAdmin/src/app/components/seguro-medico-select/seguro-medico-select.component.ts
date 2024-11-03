@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SegurosMedicosService } from '../../services/seguros-medicos.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CopagosService } from '../../services/copagos.service';
 
 @Component({
   selector: 'app-seguro-medico-select',
@@ -18,6 +19,7 @@ export class SeguroMedicoSelectComponent implements OnInit{
   constructor(
     private fb: FormBuilder,
     private segurosMedicosService: SegurosMedicosService,
+    private copagosService: CopagosService
   ) { 
     this.DatosSMForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
@@ -102,6 +104,9 @@ export class SeguroMedicoSelectComponent implements OnInit{
     if (this.DatosSMForm.invalid) {
       return;
     }
+    if (this.editando !== '' && this.editando !== null && this.editando !== undefined && this.editando.id !== '') {
+      return;
+    }
     this.segurosMedicosService.addSeguroMedico(this.DatosSMForm.value).subscribe({
       next: (data) => {
         this.segurosMedicosService.getSegurosMedicos().subscribe({
@@ -113,6 +118,18 @@ export class SeguroMedicoSelectComponent implements OnInit{
           }
         });
         this.DatosSMForm.reset();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  onSeguroMedicoChange(event: any){
+    const seguroId = event.target.value;
+    this.segurosMedicosService.getSeguroMedico(seguroId).subscribe({
+      next: (seguroMedico) => {
+        this.copagosService.changeSelectedSeguroMedico(seguroMedico);
       },
       error: (error) => {
         console.error(error);

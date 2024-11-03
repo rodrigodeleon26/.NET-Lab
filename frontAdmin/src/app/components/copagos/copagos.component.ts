@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SegurosMedicosService } from '../../services/seguros-medicos.service';
+import { CopagosService } from '../../services/copagos.service';
 
 @Component({
   selector: 'app-copagos',
@@ -11,28 +11,45 @@ export class CopagosComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
-  SegurosMedicos: any[] = [];
+  selectedSeguroMedico: any = null;
+  selectedSeguroArticulos: any[] = [];
 
   constructor(
-    private segurosMedicosService: SegurosMedicosService,
+    private CopagosService: CopagosService
   ) { }
 
   ngOnInit(): void {
-    this.loading = true;
-
-    this.segurosMedicosService.getSegurosMedicos().subscribe({
+    this.CopagosService.selectedSeguroMedico$.subscribe({
       next: (data) => {
-        this.SegurosMedicos = data;
+        this.selectedSeguroMedico = data;
       },
       error: (error) => {
         console.error(error);
-        this.showErrorMessage('Error al obtener los seguros médicos');
-        this.loading = false;
       },
-      complete: () => {
-        this.loading = false;
+    });
+
+    this.CopagosService.articulosDeSeguroMedico$.subscribe({
+      next: (data) => {
+        this.selectedSeguroArticulos = data;
+      },
+      error: (error) => {
+        console.error(error);
       }
     });
+  }
+
+  getPrecioActual(precios: any[]): number | null {
+    const today = new Date();
+    const preciosValidos = precios.filter(precio => new Date(precio.fechaInicio) <= today);
+    
+    if (preciosValidos.length === 0) {
+      return null; // no hay precios válidos para la fecha actual
+    }
+  
+    const precioActual = preciosValidos
+      .sort((a, b) => new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime())[0];
+    
+    return precioActual ? precioActual.precioBase : null;
   }
 
   showSuccessMessage(message: string) {

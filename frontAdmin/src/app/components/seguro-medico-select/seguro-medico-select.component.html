@@ -1,6 +1,6 @@
 <div class="flex justify-end items-center space-x-2">
     <h1 class="">Seguro Medico: </h1>
-    <select name="SeguroMedico" id="seguroMedico" class="p-2 border rounded-md max-w-80">
+    <select (change)="onSeguroMedicoChange($event)" name="SeguroMedico" id="seguroMedico" class="p-2 border rounded-md max-w-80">
         <option selected disabled value="0">Seleccione un Seguro Medico</option>
         <option *ngFor="let seguro of SegurosMedicos" [value]="seguro.id">{{ seguro.nombre }}</option>
     </select>
@@ -16,7 +16,7 @@
         <div class="flex">
             <div class="">
                 <div class="h-80 overflow-scroll">
-                    <button *ngFor="let sm of SegurosMedicos" (click)="elegirParaEditar(sm.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-400': editando?.id === sm.id}" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
+                    <button *ngFor="let sm of SegurosMedicos" (click)="elegirParaEditar(sm.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-600': editando?.id === sm.id, 'bg-sky-100 hover:border-blue-300 hover:bg-sky-200': editando?.id !== sm.id }" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
                         {{sm.nombre}}
                     </button>
                 </div>

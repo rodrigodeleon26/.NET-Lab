@@ -147,6 +147,9 @@ export class ArticulosComponent implements OnInit, OnDestroy {
     if (this.DatosArticuloForm.invalid) {
       return;
     }
+    if (this.editando !== '' && this.editando !== null && this.editando !== undefined && this.editando.id !== '') {
+      return;
+    }
     console.log(this.DatosArticuloForm.value);
     this.articulosService.addArticulo(this.DatosArticuloForm.value).subscribe({
       next: (data) => {

@@ -22,7 +22,31 @@
                 </div>
 
                 <div class="w-full bg-red-200">
-                    <app-seguro-medico-select></app-seguro-medico-select>
+                    <app-seguro-medico-select class=""></app-seguro-medico-select>
+                    <!-- CONTENIDO PRINCIPAL Y COPAGOS -->
+                    <div class="p-4">
+                        <Table class="w-full">
+                            <thead>
+                                <tr>
+                                    <th class="border border-gray-oscuro p-2 text-left">Articulo</th>
+                                    <th class="border border-gray-oscuro p-2 text-left">Especialidad</th>
+                                    <th class="border border-gray-oscuro p-2 text-left">Precio Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let copago of this.selectedSeguroMedico?.copagos">
+                                    <td class="border border-gray-oscuro p-2">{{ copago.articulo.nombre }}</td>
+                                    <td class="border border-gray-oscuro p-2">{{ copago.especialidad.nombre }}</td>
+                                    <td class="border border-gray-oscuro p-2">
+                                        <div class="flex">
+                                            {{ getPrecioActual(copago.precios) }}
+                                            <img src="images/calendar_clock.svg" alt="calendario de precios" class="h-full">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
 

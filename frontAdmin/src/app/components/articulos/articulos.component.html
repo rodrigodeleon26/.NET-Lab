@@ -36,7 +36,7 @@
                 </div>
         
                 <div class="h-80 overflow-scroll">
-                    <button *ngFor="let articulo of articulosModal" (click)="elegirParaEditar(articulo.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-400': editando?.id === articulo.id}" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
+                    <button *ngFor="let articulo of articulosModal" (click)="elegirParaEditar(articulo.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-600': editando?.id === articulo.id, 'bg-sky-100 hover:border-blue-300 hover:bg-sky-200': editando?.id !== articulo.id }" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-100">
                         {{articulo.nombre}}
                     </button>
                 </div>

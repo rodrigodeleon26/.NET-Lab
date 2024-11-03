@@ -200,7 +200,7 @@ namespace DAL.DALs
 							Id = p.Id,
 							PrecioBase = p.PrecioBase,
 							FechaInicio = p.FechaInicio
-						}).ToList(),
+						}).ToList()
 					}).ToList();
 			}
 		}
@@ -209,7 +209,17 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var seguro = _dbContext.SegurosMedicos.Find(id);
+                var seguro = _dbContext.SegurosMedicos
+					.Include(s => s.Contratos)
+					.Include(s => s.Precios)
+					.Include(s => s.Copagos)
+						.ThenInclude(c => c.Articulo)
+					.Include(s => s.Copagos)
+						.ThenInclude(c => c.Especialidad)
+					.Include(s => s.Copagos)
+						.ThenInclude(c => c.Precios)
+					.FirstOrDefault(s => s.Id == id);
+                
 				if (seguro != null)
 				{
 					return new SeguroMedico
@@ -229,7 +239,28 @@ namespace DAL.DALs
 							PrecioBase = p.PrecioBase,
 							FechaInicio = p.FechaInicio
 						}).ToList(),
-					};
+                        Copagos = seguro.Copagos.Select(c => new Copago
+                        {
+                            Id = c.Id,
+                            Articulo = new Articulo
+                            {
+                                Id = c.Articulo.Id,
+                                Nombre = c.Articulo.Nombre
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Especialidad.Id,
+                                Nombre = c.Especialidad.Nombre,
+                                Descripcion = c.Especialidad.Descripcion
+                            },
+                            Precios = c.Precios.Select(p => new Precio
+                            {
+                                Id = p.Id,
+                                PrecioBase = p.PrecioBase,
+                                FechaInicio = p.FechaInicio
+                            }).ToList()
+                        }).ToList()
+                    };
 				}
 				return null;
 			}
