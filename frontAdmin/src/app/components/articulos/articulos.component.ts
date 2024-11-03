@@ -19,7 +19,7 @@ export class ArticulosComponent implements OnInit, OnDestroy {
   busqueda: string = '';
   busquedaModal: string = '';
   isModalVisible: boolean = false;
-  editando: any = null;
+  editando: any = '';
 
   private searchSubscription: Subscription | undefined;
   private searchModalSubscription: Subscription | undefined;
@@ -144,6 +144,9 @@ export class ArticulosComponent implements OnInit, OnDestroy {
   }
 
   agregarArticulo(): void {
+    if (this.DatosArticuloForm.invalid) {
+      return;
+    }
     console.log(this.DatosArticuloForm.value);
     this.articulosService.addArticulo(this.DatosArticuloForm.value).subscribe({
       next: (data) => {
@@ -161,7 +164,7 @@ export class ArticulosComponent implements OnInit, OnDestroy {
 
   elegirParaEditar(articuloId: string){
     if (articuloId === '' || articuloId === null || articuloId == this.editando.id) {
-      this.editando = null;
+      this.editando = '';
       this.DatosArticuloForm.reset();
       return;
     }
@@ -170,4 +173,41 @@ export class ArticulosComponent implements OnInit, OnDestroy {
     console.log(this.editando);
   }
 
+  editar(): void {
+    if (this.editando === '' || this.editando === null || this.editando === undefined || this.editando.id === '') {
+      return;
+    }
+    this.articulosService.updateArticulo(this.editando.id, this.DatosArticuloForm.value).subscribe({
+      next: (data) => {
+        this.DatosArticuloForm.reset();
+      },
+      error: (error) => {
+        console.error(error);
+      },
+      complete: () => {
+        this.onSearch();
+        this.onSearchModal();
+        this.editando = '';
+      }
+    });
+  }
+
+  Delete(){
+    if (this.editando === '' || this.editando === null || this.editando === undefined || this.editando.id === '') {
+      return;
+    }
+    this.articulosService.deleteArticulo(this.editando.id).subscribe({
+      next: (data) => {
+        this.DatosArticuloForm.reset();
+      },
+      error: (error) => {
+        console.error(error);
+      },
+      complete: () => {
+        this.onSearch();
+        this.onSearchModal();
+        this.editando = '';
+      }
+    });
+  }
 }

@@ -1,4 +1,4 @@
-<div class="container mx-auto px-4 mt-4 md:mt-8 md:p-0 border-red-600 border-2">
+<div class="container mx-auto px-4 mt-4 md:mt-8 md:p-0">
     <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
         <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
         <p class="text-white text-lg">Cargando...</p>
@@ -11,14 +11,16 @@
             </h1>
             <div class="flex bg-zinc-300 p-2 rounded space-x-1 justify-between">
                 <input [(ngModel)]="busqueda" type="text" id="buscar" class="border rounded-md max-w-48" placeholder="Buscar...">
-                <button class="bg-blue-intermedio w-fit rounded hover:bg-blue-oscuro hover:shadow-lg" (click)="showModal()">
+                <button class="bg-blue-intermedio w-fit rounded hover:bg-blue-oscuro hover:shadow-lg transition duration-300" (click)="showModal()">
                     <img src="images/settings.svg" alt="Opciones Articulos" class="w-full">
                 </button>
             </div>
+            <div class="h-80 overflow-scroll" style="scrollbar-width: thin;"> 
+                <button *ngFor="let articulo of articulos" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
+                    {{articulo.nombre}}
+                </button>
+            </div>
 
-            <button *ngFor="let articulo of articulos" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md">
-                {{articulo.nombre}}
-            </button>
         </div>
     </div>
 </div>
@@ -34,7 +36,7 @@
                 </div>
         
                 <div class="h-80 overflow-scroll">
-                    <button *ngFor="let articulo of articulosModal" (click)="elegirParaEditar(articulo.id)" [ngClass]="{'bg-blue-oscuro text-white': editando?.id === articulo.id}" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg hover:text-black text-base text-left p-1 rounded-md">
+                    <button *ngFor="let articulo of articulosModal" (click)="elegirParaEditar(articulo.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-400': editando?.id === articulo.id}" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
                         {{articulo.nombre}}
                     </button>
                 </div>
@@ -53,8 +55,8 @@
                 </div>
                 <div class="flex justify-between">                    
                     <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Nuevo</button>
-                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Editar</button>
-                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded-md">Borrar</button>
+                    <button type="button" (click)="editar()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Editar</button>
+                    <button type="button" (click)="Delete()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded-md">Borrar</button>
                 </div>
 
             </form>

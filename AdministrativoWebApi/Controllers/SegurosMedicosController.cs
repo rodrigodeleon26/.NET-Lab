@@ -71,7 +71,7 @@ namespace AdministrativoWebApi.Controllers
                 return NotFound();
             }
 
-            _blAdministrativo.addSeguroMedico(seguroMedico);
+            _blAdministrativo.updateSeguroMedico(seguroMedico);
             return NoContent();
         }
 

@@ -14,6 +14,7 @@ import { ListMedicosComponent } from './components/list-medicos/list-medicos.com
 import { ConsultoriosComponent } from './components/consultorios/consultorios.component';
 import { CopagosComponent } from './components/copagos/copagos.component';
 import { ArticulosComponent } from './components/articulos/articulos.component';
+import { SeguroMedicoSelectComponent } from './components/seguro-medico-select/seguro-medico-select.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,6 +25,7 @@ import { ArticulosComponent } from './components/articulos/articulos.component';
     ConsultoriosComponent,
     CopagosComponent,
     ArticulosComponent,
+    SeguroMedicoSelectComponent,
   ],
   imports: [
     BrowserModule,

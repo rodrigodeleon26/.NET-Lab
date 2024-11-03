@@ -1,0 +1,53 @@
+<div class="flex justify-end items-center space-x-2">
+    <h1 class="">Seguro Medico: </h1>
+    <select name="SeguroMedico" id="seguroMedico" class="p-2 border rounded-md max-w-80">
+        <option selected disabled value="0">Seleccione un Seguro Medico</option>
+        <option *ngFor="let seguro of SegurosMedicos" [value]="seguro.id">{{ seguro.nombre }}</option>
+    </select>
+    <button (click)="this.isModalVisible = true" title="Opciones Seguro Medico" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md p-2 hover:bg-blue-oscuro transition duration-300">
+        <img src="images/settings.svg" alt="Opciones Seguros Medicos" class="w-full">
+    </button>
+</div>
+
+<!-- MODAL OPCIONES-->
+<div *ngIf="isModalVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="isModalVisible = false">
+	<div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full" (click)="$event.stopPropagation()">
+        <p class="my-2">Seguros Medicos - Opciones</p>
+        <div class="flex">
+            <div class="">
+                <div class="h-80 overflow-scroll">
+                    <button *ngFor="let sm of SegurosMedicos" (click)="elegirParaEditar(sm.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-400': editando?.id === sm.id}" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
+                        {{sm.nombre}}
+                    </button>
+                </div>
+            </div>
+
+            <span class="border-x border-blue-intermedio my-3 mx-5 order-1 md:order-2 hidden md:block"></span>
+            <span class="border-y border-blue-intermedio my-5 mx-3 order-1 block md:hidden"></span>
+
+            <form [formGroup]="DatosSMForm" (ngSubmit)="agregarSeguroMedico()" class="flex flex-col md:order-3 justify-between mb-4">
+
+                <div>
+                    <div class="flex flex-col">
+                        <label for="nombre" class="text-sm font-medium">Nombre</label>
+                        <input type="text" id="nombre" formControlName="nombre" class="border rounded-md p-2" placeholder="Ingrese El Nombre..." required>
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="descripcion" class="text-sm font-medium">Descripción</label>
+                        <textarea type="text" id="descripcion" formControlName="descripcion" class="border rounded-md p-2" placeholder="Ingrese La Descripción Aquí..." required></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-between">                    
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Nuevo</button>
+                    <button type="button" (click)="editar()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Editar</button>
+                    <button type="button" (click)="Delete()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded-md">Borrar</button>
+                </div>
+
+            </form>
+
+        </div>
+		<div class="flex justify-end space-x-4">
+			<button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md" (click)="this.isModalVisible = false">Cerrar</button>
+		</div>
+	</div>
+</div>

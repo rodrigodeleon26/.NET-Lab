@@ -4,18 +4,28 @@
         <p class="text-white text-lg">Cargando...</p>
     </div>
     <div class="flex justify-center">
-        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
+        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl pb-2 overflow-hidden">
             <div *ngIf="successMessage" class="w-full bg-green-intermedio text-center text-white text-lg max-h-10">
                 {{ successMessage }}
             </div>
             <div *ngIf="errorMessage" class="w-full bg-red-500 text-center text-white text-lg max-h-10">
                 {{ errorMessage }}
             </div> 
+            <h1 class="flex justify-center text-lg">
+                Copagos
+            </h1>
+            <div class="flex">
+                <div class="w-fit bg-gray-intermedio rounded-md py-2">
+                    <div class="max-w-64 m-2">
+                        <app-articulos></app-articulos>
+                    </div>
+                </div>
 
-            
-            <div class="max-w-64">
-                <app-articulos></app-articulos>
+                <div class="w-full bg-red-200">
+                    <app-seguro-medico-select></app-seguro-medico-select>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
