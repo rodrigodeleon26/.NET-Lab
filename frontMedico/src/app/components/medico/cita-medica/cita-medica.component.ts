@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PacienteService } from '../../../services/paciente.service';
 import { CitasMedicasService } from '../../../services/cita-medica.service';
+import { ConsultorioService } from '../../../services/consultorio.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
@@ -15,13 +16,13 @@ export class CitaMedicaComponent implements OnInit {
   loading: boolean = false; // Indicador de carga
   successMessage: string = ''; // Mensaje de éxito
   errorMessage: string = ''; // Mensaje de error
-  modalEliminarCita: boolean = false; // Modal de eliminación de cita
-  modalCrearCita: boolean = false; // Modal de creación de cita
-  citaIdEliminar: number | null = null; // ID de cita para eliminar
+  modalVerCita: boolean = false; // Modal de eliminación de cita
+  citaSeleccionada: any = null;
 
   constructor(
     private citasMedicasService: CitasMedicasService,
     private pacienteService: PacienteService,
+    private consultorioService: ConsultorioService,
     private fb: FormBuilder
   ) {
     // Inicializa el formulario de nueva cita
@@ -57,6 +58,16 @@ export class CitaMedicaComponent implements OnInit {
               }
             );
           }
+          if (cita.calendario.consultorio) { // Verifica que la cita tiene un pacienteId
+            this.consultorioService.getConsultorioGestion(cita.calendario.consultorio.id).subscribe(
+              (consultorioData) => {
+                cita.consultorio = consultorioData; // Asigna la información del paciente a la cita médica
+              },
+              (error) => {
+                console.error(`Error al cargar datos del paciente para la cita con ID ${cita.id}:`, error);
+              }
+            );
+          }
         });
 
         console.log('Datos cargados en citasMedicas:', data); // Imprime los datos en la consola
@@ -76,81 +87,13 @@ export class CitaMedicaComponent implements OnInit {
     return `${horas}:${minutos}`;
   }
 
-  // Abrir el modal para crear una nueva cita
-  openModalCrearCita(): void {
-    this.modalCrearCita = true;
-    this.nuevaCitaForm.reset();
-  }
-
-  // Cerrar el modal de creación de cita
-  closeModalCrearCita(): void {
-    this.modalCrearCita = false;
-    this.nuevaCitaForm.reset();
-  }
-
-  // Crear una nueva cita médica
-  crearCita(): void {
-    if (this.nuevaCitaForm.invalid) return;
-
-    const nuevaCita = this.nuevaCitaForm.value;
-    const calendarioId = 1; // Cambiar según el contexto
-    const pacienteId = 1;   // Cambiar según el contexto
-
-    this.citasMedicasService.crearCitaMedica(calendarioId, pacienteId, nuevaCita).subscribe(
-      (data) => {
-        this.citasMedicas.push(data);
-        this.successMessage = 'Cita médica creada con éxito';
-        this.closeModalCrearCita();
-        setTimeout(() => (this.successMessage = ''), 3000);
-      },
-      (error) => {
-        this.errorMessage = 'Error al crear la cita médica';
-        console.error('Error al crear cita:', error);
-        setTimeout(() => (this.errorMessage = ''), 3000);
-      }
-    );
-  }
-
-  // Abrir el modal de eliminación y guardar el ID de la cita a eliminar
-  openModalEliminarCita(id: number): void {
-    this.modalEliminarCita = true;
-    this.citaIdEliminar = id;
-  }
-
-  // Cerrar el modal de eliminación
-  closeModalEliminarCita(): void {
-    this.modalEliminarCita = false;
-    this.citaIdEliminar = null;
-  }
-
-  // Eliminar una cita médica
-  eliminarCita(): void {
-    if (!this.citaIdEliminar) return;
-
-    this.citasMedicasService.eliminarCitaMedica(this.citaIdEliminar).subscribe(
-      () => {
-        this.citasMedicas = this.citasMedicas.filter(cita => cita.id !== this.citaIdEliminar);
-        this.successMessage = 'Cita médica eliminada con éxito';
-        this.closeModalEliminarCita();
-        setTimeout(() => (this.successMessage = ''), 3000);
-      },
-      (error) => {
-        this.errorMessage = 'Error al eliminar la cita médica';
-        console.error('Error al eliminar cita:', error);
-        setTimeout(() => (this.errorMessage = ''), 3000);
-      }
-    );
-  }
-
-  // Ver detalles de una cita médica (por implementar)
   verCita(id: number): void {
-    console.log('Ver cita con ID:', id);
-    // Aquí se puede redirigir o abrir modal con detalles
+    this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
+    this.modalVerCita = true;
   }
 
-  // Editar una cita médica (por implementar)
-  editarCita(id: number): void {
-    console.log('Editar cita con ID:', id);
-    // Aquí se puede redirigir o abrir modal con formulario de edición
+  desverCita(): void {
+    this.modalVerCita = false;
+    this.citaSeleccionada = null;
   }
 }
