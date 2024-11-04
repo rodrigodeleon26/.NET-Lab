@@ -48,6 +48,12 @@ namespace DAL.DALs
                                 Id = p.Calendario.Especialidad.Id,
                                 Nombre = p.Calendario.Especialidad.Nombre,
                                 Descripcion = p.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = p.Calendario.Consultorio.Id,
+                                Numero = p.Calendario.Consultorio.Numero,
+                                Piso = p.Calendario.Consultorio.Piso
                             }
                         }
                     }).ToList();
@@ -89,6 +95,12 @@ namespace DAL.DALs
                                 Id = p.Calendario.Especialidad.Id,
                                 Nombre = p.Calendario.Especialidad.Nombre,
                                 Descripcion = p.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = p.Calendario.Consultorio.Id,
+                                Numero = p.Calendario.Consultorio.Numero,
+                                Piso = p.Calendario.Consultorio.Piso
                             }
                         }
                     })

@@ -1,4 +1,4 @@
 export const CitasMedicasURL = {
     production: false,
-    apiUrl: '/citasmedicas/'  // Base URL for the API, handled by Nginx
+    apiUrl: 'https://localhost/citasmedicas/'  // Base URL for the API, handled by Nginx
   };

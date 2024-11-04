@@ -58,16 +58,6 @@ export class CitaMedicaComponent implements OnInit {
               }
             );
           }
-          if (cita.calendario.consultorio) { // Verifica que la cita tiene un pacienteId
-            this.consultorioService.getConsultorioGestion(cita.calendario.consultorio.id).subscribe(
-              (consultorioData) => {
-                cita.consultorio = consultorioData; // Asigna la información del paciente a la cita médica
-              },
-              (error) => {
-                console.error(`Error al cargar datos del paciente para la cita con ID ${cita.id}:`, error);
-              }
-            );
-          }
         });
 
         console.log('Datos cargados en citasMedicas:', data); // Imprime los datos en la consola

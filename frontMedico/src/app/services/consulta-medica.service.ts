@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ConsultaMedicaService {
-  private apiUrl = '/historiaclinica/api/HistoriasClinicas';
+  private apiUrl = 'https://localhost/historiaclinica/api/HistoriasClinicas';
 
   constructor(
     private http: HttpClient

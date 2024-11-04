@@ -71,7 +71,8 @@
             <p><strong>Fecha de la cita:</strong> {{ citaSeleccionada?.fecha | date: 'dd/MM/yyyy' }}</p>
             <p><strong>Hora de la cita:</strong> {{ getHora(citaSeleccionada?.fecha) }}</p>
             <p><strong>Tiempo de cita:</strong> {{ citaSeleccionada?.calendario.tiempoCita }} minutos</p>
-            <p><strong>ID del Consultorio (Cambiar, placeholder):</strong> {{ citaSeleccionada?.calendario.consultorio.id }}</p>
+            <p><strong>Consultorio número:</strong> {{ citaSeleccionada?.calendario.consultorio.numero }}</p>
+            <p><strong>Piso:</strong> {{ citaSeleccionada?.calendario.consultorio.piso }}</p>
         </div>
 
         <div class="flex justify-center py-1">
