@@ -16,7 +16,7 @@
                 </button>
             </div>
             <div class="h-80 overflow-scroll" style="scrollbar-width: thin;"> 
-                <button *ngFor="let articulo of articulos" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
+                <button *ngFor="let articulo of articulos" (click)="selectArticulo(articulo)" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
                     {{articulo.nombre}}
                 </button>
             </div>

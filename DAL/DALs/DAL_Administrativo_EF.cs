@@ -481,52 +481,26 @@ namespace DAL.DALs
 			}
 		}
 
-		public Precio GetPrecioById(long id)
-		{
-			using (var _dbContext = new DBContext())
-			{
+        public Precio GetPrecioById(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
 				var precio = _dbContext.Precios.Find(id);
-				if (precio != null)
-				{
-					return new Precio
-					{
-						Id = precio.Id,
-						PrecioBase = precio.PrecioBase,
-						FechaInicio = precio.FechaInicio,
-						Copago = new Copago
-						{
-							Id = precio.Copago.Id,
-							Articulo = new Articulo
-							{
-								Id = precio.Copago.Articulo.Id,
-								Nombre = precio.Copago.Articulo.Nombre
-							},
-							SeguroMedico = new SeguroMedico
-							{
-								Id = precio.Copago.SeguroMedico.Id,
-								Nombre = precio.Copago.SeguroMedico.Nombre,
-								Descripcion = precio.Copago.SeguroMedico.Descripcion
-							},
-							Especialidad = new Especialidad
-							{
-								Id = precio.Copago.Especialidad.Id,
-								Nombre = precio.Copago.Especialidad.Nombre,
-								Descripcion = precio.Copago.Especialidad.Descripcion
-							}
-						},
-						SeguroMedico = new SeguroMedico
-						{
-							Id = precio.SeguroMedico.Id,
-							Nombre = precio.SeguroMedico.Nombre,
-							Descripcion = precio.SeguroMedico.Descripcion
-						}
-					};
-				}
-				return null;
-			}
-		}
 
-		public void AddPrecio(Precio precio)
+                if (precio != null)
+                {
+                    return new Precio
+                    {
+                        Id = precio.Id,
+                        PrecioBase = precio.PrecioBase,
+                        FechaInicio = precio.FechaInicio
+                    };
+                }
+                return null;
+            }
+        }
+
+        public void AddPrecio(Precio precio)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -534,10 +508,18 @@ namespace DAL.DALs
 				{
 					PrecioBase = precio.PrecioBase,
 					FechaInicio = precio.FechaInicio,
-					CopagoId = precio.Copago.Id,
-					SeguroMedicoId = precio.SeguroMedico.Id
+					CopagoId = null,
+					SeguroMedicoId = null
 				};
-				_dbContext.Precios.Add(nuevoPrecio);
+				if(precio.Copago != null)
+                {
+                    nuevoPrecio.CopagoId = precio.Copago.Id;
+                }
+                if (precio.SeguroMedico != null)
+                {
+                    nuevoPrecio.SeguroMedicoId = precio.SeguroMedico.Id;
+                }
+                _dbContext.Precios.Add(nuevoPrecio);
 				_dbContext.SaveChanges();
 			}
 		}

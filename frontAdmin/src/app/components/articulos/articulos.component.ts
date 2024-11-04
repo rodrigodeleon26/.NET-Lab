@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { CopagosService } from '../../services/copagos.service';
 
 @Component({
   selector: 'app-articulos',
@@ -21,12 +22,15 @@ export class ArticulosComponent implements OnInit, OnDestroy {
   isModalVisible: boolean = false;
   editando: any = '';
 
+  seguroMedicoSeleccionado: any = null;
+
   private searchSubscription: Subscription | undefined;
   private searchModalSubscription: Subscription | undefined;
 
   constructor(
     private fb: FormBuilder,
     private articulosService: ArticulosService,
+    private copagosService: CopagosService
   ) {
     this.DatosArticuloForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
@@ -60,6 +64,14 @@ export class ArticulosComponent implements OnInit, OnDestroy {
       }
     })
     
+    this.copagosService.selectedSeguroMedico$.subscribe({
+      next: (data) => {
+        this.seguroMedicoSeleccionado = data;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -212,5 +224,12 @@ export class ArticulosComponent implements OnInit, OnDestroy {
         this.editando = '';
       }
     });
+  }
+
+  selectArticulo(articulo: any): void {
+    if (!this.seguroMedicoSeleccionado) {
+      return;
+    }
+    this.copagosService.changeSelectedArticulo(articulo);
   }
 }

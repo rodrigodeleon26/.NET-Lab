@@ -11,8 +11,8 @@ export class CopagosService {
   private selectedSeguroMedicoSource = new BehaviorSubject<any>(null);
   selectedSeguroMedico$ = this.selectedSeguroMedicoSource.asObservable();
 
-  private articulosDeSeguroMedicoSource = new BehaviorSubject<any[]>([]);
-  articulosDeSeguroMedico$ = this.articulosDeSeguroMedicoSource.asObservable();
+  private copagosDeSeguroMedicoSource = new BehaviorSubject<any[]>([]);
+  copagosDeSeguroMedico$ = this.copagosDeSeguroMedicoSource.asObservable();
 
   constructor() { }
 
@@ -21,11 +21,11 @@ export class CopagosService {
   }
 
   changeSelectedSeguroMedico(seguroMedico: any) {
-    console.log('changeSelectedSeguroMedico', seguroMedico);
     this.selectedSeguroMedicoSource.next(seguroMedico);
+    this.changeCopagosDeSeguroMedico(seguroMedico.copagos);
   }
 
-  changeArticulosDeSeguroMedico(articulos: any[]) {
-    this.articulosDeSeguroMedicoSource.next(articulos);
+  changeCopagosDeSeguroMedico(articulos: any[]) {
+    this.copagosDeSeguroMedicoSource.next(articulos);
   }
 }
