@@ -8,6 +8,9 @@ services:
       - 5000:8080
       - 5001:8081
     container_name: PacienteWebApi_container
+    depends_on:
+      sqlserver:
+        condition: service_healthy
 
   citasmedicaswebapi:
     image: ${DOCKER_REGISTRY-}citasmedicaswebapi
@@ -18,6 +21,9 @@ services:
       - 5002:8080
       - 5003:8081
     container_name: CitasMedicasWebApi_container
+    depends_on:
+      sqlserver:
+        condition: service_healthy
 
   historiaclinicawebapi:
     image: ${DOCKER_REGISTRY-}historiaclinicawebapi
@@ -28,6 +34,9 @@ services:
       - 5004:8080
       - 5005:8081
     container_name: HistoriaClinicaWebApi_container
+    depends_on:
+      sqlserver:
+        condition: service_healthy
 
   authwebapi:
     image: ${DOCKER_REGISTRY-}authwebapi
@@ -38,6 +47,9 @@ services:
       - 5006:8080
       - 5007:8081
     container_name: AuthWebApi_container
+    depends_on:
+      sqlserver:
+        condition: service_healthy
 
   administrativowebapi:
     image: ${DOCKER_REGISTRY-}administrativowebapi
@@ -48,6 +60,9 @@ services:
       - 5008:8080
       - 5009:8081
     container_name: AdministrativoWebApi_container
+    depends_on:
+      sqlserver:
+        condition: service_healthy
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -59,13 +74,20 @@ services:
     volumes:
       - sqlserver-data:/var/opt/mssql
     container_name: SQLServer_container
+    healthcheck:
+      test: ["CMD", "echo", "SQL Server is running"]
+      interval: 1s
+      timeout: 10s
+      retries: 1
 
   nginx:
     image: nginx:latest
     container_name: nginx_container
     ports:
-      - "80:7020"
+      - "443:443"
     volumes:
+      - ./ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./ssl/server.key:/etc/nginx/certs/server.key
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - citasmedicaswebapi
@@ -74,11 +96,12 @@ services:
       - administrativowebapi
 
   frontenda:
+    image: ${DOCKER_REGISTRY-}frontenda
     build:
       context: ./frontAdmin
       dockerfile: Dockerfile  
     ports:
-      - "5010:443"
+      - "5010:446"
     volumes:
       - ./frontAdmin/ssl/server.crt:/etc/nginx/certs/server.crt
       - ./frontAdmin/ssl/server.key:/etc/nginx/certs/server.key
@@ -90,6 +113,7 @@ services:
       - administrativowebapi
   
   frontendm:
+    image: ${DOCKER_REGISTRY-}frontendm
     build:
       context: ./frontMedico
       dockerfile: Dockerfile  
@@ -106,6 +130,7 @@ services:
       - administrativowebapi
   
   frontendc:
+    image: ${DOCKER_REGISTRY-}frontendc
     build:
       context: ./frontCliente
       dockerfile: Dockerfile  
