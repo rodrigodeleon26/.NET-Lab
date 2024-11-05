@@ -37,6 +37,11 @@ namespace BL.BLs
 			return dal.GetPacienteById(id);
 		}
 
+		public Paciente getPacienteByDNI(string dni)
+        {
+            return dal.GetPacienteByDNI(dni);
+        }
+
 		public List<Paciente> getPacientes()
 		{
 			return dal.GetPacientes();

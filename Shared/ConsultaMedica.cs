@@ -24,4 +24,17 @@
         public string Diagnostico { get; set; }
         public long CitaMedicaId { get; set; }
     }
+
+    public class ConsultaMedicaConCitaDTO
+    {
+        public ConsultaMedica ConsultaMedica { get; set; }
+        public CitaMedica CitaMedica { get; set; }
+    }
+
+    public class ConsultaMedicaCompletaDTO
+    {
+        public ConsultaMedica ConsultaMedica { get; set; }
+        public CitaMedica CitaMedica { get; set; }  
+        public Paciente Paciente { get; set; }
+    }
 }

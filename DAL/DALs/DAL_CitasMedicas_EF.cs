@@ -55,7 +55,7 @@ namespace DAL.DALs
         }
 
         // Obtener una cita médica por ID
-        public CitaMedica getCitaMedicaById(int id)
+        public CitaMedica getCitaMedicaById(long id)
         {
             using (var _dbContext = new DBContext())
             {
@@ -158,6 +158,7 @@ namespace DAL.DALs
                     citaEntity.Fecha = citaActualizada.Fecha;
                     citaEntity.Estado = citaActualizada.Estado;
                     citaEntity.PacienteId= citaActualizada.PacienteId;
+                    citaEntity.ConsultaMedicaId  = citaActualizada.ConsultaMedicaId;
 
                     _dbContext.CitasMedicas.Update(citaEntity);
                     _dbContext.SaveChanges();
@@ -178,6 +179,89 @@ namespace DAL.DALs
                 }
             }
         }
+
+        //Obtener las citas medicas de un paciente
+        public List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.CitasMedicas
+                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
+
+                Console.WriteLine("hola");
+                // Aplicar filtro de fechas si ambas fechas están presentes
+                if (fechaInicio.HasValue && fechaFin.HasValue)
+                {
+                    Console.WriteLine("entro");
+                    Console.WriteLine(fechaFin.Value);
+                    Console.WriteLine(fechaInicio.Value);
+                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
+                }
+
+                if (especialidadesIds.Any())
+                {
+                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
+                }
+
+                // Aplicar orden
+                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha);
+
+                return query
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new CitaMedica
+                    {
+                        Id = c.Id,
+                        Fecha = c.Fecha,
+                        Estado = c.Estado,
+                        PacienteId = c.PacienteId,
+                        Calendario = new Calendario
+                        {
+                            Medico = new Medico
+                            {
+                                Id = c.Calendario.Medico.Id,
+                                Nombres = c.Calendario.Medico.Nombres,
+                                Apellidos = c.Calendario.Medico.Apellidos,
+                                Documento = c.Calendario.Medico.Documento,
+                                Email = c.Calendario.Medico.Email,
+                                Telefono = c.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Calendario.Especialidad.Id,
+                                Nombre = c.Calendario.Especialidad.Nombre,
+                                Descripcion = c.Calendario.Especialidad.Descripcion
+                            }
+                        },
+                        ConsultaMedicaId = c.ConsultaMedicaId
+                    })
+                    .ToList();
+            }
+        }
+
+        public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.CitasMedicas
+                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
+
+                // Aplicar filtro de rango de fechas solo si ambos valores están presentes
+                if (fechaInicio.HasValue && fechaFin.HasValue)
+                {
+                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
+                }
+
+                if (especialidadesIds.Any())
+                {
+                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
+                }
+
+                // Contar los resultados después de aplicar los filtros
+                return query.Count();
+            }
+        }
+
 
         // MEDICOS
         public List<Medico> GetMedicos()

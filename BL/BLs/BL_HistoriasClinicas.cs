@@ -2,55 +2,142 @@
 using BL.IBLs;
 using DAL.IDALs;
 using DAL.Models;
+using Shared.Services;
+using iTextSharp.text.pdf;
 
 namespace BL.BLs
 {
     public class BL_HistoriasClinicas : IBL_HistoriasClinicas
     {
         private readonly IDAL_HistoriasClinicas dal;
+        private readonly BL_Administrativo_Service bL_Administrativo_Service;
+        private readonly BL_CitasMedicas_Service bL_CitasMedicas_Service;
 
-        public BL_HistoriasClinicas(IDAL_HistoriasClinicas dal)
+        public BL_HistoriasClinicas(
+            IDAL_HistoriasClinicas dal, 
+            BL_Administrativo_Service bL_Administrativo_Service,
+            BL_CitasMedicas_Service bL_CitasMedicas_Service)
         {
             this.dal = dal;
+            this.bL_Administrativo_Service = bL_Administrativo_Service;
+            this.bL_CitasMedicas_Service = bL_CitasMedicas_Service;
         }
 
         public List<ConsultaMedica> getConsultasMedicas()
         {
-            return dal.getConsultasMedicas();
+            var consultasMedicas = dal.getConsultasMedicas();
+
+            if (consultasMedicas.Count == 0)
+            {
+                return null;
+            }
+
+            // Decripta las URLs en la capa de negocio
+            foreach (var consulta in consultasMedicas)
+            {
+                foreach (var estudio in consulta.Estudios)
+                {
+                    estudio.ImagenUrl = EncryptionHelper.TryDecrypt(estudio.ImagenUrl);
+                }
+            }
+
+            return consultasMedicas;
         }
 
-        public ConsultaMedica getConsultaMedica(int id)
+        public ConsultaMedica getConsultaMedica(long id)
         {
             return dal.getConsultaMedica(id);
         }
 
+        public ConsultaMedicaCompletaDTO getConsultaMedicaCompleta(long id)
+        {
+            var consultaMedica = dal.getConsultaMedica(id);
+            if (consultaMedica == null) return null;
+
+            var citaMedica = bL_CitasMedicas_Service.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            if (citaMedica == null) return null;
+
+            var paciente = bL_Administrativo_Service.getPacienteById(citaMedica.PacienteId ?? 0);
+            if (paciente == null) return null;
+
+            return new ConsultaMedicaCompletaDTO
+            {
+                ConsultaMedica = consultaMedica,
+                CitaMedica = citaMedica,
+                Paciente = paciente
+            };
+        }
+
         public ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica)
         {
-            return dal.createConsultaMedica(consultaMedica);
+            if (string.IsNullOrEmpty(consultaMedica.Descripcion))
+            {
+                throw new ArgumentException("La descripción no puede estar vacía");
+            }
+
+            if (string.IsNullOrEmpty(consultaMedica.Diagnostico))
+            {
+                throw new ArgumentException("El diagnóstico no puede estar vacío");
+            }
+
+            if (consultaMedica.CitaMedicaId == 0)
+            {
+                throw new ArgumentException("La consulta médica debe estar asociada a una cita médica");
+            }
+
+            var nuevaConsultaMedica = new ConsultaMedicaDTO
+            {
+                Descripcion = consultaMedica.Descripcion,
+                Diagnostico = consultaMedica.Diagnostico,
+                CitaMedicaId = consultaMedica.CitaMedicaId,
+            };
+
+            return dal.createConsultaMedica(nuevaConsultaMedica);
         }
 
         public ConsultaMedica createConsultaMedicaSD(long consultaMedicaId)
         {
+            if (consultaMedicaId == 0)
+            {
+                throw new ArgumentException("La consulta médica debe estar asociada a una cita médica");
+            }
             return dal.createConsultaMedicaSD(consultaMedicaId);
         }
 
         public ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica)
         {
+            if (consultaMedica == null)
+            {
+                throw new ArgumentException("La consulta médica no puede ser nula");
+            }
             return dal.updateConsultaMedica(consultaMedica);
         }
 
         public ConsultaMedica deleteConsultaMedica(int id)
         {
+            if (id <= 0)
+            {
+                throw new ArgumentException("El ID proporcionado no es válido");
+            }
+
             return dal.deleteConsultaMedica(id);
         }
 
         public ConsultaMedica addReceta(int idConsultaMedica, Receta receta)
         {
+            if (receta == null)
+            {
+                throw new ArgumentException("La receta no puede ser nula");
+            }
             return dal.addReceta(idConsultaMedica, receta);
         }
         
         public ConsultaMedica updateReceta(int idConsultaMedica, Receta receta)
         {
+            if (receta == null)
+            {
+                throw new ArgumentException("La receta no puede ser nula");
+            }
             return dal.updateReceta(idConsultaMedica, receta);
         }
 
@@ -59,13 +146,54 @@ namespace BL.BLs
             return dal.deleteReceta(idConsultaMedica, idReceta);
         }
 
-        public ConsultaMedica addEstudio(int idConsultaMedica, Estudio estudio)
+        public async Task<ConsultaMedica> addEstudio(int idConsultaMedica, Estudio estudio)
         {
+            if (estudio == null)
+            {
+                throw new ArgumentException("El estudio no puede ser nulo");
+            }
+
+            DateOnly fechaRealizado = estudio.FechaRealizado ?? new DateOnly();
+            Random random = new Random();
+            int diasAdicionales = random.Next(1, 30);
+            DateOnly fechaResultado = fechaRealizado.AddDays(diasAdicionales);
+
+            var datosEstudio = new EstudioDTO
+            {
+                Nombre = estudio.Nombre,
+                Descripcion = estudio.Descripcion,
+                FechaRealizado = fechaRealizado,
+                FechaResultado = fechaResultado
+            };
+
+            var consultaMedica = getConsultaMedica(idConsultaMedica);
+            var citaMedica = bL_CitasMedicas_Service.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            var paciente = bL_Administrativo_Service.getPacienteById(citaMedica.PacienteId ?? 0);
+
+            // Generación de PDF y subida a S3
+            PdfGenerator pdfGenerator = new PdfGenerator();
+            byte[] pdf = pdfGenerator.GeneratePdf(datosEstudio, paciente);
+            using var pdfStream = new MemoryStream(pdf);
+            var s3Service = new S3Service();
+            string pdfFileName = $"{idConsultaMedica}_{DateTime.UtcNow.Ticks}.pdf";
+            string pdfUrl = await s3Service.UploadFileAsync(pdfStream, pdfFileName, "application/pdf");
+
+            string encryptedPdf = EncryptionHelper.Encrypt(pdfUrl);
+
+            estudio.ImagenUrl = encryptedPdf;
+            estudio.FechaResultado = fechaResultado;
+
+            // Agrega el estudio a la consulta médica y retorna el objeto completo
             return dal.addEstudio(idConsultaMedica, estudio);
         }
 
+
         public ConsultaMedica updateEstudio(int idConsultaMedica, Estudio estudio)
         {
+            if (estudio == null)
+            {
+                throw new ArgumentException("El estudio no puede ser nulo");
+            }
             return dal.updateEstudio(idConsultaMedica, estudio);
         }
 
@@ -77,6 +205,67 @@ namespace BL.BLs
         public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, DateOnly fechaResultado, string imagenUrl)
         {
             return dal.addResultadoEstudio(idConsultaMedica, idEstudio, fechaResultado, imagenUrl);
+        }
+
+        public object GetHistoriaClinica(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+            var paciente = bL_Administrativo_Service.getPacienteByDNI(dni);
+            if (paciente == null)
+            {
+                return null;
+            }
+
+            var citasMedicas = bL_CitasMedicas_Service.GetCitasMedicasByPacienteId(paciente.Id, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
+
+            List<ConsultaMedicaConCitaDTO> consultasMedicasConCitas = new List<ConsultaMedicaConCitaDTO>();
+            foreach (var cita in citasMedicas)
+            {
+                var consulta = getConsultaMedica(cita.ConsultaMedicaId ?? 0);
+                consultasMedicasConCitas.Add(new ConsultaMedicaConCitaDTO
+                {
+                    ConsultaMedica = consulta,
+                    CitaMedica = cita
+                });
+            }
+
+            // Para obtener el total de citas, útil para calcular el número total de páginas
+            int totalCitas = bL_CitasMedicas_Service.CountCitasMedicasByPacienteId(paciente.Id, fechaInicio, fechaFin, orden, especialidadesIds);
+
+            return new
+            {
+                ConsultasMedicasConCitas = consultasMedicasConCitas,
+                Paciente = paciente,
+                TotalItems = totalCitas,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalCitas / pageSize)
+            };
+        }
+
+        public ConsultaMedica GuardarConsulta(long id)
+        {
+            var consultaMedica = getConsultaMedica(id);
+            if (consultaMedica == null)
+            {
+                return null;
+            }
+
+            var cita = bL_CitasMedicas_Service.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            if (cita == null)
+            {
+                return null;
+            }
+
+            cita.Estado = "Completada";
+            cita.ConsultaMedicaId = consultaMedica.Id;
+            bL_CitasMedicas_Service.updateCitaMedica(cita);
+
+            return consultaMedica;
+        }
+
+        public List<Medicamento> getMedicamentos()
+        {
+            return dal.getMedicamentos();
         }
     }
 }

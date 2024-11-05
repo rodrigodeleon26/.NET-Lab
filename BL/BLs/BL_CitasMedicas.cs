@@ -21,7 +21,7 @@ namespace BL.BLs
         }
 
         // Obtener una cita médica por ID
-        public CitaMedica getCitaMedicaById(int id)
+        public CitaMedica getCitaMedicaById(long id)
         {
             return dal.getCitaMedicaById(id);
         }
@@ -125,6 +125,16 @@ namespace BL.BLs
         public void DeleteCalendario(long medicoId, long especialidadId)
         {
             dal.DeleteCalendario(medicoId, especialidadId);
+        }
+
+        public List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+           return dal.GetCitasMedicasByPacienteId(pacienteId, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
+        }
+
+        public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+            return dal.CountCitasMedicasByPacienteId(pacienteId, fechaInicio, fechaFin, orden, especialidadesIds);
         }
     }
 }
