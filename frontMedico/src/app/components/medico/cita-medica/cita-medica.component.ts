@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { PacienteService } from '../../../services/paciente.service';
 import { CitasMedicasService } from '../../../services/cita-medica.service';
 import { ConsultorioService } from '../../../services/consultorio.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-cita-medica',
@@ -13,7 +13,7 @@ import { forkJoin } from 'rxjs';
 export class CitaMedicaComponent implements OnInit {
   citasMedicas: any[] = []; // Lista de citas
   nuevaCitaForm: FormGroup;  // Formulario reactivo para nueva cita
-  loading: boolean = false; // Indicador de carga
+  loading: boolean = true; // Indicador de carga
   successMessage: string = ''; // Mensaje de éxito
   errorMessage: string = ''; // Mensaje de error
   modalVerCita: boolean = false; // Modal de eliminación de cita
@@ -35,42 +35,22 @@ export class CitaMedicaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
-    this.cargarCitasMedicas();
-    
+    this.loading = true;
+    this.cargarCitasMedicas().then(() => {
+      this.loading = false; // Se ejecuta solo después de que los datos hayan sido cargados
+    });
   }
-
-  // Cargar todas las citas médicas
-  cargarCitasMedicas(): void {
-    this.citasMedicasService.obtenerCitasMedicas().subscribe(
-      (data) => {
-        this.citasMedicas = data;
-
-        this.loading = true;
   
-        // Cargar información del paciente para cada cita médica
-        this.citasMedicas.forEach((cita) => {
-          if (cita.pacienteId) { // Verifica que la cita tiene un pacienteId
-            this.pacienteService.getPacienteGestion(cita.pacienteId).subscribe(
-              (pacienteData) => {
-                cita.paciente = pacienteData; // Asigna la información del paciente a la cita médica
-              },
-              (error) => {
-                console.error(`Error al cargar datos del paciente para la cita con ID ${cita.id}:`, error);
-              }
-            );
-          }
-        });
-
-        this.loading = false;
-
-        console.log('Datos cargados en citasMedicas:', data); // Imprime los datos en la consola
-      },
-      (error) => {
-        this.errorMessage = 'Error al cargar las citas médicas';
-        console.error('Error al cargar citas:', error);
-      }
-    );
+  // Cargar todas las citas médicas
+  async cargarCitasMedicas(): Promise<void> {
+    try {
+      const data = await lastValueFrom(this.citasMedicasService.obtenerCitasMedicas()); // Convertir Observable a Promesa
+      this.citasMedicas = data;
+      console.log('Datos cargados en citasMedicas:', data); // Imprime los datos en la consola
+    } catch (error) {
+      this.errorMessage = 'Error al cargar las citas médicas';
+      console.error('Error al cargar citas:', error);
+    }
   }
 
   getHora(fecha: string): string {

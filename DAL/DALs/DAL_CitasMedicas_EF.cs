@@ -27,6 +27,13 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
+                        Paciente = new Paciente
+                        {
+                            Id = p.Paciente.Id,
+                            Nombres = p.Paciente.Nombres,
+                            Apellidos = p.Paciente.Apellidos,
+                            Documento = p.Paciente.Documento
+                        },
                         ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
@@ -74,6 +81,13 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
+                        Paciente = new Paciente
+                        {
+                            Id = p.Paciente.Id,
+                            Nombres = p.Paciente.Nombres,
+                            Apellidos = p.Paciente.Apellidos,
+                            Documento = p.Paciente.Documento
+                        },
                         ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
