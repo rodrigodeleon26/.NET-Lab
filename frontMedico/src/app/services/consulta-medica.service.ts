@@ -17,6 +17,11 @@ export class ConsultaMedicaService {
     return this.http.get<any>(url);
   }
 
+  crearConsulta(consultaMedica: any): Observable<any> {
+    const url = `${this.apiUrl}`;
+    return this.http.post<any>(url, consultaMedica);
+  }
+
   obtenerConsultaMedica(id: number): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<any>(url);

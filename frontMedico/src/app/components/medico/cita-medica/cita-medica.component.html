@@ -83,7 +83,7 @@
         </div>
 
         <div *ngIf="citaSeleccionada.estado === 'Agendada'" class="flex justify-center py-1">
-            <button type="button" (click)="desverCita()" class="mr-2 ml-2 bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+            <button type="button" (click)="generarConsultaMedica(citaSeleccionada.id)" class="mr-2 ml-2 bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
                 Asignar consulta
             </button>
             <button type="button" (click)="asignarEstado(citaSeleccionada.id, 'NoAsistida')" class="mr-2 ml-2 bg-red-500 text-white border border-red-500 rounded-md py-1 px-3 hover:bg-red-700 transition duration-300">

@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { PacienteService } from '../../../services/paciente.service';
 import { CitasMedicasService } from '../../../services/cita-medica.service';
+import { ConsultaMedicaService } from '../../../services/consulta-medica.service';
 import { ConsultorioService } from '../../../services/consultorio.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, lastValueFrom } from 'rxjs';
@@ -23,6 +24,7 @@ export class CitaMedicaComponent implements OnInit {
 
   constructor(
     private citasMedicasService: CitasMedicasService,
+    private ConsultaMedicaService: ConsultaMedicaService,
     private pacienteService: PacienteService,
     private consultorioService: ConsultorioService,
     private route: ActivatedRoute,
@@ -77,6 +79,43 @@ export class CitaMedicaComponent implements OnInit {
   desverCita(): void {
     this.modalVerCita = false;
     this.citaSeleccionada = null;
+  }
+
+  generarConsultaMedica(id: number): void {
+    this.modalVerCita = false;
+    this.citaSeleccionada = null;
+    this.loading = true;
+    this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
+    const consultaData = {
+      descripcion: " ",  // Puedes establecer valores iniciales o vacíos aquí
+      diagnostico: " ",  // o incluso permitir que el usuario los complete
+      citaMedicaId: this.citaSeleccionada.id
+    };
+    this.ConsultaMedicaService.crearConsulta(consultaData).subscribe(
+      (response) => {
+        console.log('Consulta creada exitosamente:', response);
+
+        // Asigna la ID de la nueva consulta a citaSeleccionada.consultaMedicaId
+        this.citaSeleccionada.consultaMedicaId = response.id;  // Asegúrate de que la respuesta contiene la ID
+        this.citaSeleccionada.estado = 'Completada';  // Cambia el estado de la cita a 'Completada'
+        this.citasMedicasService.actualizarCitaMedica(this.citaSeleccionada.id, this.citaSeleccionada).subscribe(() => {
+        });
+
+        /* this.citasMedicasService.editarEstado(id, 'Completada').subscribe(() => {
+        }); */
+        
+        // Abre una nueva ventana con la ID de la consulta
+        window.open(`/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`, '_blank');
+
+        this.loading = false;
+        // Puedes actualizar el estado o mostrar una notificación de éxito aquí
+      },
+      (error) => {
+        console.error('Error al crear la consulta:', error);
+        this.loading = false;
+        // Puedes manejar el error aquí, mostrando un mensaje de error
+      }
+    );
   }
 
   abrirConsultaMedica(id: number) {
