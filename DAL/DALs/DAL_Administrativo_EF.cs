@@ -2,6 +2,7 @@
 using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System;
@@ -14,12 +15,19 @@ namespace DAL.DALs
 {
 	public class DAL_Administrativo_EF : IDAL_Administrativo
 	{
-		/**********************************************************/
-		/**                  PACIENTES                           **/
-		/**********************************************************/
-		#region FUNCTIONES PACIENTES
 
-		public List<Paciente> GetPacientes()
+        private readonly ILogger<DAL_Administrativo_EF> _logger;
+
+        public DAL_Administrativo_EF(ILogger<DAL_Administrativo_EF> logger)
+        {
+            _logger = logger;
+        }
+        /**********************************************************/
+        /**                  PACIENTES                           **/
+        /**********************************************************/
+        #region FUNCTIONES PACIENTES
+
+        public List<Paciente> GetPacientes()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -485,10 +493,14 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
-				var precio = _dbContext.Precios.Find(id);
+                _logger.LogInformation($"FUNCION {id}");
+
+                var precio = _dbContext.Precios.FirstOrDefault(p => p.Id == id);
+                _logger.LogInformation($"COSSSSAAAAAAAAAAAA");
 
                 if (precio != null)
                 {
+                    _logger.LogInformation($"Precio encontrado: {precio.Id}");
                     return new Precio
                     {
                         Id = precio.Id,
@@ -496,6 +508,7 @@ namespace DAL.DALs
                         FechaInicio = precio.FechaInicio
                     };
                 }
+                _logger.LogInformation("Precio encontrado: es null");
                 return null;
             }
         }
