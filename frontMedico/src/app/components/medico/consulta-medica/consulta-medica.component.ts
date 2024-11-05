@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ConsultaMedicaService } from '../../../services/consulta-medica.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-consulta-medica',
@@ -39,8 +41,11 @@ export class ConsultaMedicaComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
+  consultaSeleccionadaUrl: any = null;
+
   constructor(
     private consultaMedicaService: ConsultaMedicaService,
+    private route: ActivatedRoute,
     private fb: FormBuilder
   ) { 
     this.consultaMedicaForm = this.fb.group({
@@ -78,7 +83,12 @@ export class ConsultaMedicaComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.consultaMedicaService.obtenerConsultaMedica(1).subscribe(
+    this.route.queryParams.subscribe(params => {
+      const consultaSeleccionada = params['consultaSeleccionada'];
+      if (!consultaSeleccionada) return;
+      this.consultaSeleccionadaUrl = consultaSeleccionada;
+    });
+    this.consultaMedicaService.obtenerConsultaMedica(this.consultaSeleccionadaUrl).subscribe(
       response => {
         this.consultaMedica = response.consultaMedica;
         this.consultaMedicaForm.patchValue(this.consultaMedica);

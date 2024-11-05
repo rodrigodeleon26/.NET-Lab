@@ -27,6 +27,7 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
+                        ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
                             HoraInicio = p.Calendario.HoraInicio,
@@ -73,7 +74,7 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        // Mapeo del calendario relacionado
+                        ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
                             HoraInicio = p.Calendario.HoraInicio,

@@ -24,7 +24,7 @@
                             <th class="py-2 px-4 border-b">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody>                
                         <tr *ngFor="let cita of citasMedicas">
                             <td class="py-2 px-4 border-b">{{ cita.fecha | date: 'dd/MM/yyyy' }}</td>
                             <td class="py-2 px-4 border-b">{{ getHora(cita.fecha) }}</td>
@@ -75,9 +75,15 @@
             <p><strong>Piso:</strong> {{ citaSeleccionada?.calendario.consultorio.piso }}</p>
         </div>
 
-        <div class="flex justify-center py-1">
+        <div *ngIf="citaSeleccionada.estado === 'Agendada'" class="flex justify-center py-1">
             <button type="button" (click)="desverCita()" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
                 Asignar consulta
+            </button>
+        </div>
+
+        <div *ngIf="citaSeleccionada.estado === 'Completada'" class="flex justify-center py-1">
+            <button type="button" (click)="abrirConsultaMedica(citaSeleccionada.id)" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+                Ver consulta
             </button>
         </div>
     </div>

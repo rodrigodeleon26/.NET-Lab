@@ -35,17 +35,18 @@ export class CitaMedicaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loading = true;
+    
     this.cargarCitasMedicas();
-    this.loading = false;
+    
   }
 
   // Cargar todas las citas médicas
   cargarCitasMedicas(): void {
-    this.loading = true;
     this.citasMedicasService.obtenerCitasMedicas().subscribe(
       (data) => {
         this.citasMedicas = data;
+
+        this.loading = true;
   
         // Cargar información del paciente para cada cita médica
         this.citasMedicas.forEach((cita) => {
@@ -61,15 +62,15 @@ export class CitaMedicaComponent implements OnInit {
           }
         });
 
+        this.loading = false;
+
         console.log('Datos cargados en citasMedicas:', data); // Imprime los datos en la consola
       },
       (error) => {
         this.errorMessage = 'Error al cargar las citas médicas';
         console.error('Error al cargar citas:', error);
-        this.loading = false;
       }
     );
-    this.loading = false;
   }
 
   getHora(fecha: string): string {
@@ -81,11 +82,18 @@ export class CitaMedicaComponent implements OnInit {
 
   verCita(id: number): void {
     this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
+    console.log(this.citaSeleccionada.consultaMedicaId);
     this.modalVerCita = true;
   }
 
   desverCita(): void {
     this.modalVerCita = false;
     this.citaSeleccionada = null;
+  }
+
+  abrirConsultaMedica(id: number) {
+    console.log(id);
+    this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
+    window.open(`/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`, '_blank');
   }
 }
