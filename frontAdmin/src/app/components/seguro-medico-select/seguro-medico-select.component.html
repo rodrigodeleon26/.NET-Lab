@@ -11,39 +11,111 @@
 
 <!-- MODAL OPCIONES-->
 <div *ngIf="isModalVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="isModalVisible = false">
-	<div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full" (click)="$event.stopPropagation()">
+	<div class="bg-white p-6 rounded-lg shadow-lg max-w-fit w-full" (click)="$event.stopPropagation()">
         <p class="my-2">Seguros Medicos - Opciones</p>
         <div class="flex">
             <div class="">
-                <div class="h-80 overflow-scroll">
+                <div class="h-80 overflow-scroll" style="scrollbar-width: thin;">
                     <button *ngFor="let sm of SegurosMedicos" (click)="elegirParaEditar(sm.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-600': editando?.id === sm.id, 'bg-sky-100 hover:border-blue-300 hover:bg-sky-200': editando?.id !== sm.id }" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 bg-sky-100 hover:border-blue-300 hover:bg-blue-200 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-75">
                         {{sm.nombre}}
                     </button>
                 </div>
             </div>
 
-            <span class="border-x border-blue-intermedio my-3 mx-5 order-1 md:order-2 hidden md:block"></span>
-            <span class="border-y border-blue-intermedio my-5 mx-3 order-1 block md:hidden"></span>
-
-            <form [formGroup]="DatosSMForm" (ngSubmit)="agregarSeguroMedico()" class="flex flex-col md:order-3 justify-between mb-4">
-
-                <div>
-                    <div class="flex flex-col">
-                        <label for="nombre" class="text-sm font-medium">Nombre</label>
-                        <input type="text" id="nombre" formControlName="nombre" class="border rounded-md p-2" placeholder="Ingrese El Nombre..." required>
+            <div class="md:order-3 flex flex-col pl-4 justify-between">
+                <form [formGroup]="DatosSMForm" (ngSubmit)="agregarSeguroMedico()" class="flex justify-between mb-4">
+    
+                    <div>
+                        <div class="flex flex-col">
+                            <label for="nombre" class="text-sm font-medium">Nombre</label>
+                            <input type="text" id="nombre" formControlName="nombre" class="border rounded-md p-2" placeholder="Ingrese El Nombre..." required>
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="descripcion" class="text-sm font-medium">Descripción</label>
+                            <textarea type="text" id="descripcion" formControlName="descripcion" class="border rounded-md p-2" placeholder="Ingrese La Descripción Aquí..." required></textarea>
+                        </div>
                     </div>
-                    <div class="flex flex-col">
-                        <label for="descripcion" class="text-sm font-medium">Descripción</label>
-                        <textarea type="text" id="descripcion" formControlName="descripcion" class="border rounded-md p-2" placeholder="Ingrese La Descripción Aquí..." required></textarea>
+                    <div class="flex flex-col justify-between h-fit space-y-3">                    
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Nuevo</button>
+                        <button type="button" (click)="editar()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Editar</button>
+                        <button type="button" (click)="Delete()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded-md">Borrar</button>
+                    </div>
+                </form>
+                
+                <!-- <span class="border-y border-blue-intermedio mt-5 mx-3 order-1 block"></span> -->
+
+                <div class="relative md:order-3">
+                    <span (click)="this.isFormVisible = !this.isFormVisible" class="cursor-pointer border rounded-full border-blue-intermedio my-3 order-1 md:order-2 hidden md:block">
+                        <!-- Icono o texto para mostrar/ocultar el formulario -->
+                        <div class="flex items-center">
+                            <svg *ngIf="!isFormVisible" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                            </svg>
+                            <svg *ngIf="isFormVisible" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                            <p class="ml-2">Modificar Precios</p>
+                        </div>
+                    </span>
+                    <div [ngClass]="{'max-h-0 opacity-0 overflow-hidden': !isFormVisible, 'max-h-screen opacity-100': isFormVisible}" class="transition-all duration-500 ease-in-out flex justify-between w-full md:order-3">
+
+                        <div class="flex flex-col items-center w-4/5">
+                            <p class="bg-green-claro rounded-full p-2 font-semibold">
+                                Precio Actual: 
+                            </p>
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Precio</th>
+                                        <th>Fecha Inicio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let precio of editando.precios" [ngClass]="{'bg-green-claro': precio.fechaInicio == getPrecioActual(editando.precios)?.fechaInicio }">
+                                        <td>{{ precio.precioBase }}</td>
+                                        <td>{{ precio.fechaInicio | date: 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <div class="flex justify-between items-center">
+                                            <button (click)="borrarPrecio(precio.id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <span class="border-x border-blue-intermedio my-3 mx-5 order-1 md:order-2 hidden md:block"></span>
+                        <span class="border-y border-blue-intermedio my-5 mx-3 order-1 block md:hidden"></span>
+            
+                        <form [formGroup]="DatosPrecioForm" (ngSubmit)="agregarPrecio()" class="flex flex-col md:order-3 justify-between mb-4 w-full">
+                            <div class="flex flex-col space-y-2 w-full">
+                                <div class="flex flex-col">
+                                    <label for="precioBase" class="text-sm font-medium">Precio Base</label>
+                                    <input 
+                                    required
+                                    type="number" 
+                                    id="precioBase" 
+                                    formControlName="precioBase" 
+                                    class="border rounded-md p-2" 
+                                    placeholder="Ingrese El Precio Base Aquí..."
+                                    min="0" 
+                                    step="0.01" 
+                                    inputmode="decimal"
+                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '');"
+                                    />
+                                </div>
+                                <div class="flex flex-col">
+                                    <label for="fechaInicio" class="text-sm font-medium">Fecha Inicio</label>
+                                    <input [min]="today" type="date" id="fechaInicio" class="border rounded-md p-2" formControlName="fechaInicio" placeholder="Ingrese La Fecha Inicio Aquí..." required>
+                                </div>
+                                <button type="submit" class="bg-blue-claro hover:bg-blue-oscuro text-white font-bold py-2 px-4 rounded-md">Agregar Precio</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="flex justify-between">                    
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Nuevo</button>
-                    <button type="button" (click)="editar()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded-md">Editar</button>
-                    <button type="button" (click)="Delete()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded-md">Borrar</button>
-                </div>
-
-            </form>
+            </div>
 
         </div>
 		<div class="flex justify-end space-x-4">

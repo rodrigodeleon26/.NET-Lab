@@ -35,7 +35,7 @@
                     <input [(ngModel)]="busquedaModal" type="text" id="buscarModal" class="border rounded-md w-full" placeholder="Buscar...">
                 </div>
         
-                <div class="h-80 overflow-scroll">
+                <div class="h-80 overflow-scroll" style="scrollbar-width: thin;">
                     <button *ngFor="let articulo of articulosModal" (click)="elegirParaEditar(articulo.id)" [ngClass]="{'bg-blue-oscuro text-white hover:border-blue-intermedio hover:bg-blue-600': editando?.id === articulo.id, 'bg-sky-100 hover:border-blue-300 hover:bg-sky-200': editando?.id !== articulo.id }" class="w-full flex flex-col flex-nowrap text-nowrap border border-blue-100 shadow-sm hover:shadow-lg text-base text-left p-1 rounded-md transition duration-100">
                         {{articulo.nombre}}
                     </button>

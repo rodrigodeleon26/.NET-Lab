@@ -32,8 +32,7 @@ export class CopagosComponent implements OnInit {
   ) { 
     this.DatosPrecioForm = this.fb.group({
       precioBase: ['', [Validators.required, Validators.min(0), Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]],
-      fechaInicio: ['', [Validators.required]],
-      CopagoId: ['', [Validators.required]]
+      fechaInicio: ['', [Validators.required]]
     });
 
     const today = new Date();
@@ -88,7 +87,7 @@ export class CopagosComponent implements OnInit {
     });
   }
 
-  getPrecioActual(precios: any[]): number | null {
+  getPrecioActual(precios: any[]): any | null {
     const today = new Date();
     const preciosValidos = precios.filter(precio => new Date(precio.fechaInicio) <= today);
     
@@ -99,7 +98,7 @@ export class CopagosComponent implements OnInit {
     const precioActual = preciosValidos
       .sort((a, b) => new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime())[0];
     
-    return precioActual ? precioActual.precioBase : null;
+    return precioActual ? precioActual : null;
   }
 
   showSuccessMessage(message: string) {
@@ -118,8 +117,11 @@ export class CopagosComponent implements OnInit {
 
   selectCopagoDetalle(copago: any) {
     this.copagoVerDetalle = copago;
-    //setear el valor del copago en el formulario
-    this.DatosPrecioForm.get('CopagoId')?.setValue(copago.id);
+
+    //ordenar las fechas de los precios de forma descendente
+    this.copagoVerDetalle.precios = this.copagoVerDetalle.precios.sort((
+      a: { fechaInicio: string | number | Date; }, 
+      b: { fechaInicio: string | number | Date; }) => new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime());
   }
 
   agregarPrecio(){
@@ -128,12 +130,30 @@ export class CopagosComponent implements OnInit {
       return;
     }
     const formPrecio = this.DatosPrecioForm.value;
+
+    //chequear que la fecha no sea anterior a hoy
+    const fechaInicio = new Date(formPrecio.fechaInicio);
+    const today = new Date();
+    if (fechaInicio < today) {
+      this.showErrorMessage('La fecha de inicio no puede ser anterior a hoy');
+      return;
+    }
+    
+
+    //chequear que no haya otro precio con la misma fecha de inicio para ese copago
+    const precios = this.copagoVerDetalle.precios;
+    const precioExistente = precios.find((precio: { fechaInicio: any; }) => precio.fechaInicio === formPrecio.fechaInicio);
+    if (precioExistente) {
+      this.showErrorMessage('Ya existe un precio con la misma fecha de inicio');
+      return;
+    }
+
     //convertir el precio a un objeto que acepte el servicio con copago y seguro como objetos
     const nuevoPrecio = {
       precioBase: formPrecio.precioBase,
       fechaInicio: formPrecio.fechaInicio,
       copago: {
-        id: formPrecio.CopagoId
+        id: this.copagoVerDetalle.id
       },
       seguroMedico: null,
     };
@@ -150,7 +170,7 @@ export class CopagosComponent implements OnInit {
       },
       complete: () => {
         //agregar el precio a la lista del copago
-        const copago = this.selectedSeguroCopagos.find(copago => copago.id === formPrecio.CopagoId);
+        const copago = this.selectedSeguroCopagos.find(copago => copago.id === this.copagoVerDetalle.id);
         if (copago) {
           copago.precios.push(nuevoPrecio);
         }
