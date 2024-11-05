@@ -109,6 +109,45 @@ namespace DAL.DALs
 			}
 		}
 
+		public Paciente GetPacienteByDNI(string dni)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var paciente = _dbContext.Pacientes
+                    .Include(p => p.Contrato)
+                    .ThenInclude(c => c.SeguroMedico)
+                    .FirstOrDefault(p => p.Documento == dni);
+
+                if (paciente != null)
+                {
+                    return new Paciente
+                    {
+                        Id = paciente.Id,
+                        Nombres = paciente.Nombres,
+                        Apellidos = paciente.Apellidos,
+                        Documento = paciente.Documento,
+                        FechaDeNacimiento = paciente.FechaDeNacimiento,
+                        Direccion = paciente.Direccion,
+                        Telefono = paciente.Telefono,
+                        Email = paciente.Email,
+                        Contrato = paciente.Contrato != null ? new Contrato
+                        {
+                            Id = paciente.Contrato.Id,
+                            FechaInicio = paciente.Contrato.FechaInicio,
+                            Activo = paciente.Contrato.Activo,
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = paciente.Contrato.SeguroMedico.Id,
+                                Nombre = paciente.Contrato.SeguroMedico.Nombre,
+                                Descripcion = paciente.Contrato.SeguroMedico.Descripcion
+                            }
+                        } : null
+                    };
+                }
+                return null;
+            }
+        }
+
 		public void UpdatePaciente(Paciente paciente)
 		{
 			using (var _dbContext = new DBContext())
@@ -991,7 +1030,7 @@ namespace DAL.DALs
                 {
                     Fecha = citasMedicas.Fecha,
                     Estado = citasMedicas.Estado,
-                    CalendarioId = citasMedicas.Calendario.Id,
+                    CalendarioId = citasMedicas.CalendarioId,
                     PacienteId = citasMedicas.PacienteId
                 };
                 _dbContext.CitasMedicas.Add(nuevaCita);

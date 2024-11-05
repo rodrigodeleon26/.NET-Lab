@@ -12,14 +12,14 @@ export class ConsultaMedicaComponent implements OnInit {
   consultaMedica: any = {};
   consultaMeciaDatos = false;
 
+  citaMedica: any = {};
+  paciente: any = {};
+
   modalEliminarConsultaMedica = false;
   modalGuardarConsultaMedica = false;
+  terminarConsulta = false;
 
-  medicamentos = [
-    { id: 1, name: 'Medicamento 1' },
-    { id: 2, name: 'Medicamento 2' },
-    { id: 3, name: 'Medicamento 3' }
-  ];
+  medicamentos: any = [];
 
   recetaForm: FormGroup;
   modalReceta = false;
@@ -30,6 +30,8 @@ export class ConsultaMedicaComponent implements OnInit {
   modalEstudio = false;
   modalEditarEstudio = false;
   modalEliminarEstudio = false;
+
+  today: string;
 
   selectedTab: string = 'recetas'
 
@@ -66,25 +68,43 @@ export class ConsultaMedicaComponent implements OnInit {
       id: [0],
       nombre: ['', Validators.required],
       descripcion: ['', Validators.required],
-      fechaRealizado: [null],
+      fechaRealizado: ['', Validators.required],
       fechaResultado: [null],
       imagenUrl: [null],
     });
+    const now = new Date();
+    this.today = now.toISOString().split('T')[0]; // Formato yyyy-MM-dd
   }
 
   ngOnInit(): void {
-    this.consultaMedicaService.obtenerConsultaMedica(3).subscribe(
+    this.loading = true;
+    this.consultaMedicaService.obtenerConsultaMedica(1).subscribe(
       response => {
-        this.consultaMedica = response;
+        this.consultaMedica = response.consultaMedica;
         this.consultaMedicaForm.patchValue(this.consultaMedica);
         if (this.consultaMedica.descripcion && this.consultaMedica.diagnostico) {
           this.consultaMeciaDatos = true;
         } else {
           this.consultaMeciaDatos = false;
         }
+        this.citaMedica = response.citaMedica;    
+        this.paciente = response.paciente;
+        this.loading = false;
       },
       error => {
         this.errorMessage = 'Error al obtener la consulta médica';
+        setTimeout(() => {
+          this.errorMessage = '';
+        }, 3000);
+      }
+    );
+    this.consultaMedicaService.obtenerMedicamentos().subscribe(
+      response => {
+        this.medicamentos = response;
+        console.log(this.medicamentos);
+      },
+      error => {
+        this.errorMessage = 'Error al obtener los medicamentos';
         setTimeout(() => {
           this.errorMessage = '';
         }, 3000);
@@ -155,36 +175,42 @@ export class ConsultaMedicaComponent implements OnInit {
     this.modalGuardarConsultaMedica = false;
   }
 
+  abrirHistorialClinico() {
+    const documento = this.paciente.documento;
+    console.log(documento);
+    window.open(`/historia-clinica?documento=${documento}`, '_blank');
+  }
+
   guardarConsultaMedica() {
-    // if (this.consultaMedicaForm.invalid) {
-    //   this.errorMessage = 'Debe completar todos los campos';
-    //   setTimeout(() => {
-    //     this.errorMessage = '';
-    //   }, 3000);
-    //   return;
-    // }
-    // this.loading = true;
-    // const consultaMedicaGuardar = this.consultaMedicaForm.value;
-    // this.consultaMedicaService.actualizarCosultaMedica(consultaMedicaGuardar).subscribe(
-    //   response => {
-    //     this.loading = false;
-    //     this.consultaMedica = response;
-    //     this.consultaMedicaForm.patchValue(this.consultaMedica);
-    //     this.consultaMeciaDatos = true;
-    //     this.modalGuardarConsultaMedica = false;
-    //     this.successMessage = 'Consulta médica guardada correctamente';
-    //     setTimeout(() => {
-    //       this.successMessage = '';
-    //     }, 3000);
-    //   },
-    //   error => {
-    //     this.loading = false;
-    //     this.errorMessage = 'Error al guardar la consulta médica';
-    //     setTimeout(() => {
-    //       this.errorMessage = '';
-    //     }, 3000);
-    //   }
-    // );
+    if (this.consultaMedicaForm.invalid) {
+      this.errorMessage = 'Debe completar todos los campos';
+      setTimeout(() => {
+        this.errorMessage = '';
+      }, 3000);
+      return;
+    }
+    this.loading = true;
+    const consultaMedicaGuardar = this.consultaMedicaForm.value;
+    this.consultaMedicaService.guardarConsultaMedica(consultaMedicaGuardar.id).subscribe(
+      response => {
+        this.loading = false;
+        this.consultaMedica = response;
+        this.consultaMedicaForm.patchValue(this.consultaMedica);
+        this.consultaMeciaDatos = true;
+        this.modalGuardarConsultaMedica = false;
+        this.successMessage = 'Consulta médica guardada correctamente';
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error => {
+        this.loading = false;
+        this.errorMessage = 'Error al guardar la consulta médica';
+        setTimeout(() => {
+          this.errorMessage = '';
+        }, 3000);
+      }
+    );
   }
 
   actualizarCosultaMedica() {
@@ -200,6 +226,7 @@ export class ConsultaMedicaComponent implements OnInit {
     this.consultaMedicaService.actualizarCosultaMedica(consultaMedicaActualizada).subscribe(
       response => {
         this.loading = false;
+        this.terminarConsulta = true;
         this.consultaMedica = response;
         this.consultaMedicaForm.patchValue(this.consultaMedica);
         this.consultaMeciaDatos = true;

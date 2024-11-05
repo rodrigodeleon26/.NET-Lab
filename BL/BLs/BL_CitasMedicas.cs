@@ -21,7 +21,7 @@ namespace BL.BLs
         }
 
         // Obtener una cita médica por ID
-        public CitaMedica getCitaMedicaById(int id)
+        public CitaMedica getCitaMedicaById(long id)
         {
             return dal.getCitaMedicaById(id);
         }

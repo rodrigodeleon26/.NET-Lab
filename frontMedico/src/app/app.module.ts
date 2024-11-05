@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CitaMedicaComponent } from './components/medico/cita-medica/cita-medica.component'; // Importa ReactiveFormsModule
+import { HistoriaClinicaComponent } from './components/medico/historia-clinica/historia-clinica.component'; 
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { CitaMedicaComponent } from './components/medico/cita-medica/cita-medica
     NavComponent,
     ConsultaMedicaComponent,
     CitaMedicaComponent,
+    HistoriaClinicaComponent,
   ],
   imports: [
     BrowserModule,

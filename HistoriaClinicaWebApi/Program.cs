@@ -34,9 +34,14 @@ try
 
     // DALs
     builder.Services.AddTransient<IDAL_HistoriasClinicas, DAL_HistoriasClinicas_EF>();
+    builder.Services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_EF>();
+    builder.Services.AddTransient<IDAL_Administrativo, DAL_Administrativo_EF>();
 
     // BLs
     builder.Services.AddTransient<IBL_HistoriasClinicas, BL_HistoriasClinicas>();
+    builder.Services.AddTransient<BL_Administrativo_Service>();
+    builder.Services.AddTransient<BL_CitasMedicas_Service>();
+
 
     builder.Services.AddTransient<S3Service>();
 

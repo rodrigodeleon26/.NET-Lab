@@ -13,10 +13,11 @@ namespace BL.IBLs
         List<CitaMedica> getCitasMedicas();
 
         // Método para obtener una cita médica por su ID
-        CitaMedica getCitaMedicaById(int id);
+        CitaMedica getCitaMedicaById(long id);
 
         // Método para crear una nueva cita médica
         CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
+
 
         // Método para actualizar una cita médica existente
         void updateCitaMedica(CitaMedica citaActualizada);

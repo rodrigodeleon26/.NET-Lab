@@ -9,7 +9,7 @@ namespace DAL.IDALs
         List<CitaMedica> getCitasMedicas();
 
         // Obtener una cita médica por ID
-        CitaMedica getCitaMedicaById(int id);
+        CitaMedica getCitaMedicaById(long id);
 
         // Crear una nueva cita médica
         CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
