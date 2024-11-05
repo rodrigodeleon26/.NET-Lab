@@ -8,6 +8,9 @@ namespace DAL.IDALs
         // Obtener todas las citas médicas
         List<CitaMedica> getCitasMedicas();
 
+        // Obtener citas medicas por especialidad
+        List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad);
+
         // Obtener una cita médica por ID
         CitaMedica getCitaMedicaById(long id);
 

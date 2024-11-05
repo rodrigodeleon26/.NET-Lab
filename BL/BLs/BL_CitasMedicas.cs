@@ -20,6 +20,12 @@ namespace BL.BLs
             return dal.getCitasMedicas();
         }
 
+        // Citas medicas por especialidad
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad)
+        {
+            return dal.getCitasMedicasPorEspecialidad(nombreEspecialidad);
+        }
+
         // Obtener una cita médica por ID
         public CitaMedica getCitaMedicaById(long id)
         {

@@ -18,6 +18,15 @@ namespace PacienteWebApi.Controllers
             _blCitasMedicas = blCitasMedicas;
         }
 
+        // TRAE TODAS LAS CITAS MEDICAS DE UNA ESPECIALIDAD. Formato:
+        // GET: api/<CitasMedicasController>
+        [ProducesResponseType(typeof(List<CitaMedica>), 200)]
+        [HttpGet("especialidad/{espec}")]
+        public IActionResult Get(string espec)
+        {
+            return Ok(_blCitasMedicas.getCitasMedicasPorEspecialidad(espec));
+        }
+
         // TRAE TODAS LAS CITAS MEDICAS. Formato:
         // GET: api/<CitasMedicasController>
         [ProducesResponseType(typeof(List<CitaMedica>), 200)]

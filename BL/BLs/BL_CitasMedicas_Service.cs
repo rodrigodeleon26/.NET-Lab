@@ -83,6 +83,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad)
+        {
+            throw new NotImplementedException();
+        }
+
         public Especialidad GetEspecialidadById(long id)
         {
             throw new NotImplementedException();

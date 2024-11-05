@@ -12,6 +12,9 @@ namespace BL.IBLs
         // Método para obtener todas las citas médicas
         List<CitaMedica> getCitasMedicas();
 
+        // Metodo citas medicas por especialidad
+        List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad);
+
         // Método para obtener una cita médica por su ID
         CitaMedica getCitaMedicaById(long id);
 

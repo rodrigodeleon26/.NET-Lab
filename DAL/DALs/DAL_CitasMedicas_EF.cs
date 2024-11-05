@@ -68,6 +68,59 @@ namespace DAL.DALs
             }
         }
 
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.CitasMedicas
+                    .Where(p => p.Calendario.Especialidad.Nombre == nombreEspecialidad) // Filtra por nombre de especialidad
+                    .Select(p => new CitaMedica
+                    {
+                        Id = p.Id,
+                        Fecha = p.Fecha,
+                        Estado = p.Estado,
+                        PacienteId = p.PacienteId,
+                        Paciente = new Paciente
+                        {
+                            Id = p.Paciente.Id,
+                            Nombres = p.Paciente.Nombres,
+                            Apellidos = p.Paciente.Apellidos,
+                            Documento = p.Paciente.Documento
+                        },
+                        ConsultaMedicaId = p.ConsultaMedicaId,
+                        Calendario = new Calendario
+                        {
+                            HoraInicio = p.Calendario.HoraInicio,
+                            HoraFin = p.Calendario.HoraFin,
+                            TiempoCita = p.Calendario.TiempoCita,
+                            CantidadCitas = p.Calendario.CantidadCitas,
+                            DiasSemana = p.Calendario.DiasSemana,
+                            Medico = new Medico
+                            {
+                                Id = p.Calendario.Medico.Id,
+                                Nombres = p.Calendario.Medico.Nombres,
+                                Apellidos = p.Calendario.Medico.Apellidos,
+                                Documento = p.Calendario.Medico.Documento,
+                                Email = p.Calendario.Medico.Email,
+                                Telefono = p.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = p.Calendario.Especialidad.Id,
+                                Nombre = p.Calendario.Especialidad.Nombre,
+                                Descripcion = p.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = p.Calendario.Consultorio.Id,
+                                Numero = p.Calendario.Consultorio.Numero,
+                                Piso = p.Calendario.Consultorio.Piso
+                            }
+                        }
+                    }).ToList();
+            }
+        }
+
         // Obtener una cita médica por ID
         public CitaMedica getCitaMedicaById(long id)
         {

@@ -29,13 +29,20 @@
                             <td class="py-2 px-4 border-b">{{ cita.fecha | date: 'dd/MM/yyyy' }}</td>
                             <td class="py-2 px-4 border-b">{{ getHora(cita.fecha) }}</td>
                             <td class="py-2 px-4 border-b">{{ cita.paciente.nombres }} {{ cita.paciente.apellidos }}</td>
-                            <td class="py-2 px-4 border-b">
+                            <td *ngIf="cita.estado !== 'NoAsistida'" class="py-2 px-4 border-b">
                                 <span [ngClass]="{
                                     'text-green-500 py-1 px-2 rounded': cita.estado === 'Completada',
                                     'text-yellow-500 py-1 px-2 rounded': cita.estado === 'Agendada',
-                                    'text-red-500 py-1 px-2 rounded': cita.estado === 'Cancelada' || cita.estado === 'NoAsistida'
+                                    'text-red-500 py-1 px-2 rounded': cita.estado === 'Cancelada'
                                 }">
                                     {{ cita.estado }}
+                                </span>
+                            </td>
+                            <td *ngIf="cita.estado === 'NoAsistida'" class="py-2 px-4 border-b">
+                                <span [ngClass]="{
+                                    'text-red-500 py-1 px-2 rounded': cita.estado === 'NoAsistida'
+                                }">
+                                    No asistió
                                 </span>
                             </td>
                             <td class="py-2 px-4 border-b space-x-3">
@@ -76,8 +83,11 @@
         </div>
 
         <div *ngIf="citaSeleccionada.estado === 'Agendada'" class="flex justify-center py-1">
-            <button type="button" (click)="desverCita()" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+            <button type="button" (click)="desverCita()" class="mr-2 ml-2 bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
                 Asignar consulta
+            </button>
+            <button type="button" (click)="asignarEstado(citaSeleccionada.id, 'NoAsistida')" class="mr-2 ml-2 bg-red-500 text-white border border-red-500 rounded-md py-1 px-3 hover:bg-red-700 transition duration-300">
+                No asistió
             </button>
         </div>
 

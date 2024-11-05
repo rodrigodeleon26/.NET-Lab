@@ -17,6 +17,12 @@ export class CitasMedicasService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  // Obtener todas las citas médicas de una especialidad
+  obtenerCitasMedicasPorEspecialidad(espec: string): Observable<any[]> {
+    const url = `${this.apiUrl}/especialidad/${espec}`;
+    return this.http.get<any>(url);
+  }
+
   // Obtener una cita médica por ID
   obtenerCitaMedica(id: number): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
