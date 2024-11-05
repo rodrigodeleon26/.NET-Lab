@@ -178,7 +178,7 @@ export class ConsultaMedicaComponent implements OnInit {
   abrirHistorialClinico() {
     const documento = this.paciente.documento;
     console.log(documento);
-    window.open(`/historia-clinica?documento=${documento}`, '_blank');
+    window.open(`/medico/historia-clinica?documento=${documento}`, '_blank');
   }
 
   guardarConsultaMedica() {

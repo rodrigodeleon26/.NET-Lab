@@ -19,5 +19,8 @@ namespace DAL.IDALs
 
         // Eliminar una cita médica por ID
         void deleteCitaMedica(int id);
+
+        List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
+        int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
     }
 }

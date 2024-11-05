@@ -35,7 +35,9 @@ export class CitaMedicaComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.cargarCitasMedicas();
+    this.loading = false;
   }
 
   // Cargar todas las citas médicas
@@ -44,7 +46,6 @@ export class CitaMedicaComponent implements OnInit {
     this.citasMedicasService.obtenerCitasMedicas().subscribe(
       (data) => {
         this.citasMedicas = data;
-        this.loading = false;
   
         // Cargar información del paciente para cada cita médica
         this.citasMedicas.forEach((cita) => {
@@ -68,6 +69,7 @@ export class CitaMedicaComponent implements OnInit {
         this.loading = false;
       }
     );
+    this.loading = false;
   }
 
   getHora(fecha: string): string {

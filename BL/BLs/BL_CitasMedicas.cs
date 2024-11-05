@@ -43,5 +43,15 @@ namespace BL.BLs
         {
             dal.deleteCitaMedica(id);
         }
+
+        public List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+            return dal.GetCitasMedicasByPacienteId(pacienteId, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
+        }
+
+        public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+            return dal.CountCitasMedicasByPacienteId(pacienteId, fechaInicio, fechaFin, orden, especialidadesIds);
+        }
     }
 }

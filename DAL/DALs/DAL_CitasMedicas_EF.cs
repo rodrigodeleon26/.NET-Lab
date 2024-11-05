@@ -250,5 +250,28 @@ namespace DAL.DALs
                     .ToList();
             }
         }
+
+        public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.CitasMedicas
+                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
+
+                // Aplicar filtro de rango de fechas solo si ambos valores están presentes
+                if (fechaInicio.HasValue && fechaFin.HasValue)
+                {
+                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
+                }
+
+                if (especialidadesIds.Any())
+                {
+                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
+                }
+
+                // Contar los resultados después de aplicar los filtros
+                return query.Count();
+            }
+        }
     }
 }
