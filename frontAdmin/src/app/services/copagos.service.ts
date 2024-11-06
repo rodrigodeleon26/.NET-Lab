@@ -1,10 +1,15 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { SegurosMedicosService } from './seguros-medicos.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CopagosService {
+
+  private apiUrl = 'https://localhost:5009/api/Copagos'; // URL del microservicio
+
   private selectedArticuloSource = new BehaviorSubject<any>(null);
   selectedArticulo$ = this.selectedArticuloSource.asObservable();
 
@@ -14,7 +19,13 @@ export class CopagosService {
   private copagosDeSeguroMedicoSource = new BehaviorSubject<any[]>([]);
   copagosDeSeguroMedico$ = this.copagosDeSeguroMedicoSource.asObservable();
 
-  constructor() { }
+  private refreshSeguroSource = new Subject<void>();
+  refreshSeguro$ = this.refreshSeguroSource.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    private segurosMedicosService: SegurosMedicosService
+  ) { }
 
   changeSelectedArticulo(articulo: any) {
     this.selectedArticuloSource.next(articulo);
@@ -27,5 +38,19 @@ export class CopagosService {
 
   changeCopagosDeSeguroMedico(articulos: any[]) {
     this.copagosDeSeguroMedicoSource.next(articulos);
+  }
+
+  addCopago(copago: any) {
+    console.log("añadiendo Copago:" + copago);
+    
+    return this.http.post<any>(this.apiUrl, copago);
+  }
+
+  RefreshCopagos(){
+    this.refreshSeguroSource.next();
+  }
+
+  deleteCopago(id: number) {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 }

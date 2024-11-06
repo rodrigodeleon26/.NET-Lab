@@ -1,6 +1,8 @@
 ﻿using BL.IBLs;
+using DAL.DALs;
 using DAL.IDALs;
 using DAL.Models;
+using Microsoft.Extensions.Logging;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -13,16 +15,18 @@ namespace BL.BLs
 	public class BL_Administrativo : IBL_Administrativo
 	{
 		private readonly IDAL_Administrativo dal;
+        private readonly ILogger<BL_Administrativo> _logger;
 
-		public BL_Administrativo(IDAL_Administrativo dal)
+        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger)
 		{
+            _logger = logger;
 			this.dal = dal;
-		}
+        }
 
-		//Pacientes 
-		#region PACIENTES
+        //Pacientes 
+        #region PACIENTES
 
-		public void addPaciente(Paciente paciente)
+        public void addPaciente(Paciente paciente)
 		{
 			dal.AddPaciente(paciente);
 		}
@@ -196,6 +200,18 @@ namespace BL.BLs
 		public void addCopago(Copago copago)
 		{
 			dal.AddCopago(copago);
+
+			//si el copago incluye un precio, se agrega a la lista de precios
+			if (copago.Precios != null && copago.Precios.Count > 0)
+            {
+				var copagoId = dal.getIdByFilds(copago);
+                _logger.LogInformation("CopagoId: " + copagoId);
+                foreach (var precio in copago.Precios)
+                {
+					precio.Copago.Id = copagoId;
+					dal.AddPrecio(precio);
+                }
+            }
 		}
 
 		public void updateCopago(Copago copago)
@@ -206,6 +222,13 @@ namespace BL.BLs
 		public void deleteCopago(long id)
 		{
 			dal.DeleteCopago(id);
+
+			//borrar precios asociados al copago
+			var precios = getPrecios().Where(p => p.Copago.Id == id).ToList();
+			foreach (var precio in precios)
+            {
+                deletePrecio(precio.Id);
+            }
 		}
 
 		#endregion

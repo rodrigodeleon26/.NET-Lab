@@ -20,6 +20,7 @@ export class SeguroMedicoSelectComponent implements OnInit{
 
   today: string;
   editando: any = '';
+  seleccionado: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -50,6 +51,18 @@ export class SeguroMedicoSelectComponent implements OnInit{
         console.error(error);
       }
     });
+    this.copagosService.refreshSeguro$.subscribe({
+      next: () => {
+        this.segurosMedicosService.getSeguroMedico(this.seleccionado).subscribe({
+          next: (seguroMedico) => {
+            this.copagosService.changeSelectedSeguroMedico(seguroMedico);
+          },
+          error: (error) => {
+            console.error(error);
+          }
+        });
+      }
+    })
   }
 
   elegirParaEditar(smId: string){
@@ -143,6 +156,7 @@ export class SeguroMedicoSelectComponent implements OnInit{
 
   onSeguroMedicoChange(event: any){
     const seguroId = event.target.value;
+    this.seleccionado = seguroId;
     this.segurosMedicosService.getSeguroMedico(seguroId).subscribe({
       next: (seguroMedico) => {
         this.copagosService.changeSelectedSeguroMedico(seguroMedico);

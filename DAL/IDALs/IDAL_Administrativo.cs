@@ -46,9 +46,10 @@ namespace DAL.IDALs
 		public void AddCopago(Copago copago);
 		public void UpdateCopago(Copago copago);
 		public void DeleteCopago(long id);
+		public long getIdByFilds(Copago copago);
 
-		// Facturas
-		public List<Factura> GetFacturas();
+        // Facturas
+        public List<Factura> GetFacturas();
 		public Factura GetFacturaById(long id);
 		public void AddFactura(Factura factura);
 		public void UpdateFactura(Factura factura);

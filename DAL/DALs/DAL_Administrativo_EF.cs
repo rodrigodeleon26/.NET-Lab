@@ -724,6 +724,19 @@ namespace DAL.DALs
 				}
 			}
 		}
+
+		public long getIdByFilds(Copago copago)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var copagoExistente = _dbContext.Copagos.FirstOrDefault(c => c.ArticuloId == copago.Articulo.Id && c.SeguroMedicoId == copago.SeguroMedico.Id && c.EspecialidadId == copago.Especialidad.Id);
+				if (copagoExistente != null)
+				{
+					return copagoExistente.Id;
+				}
+				return 0;
+			}
+		}
 		#endregion
 
 

@@ -43,12 +43,14 @@ namespace DAL
                 .HasOne(p => p.Copago)
                 .WithMany(c => c.Precios)
                 .HasForeignKey(p => p.CopagoId)
+                .OnDelete(DeleteBehavior.Cascade) // Configurar eliminación en cascada
                 .IsRequired(false); // La relación con Copago es opcional
 
             modelBuilder.Entity<Precios>()
                 .HasOne(p => p.SeguroMedico)
                 .WithMany(s => s.Precios)
                 .HasForeignKey(p => p.SeguroMedicoId)
+                .OnDelete(DeleteBehavior.Cascade) // Configurar eliminación en cascada
                 .IsRequired(false); // La relación con SeguroMedico es opcional
         }
 

@@ -36,10 +36,13 @@ export class CopagosComponent implements OnInit {
     });
 
     const today = new Date();
-    this.today = today.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    const uruguayTimeZone = 'America/Montevideo';
+    this.today = today.toLocaleDateString('en-CA', { timeZone: uruguayTimeZone });
   }
 
   ngOnInit(): void {
+    this.loading = true;
+    console.log('today:' + this.today);
     this.CopagosService.selectedSeguroMedico$.subscribe({
       next: (data) => {
         this.selectedSeguroMedico = data;
@@ -64,9 +67,11 @@ export class CopagosComponent implements OnInit {
         if (data) {
           //crearle un nuevo copago con el articulo seleccionado
           this.nuevosCopagos.push({
-            id: null,
+            valido: false,
+            id: 0,
             articulo: data,
             especialidad: null,
+            seguroMedico: this.selectedSeguroMedico,
             precios: []
           });
           console.log('nuevosCopagos', this.nuevosCopagos);
@@ -85,6 +90,7 @@ export class CopagosComponent implements OnInit {
         console.error(error);
       }
     });
+    this.loading = false;
   }
 
   getPrecioActual(precios: any[]): any | null {
@@ -204,5 +210,77 @@ export class CopagosComponent implements OnInit {
 
   borrarNuevo(index: number){
     this.nuevosCopagos.splice(index, 1);
+  }
+
+  copagoValidoCheck(index: number){
+    const copago = this.nuevosCopagos[index];
+    copago.valido = copago.especialidad !== null && copago.precios.length > 0;
+  }
+
+  cadaCopagoValidoCheck(){
+    return this.nuevosCopagos.every(copago => copago.valido);
+  }
+
+  especialidadCopagoNuevo(event: any, index: number){    
+    const especialidadId = event.target.value;
+    const copago = this.nuevosCopagos[index];
+    copago.especialidad = this.especialidades.find(e => e.id === parseInt(especialidadId));
+    this.copagoValidoCheck(index);
+    console.log('copago', copago);
+  }
+
+  precioCopagoNuevo(event: any, index: number){
+    const precioBase = event.target.value;
+    const copago = this.nuevosCopagos[index];
+    copago.precios = [{
+      precioBase: parseFloat(precioBase),
+      fechaInicio: this.today,
+      SeguroMedico: null,
+      copago: { id: 0 }
+    }];
+    this.copagoValidoCheck(index);
+    console.log('copago', copago);
+  }
+
+  guardarCopagosNuevos(){
+    if (!this.cadaCopagoValidoCheck()) {
+      this.showErrorMessage('Todos los copagos deben tener una especialidad y un precio');
+      return;
+    }
+
+    this.nuevosCopagos.forEach(copago => {
+      this.CopagosService.addCopago(copago).subscribe({
+        next: (data) => {
+          this.showSuccessMessage('Copago agregado correctamente');
+          this.nuevosCopagos = [];
+        },
+        error: (error) => {
+          this.showErrorMessage('Error al agregar copago');
+          console.error(error);
+        },
+        complete: () => {
+          this.CopagosService.RefreshCopagos();
+        }
+      });
+    });
+  }
+
+  borrarCopago(id: number){
+    //mostrar un alert
+    if (!confirm('¿Está seguro de eliminar el copago?')) {
+      return;
+    }
+    this.CopagosService.deleteCopago(id).subscribe({
+      next: (data) => {
+        this.showSuccessMessage('Copago eliminado correctamente');
+      },
+      error: (error) => {
+        this.showErrorMessage('Error al eliminar copago');
+        console.error(error);
+      },
+      complete: () => {
+        this.CopagosService.RefreshCopagos();
+      }
+    });
   }
 }
