@@ -647,7 +647,13 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var copago = _dbContext.Copagos.Find(id);
+				var copago = _dbContext.Copagos
+					.Include(c => c.Articulo)
+					.Include(c => c.SeguroMedico)
+					.Include(c => c.Especialidad)
+					.Include(c => c.Precios)
+					.FirstOrDefault(c => c.Id == id);
+
 				if (copago != null)
 				{
 					return new Copago
