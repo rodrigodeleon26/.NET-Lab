@@ -139,8 +139,9 @@ export class CopagosComponent implements OnInit {
 
     //chequear que la fecha no sea anterior a hoy
     const fechaInicio = new Date(formPrecio.fechaInicio);
-    const today = new Date();
-    if (fechaInicio < today) {
+    const fechaString =  fechaInicio.toDateString();
+    
+    if (fechaString < this.today) {
       this.showErrorMessage('La fecha de inicio no puede ser anterior a hoy');
       return;
     }

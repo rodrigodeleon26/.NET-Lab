@@ -219,19 +219,21 @@ namespace BL.BLs
 			dal.UpdateCopago(copago);
 		}
 
-		public void deleteCopago(long id)
-		{
-			_logger.LogInformation("Borrando copago con id: " + id);
-			//borrar precios asociados al copago
-			var precios = getPrecios().Where(p => p.Copago.Id == id).ToList();
-			foreach (var precio in precios)
+        public void deleteCopago(long id)
+        {
+            //borrar precios asociados al copago
+            var precios = getPrecios();
+            var preciosAEliminar = precios.Where(p => p.Copago != null && p.Copago.Id == id).ToList();
+
+            _logger.LogInformation("Precios a borrar: " + preciosAEliminar.Count);
+            foreach (var precio in preciosAEliminar)
             {
                 deletePrecio(precio.Id);
             }
-			_logger.LogInformation("Precios borrados");
+            _logger.LogInformation("Precios borrados");
 
-			dal.DeleteCopago(id);
-		}
+            dal.DeleteCopago(id);
+        }
 
 		#endregion
 

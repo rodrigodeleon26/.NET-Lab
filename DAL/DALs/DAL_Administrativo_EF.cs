@@ -458,7 +458,7 @@ namespace DAL.DALs
 						Id = p.Id,
 						PrecioBase = p.PrecioBase,
 						FechaInicio = p.FechaInicio,
-						Copago = new Copago
+						Copago = p.Copago != null ? new Copago
 						{
 							Id = p.Copago.Id,
 							Articulo = new Articulo
@@ -478,13 +478,13 @@ namespace DAL.DALs
 								Nombre = p.Copago.Especialidad.Nombre,
 								Descripcion = p.Copago.Especialidad.Descripcion
 							}
-						},
-						SeguroMedico = new SeguroMedico
+						}: null,
+						SeguroMedico = p.SeguroMedico != null ? new SeguroMedico
 						{
 							Id = p.SeguroMedico.Id,
 							Nombre = p.SeguroMedico.Nombre,
 							Descripcion = p.SeguroMedico.Descripcion
-						}
+						}: null
 					}).ToList();
 			}
 		}
