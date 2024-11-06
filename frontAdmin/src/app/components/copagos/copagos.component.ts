@@ -21,6 +21,7 @@ export class CopagosComponent implements OnInit {
   selectedSeguroCopagos: any[] = [];
   copagoVerDetalle: any = null;
   nuevosCopagos: any[] = [];
+  copagosViejosEditados: any[] = [];
 
   especialidades: any[] = [];
 
@@ -280,6 +281,45 @@ export class CopagosComponent implements OnInit {
         console.error(error);
       },
       complete: () => {
+        this.CopagosService.RefreshCopagos();
+      }
+    });
+  }
+
+  editandoCopago(copagoId: number){
+    const copago = this.selectedSeguroCopagos.find(copago => copago.id === copagoId);
+    
+    //ingresar el copago o sacarlo de la lista de editados
+    if (this.estaSiendoEditado(copagoId)) {
+      this.copagosViejosEditados = this.copagosViejosEditados.filter(copago => copago.id !== copagoId);
+    } else {
+      this.copagosViejosEditados.push(copago);
+    }
+  }
+
+  estaSiendoEditado(copagoId: number){
+    return this.copagosViejosEditados.some(copago => copago.id === copagoId);
+  }
+
+  especialidadCopagoEdit(event: any, copagoIndex: number){
+    const especialidadId = event.target.value;
+    const copago = {
+      id: this.selectedSeguroCopagos[copagoIndex].id,
+      especialidad: this.especialidades.find(e => e.id === parseInt(especialidadId)),
+      seguroMedico: this.selectedSeguroMedico,
+      articulo: this.selectedSeguroCopagos[copagoIndex].articulo,
+    }
+    console.log('copago', copago);
+    this.CopagosService.updateCopago(copago).subscribe({
+      next: (data) => {
+        this.showSuccessMessage('Especialidad actualizada correctamente');
+      },
+      error: (error) => {
+        this.showErrorMessage('Error al actualizar especialidad');
+        console.error(error);
+      },
+      complete: () => {
+        this.copagosViejosEditados = this.copagosViejosEditados.filter(copago => copago.id !== copago.id);
         this.CopagosService.RefreshCopagos();
       }
     });

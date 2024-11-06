@@ -53,4 +53,9 @@ export class CopagosService {
   deleteCopago(id: number) {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  updateCopago(copago: any) {
+    console.log("actualizando Copago:" + copago);
+    return this.http.put<any>(`${this.apiUrl}/${copago.id}`, copago);
+  }
 }
