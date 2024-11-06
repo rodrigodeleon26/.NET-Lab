@@ -2,7 +2,6 @@ import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { PacienteService } from '../../../services/paciente.service';
 import { CitasMedicasService } from '../../../services/cita-medica.service';
 import { ConsultaMedicaService } from '../../../services/consulta-medica.service';
-import { ConsultorioService } from '../../../services/consultorio.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, lastValueFrom } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -29,7 +28,6 @@ export class CitaMedicaComponent implements OnInit {
     private citasMedicasService: CitasMedicasService,
     private ConsultaMedicaService: ConsultaMedicaService,
     private pacienteService: PacienteService,
-    private consultorioService: ConsultorioService,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {

@@ -7,17 +7,11 @@ import { Observable } from 'rxjs';
 })
 export class PacienteService {
   private apiUrl = 'https://localhost/historiaclinica/api/HistoriasClinicas';
-  private apiUrlPacientes = 'https://localhost/gestion/api/Pacientes';
 
   constructor(private http: HttpClient) {}
 
   getPacientes(id: number): Observable<any[]> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<any[]>(url);
-  }
-
-  getPacienteGestion(id: number): Observable<any[]> {
-    const url = `${this.apiUrlPacientes}/${id}`;
     return this.http.get<any[]>(url);
   }
 }

@@ -896,29 +896,42 @@ namespace DAL.DALs
 			}
 		}
 
-		public void UpdateMedico(Medico medico)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				var medicoExistente = _dbContext.Medicos.Find(medico.Id);
-				if (medicoExistente != null)
-				{
-					medicoExistente.Nombres = medico.Nombres;
-					medicoExistente.Apellidos = medico.Apellidos;
-					medicoExistente.Documento = medico.Documento;
-					medicoExistente.Email = medico.Email;
-					medicoExistente.Telefono = medico.Telefono;
-					medicoExistente.EspecialidadesMedicos = medico.Especialidades.Select(e => new EspecialidadesMedicos
-                    {
-                        MedicoId = medico.Id,
-                        EspecialidadId = e.Id
-                    }).ToList();
-					_dbContext.SaveChanges();
-				}
-			}
-		}
+        public void UpdateMedico(Medico medico)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var medicoExistente = _dbContext.Medicos.Find(medico.Id);
+                if (medicoExistente != null)
+                {
+                    medicoExistente.Nombres = medico.Nombres;
+                    medicoExistente.Apellidos = medico.Apellidos;
+                    medicoExistente.Documento = medico.Documento;
+                    medicoExistente.Email = medico.Email;
+                    medicoExistente.Telefono = medico.Telefono;
+                    // Obtener todos los Ids de Especialidades del nuevo medico
+                    var especialidadesIds = medico.Especialidades.Select(e => e.Id).ToList();
 
-		public void DeleteMedico(long id)
+                    // Consulta de los registros existentes para el medico específico
+                    var especialidadesExistentes = _dbContext.EspecialidadesMedicos
+                        .Where(em => em.MedicoId == medico.Id && especialidadesIds.Contains(em.EspecialidadId))
+                        .Select(em => em.EspecialidadId)
+                        .ToList();
+
+                    // Filtrar para agregar solo las especialidades que aún no existen
+                    medicoExistente.EspecialidadesMedicos = medico.Especialidades
+                        .Where(e => !especialidadesExistentes.Contains(e.Id))
+                        .Select(e => new EspecialidadesMedicos
+                        {
+                            MedicoId = medico.Id,
+                            EspecialidadId = e.Id
+                        })
+                        .ToList();
+                    _dbContext.SaveChanges();
+                }
+            }
+        }
+
+        public void DeleteMedico(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
