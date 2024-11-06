@@ -21,9 +21,14 @@ namespace BL.BLs
         }
 
         // Citas medicas por especialidad
-        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad)
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
         {
-            return dal.getCitasMedicasPorEspecialidad(nombreEspecialidad);
+            return dal.getCitasMedicasPorEspecialidad(nombreEspecialidad, numPagina, fecha);
+        }
+
+        public bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha)
+        {
+            return dal.HayMasCitasMedicas(nombreEspecialidad, numPagina, fecha);
         }
 
         // Obtener una cita médica por ID

@@ -68,12 +68,29 @@ namespace DAL.DALs
             }
         }
 
-        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad)
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
         {
             using (var _dbContext = new DBContext())
             {
-                return _dbContext.CitasMedicas
-                    .Where(p => p.Calendario.Especialidad.Nombre == nombreEspecialidad) // Filtra por nombre de especialidad
+                var query = _dbContext.CitasMedicas.AsQueryable();
+
+                // Filtra por nombre de especialidad si se proporciona
+                if (!string.IsNullOrEmpty(nombreEspecialidad))
+                {
+                    query = query.Where(p => p.Calendario.Especialidad.Nombre == nombreEspecialidad);
+                }
+
+                // Filtra por fecha específica si se proporciona
+                if (fecha.HasValue)
+                {
+                    query = query.Where(p => p.Fecha.Date == fecha.Value.Date);
+                }
+
+                // Paginación: salta los registros de páginas anteriores y toma 10 registros
+                return query
+                    .OrderBy(p => p.Fecha) // Ordena por la hora de la cita
+                    .Skip((numPagina - 1) * 10)
+                    .Take(10)
                     .Select(p => new CitaMedica
                     {
                         Id = p.Id,
@@ -118,6 +135,18 @@ namespace DAL.DALs
                             }
                         }
                     }).ToList();
+            }
+        }
+
+        public bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                int skip = (numPagina - 1) * 10;
+                return _dbContext.CitasMedicas
+                    .Where(p => p.Calendario.Especialidad.Nombre == nombreEspecialidad && p.Fecha.Date == fecha.Date)
+                    .Skip(skip)
+                    .Any();
             }
         }
 

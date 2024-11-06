@@ -83,10 +83,10 @@
         </div>
 
         <div *ngIf="citaSeleccionada.estado === 'Agendada'" class="flex justify-center py-1">
-            <button type="button" (click)="generarConsultaMedica(citaSeleccionada.id)" class="mr-2 ml-2 bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+            <button *ngIf="esFechaHoy()" type="button" (click)="generarConsultaMedica(citaSeleccionada.id)" class="mr-2 ml-2 bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
                 Asignar consulta
             </button>
-            <button type="button" (click)="asignarEstado(citaSeleccionada.id, 'NoAsistida')" class="mr-2 ml-2 bg-red-500 text-white border border-red-500 rounded-md py-1 px-3 hover:bg-red-700 transition duration-300">
+            <button *ngIf="esFechaHoyOMenor()" type="button" (click)="asignarEstado(citaSeleccionada.id, 'NoAsistida')" class="mr-2 ml-2 bg-red-500 text-white border border-red-500 rounded-md py-1 px-3 hover:bg-red-700 transition duration-300">
                 No asistió
             </button>
         </div>
@@ -97,4 +97,23 @@
             </button>
         </div>
     </div>
+</div>
+
+<div class="pagination-buttons flex justify-center mt-4">
+    <button 
+        type="button" 
+        (click)="cambiarPagina(-1)" 
+        [disabled]="paginaActual === 1" 
+        class="bg-gray-400 text-white py-1 px-3 rounded-md mr-2 hover:bg-gray-500 disabled:opacity-50"
+    >
+        Anterior
+    </button>
+    <button 
+        type="button" 
+        (click)="cambiarPagina(1)" 
+        [disabled]="!hayMasResultados" 
+        class="bg-gray-400 text-white py-1 px-3 rounded-md ml-2 hover:bg-gray-500 disabled:opacity-50"
+    >
+        Siguiente
+    </button>
 </div>

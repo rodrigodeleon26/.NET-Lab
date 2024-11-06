@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -9,7 +10,8 @@ export class CitasMedicasService {
   private apiUrl = 'https://localhost/citasmedicas/api/CitasMedicas';
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private datePipe: DatePipe
   ) { }
 
   // Obtener todas las citas médicas
@@ -18,9 +20,16 @@ export class CitasMedicasService {
   }
 
   // Obtener todas las citas médicas de una especialidad
-  obtenerCitasMedicasPorEspecialidad(espec: string): Observable<any[]> {
-    const url = `${this.apiUrl}/especialidad/${espec}`;
+  obtenerCitasMedicasPorEspecialidad(espec: string, pag: number, fecha: Date): Observable<any[]> {
+    const formattedDate = this.datePipe.transform(fecha, 'yyyy-MM-dd');
+    const url = `${this.apiUrl}/especialidad/${espec}/${pag}/${formattedDate}`;
     return this.http.get<any>(url);
+  }
+
+  chequearPaginaCita(espec: string, pag: number, fecha: Date): Observable<boolean> {
+    const formattedDate = this.datePipe.transform(fecha, 'yyyy-MM-dd');
+    const url = `${this.apiUrl}/conteo/${espec}/${pag}/${formattedDate}`;
+    return this.http.get<boolean>(url);
   }
 
   // Obtener una cita médica por ID

@@ -13,7 +13,9 @@ namespace BL.IBLs
         List<CitaMedica> getCitasMedicas();
 
         // Metodo citas medicas por especialidad
-        List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad);
+        List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha);
+
+        bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha);
 
         // Método para obtener una cita médica por su ID
         CitaMedica getCitaMedicaById(long id);

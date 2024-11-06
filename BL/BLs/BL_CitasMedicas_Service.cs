@@ -83,7 +83,12 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
-        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad)
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha)
         {
             throw new NotImplementedException();
         }

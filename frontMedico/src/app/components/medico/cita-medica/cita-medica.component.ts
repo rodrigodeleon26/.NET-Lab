@@ -21,6 +21,9 @@ export class CitaMedicaComponent implements OnInit {
   modalVerCita: boolean = false; // Modal de eliminación de cita
   citaSeleccionada: any = null;
   especialidadSeleccionada: string = ''; // Especialidad seleccionada
+  fechaVisible: Date = new Date();
+  paginaActual: number = 1;
+  hayMasResultados: boolean = true;
 
   constructor(
     private citasMedicasService: CitasMedicasService,
@@ -44,23 +47,70 @@ export class CitaMedicaComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const especialidad = params['especialidad'];
       this.especialidadSeleccionada = especialidad;
+      const fechaVisible = params['fecha'];
+      if (fechaVisible) {
+        const [year, month, day] = fechaVisible.split('-').map(Number);
+        this.fechaVisible = new Date(year, month - 1, day);
+        console.log('Fecha visible:', this.fechaVisible);
+      }
+      else {
+        this.fechaVisible = new Date();
+      }
     });
-    this.cargarCitasMedicas(this.especialidadSeleccionada).then(() => {
+    this.cargarCitasMedicas(this.especialidadSeleccionada, this.fechaVisible).then(() => {
       this.loading = false; // Se ejecuta solo después de que los datos hayan sido cargados
     });
   }
   
   // Cargar todas las citas médicas
-  async cargarCitasMedicas(espec: string): Promise<void> {
+  async cargarCitasMedicas(espec: string, fechaVisible: Date): Promise<void> {
     try {
-      this.especialidadSeleccionada = 'Odontologia';
-      const data = await lastValueFrom(this.citasMedicasService.obtenerCitasMedicasPorEspecialidad(espec)); // Convertir Observable a Promesa
+      const data = await lastValueFrom(this.citasMedicasService.obtenerCitasMedicasPorEspecialidad(espec, this.paginaActual, fechaVisible)); // Convertir Observable a Promesa
       this.citasMedicas = data;
       console.log('Datos cargados en citasMedicas:', data); // Imprime los datos en la consola
+      const paginadoSigue = await lastValueFrom(this.citasMedicasService.chequearPaginaCita(espec, this.paginaActual + 1, fechaVisible));
+      if (paginadoSigue === true) {
+        this.hayMasResultados = true;
+      }
+      else {
+        this.hayMasResultados = false;
+      }
     } catch (error) {
       this.errorMessage = 'Error al cargar las citas médicas';
       console.error('Error al cargar citas:', error);
     }
+  }
+
+  cambiarPagina(incremento: number): void {
+    this.paginaActual += incremento; // Incrementa o decrementa la página
+    this.cargarCitasMedicas(this.especialidadSeleccionada, this.fechaVisible);
+  }
+
+  esFechaHoy(): boolean {
+    const hoy = new Date();
+    return (
+        this.fechaVisible &&
+        this.fechaVisible.getDate() === hoy.getDate() &&
+        this.fechaVisible.getMonth() === hoy.getMonth() &&
+        this.fechaVisible.getFullYear() === hoy.getFullYear()
+      );
+  }
+
+  esFechaHoyOMenor(): boolean {
+    const hoy = new Date();
+    
+    // Asegurarse de que `fechaVisible` esté definido y sea una fecha válida
+    return (
+      this.fechaVisible &&
+      (
+        this.fechaVisible.getFullYear() < hoy.getFullYear() ||
+        (this.fechaVisible.getFullYear() === hoy.getFullYear() &&
+         this.fechaVisible.getMonth() < hoy.getMonth()) ||
+        (this.fechaVisible.getFullYear() === hoy.getFullYear() &&
+         this.fechaVisible.getMonth() === hoy.getMonth() &&
+         this.fechaVisible.getDate() <= hoy.getDate())
+      )
+    );
   }
 
   getHora(fecha: string): string {
@@ -99,8 +149,24 @@ export class CitaMedicaComponent implements OnInit {
         this.citaSeleccionada.consultaMedicaId = response.id;  // Asegúrate de que la respuesta contiene la ID
         this.citaSeleccionada.estado = 'Completada';  // Cambia el estado de la cita a 'Completada'
         this.citasMedicasService.actualizarCitaMedica(this.citaSeleccionada.id, this.citaSeleccionada).subscribe(() => {
+          this.route.queryParams.subscribe(params => {
+            const especialidad = params['especialidad'];
+            this.especialidadSeleccionada = especialidad;
+            const fechaVisible = params['fecha'];
+            if (fechaVisible) {
+              const [year, month, day] = fechaVisible.split('-').map(Number);
+              this.fechaVisible = new Date(year, month - 1, day);
+            }
+            else {
+              this.fechaVisible = new Date();
+            }
+          });
+          this.cargarCitasMedicas(this.especialidadSeleccionada, this.fechaVisible).then(() => {
+            this.loading = false;
+          });
         });
-
+        
+        
         /* this.citasMedicasService.editarEstado(id, 'Completada').subscribe(() => {
         }); */
         
@@ -132,8 +198,16 @@ export class CitaMedicaComponent implements OnInit {
       this.route.queryParams.subscribe(params => {
         const especialidad = params['especialidad'];
         this.especialidadSeleccionada = especialidad;
+        const fechaVisible = params['fecha'];
+        if (fechaVisible) {
+          const [year, month, day] = fechaVisible.split('-').map(Number);
+          this.fechaVisible = new Date(year, month - 1, day);
+        }
+        else {
+          this.fechaVisible = new Date();
+        }
       });
-      this.cargarCitasMedicas(this.especialidadSeleccionada).then(() => {
+      this.cargarCitasMedicas(this.especialidadSeleccionada, this.fechaVisible).then(() => {
         this.loading = false;
       });
     }, error => {
