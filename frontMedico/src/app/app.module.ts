@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -15,6 +15,9 @@ import { LoginComponent } from './components/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AuthInterceptor } from './shared/auth.interceptor';
+import { CitaMedicaComponent } from './components/medico/cita-medica/cita-medica.component'; // Importa ReactiveFormsModule
+import { HistoriaClinicaComponent } from './components/medico/historia-clinica/historia-clinica.component';
+import { SeleccionEspecialidadComponent } from './components/medico/seleccion-especialidad/seleccion-especialidad.component';
 
 
 @NgModule({
@@ -24,6 +27,9 @@ import { AuthInterceptor } from './shared/auth.interceptor';
     NavComponent,
     ConsultaMedicaComponent,
     LoginComponent,
+    CitaMedicaComponent,
+    HistoriaClinicaComponent,
+    SeleccionEspecialidadComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +49,7 @@ import { AuthInterceptor } from './shared/auth.interceptor';
       useClass: AuthInterceptor,
       multi: true
     }
-  ], 
+  ,DatePipe], 
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -12,7 +12,8 @@ namespace BL.IBLs
 		// Pacientes
 		List<Paciente> getPacientes();
 		Paciente getPacienteById(long id);
-		void addPaciente(Paciente paciente);
+		Paciente getPacienteByDNI(string dni);
+        void addPaciente(Paciente paciente);
 		void updatePaciente(Paciente paciente);
 		void deletePaciente(long id);
 		void ContratarSeguroMedico(long idPaciente, long idSeguroMedico);

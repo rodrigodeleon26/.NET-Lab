@@ -180,6 +180,9 @@ namespace DAL.Migrations
                     b.Property<long>("CalendarioId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("ConsultaMedicaId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("ConsultoriosId")
                         .HasColumnType("bigint");
 
@@ -369,18 +372,19 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("FechaRealizado")
+                    b.Property<DateOnly?>("FechaRealizado")
+                        .IsRequired()
                         .HasColumnType("date");
 
                     b.Property<DateOnly?>("FechaResultado")
                         .IsRequired()
                         .HasColumnType("date");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("ImagenUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Resultado")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -868,7 +872,7 @@ namespace DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Medicos", "Medico")
-                        .WithMany()
+                        .WithMany("EspecialidadesMedicos")
                         .HasForeignKey("MedicoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1030,6 +1034,8 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Models.Medicos", b =>
                 {
                     b.Navigation("Calendarios");
+
+                    b.Navigation("EspecialidadesMedicos");
                 });
 
             modelBuilder.Entity("DAL.Models.Pacientes", b =>

@@ -27,6 +27,14 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
+                        Paciente = new Paciente
+                        {
+                            Id = p.Paciente.Id,
+                            Nombres = p.Paciente.Nombres,
+                            Apellidos = p.Paciente.Apellidos,
+                            Documento = p.Paciente.Documento
+                        },
+                        ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
                             HoraInicio = p.Calendario.HoraInicio,
@@ -48,14 +56,102 @@ namespace DAL.DALs
                                 Id = p.Calendario.Especialidad.Id,
                                 Nombre = p.Calendario.Especialidad.Nombre,
                                 Descripcion = p.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = p.Calendario.Consultorio.Id,
+                                Numero = p.Calendario.Consultorio.Numero,
+                                Piso = p.Calendario.Consultorio.Piso
                             }
                         }
                     }).ToList();
             }
         }
 
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.CitasMedicas.AsQueryable();
+
+                // Filtra por nombre de especialidad si se proporciona
+                if (!string.IsNullOrEmpty(nombreEspecialidad))
+                {
+                    query = query.Where(p => p.Calendario.Especialidad.Nombre == nombreEspecialidad);
+                }
+
+                // Filtra por fecha específica si se proporciona
+                if (fecha.HasValue)
+                {
+                    query = query.Where(p => p.Fecha.Date == fecha.Value.Date);
+                }
+
+                // Paginación: salta los registros de páginas anteriores y toma 10 registros
+                return query
+                    .OrderBy(p => p.Fecha) // Ordena por la hora de la cita
+                    .Skip((numPagina - 1) * 10)
+                    .Take(10)
+                    .Select(p => new CitaMedica
+                    {
+                        Id = p.Id,
+                        Fecha = p.Fecha,
+                        Estado = p.Estado,
+                        PacienteId = p.PacienteId,
+                        Paciente = new Paciente
+                        {
+                            Id = p.Paciente.Id,
+                            Nombres = p.Paciente.Nombres,
+                            Apellidos = p.Paciente.Apellidos,
+                            Documento = p.Paciente.Documento
+                        },
+                        ConsultaMedicaId = p.ConsultaMedicaId,
+                        Calendario = new Calendario
+                        {
+                            HoraInicio = p.Calendario.HoraInicio,
+                            HoraFin = p.Calendario.HoraFin,
+                            TiempoCita = p.Calendario.TiempoCita,
+                            CantidadCitas = p.Calendario.CantidadCitas,
+                            DiasSemana = p.Calendario.DiasSemana,
+                            Medico = new Medico
+                            {
+                                Id = p.Calendario.Medico.Id,
+                                Nombres = p.Calendario.Medico.Nombres,
+                                Apellidos = p.Calendario.Medico.Apellidos,
+                                Documento = p.Calendario.Medico.Documento,
+                                Email = p.Calendario.Medico.Email,
+                                Telefono = p.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = p.Calendario.Especialidad.Id,
+                                Nombre = p.Calendario.Especialidad.Nombre,
+                                Descripcion = p.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = p.Calendario.Consultorio.Id,
+                                Numero = p.Calendario.Consultorio.Numero,
+                                Piso = p.Calendario.Consultorio.Piso
+                            }
+                        }
+                    }).ToList();
+            }
+        }
+
+        public bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                int skip = (numPagina - 1) * 10;
+                return _dbContext.CitasMedicas
+                    .Where(p => p.Calendario.Especialidad.Nombre == nombreEspecialidad && p.Fecha.Date == fecha.Date)
+                    .Skip(skip)
+                    .Any();
+            }
+        }
+
         // Obtener una cita médica por ID
-        public CitaMedica getCitaMedicaById(int id)
+        public CitaMedica getCitaMedicaById(long id)
         {
             using (var _dbContext = new DBContext())
             {
@@ -67,7 +163,14 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        // Mapeo del calendario relacionado
+                        Paciente = new Paciente
+                        {
+                            Id = p.Paciente.Id,
+                            Nombres = p.Paciente.Nombres,
+                            Apellidos = p.Paciente.Apellidos,
+                            Documento = p.Paciente.Documento
+                        },
+                        ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
                             HoraInicio = p.Calendario.HoraInicio,
@@ -89,6 +192,12 @@ namespace DAL.DALs
                                 Id = p.Calendario.Especialidad.Id,
                                 Nombre = p.Calendario.Especialidad.Nombre,
                                 Descripcion = p.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = p.Calendario.Consultorio.Id,
+                                Numero = p.Calendario.Consultorio.Numero,
+                                Piso = p.Calendario.Consultorio.Piso
                             }
                         }
                     })
@@ -158,6 +267,7 @@ namespace DAL.DALs
                     citaEntity.Fecha = citaActualizada.Fecha;
                     citaEntity.Estado = citaActualizada.Estado;
                     citaEntity.PacienteId= citaActualizada.PacienteId;
+                    citaEntity.ConsultaMedicaId  = citaActualizada.ConsultaMedicaId;
 
                     _dbContext.CitasMedicas.Update(citaEntity);
                     _dbContext.SaveChanges();
@@ -179,389 +289,85 @@ namespace DAL.DALs
             }
         }
 
-        // MEDICOS
-        public List<Medico> GetMedicos()
+        //Obtener las citas medicas de un paciente
+        public List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
             using (var _dbContext = new DBContext())
             {
-                return _dbContext.Medicos
-                    .Select(m => new Medico
-                    {
-                        Id = m.Id,
-                        Nombres = m.Nombres,
-                        Apellidos = m.Apellidos,
-                        Documento = m.Documento,
-                        Email = m.Email,
-                        Telefono = m.Telefono,
-                        Calendarios = m.Calendarios.Select(c => new Calendario
-                        {
-                            HoraInicio = c.HoraInicio,
-                            HoraFin = c.HoraFin,
-                            TiempoCita = c.TiempoCita,
-                            CantidadCitas = c.CantidadCitas,
-                            DiasSemana = c.DiasSemana
-                        }).ToList() // Convertir a lista de calendarios
-                    }).ToList();
-            }
-        }
+                var query = _dbContext.CitasMedicas
+                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
 
-        // Obtener un médico por ID
-        public Medico GetMedicoById(long id)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var medicoEntity = _dbContext.Medicos.FirstOrDefault(m => m.Id == id);
-                if (medicoEntity == null) return null;
-
-                return new Medico
+                Console.WriteLine("hola");
+                // Aplicar filtro de fechas si ambas fechas están presentes
+                if (fechaInicio.HasValue && fechaFin.HasValue)
                 {
-                    Id = medicoEntity.Id,
-                    Nombres = medicoEntity.Nombres,
-                    Apellidos = medicoEntity.Apellidos,
-                    Documento = medicoEntity.Documento,
-                    Email = medicoEntity.Email,
-                    Telefono = medicoEntity.Telefono,
-                    Calendarios = medicoEntity.Calendarios.Select(c => new Calendario
-                    {
-                        HoraInicio = c.HoraInicio,
-                        HoraFin = c.HoraFin,
-                        TiempoCita = c.TiempoCita,
-                        CantidadCitas = c.CantidadCitas,
-                        DiasSemana = c.DiasSemana
-                    }).ToList() // Convertir a lista de calendarios
-                };
-            }
-        }
-
-        // Crear un nuevo médico
-        public Medico CreateMedico(Medico nuevoMedico)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var medicoEntity = new Medicos
-                {
-                    Nombres = nuevoMedico.Nombres,
-                    Apellidos = nuevoMedico.Apellidos,
-                    Documento = nuevoMedico.Documento,
-                    Email = nuevoMedico.Email,
-                    Telefono = nuevoMedico.Telefono
-                };
-
-                _dbContext.Medicos.Add(medicoEntity);
-                _dbContext.SaveChanges();
-
-                nuevoMedico.Id = medicoEntity.Id;
-                return nuevoMedico;
-            }
-        }
-
-        // Actualizar un médico existente
-        public void UpdateMedico(Medico medicoActualizado)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var medicoEntity = _dbContext.Medicos.FirstOrDefault(m => m.Id == medicoActualizado.Id);
-                if (medicoEntity != null)
-                {
-                    medicoEntity.Nombres = medicoActualizado.Nombres;
-                    medicoEntity.Apellidos = medicoActualizado.Apellidos;
-                    medicoEntity.Documento = medicoActualizado.Documento;
-                    medicoEntity.Email = medicoActualizado.Email;
-                    medicoEntity.Telefono = medicoActualizado.Telefono;
-
-                    _dbContext.Medicos.Update(medicoEntity);
-                    _dbContext.SaveChanges();
+                    Console.WriteLine("entro");
+                    Console.WriteLine(fechaFin.Value);
+                    Console.WriteLine(fechaInicio.Value);
+                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
                 }
-            }
-        }
 
-        // Eliminar un médico por ID
-        public void DeleteMedico(long id)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var medicoEntity = _dbContext.Medicos.FirstOrDefault(m => m.Id == id);
-                if (medicoEntity != null)
+                if (especialidadesIds.Any())
                 {
-                    _dbContext.Medicos.Remove(medicoEntity);
-                    _dbContext.SaveChanges();
+                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
                 }
-            }
-        }
 
-        //ESPECIALIDADES
-        // Obtener todas las especialidades
-        public List<Especialidad> GetEspecialidades()
-        {
-            using (var _dbContext = new DBContext())
-            {
-                return _dbContext.Especialidades
-                    .Select(e => new Especialidad
-                    {
-                        Id = e.Id,
-                        Nombre = e.Nombre,
-                        Descripcion = e.Descripcion
-                    }).ToList();
-            }
-        }
+                // Aplicar orden
+                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha);
 
-        // Obtener una especialidad por ID
-        public Especialidad GetEspecialidadById(long id)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var especialidadEntity = _dbContext.Especialidades.FirstOrDefault(e => e.Id == id);
-                if (especialidadEntity == null) return null;
-
-                return new Especialidad
-                {
-                    Id = especialidadEntity.Id,
-                    Nombre = especialidadEntity.Nombre,
-                    Descripcion = especialidadEntity.Descripcion
-                };
-            }
-        }
-
-        // Crear una nueva especialidad
-        public Especialidad CreateEspecialidad(Especialidad nuevaEspecialidad)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var especialidadEntity = new Especialidades
-                {
-                    Nombre = nuevaEspecialidad.Nombre,
-                    Descripcion = nuevaEspecialidad.Descripcion
-                    // Las listas de Calendarios y Copagos no suelen inicializarse al crear una entidad nueva
-                };
-
-                _dbContext.Especialidades.Add(especialidadEntity);
-                _dbContext.SaveChanges();
-
-                nuevaEspecialidad.Id = especialidadEntity.Id; // Asignar el ID generado por la base de datos
-                return nuevaEspecialidad;
-            }
-        }
-
-        // Actualizar una especialidad existente
-        public void UpdateEspecialidad(Especialidad especialidadActualizada)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var especialidadEntity = _dbContext.Especialidades.FirstOrDefault(e => e.Id == especialidadActualizada.Id);
-                if (especialidadEntity != null)
-                {
-                    especialidadEntity.Nombre = especialidadActualizada.Nombre;
-                    especialidadEntity.Descripcion = especialidadActualizada.Descripcion;
-                    // Si es necesario, también puedes actualizar las relaciones de Calendarios y Copagos
-
-                    _dbContext.Especialidades.Update(especialidadEntity);
-                    _dbContext.SaveChanges();
-                }
-            }
-        }
-
-        // Eliminar una especialidad por ID
-        public void DeleteEspecialidad(long id)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var especialidadEntity = _dbContext.Especialidades.FirstOrDefault(e => e.Id == id);
-                if (especialidadEntity != null)
-                {
-                    _dbContext.Especialidades.Remove(especialidadEntity);
-                    _dbContext.SaveChanges();
-                }
-            }
-        }
-
-        // CALENDARIOS
-        // Obtener todos los calendarios
-        public List<Calendario> GetCalendarios()
-        {
-            using (var _dbContext = new DBContext())
-            {
-                return _dbContext.Calendarios
-                    .Select(c => new Calendario
+                return query
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new CitaMedica
                     {
                         Id = c.Id,
-                        HoraInicio = c.HoraInicio,
-                        HoraFin = c.HoraFin,
-                        TiempoCita = c.TiempoCita,
-                        CantidadCitas = c.CantidadCitas,
-                        DiasSemana = c.DiasSemana,
-                        Medico = new Medico
+                        Fecha = c.Fecha,
+                        Estado = c.Estado,
+                        PacienteId = c.PacienteId,
+                        Calendario = new Calendario
                         {
-                            Id = c.Medico.Id,
-                            Nombres = c.Medico.Nombres,
-                            Apellidos = c.Medico.Apellidos,
-                            Documento = c.Medico.Documento,
-                            Email = c.Medico.Email,
-                            Telefono = c.Medico.Telefono
-                        }, // Mapeo del médico con las propiedades adicionales
-                        Especialidad = new Especialidad
-                        {
-                            Id = c.Especialidad.Id,
-                            Nombre = c.Especialidad.Nombre,
-                            Descripcion = c.Especialidad.Descripcion
-                        }, // Mapeo de la especialidad con Descripción
-                        CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
-                        {
-                            Id = cm.Id,
-                            Fecha = cm.Fecha,
-                            Estado = cm.Estado
-                        }).ToList() // Mapeo de las citas médicas
-                    }).ToList();
-            }
-        }
-
-        // Obtener un calendario por (MedicoId y EspecialidadId)
-        public Calendario GetCalendarioByMedicoEspecialidad(long medicoId, long especialidadId)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                return _dbContext.Calendarios
-                    .Where(c => c.MedicoId == medicoId && c.EspecialidadId == especialidadId)
-                    .Select(c => new Calendario
-                    {
-                        Id = c.Id,
-                        HoraInicio = c.HoraInicio,
-                        HoraFin = c.HoraFin,
-                        TiempoCita = c.TiempoCita,
-                        CantidadCitas = c.CantidadCitas,
-                        DiasSemana = c.DiasSemana,
-                        Medico = new Medico
-                        {
-                            Id = c.Medico.Id,
-                            Nombres = c.Medico.Nombres,
-                            Apellidos = c.Medico.Apellidos,
-                            Documento = c.Medico.Documento,
-                            Email = c.Medico.Email,
-                            Telefono = c.Medico.Telefono
-                        }, // Mapeo del médico con las propiedades adicionales
-                        Especialidad = new Especialidad
-                        {
-                            Id = c.Especialidad.Id,
-                            Nombre = c.Especialidad.Nombre,
-                            Descripcion = c.Especialidad.Descripcion
-                        }, // Mapeo de la especialidad con Descripción
-                        CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
-                        {
-                            Id = cm.Id,
-                            Fecha = cm.Fecha,
-                            Estado = cm.Estado
-                        }).ToList() // Mapeo de las citas médicas
+                            Medico = new Medico
+                            {
+                                Id = c.Calendario.Medico.Id,
+                                Nombres = c.Calendario.Medico.Nombres,
+                                Apellidos = c.Calendario.Medico.Apellidos,
+                                Documento = c.Calendario.Medico.Documento,
+                                Email = c.Calendario.Medico.Email,
+                                Telefono = c.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Calendario.Especialidad.Id,
+                                Nombre = c.Calendario.Especialidad.Nombre,
+                                Descripcion = c.Calendario.Especialidad.Descripcion
+                            }
+                        },
+                        ConsultaMedicaId = c.ConsultaMedicaId
                     })
-                    .FirstOrDefault(); // Obtener el primer calendario que coincide con MedicoId y EspecialidadId
+                    .ToList();
             }
         }
 
-        public Calendario GetCalendarioById(long calendarioId)
+        public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
             using (var _dbContext = new DBContext())
             {
-                // Buscar el calendario por su Id único utilizando Select
-                return _dbContext.Calendarios
-                    .Where(c => c.Id == calendarioId)
-                    .Select(c => new Calendario
-                    {
-                        Id = c.Id,
-                        HoraInicio = c.HoraInicio,
-                        HoraFin = c.HoraFin,
-                        TiempoCita = c.TiempoCita,
-                        CantidadCitas = c.CantidadCitas,
-                        DiasSemana = c.DiasSemana,
-                        Medico = new Medico
-                        {
-                            Id = c.Medico.Id,
-                            Nombres = c.Medico.Nombres,
-                            Apellidos = c.Medico.Apellidos,
-                            Documento = c.Medico.Documento,
-                            Email = c.Medico.Email,
-                            Telefono = c.Medico.Telefono
-                        }, // Mapeo del médico con las propiedades adicionales
-                        Especialidad = new Especialidad
-                        {
-                            Id = c.Especialidad.Id,
-                            Nombre = c.Especialidad.Nombre,
-                            Descripcion = c.Especialidad.Descripcion
-                        }, // Mapeo de la especialidad con Descripción
-                        CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
-                        {
-                            Id = cm.Id,
-                            Fecha = cm.Fecha,
-                            Estado = cm.Estado
-                        }).ToList() // Mapeo de las citas médicas
-                    })
-                    .FirstOrDefault(); // Obtener el primer (y único) calendario que coincide con el Id
-            }
-        }
+                var query = _dbContext.CitasMedicas
+                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
 
-        // Crear un nuevo calendario (necesita ID de Medico y Especialidad)
-        public Calendario CreateCalendario(Calendario nuevoCalendario, long medicoId, long especialidadId)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var medico = _dbContext.Medicos.FirstOrDefault(m => m.Id == medicoId);
-                var especialidad = _dbContext.Especialidades.FirstOrDefault(e => e.Id == especialidadId);
-
-                if (medico == null || especialidad == null)
+                // Aplicar filtro de rango de fechas solo si ambos valores están presentes
+                if (fechaInicio.HasValue && fechaFin.HasValue)
                 {
-                    throw new Exception("Medico o Especialidad no encontrados.");
+                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
                 }
 
-                var calendarioEntity = new Calendarios
+                if (especialidadesIds.Any())
                 {
-                    HoraInicio = nuevoCalendario.HoraInicio,
-                    HoraFin = nuevoCalendario.HoraFin,
-                    TiempoCita = nuevoCalendario.TiempoCita,
-                    CantidadCitas = nuevoCalendario.CantidadCitas,
-                    DiasSemana = nuevoCalendario.DiasSemana,
-                    MedicoId = medicoId,
-                    EspecialidadId = especialidadId
-                };
-
-                _dbContext.Calendarios.Add(calendarioEntity);
-                _dbContext.SaveChanges();
-
-                return nuevoCalendario;
-            }
-        }
-
-        // Actualizar un calendario existente
-        public void UpdateCalendario(Calendario calendarioActualizado, long medicoId, long especialidadId)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var calendarioEntity = _dbContext.Calendarios
-                    .FirstOrDefault(c => c.MedicoId == medicoId && c.EspecialidadId == especialidadId);
-
-                if (calendarioEntity != null)
-                {
-                    calendarioEntity.HoraInicio = calendarioActualizado.HoraInicio;
-                    calendarioEntity.HoraFin = calendarioActualizado.HoraFin;
-                    calendarioEntity.TiempoCita = calendarioActualizado.TiempoCita;
-                    calendarioEntity.CantidadCitas = calendarioActualizado.CantidadCitas;
-                    calendarioEntity.DiasSemana = calendarioActualizado.DiasSemana;
-
-                    _dbContext.Calendarios.Update(calendarioEntity);
-                    _dbContext.SaveChanges();
+                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
                 }
-            }
-        }
 
-        // Eliminar un calendario por ID (MedicoId y EspecialidadId)
-        public void DeleteCalendario(long medicoId, long especialidadId)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var calendarioEntity = _dbContext.Calendarios
-                    .FirstOrDefault(c => c.MedicoId == medicoId && c.EspecialidadId == especialidadId);
-
-                if (calendarioEntity != null)
-                {
-                    _dbContext.Calendarios.Remove(calendarioEntity);
-                    _dbContext.SaveChanges();
-                }
+                // Contar los resultados después de aplicar los filtros
+                return query.Count();
             }
         }
     }

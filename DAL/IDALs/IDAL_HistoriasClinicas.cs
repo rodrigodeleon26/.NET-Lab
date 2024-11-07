@@ -6,7 +6,7 @@ namespace DAL.IDALs
     public interface IDAL_HistoriasClinicas
     {
         public List<ConsultaMedica> getConsultasMedicas();
-        public ConsultaMedica getConsultaMedica(int id);
+        public ConsultaMedica getConsultaMedica(long id);
         public ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica);
         public ConsultaMedica createConsultaMedicaSD(long consultaMedicaId);
         public ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica);
@@ -18,5 +18,6 @@ namespace DAL.IDALs
         public ConsultaMedica updateEstudio(int idConsultaMedica, Estudio estudio);
         public ConsultaMedica deleteEstudio(int idConsultaMedica, int idEstudio);
         public ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, DateOnly fechaResultado, string imagenUrl);
+        public List<Medicamento> getMedicamentos();
     }
 }

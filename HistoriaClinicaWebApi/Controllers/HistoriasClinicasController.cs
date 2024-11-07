@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using BL.IBLs;
 using DAL.Models;
 using Microsoft.Extensions.Logging;
+using BL.BLs;
+using Newtonsoft.Json;
 
 namespace HistoriaClinicaWebApi.Controllers
 
@@ -15,7 +17,11 @@ namespace HistoriaClinicaWebApi.Controllers
         private readonly IBL_HistoriasClinicas _blHistoriasClinicas;
         private readonly S3Service _s3Service;
 
-        public HistoriasClinicasController(IBL_HistoriasClinicas blHistoriasClinicas, S3Service s3Service)
+        public HistoriasClinicasController
+            (
+            IBL_HistoriasClinicas blHistoriasClinicas, 
+            S3Service s3Service
+            )
         {
             _blHistoriasClinicas = blHistoriasClinicas;
             _s3Service = s3Service;
@@ -28,7 +34,9 @@ namespace HistoriaClinicaWebApi.Controllers
         public IActionResult Get()
         {
             var consultasMedicas = _blHistoriasClinicas.getConsultasMedicas();
-            if (consultasMedicas.Count == 0)
+
+            // La capa de negocio ahora se encarga de devolver null si no hay consultas
+            if (consultasMedicas == null)
             {
                 return NotFound(new { Message = "No hay consultas médicas" });
             }
@@ -36,17 +44,19 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // GET api/<HistoriasClinicasController>/5
-        [ProducesResponseType(typeof(ConsultaMedica), 200)]
+        [ProducesResponseType(typeof(ConsultaMedicaCompletaDTO), 200)]
         [ProducesResponseType(404)]
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(long id)
         {
-            var consultaMedica = _blHistoriasClinicas.getConsultaMedica(id);
-            if (consultaMedica == null)
+            var consultaMedicaCompleta = _blHistoriasClinicas.getConsultaMedicaCompleta(id);
+
+            if (consultaMedicaCompleta == null)
             {
                 return NotFound(new { Message = "No existe consulta médica con ese ID" });
             }
-            return Ok(consultaMedica);
+
+            return Ok(consultaMedicaCompleta);
         }
 
 
@@ -60,7 +70,9 @@ namespace HistoriaClinicaWebApi.Controllers
             {
                 return BadRequest(new { Message = "La consulta médica no puede ser nula" });
             }
+
             var consultaMedicaCreada = _blHistoriasClinicas.createConsultaMedica(consultaMedica);
+
             return CreatedAtAction(nameof(Get), new { id = consultaMedicaCreada.Id }, consultaMedicaCreada);
         }
 
@@ -82,27 +94,20 @@ namespace HistoriaClinicaWebApi.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] ConsultaMedica consultaMedica)
         {
-            try
+            if (consultaMedica == null)
             {
-                if (consultaMedica == null)
-                {
-                    return BadRequest(new { Message = "La consulta médica no puede ser nula" });
-                }
-                if (id != consultaMedica.Id)
-                {
-                    return BadRequest(new { Message = "El ID de la consulta médica no coincide con el ID de la URL" });
-                }
-                var consultaMedicaActualizada = _blHistoriasClinicas.updateConsultaMedica(consultaMedica);
-                if (consultaMedicaActualizada == null)
-                {
-                    return NotFound(new { Message = "No existe consulta médica con ese ID" });
-                }
-                return Ok(consultaMedicaActualizada);
+                return BadRequest(new { Message = "La consulta médica no puede ser nula" });
             }
-            catch (Exception ex)
+            if (id != consultaMedica.Id)
             {
-                return StatusCode(500, new { Message = "Ocurrió un error interno", Error = ex.Message });
+                return BadRequest(new { Message = "El ID de la consulta médica no coincide con el ID de la URL" });
             }
+            var consultaMedicaActualizada = _blHistoriasClinicas.updateConsultaMedica(consultaMedica);
+            if (consultaMedicaActualizada == null)
+            {
+                return NotFound(new { Message = "No existe consulta médica con ese ID" });
+            }
+            return Ok(consultaMedicaActualizada);
         }
 
         //DELETE api/<HistoriasClinicasController>/5
@@ -112,10 +117,12 @@ namespace HistoriaClinicaWebApi.Controllers
         public IActionResult Delete(int id)
         {
             var consultaMedicaEliminada = _blHistoriasClinicas.deleteConsultaMedica(id);
+
             if (consultaMedicaEliminada == null)
             {
                 return NotFound(new { Message = "No existe consulta médica con ese ID" });
             }
+
             return Ok(consultaMedicaEliminada);
         }
 
@@ -159,6 +166,7 @@ namespace HistoriaClinicaWebApi.Controllers
 
         // DELETE api/<HistoriasClinicasController>/5/Receta/1
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [HttpDelete("{id}/Receta/{idReceta}")]
         public IActionResult DeleteReceta(int id, int idReceta)
@@ -168,7 +176,7 @@ namespace HistoriaClinicaWebApi.Controllers
             {
                 return NotFound(new { Message = "No existe consulta médica con ese ID o no existe receta con ese ID" });
             }
-            return Ok(consultaMedicaSinReceta);
+            return Ok(consultaMedicaSinReceta); // O considera retornar NoContent()
         }
 
         // POST api/<HistoriasClinicasController>/5/Estudio
@@ -176,28 +184,14 @@ namespace HistoriaClinicaWebApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [HttpPost("{id}/Estudio")]
-        public IActionResult Post(int id, [FromBody] Estudio estudio)
+        public async Task<IActionResult> Post(int id, [FromBody] Estudio estudio)
         {
             if (estudio == null)
             {
                 return BadRequest(new { Message = "El estudio no puede ser nulo" });
             }
 
-            //string imagenUrl = null;
-
-            //// Subir la imagen a S3 si está presente
-            //if (imagenEstudio != null && imagenEstudio.Length > 0)
-            //{
-            //    using var stream = imagenEstudio.OpenReadStream();
-            //    imagenUrl = await _s3Service.UploadFileAsync(stream, $"{Guid.NewGuid()}_{imagenEstudio.FileName}", imagenEstudio.ContentType);
-            //}
-
-            //// Asignar la URL de la imagen al estudio si se ha subido una imagen
-            //estudio.ImagenUrl = imagenUrl;
-
-            // Agregar el estudio a la consulta médica
-            var consultaMedicaConEstudio = _blHistoriasClinicas.addEstudio(id, estudio);
-
+            var consultaMedicaConEstudio = await _blHistoriasClinicas.addEstudio(id, estudio);
             if (consultaMedicaConEstudio == null)
             {
                 return NotFound(new { Message = "No existe consulta médica con ese ID" });
@@ -205,6 +199,7 @@ namespace HistoriaClinicaWebApi.Controllers
 
             return Ok(consultaMedicaConEstudio);
         }
+
 
         // PUT api/<HistoriasClinicasController>/5/Estudio
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
@@ -217,16 +212,6 @@ namespace HistoriaClinicaWebApi.Controllers
             {
                 return BadRequest(new { Message = "El estudio no puede ser nulo" });
             }
-            //string imagenUrl = null;
-
-            //// Subir la imagen a S3 si está presente
-            //if (imagenEstudio != null && imagenEstudio.Length > 0)
-            //{
-            //    using var stream = imagenEstudio.OpenReadStream();
-            //    imagenUrl = await _s3Service.UploadFileAsync(stream, $"{Guid.NewGuid()}_{imagenEstudio.FileName}", imagenEstudio.ContentType);
-            //    estudio.ImagenUrl = imagenUrl;
-            //}
-
             var consultaMedicaConEstudioActualizado = _blHistoriasClinicas.updateEstudio(id, estudio);
             if (consultaMedicaConEstudioActualizado == null)
             {
@@ -255,21 +240,14 @@ namespace HistoriaClinicaWebApi.Controllers
         [HttpPost("{id}/Estudio/{idEstudio}/Resultado")]
         public async Task<IActionResult> Post(int id, int idEstudio, DateOnly fechaResultado, IFormFile imagenEstudio)
         {
-            if (fechaResultado == null)
-            {
-                return BadRequest(new { Message = "La fecha del resultado no puede ser nula" });
-            }
-
             string imagenUrl = null;
 
-            // Subir la imagen a S3 si está presente
             if (imagenEstudio != null && imagenEstudio.Length > 0)
             {
                 using var stream = imagenEstudio.OpenReadStream();
                 imagenUrl = await _s3Service.UploadFileAsync(stream, $"{Guid.NewGuid()}_{imagenEstudio.FileName}", imagenEstudio.ContentType);
             }
 
-            // Guardar el resultado del estudio junto con la URL de la imagen (si existe)
             var consultaMedicaConResultadoEstudio = _blHistoriasClinicas.addResultadoEstudio(id, idEstudio, fechaResultado, imagenUrl);
 
             if (consultaMedicaConResultadoEstudio == null)
@@ -280,5 +258,57 @@ namespace HistoriaClinicaWebApi.Controllers
             return Ok(consultaMedicaConResultadoEstudio);
         }
 
+        // GET api/<HistoriasClinicasController>/12345678/historiaClinica?pageNumber=1&pageSize=10
+        [ProducesResponseType(typeof(ConsultaMedica), 200)]
+        [ProducesResponseType(404)]
+        [HttpGet("{dni}/historiaClinica")]
+        public IActionResult Get(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, string especialidades)
+        {
+            var especialidadesList = JsonConvert.DeserializeObject<List<EspecialidadDTO>>(especialidades);
+
+            // Filtrar las especialidades con checked en true
+            var especialidadesIds = especialidadesList.Where(e => e.IsChecked).Select(e => e.Id).ToList();
+
+            var resultado = _blHistoriasClinicas.GetHistoriaClinica(dni, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
+
+            if (resultado == null)
+            {
+                return NotFound(new { Message = "No existe paciente con esa cédula" });
+            }
+
+            return Ok(resultado);
+        }
+
+        // PUT api/<HistoriasClinicasController>/5/guardarConsulta
+        [ProducesResponseType(typeof(ConsultaMedica), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [HttpPut("{id}/guardarConsulta")]
+        public IActionResult Put(long id)
+        {
+            var consultaMedica = _blHistoriasClinicas.GuardarConsulta(id);
+            if (consultaMedica == null)
+            {
+                return NotFound(new { Message = "No existe consulta médica con ese ID" });
+            }
+
+            return Ok(consultaMedica);
+        }
+
+        //GET api/<HistoriaClinicasController>/Medicamentos
+        [ProducesResponseType(typeof(List<Medicamento>), 200)]
+        [ProducesResponseType(404)]
+        [HttpGet("Medicamentos")]
+        public IActionResult GetMedicamentos()
+        {
+            var medicamentos = _blHistoriasClinicas.getMedicamentos();
+
+            if (medicamentos == null)
+            {
+                return NotFound(new { Message = "No hay medicamentos" });
+            }
+
+            return Ok(medicamentos);
+        }
     }
 }

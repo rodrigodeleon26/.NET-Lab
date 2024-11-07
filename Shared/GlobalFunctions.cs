@@ -21,6 +21,14 @@ namespace Shared
         private static string _smtpPassword = "ftsv cbhn aspv amdx";
         private static bool _smtpEnableSsl = true;
 
+        // Configuración de S3
+        private static string _awsProfile = "default";
+        private static string _awsRegion = "us-east-2";
+        private static string _awsBucketName = "s3.net-lab";
+        private static string _awsAccessKey = "AKIAT4GVRXPXDNJ4G4HQ";
+        private static string _awsSecretKey = "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";
+
+
         public static string GetConnectionString()
         {
 
@@ -47,6 +55,18 @@ namespace Shared
                 { "Password", _smtpPassword },
                 { "EnableSsl", _smtpEnableSsl.ToString() }
             };
+        }
+
+        public static Dictionary<string, string> GetS3Config()
+        {
+            return new Dictionary<string, string>
+        {
+            { "Profile", _awsProfile },
+            { "Region", _awsRegion },
+            { "BucketName", _awsBucketName },
+            { "AccessKey", _awsAccessKey },
+            { "SecretKey", _awsSecretKey }
+        };
         }
     }
 }

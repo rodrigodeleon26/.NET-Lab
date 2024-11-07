@@ -20,8 +20,19 @@ namespace BL.BLs
             return dal.getCitasMedicas();
         }
 
+        // Citas medicas por especialidad
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
+        {
+            return dal.getCitasMedicasPorEspecialidad(nombreEspecialidad, numPagina, fecha);
+        }
+
+        public bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha)
+        {
+            return dal.HayMasCitasMedicas(nombreEspecialidad, numPagina, fecha);
+        }
+
         // Obtener una cita médica por ID
-        public CitaMedica getCitaMedicaById(int id)
+        public CitaMedica getCitaMedicaById(long id)
         {
             return dal.getCitaMedicaById(id);
         }
@@ -44,87 +55,14 @@ namespace BL.BLs
             dal.deleteCitaMedica(id);
         }
 
-        // MEDICOS
-        public List<Medico> GetMedicos()
+        public List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
-            return dal.GetMedicos();
+            return dal.GetCitasMedicasByPacienteId(pacienteId, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
         }
 
-        public Medico GetMedicoById(long id)
+        public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
-            return dal.GetMedicoById(id);
-        }
-
-        public Medico CreateMedico(Medico nuevoMedico)
-        {
-            return dal.CreateMedico(nuevoMedico);
-        }
-
-        public void UpdateMedico(Medico medicoActualizado)
-        {
-            dal.UpdateMedico(medicoActualizado);
-        }
-
-        public void DeleteMedico(long id)
-        {
-            dal.DeleteMedico(id);
-        }
-
-        // ESPECIALIDADES
-        public List<Especialidad> GetEspecialidades()
-        {
-            return dal.GetEspecialidades();
-        }
-
-        public Especialidad GetEspecialidadById(long id)
-        {
-            return dal.GetEspecialidadById(id);
-        }
-
-        public Especialidad CreateEspecialidad(Especialidad nuevaEspecialidad)
-        {
-            return dal.CreateEspecialidad(nuevaEspecialidad);
-        }
-
-        public void UpdateEspecialidad(Especialidad especialidadActualizada)
-        {
-            dal.UpdateEspecialidad(especialidadActualizada);
-        }
-
-        public void DeleteEspecialidad(long id)
-        {
-            dal.DeleteEspecialidad(id);
-        }
-
-        // CALENDARIOS
-        public List<Calendario> GetCalendarios()
-        {
-            return dal.GetCalendarios();
-        }
-
-        public Calendario GetCalendarioById(long calendarioId)
-        {
-            return dal.GetCalendarioById(calendarioId);
-        }
-
-        public Calendario GetCalendarioByMedicoEspecialidad(long medicoId, long especialidadId)
-        {
-            return dal.GetCalendarioByMedicoEspecialidad(medicoId, especialidadId);
-        }
-
-        public Calendario CreateCalendario(Calendario nuevoCalendario, long medicoId, long especialidadId)
-        {
-            return dal.CreateCalendario(nuevoCalendario, medicoId, especialidadId);
-        }
-
-        public void UpdateCalendario(Calendario calendarioActualizado, long medicoId, long especialidadId)
-        {
-            dal.UpdateCalendario(calendarioActualizado, medicoId, especialidadId);
-        }
-
-        public void DeleteCalendario(long medicoId, long especialidadId)
-        {
-            dal.DeleteCalendario(medicoId, especialidadId);
+            return dal.CountCitasMedicasByPacienteId(pacienteId, fechaInicio, fechaFin, orden, especialidadesIds);
         }
     }
 }

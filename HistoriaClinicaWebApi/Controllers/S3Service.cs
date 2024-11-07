@@ -36,7 +36,7 @@ namespace HistoriaClinicaWebApi.Controllers
             if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
             {
                 // Devolver la URL del archivo en S3
-                return $"https://{_bucketName}.s3.amazonaws.com/{fileName}";
+                return $"http://{_bucketName}.s3.amazonaws.com/{fileName}";
             }
 
             throw new Exception("Error al subir archivo a S3");

@@ -66,6 +66,7 @@ namespace DAL
         public DbSet<Pacientes> Pacientes { get; set; }
         public DbSet<Medicos> Medicos { get; set; }
         public DbSet<Especialidades> Especialidades { get; set; }
+        public DbSet<Medicamentos> Medicamentos { get; set; }
         public DbSet<Calendarios> Calendarios { get; set; }
         public DbSet<CitasMedicas> CitasMedicas { get; set; }
         public DbSet<Consultorios> Consultorios { get; set; }

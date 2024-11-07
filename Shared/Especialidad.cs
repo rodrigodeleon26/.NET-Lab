@@ -12,4 +12,11 @@
 
         //public List<Copago> Copagos { get; set; } = new List<Copago>();
     }
+
+    public class EspecialidadDTO
+    {
+        public long Id { get; set; }
+
+        public bool IsChecked { get; set; }
+    }
 }
