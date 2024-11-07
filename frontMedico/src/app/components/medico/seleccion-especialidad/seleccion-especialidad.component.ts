@@ -35,8 +35,16 @@ export class SeleccionEspecialidadComponent {
   }
 
   seleccionarEspecialidad(especialidad: any): void {
+    const hoy = new Date();
+    const year = hoy.getFullYear();
+    const month = (hoy.getMonth() + 1).toString().padStart(2, '0'); // Mes en formato 2 dígitos
+    const day = hoy.getDate().toString().padStart(2, '0'); // Día en formato 2 dígitos
+  
+    const fechaHoy = `${year}-${month}-${day}`; // Formato YYYY-MM-DD
+  
     console.log("Especialidad seleccionada:", especialidad);
-    // Aquí puedes añadir la lógica que necesites al seleccionar una especialidad
-    window.open(`/medico/cita-medica?especialidad=${especialidad}&fecha=2024-11-06`, '_blank');
+  
+    // Abre la URL en una nueva ventana con la especialidad y la fecha de hoy
+    window.open(`/medico/cita-medica?especialidad=${especialidad}&fecha=${fechaHoy}`, '_blank');
   }
 }

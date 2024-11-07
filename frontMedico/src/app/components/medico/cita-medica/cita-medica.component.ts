@@ -4,7 +4,7 @@ import { CitasMedicasService } from '../../../services/cita-medica.service';
 import { ConsultaMedicaService } from '../../../services/consulta-medica.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, lastValueFrom } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-cita-medica',
@@ -27,7 +27,7 @@ export class CitaMedicaComponent implements OnInit {
   constructor(
     private citasMedicasService: CitasMedicasService,
     private ConsultaMedicaService: ConsultaMedicaService,
-    private pacienteService: PacienteService,
+    private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
@@ -211,6 +211,35 @@ export class CitaMedicaComponent implements OnInit {
     }, error => {
       this.errorMessage = 'Error al actualizar el estado de la cita';
       console.error('Error al actualizar estado:', error);
+      this.loading = false;
+    });
+  }
+
+  actualizarFecha(event: Event): void {
+    this.loading = true;
+    const input = event.target as HTMLInputElement;
+    const fechaSeleccionada = input.value;
+    
+    // Actualiza la URL con la fecha seleccionada
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { fecha: fechaSeleccionada, especialidad: this.especialidadSeleccionada },
+      queryParamsHandling: 'merge' // Para mantener otros parámetros de la URL
+    });
+
+    this.route.queryParams.subscribe(params => {
+      const especialidad = params['especialidad'];
+      this.especialidadSeleccionada = especialidad;
+      const fechaVisible = fechaSeleccionada;
+      if (fechaVisible) {
+        const [year, month, day] = fechaVisible.split('-').map(Number);
+        this.fechaVisible = new Date(year, month - 1, day);
+      }
+      else {
+        this.fechaVisible = new Date();
+      }
+    });
+    this.cargarCitasMedicas(this.especialidadSeleccionada, this.fechaVisible).then(() => {
       this.loading = false;
     });
   }
