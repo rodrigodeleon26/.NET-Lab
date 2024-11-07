@@ -11,10 +11,8 @@ import { SeleccionEspecialidadComponent } from './components/medico/seleccion-es
   
 const routes: Routes = [
   { path: 'prueba-imagen', component: PruebaImagenComponent },
-  { path: 'consulta-medica', component: ConsultaMedicaComponent, canActivate: [authGuard] },
-  { path: 'login', component: LoginComponent },
-  { path: 'prueba-imagen', component: PruebaImagenComponent },
   { path: 'consulta-medica', component: ConsultaMedicaComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'cita-medica', component: CitaMedicaComponent },
   { path: 'elegir-especialidad', component: SeleccionEspecialidadComponent },
   { path: 'historia-clinica', component: HistoriaClinicaComponent }
