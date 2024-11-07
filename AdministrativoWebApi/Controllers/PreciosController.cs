@@ -1,5 +1,6 @@
 ﻿using BL.IBLs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Shared;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,10 +12,12 @@ namespace AdministrativoWebApi.Controllers
     public class PreciosController : ControllerBase
     {
         private readonly IBL_Administrativo _blAdministrativo;
+        private readonly ILogger<PreciosController> _logger;
 
-        public PreciosController(IBL_Administrativo blAdministrativo)
+        public PreciosController(IBL_Administrativo blAdministrativo, ILogger<PreciosController> logger)
         {
             _blAdministrativo = blAdministrativo;
+            _logger = logger;
         }
 
         // GET: api/<PreciosController>
@@ -43,6 +46,8 @@ namespace AdministrativoWebApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Precio precio)
         {
+            _logger.LogInformation("Se ha llegado a la función Post del controlador PreciosController.");
+
             if (precio == null)
             {
                 return BadRequest();
@@ -75,11 +80,16 @@ namespace AdministrativoWebApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
+            _logger.LogInformation("FUNCION");
+
             var precio = _blAdministrativo.getPrecioById(id);
+            _logger.LogInformation("OBTUBO");
+
             if (precio == null)
             {
                 return NotFound();
             }
+            _logger.LogInformation("PASO EL IF.");
 
             _blAdministrativo.deletePrecio(id);
             return NoContent();

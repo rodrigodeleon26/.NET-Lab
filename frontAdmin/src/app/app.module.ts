@@ -10,11 +10,28 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './components/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthInterceptor } from './shared/auth.interceptor';
+import { NavComponent } from './components/web/nav/nav.component';
+import { GenerarMedicoComponent } from './components/generar-medico/generar-medico.component';
+import { AddEspecialidadComponent } from './components/add-especialidad/add-especialidad.component';
+import { ListMedicosComponent } from './components/list-medicos/list-medicos.component';
+import { ConsultoriosComponent } from './components/consultorios/consultorios.component';
+import { CopagosComponent } from './components/copagos/copagos.component';
+import { ArticulosComponent } from './components/articulos/articulos.component';
+import { SeguroMedicoSelectComponent } from './components/seguro-medico-select/seguro-medico-select.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    NavComponent,
+    GenerarMedicoComponent,
+    AddEspecialidadComponent,
+    ListMedicosComponent,
+    ConsultoriosComponent,
+    CopagosComponent,
+    ArticulosComponent,
+    SeguroMedicoSelectComponent,
   ],
   imports: [
     BrowserModule,

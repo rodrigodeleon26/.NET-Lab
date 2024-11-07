@@ -9,13 +9,11 @@ namespace DAL.Models
         [Key]
         public long Id { get; set; }
 
-        [Required]
         public long? CopagoId { get; set; }
 
         [ForeignKey(nameof(CopagoId))]
         public virtual Copagos? Copago { get; set; }
 
-        [Required]
         public long? SeguroMedicoId { get; set; }
 
         [ForeignKey(nameof(SeguroMedicoId))]

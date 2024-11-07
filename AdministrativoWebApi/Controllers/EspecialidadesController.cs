@@ -67,7 +67,7 @@ namespace AdministrativoWebApi.Controllers
                 return NotFound();
             }
 
-            _blAdministrativo.addEspecialidad(especialidad);
+            _blAdministrativo.updateEspecialidad(especialidad);
             return NoContent();
         }
 

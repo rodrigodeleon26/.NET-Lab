@@ -2,6 +2,7 @@
 using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System;
@@ -14,12 +15,19 @@ namespace DAL.DALs
 {
 	public class DAL_Administrativo_EF : IDAL_Administrativo
 	{
-		/**********************************************************/
-		/**                  PACIENTES                           **/
-		/**********************************************************/
-		#region FUNCTIONES PACIENTES
 
-		public List<Paciente> GetPacientes()
+        private readonly ILogger<DAL_Administrativo_EF> _logger;
+
+        public DAL_Administrativo_EF(ILogger<DAL_Administrativo_EF> logger)
+        {
+            _logger = logger;
+        }
+        /**********************************************************/
+        /**                  PACIENTES                           **/
+        /**********************************************************/
+        #region FUNCTIONES PACIENTES
+
+        public List<Paciente> GetPacientes()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -239,7 +247,7 @@ namespace DAL.DALs
 							Id = p.Id,
 							PrecioBase = p.PrecioBase,
 							FechaInicio = p.FechaInicio
-						}).ToList(),
+						}).ToList()
 					}).ToList();
 			}
 		}
@@ -248,7 +256,17 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var seguro = _dbContext.SegurosMedicos.Find(id);
+                var seguro = _dbContext.SegurosMedicos
+					.Include(s => s.Contratos)
+					.Include(s => s.Precios)
+					.Include(s => s.Copagos)
+						.ThenInclude(c => c.Articulo)
+					.Include(s => s.Copagos)
+						.ThenInclude(c => c.Especialidad)
+					.Include(s => s.Copagos)
+						.ThenInclude(c => c.Precios)
+					.FirstOrDefault(s => s.Id == id);
+                
 				if (seguro != null)
 				{
 					return new SeguroMedico
@@ -268,7 +286,28 @@ namespace DAL.DALs
 							PrecioBase = p.PrecioBase,
 							FechaInicio = p.FechaInicio
 						}).ToList(),
-					};
+                        Copagos = seguro.Copagos.Select(c => new Copago
+                        {
+                            Id = c.Id,
+                            Articulo = new Articulo
+                            {
+                                Id = c.Articulo.Id,
+                                Nombre = c.Articulo.Nombre
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Especialidad.Id,
+                                Nombre = c.Especialidad.Nombre,
+                                Descripcion = c.Especialidad.Descripcion
+                            },
+                            Precios = c.Precios.Select(p => new Precio
+                            {
+                                Id = p.Id,
+                                PrecioBase = p.PrecioBase,
+                                FechaInicio = p.FechaInicio
+                            }).ToList()
+                        }).ToList()
+                    };
 				}
 				return null;
 			}
@@ -458,7 +497,7 @@ namespace DAL.DALs
 						Id = p.Id,
 						PrecioBase = p.PrecioBase,
 						FechaInicio = p.FechaInicio,
-						Copago = new Copago
+						Copago = p.Copago != null ? new Copago
 						{
 							Id = p.Copago.Id,
 							Articulo = new Articulo
@@ -478,30 +517,40 @@ namespace DAL.DALs
 								Nombre = p.Copago.Especialidad.Nombre,
 								Descripcion = p.Copago.Especialidad.Descripcion
 							}
-						},
-						SeguroMedico = new SeguroMedico
+						}: null,
+						SeguroMedico = p.SeguroMedico != null ? new SeguroMedico
 						{
 							Id = p.SeguroMedico.Id,
 							Nombre = p.SeguroMedico.Nombre,
 							Descripcion = p.SeguroMedico.Descripcion
-						}
+						}: null
 					}).ToList();
 			}
 		}
 
-		public Precio GetPrecioById(long id)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				var precio = _dbContext.Precios.Find(id);
-				if (precio != null)
-				{
-					return new Precio
-					{
-						Id = precio.Id,
-						PrecioBase = precio.PrecioBase,
-						FechaInicio = precio.FechaInicio,
-						Copago = new Copago
+        public Precio GetPrecioById(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var precio = _dbContext.Precios
+					.Include(Precios => Precios.Copago)
+                        .ThenInclude(c => c.Articulo)
+					.Include(Precios => Precios.Copago)
+                        .ThenInclude(c => c.Especialidad)
+					.Include(Precios => Precios.Copago)
+						.ThenInclude(c => c.SeguroMedico)
+					.Include(Precios => Precios.SeguroMedico)
+					.FirstOrDefault(p => p.Id == id);
+
+                if (precio != null)
+                {
+                    _logger.LogInformation($"Precio encontrado: {precio.Id}");
+                    return new Precio
+                    {
+                        Id = precio.Id,
+                        PrecioBase = precio.PrecioBase,
+                        FechaInicio = precio.FechaInicio,
+						Copago = precio.Copago != null ? new Copago()
 						{
 							Id = precio.Copago.Id,
 							Articulo = new Articulo
@@ -510,31 +559,33 @@ namespace DAL.DALs
 								Nombre = precio.Copago.Articulo.Nombre
 							},
 							SeguroMedico = new SeguroMedico
-							{
-								Id = precio.Copago.SeguroMedico.Id,
-								Nombre = precio.Copago.SeguroMedico.Nombre,
-								Descripcion = precio.Copago.SeguroMedico.Descripcion
-							},
+                            {
+                                Id = precio.Copago.SeguroMedico.Id,
+                                Nombre = precio.Copago.SeguroMedico.Nombre,
+                                Descripcion = precio.Copago.SeguroMedico.Descripcion
+                            },
 							Especialidad = new Especialidad
-							{
-								Id = precio.Copago.Especialidad.Id,
-								Nombre = precio.Copago.Especialidad.Nombre,
-								Descripcion = precio.Copago.Especialidad.Descripcion
-							}
-						},
-						SeguroMedico = new SeguroMedico
+                            {
+                                Id = precio.Copago.Especialidad.Id,
+                                Nombre = precio.Copago.Especialidad.Nombre,
+                                Descripcion = precio.Copago.Especialidad.Descripcion
+                            }
+						} : null,
+						SeguroMedico = precio.SeguroMedico != null ? new SeguroMedico()
 						{
 							Id = precio.SeguroMedico.Id,
 							Nombre = precio.SeguroMedico.Nombre,
 							Descripcion = precio.SeguroMedico.Descripcion
-						}
-					};
-				}
-				return null;
-			}
-		}
+						} : null
 
-		public void AddPrecio(Precio precio)
+                    };
+                }
+                _logger.LogInformation("Precio encontrado: es null");
+                return null;
+            }
+        }
+
+        public void AddPrecio(Precio precio)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -542,10 +593,18 @@ namespace DAL.DALs
 				{
 					PrecioBase = precio.PrecioBase,
 					FechaInicio = precio.FechaInicio,
-					CopagoId = precio.Copago.Id,
-					SeguroMedicoId = precio.SeguroMedico.Id
+					CopagoId = null,
+					SeguroMedicoId = null
 				};
-				_dbContext.Precios.Add(nuevoPrecio);
+				if(precio.Copago != null)
+                {
+                    nuevoPrecio.CopagoId = precio.Copago.Id;
+                }
+                if (precio.SeguroMedico != null)
+                {
+                    nuevoPrecio.SeguroMedicoId = precio.SeguroMedico.Id;
+                }
+                _dbContext.Precios.Add(nuevoPrecio);
 				_dbContext.SaveChanges();
 			}
 		}
@@ -627,7 +686,13 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var copago = _dbContext.Copagos.Find(id);
+				var copago = _dbContext.Copagos
+					.Include(c => c.Articulo)
+					.Include(c => c.SeguroMedico)
+					.Include(c => c.Especialidad)
+					.Include(c => c.Precios)
+					.FirstOrDefault(c => c.Id == id);
+
 				if (copago != null)
 				{
 					return new Copago
@@ -702,6 +767,19 @@ namespace DAL.DALs
 					_dbContext.Copagos.Remove(copago);
 					_dbContext.SaveChanges();
 				}
+			}
+		}
+
+		public long getIdByFilds(Copago copago)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var copagoExistente = _dbContext.Copagos.FirstOrDefault(c => c.ArticuloId == copago.Articulo.Id && c.SeguroMedicoId == copago.SeguroMedico.Id && c.EspecialidadId == copago.Especialidad.Id);
+				if (copagoExistente != null)
+				{
+					return copagoExistente.Id;
+				}
+				return 0;
 			}
 		}
 		#endregion
@@ -883,6 +961,12 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
+				//chequear que no existan con la misma ci
+				if (_dbContext.Medicos.Any(m => m.Documento == medico.Documento))
+                {
+                    throw new Exception("Ya existe un medico con la cedula ingresada");
+                }
+
 				var nuevoMedico = new Medicos
 				{
 					Nombres = medico.Nombres,
@@ -891,6 +975,14 @@ namespace DAL.DALs
 					Email = medico.Email,
 					Telefono = medico.Telefono
 				};
+				if (!medico.Especialidades.IsNullOrEmpty())
+				{
+					nuevoMedico.EspecialidadesMedicos = medico.Especialidades.Select(e => new EspecialidadesMedicos
+					{
+						MedicoId = medico.Id,
+						EspecialidadId = e.Id
+					}).ToList();
+				}
 				_dbContext.Medicos.Add(nuevoMedico);
 				_dbContext.SaveChanges();
 			}
@@ -944,15 +1036,47 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
+        public List<Medico> GetMedicosPaginadosYFiltrados(int numPagina, string filtro)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.Medicos.AsQueryable();
+
+                if (!string.IsNullOrEmpty(filtro))
+                {
+                    query = query.Where(m => m.Nombres.Contains(filtro) || m.Apellidos.Contains(filtro) || m.Documento.Contains(filtro));
+                }
+
+                return query
+                    .Skip((numPagina - 1) * 10)
+                    .Take(10)
+                    .Select(m => new Medico
+                    {
+                        Id = m.Id,
+                        Nombres = m.Nombres,
+                        Apellidos = m.Apellidos,
+                        Documento = m.Documento,
+                        Email = m.Email,
+                        Telefono = m.Telefono,
+                        Especialidades = m.EspecialidadesMedicos.Select(em => new Especialidad
+                        {
+                            Id = em.Especialidad.Id,
+                            Nombre = em.Especialidad.Nombre,
+                            Descripcion = em.Especialidad.Descripcion
+                        }).ToList()
+                    }).ToList();
+            }
+        }
+
+        #endregion
 
 
-		/**********************************************************/
-		/**                 Citas Medicas                        **/
-		/**********************************************************/
-		#region FUNCTIONES CITAS MEDICAS
+        /**********************************************************/
+        /**                 Citas Medicas                        **/
+        /**********************************************************/
+        #region FUNCTIONES CITAS MEDICAS
 
-		public List<CitaMedica> GetCitasMedicas()
+        public List<CitaMedica> GetCitasMedicas()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -1507,19 +1631,20 @@ namespace DAL.DALs
 				var nuevoArticulo = new Articulos
 				{
 					Nombre = articulo.Nombre,
-					Copagos = articulo.Copagos.Select(c => new Copagos
-					{
-						SeguroMedicoId = c.SeguroMedico.Id,
-						EspecialidadId = c.Especialidad.Id,
-                        ArticuloId = c.Id,
-						Precios = c.Precios.Select(p => new Precios
-						{
+					Copagos = nameof(articulo.Copagos) != null ? articulo.Copagos.Select(c => new Copagos
+                    {
+                        SeguroMedicoId = c.SeguroMedico.Id,
+                        EspecialidadId = c.Especialidad.Id,
+                        Precios = c.Precios.Select(p => new Precios
+                        {
                             PrecioBase = p.PrecioBase,
                             FechaInicio = p.FechaInicio
                         }).ToList()
-					}).ToList(),
+                    }).ToList() : new List<Copagos>()
 				};
-			}
+                _dbContext.Articulos.Add(nuevoArticulo);
+                _dbContext.SaveChanges();
+            }
         }
 
         public void UpdateArticulo(Articulo articulo)
@@ -1556,6 +1681,48 @@ namespace DAL.DALs
 					_dbContext.Articulos.Remove(articulo);
 					_dbContext.SaveChanges();
 				}
+			}
+        }
+
+        public List<Articulo> GetArticulosFiltrados(string filtro)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var query = _dbContext.Articulos.AsQueryable();
+
+				if (!string.IsNullOrEmpty(filtro))
+				{
+					query = query.Where(m => m.Nombre.Contains(filtro));
+				}
+
+				return query
+                    .Select(a => new Articulo
+                    {
+                        Id = a.Id,
+                        Nombre = a.Nombre,
+                        Copagos = a.Copagos.Select(c => new Copago
+                        {
+                            Id = c.Id,
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = c.SeguroMedico.Id,
+                                Nombre = c.SeguroMedico.Nombre,
+                                Descripcion = c.SeguroMedico.Descripcion
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Especialidad.Id,
+                                Nombre = c.Especialidad.Nombre,
+                                Descripcion = c.Especialidad.Descripcion
+                            },
+                            Precios = c.Precios.Select(p => new Precio
+                            {
+                                Id = p.Id,
+                                PrecioBase = p.PrecioBase,
+                                FechaInicio = p.FechaInicio
+                            }).ToList()
+                        }).ToList()
+                    }).ToList();
 			}
         }
 

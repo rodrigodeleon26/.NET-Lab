@@ -97,5 +97,16 @@ namespace AdministrativoWebApi.Controllers
             _blAdministrativo.asignarEspecialidad(medId, espId);
             return NoContent();
         }
+
+        // GET api/<MedicosController>/3?hibber
+        [ProducesResponseType(typeof(List<Medico>), 200)]
+        [HttpGet("getMedicosPaginadosYFiltrados/{numPagina}")]
+        public IActionResult GetMedicosPaginadosYFiltrados(int numPagina = 1, [FromQuery] string? filtro = null)
+        {
+            if (numPagina <= 0)
+                return BadRequest();
+
+            return Ok(_blAdministrativo.getMedicosPaginadosYFiltrados(numPagina, filtro));
+        }
     }
 }

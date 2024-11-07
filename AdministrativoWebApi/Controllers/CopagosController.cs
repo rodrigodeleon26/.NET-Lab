@@ -61,7 +61,7 @@ namespace AdministrativoWebApi.Controllers
                 return BadRequest();
             }
 
-            var existingPrecio = _blAdministrativo.getPrecioById(id);
+            var existingPrecio = _blAdministrativo.getCopagoById(id);
             if (existingPrecio == null)
             {
                 return NotFound();
@@ -75,7 +75,7 @@ namespace AdministrativoWebApi.Controllers
 		[HttpDelete("{id}")]
 		public IActionResult Delete(long id)
         {
-            var precio = _blAdministrativo.getPrecioById(id);
+            var precio = _blAdministrativo.getCopagoById(id);
             if (precio == null)
             {
                 return NotFound();

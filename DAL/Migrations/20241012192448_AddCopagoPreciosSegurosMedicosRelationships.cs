@@ -17,8 +17,8 @@ namespace DAL.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CopagoId = table.Column<long>(type: "bigint", nullable: false),
-                    SeguroMedicoId = table.Column<long>(type: "bigint", nullable: false),
+                    CopagoId = table.Column<long>(type: "bigint", nullable: true),
+                    SeguroMedicoId = table.Column<long>(type: "bigint", nullable: true),
                     PrecioBase = table.Column<float>(type: "real", nullable: false),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

@@ -1,0 +1,93 @@
+<div class="container mx-auto px-4 mt-4 md:mt-8 md:p-0">
+    <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white text-lg">Cargando...</p>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
+            <div *ngIf="successMessage" class="w-full bg-green-intermedio text-center text-white text-lg max-h-10">
+                {{ successMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="w-full bg-red-500 text-center text-white text-lg max-h-10">
+                {{ errorMessage }}
+            </div> 
+            
+            <form [formGroup]="DatosMedicoForm" (ngSubmit)="agregarMedico()">
+
+                <h1 class="text-center text-xl mt-5">Añadir Medico</h1>
+                <div class="flex flex-col md:flex-row p-5">
+                    <!-- INFO MEDICO -->
+                    <div class="w-full md:w-1/2 flex flex-col space-y-5 order-2 md:order-1"> <!-- Fondo de color agregado -->
+                        <h1 class="flex justify-center text-lg">
+                            Datos del Medico
+                        </h1>
+                        <div class="flex flex-col">
+                            <label for="nombres" class="text-sm font-medium">Nombres</label>
+                            <input type="text" id="nombres" formControlName="nombres" class="border rounded-md p-2" placeholder="Ingrese Los Nombres Aquí..." required>
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="apellidos" class="text-sm font-medium">Apellidos</label>
+                            <input type="text" id="apellidos" formControlName="apellidos" class="border rounded-md p-2" placeholder="Ingrese Los Apellidos Aquí..." required>
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="documento" class="text-sm font-medium">Documento</label>
+                            <input 
+                            required
+                            type="text" 
+                            id="documento" 
+                            formControlName="documento" 
+                            class="border rounded-md p-2" 
+                            placeholder="Ingrese El Documento Aquí..."
+                            min="1" 
+                            pattern="^[1-9]\d*$"
+                            inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                            maxlength="8"
+                            minlength="8"
+                            />
+                        </div>
+                        <div class="flex flex-col">
+							<label for="telefono" class="text-sm font-medium">Telefono</label>
+                            <input 
+                            required
+                            type="tel" 
+                            id="telefono" 
+                            formControlName="telefono" 
+                            class="border rounded-md p-2" 
+                            placeholder="Ingrese El Telefono Aquí..."
+                            pattern="^[0-9]\d*$"
+                            inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                            />
+						</div>
+						<div class="flex flex-col">
+                            <label for="email" class="text-sm font-medium">Email</label>
+                            <input type="email" id="email" formControlName="email" class="border rounded-md p-2" placeholder="Ingrese El Email Aquí..." required>
+                        </div>
+                    </div>
+    
+                    <!-- ESPECIALIDADES -->
+                    <div class="w-full md:w-1/2 flex flex-col space-y-5 order-2 md:order-1"> <!-- Fondo de color agregado -->
+                        <h1 class="flex justify-center text-lg">
+                            Especialidades
+                        </h1>
+                        <!-- en caso de que ya hayan especialidades en el arreglo, asegurarme que se apliquen en los checkbox -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 place-items-center">
+                            <div *ngFor="let especialidad of this.especialidades" class="flex">
+                                <input type="checkbox" [id]="especialidad.nombre" [value]="especialidad.id" (change)="onCheckboxChange($event)" [checked]="DatosMedicoForm.value.especialidades.includes(especialidad.id)">
+                                <label [for]="especialidad.nombre" class="text-sm font-medium">{{especialidad.nombre}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+				<div class="flex justify-center space-x-5 p-5">
+					<button type="submit" title="Guardar" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+						Guardar Medico
+					</button>
+				</div> 
+
+            </form>
+        </div>
+    </div>
+</div>
