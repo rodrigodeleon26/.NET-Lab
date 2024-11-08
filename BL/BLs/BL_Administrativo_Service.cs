@@ -168,6 +168,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<Articulo> getArticulosFiltrados(string filtro)
+        {
+            throw new NotImplementedException();
+        }
+
         public Calendario getCalendarioById(long id)
         {
             throw new NotImplementedException();
@@ -244,6 +249,11 @@ namespace BL.BLs
         }
 
         public List<Medico> getMedicos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Medico> getMedicosPaginadosYFiltrados(int numPagina, string filtro)
         {
             throw new NotImplementedException();
         }
