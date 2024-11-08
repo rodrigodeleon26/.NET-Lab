@@ -84,5 +84,14 @@ namespace AdministrativoWebApi.Controllers
 			_blAdministrativo.deleteArticulo(id);
 			return NoContent();
 		}
+
+		// GET api/<ArticulosController>/filtro/{filtro}
+		[ProducesResponseType(typeof(List<Articulo>), 200)]
+		[HttpGet("filtro/{filtro}")]
+		public IActionResult Get(string filtro)
+        {
+            return Ok(_blAdministrativo.getArticulosFiltrados(filtro));
+        }
+
 	}
 }

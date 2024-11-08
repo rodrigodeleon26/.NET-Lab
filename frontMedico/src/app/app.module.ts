@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { PruebaImagenComponent } from './prueba-imagen/prueba-imagen.component';
 import { NavComponent } from './components/web/nav/nav.component';
@@ -11,7 +11,13 @@ import { ConsultaMedicaComponent } from './components/medico/consulta-medica/con
 import { FormsModule } from '@angular/forms'; 
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HistoriaClinicaComponent } from './components/medico/historia-clinica/historia-clinica.component'; 
+import { LoginComponent } from './components/login/login.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+import { AuthInterceptor } from './shared/auth.interceptor';
+import { CitaMedicaComponent } from './components/medico/cita-medica/cita-medica.component'; // Importa ReactiveFormsModule
+import { HistoriaClinicaComponent } from './components/medico/historia-clinica/historia-clinica.component';
+import { SeleccionEspecialidadComponent } from './components/medico/seleccion-especialidad/seleccion-especialidad.component';
 
 
 @NgModule({
@@ -20,7 +26,10 @@ import { HistoriaClinicaComponent } from './components/medico/historia-clinica/h
     PruebaImagenComponent,
     NavComponent,
     ConsultaMedicaComponent,
+    LoginComponent,
+    CitaMedicaComponent,
     HistoriaClinicaComponent,
+    SeleccionEspecialidadComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,9 +39,17 @@ import { HistoriaClinicaComponent } from './components/medico/historia-clinica/h
     RouterModule,
     NgSelectModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule, 
+    ToastrModule.forRoot(), 
   ],
-  providers: [], 
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ,DatePipe], 
   bootstrap: [AppComponent]
 })
 export class AppModule { }

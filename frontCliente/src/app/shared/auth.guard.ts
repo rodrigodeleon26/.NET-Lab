@@ -12,6 +12,9 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   if (!authService.getEmailConfirmedStatus()) {
+    if (state.url.startsWith('/confirmEmail')) {
+      return true;
+    }
     if (state.url !== '/resendEmailConfirmation') {
       router.navigate(['/resendEmailConfirmation']);
       return false;

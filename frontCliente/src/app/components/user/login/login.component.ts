@@ -35,6 +35,10 @@ export class LoginComponent implements OnInit {
         email: ['', Validators.required],
         password: ['', Validators.required]
       });
+
+      this.forgotPasswordForm = this.formBuilder.group({
+        email: ['', [Validators.required, Validators.email]]
+      });
     }
 
   onSubmit(): void {

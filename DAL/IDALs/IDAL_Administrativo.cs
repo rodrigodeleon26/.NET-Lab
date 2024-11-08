@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using Amazon.S3.Model;
+using DAL.Models;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -46,9 +47,10 @@ namespace DAL.IDALs
 		public void AddCopago(Copago copago);
 		public void UpdateCopago(Copago copago);
 		public void DeleteCopago(long id);
+		public long getIdByFilds(Copago copago);
 
-		// Facturas
-		public List<Factura> GetFacturas();
+        // Facturas
+        public List<Factura> GetFacturas();
 		public Factura GetFacturaById(long id);
 		public void AddFactura(Factura factura);
 		public void UpdateFactura(Factura factura);
@@ -60,9 +62,10 @@ namespace DAL.IDALs
 		public void AddMedico(Medico medico);
 		public void UpdateMedico(Medico medico);
 		public void DeleteMedico(long id);
+		public List<Medico> GetMedicosPaginadosYFiltrados(int numPagina, string filtro);
 
-		// CitasMedicas
-		public List<CitaMedica> GetCitasMedicas();
+        // CitasMedicas
+        public List<CitaMedica> GetCitasMedicas();
 		public CitaMedica GetCitasMedicasById(long id);
 		public void AddCitasMedicas(CitaMedica citaMedica);
 		public void UpdateCitasMedicas(CitaMedica citaMedica);
@@ -95,5 +98,6 @@ namespace DAL.IDALs
 		public void AddArticulo(Articulo articulo);
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
+		public List<Articulo> GetArticulosFiltrados(string filtro);
 	}
 }

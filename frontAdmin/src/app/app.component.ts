@@ -6,25 +6,25 @@ import { PacientesService } from './services/pacientes.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'frontAdmin';
   pacientes: any[] = [];
 
   constructor(private pacientesService: PacientesService) {}
 
-  ngOnInit() {
-    this.loadPacientes();
-  }
+//   ngOnInit() {
+//     this.loadPacientes();
+//   }
 
-  loadPacientes() {
-    this.pacientesService.getPacientes().subscribe(
-      (data) => {
-        this.pacientes = data;
-        console.log('Pacientes cargados', this.pacientes);
-      },
-      (error) => {
-        console.error('Error al cargar los pacientes', error);
-      }
-    );
-  }
+//   loadPacientes() {
+//     this.pacientesService.getPacientes().subscribe(
+//       (data) => {
+//         this.pacientes = data;
+//         console.log('Pacientes cargados', this.pacientes);
+//       },
+//       (error) => {
+//         console.error('Error al cargar los pacientes', error);
+//       }
+//     );
+//   }
 }

@@ -1,0 +1,31 @@
+<div class="container mx-auto px-4 mt-4 md:mt-8 md:p-0">
+    <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white text-lg">Cargando...</p>
+    </div>
+
+    <div class="flex justify-center">
+        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
+            <div *ngIf="successMessage" class="w-full bg-green-intermedio text-center text-white text-lg max-h-10">
+                {{ successMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="w-full bg-red-500 text-center text-white text-lg max-h-10">
+                {{ errorMessage }}
+            </div>
+
+            <div class="p-5 text-center">
+                <h1 class="text-2xl font-semibold">Especialidades disponibles</h1>
+            </div>
+
+            <div class="p-5 flex flex-wrap justify-center gap-4">
+                <button 
+                    *ngFor="let especialidad of especialidades" 
+                    (click)="seleccionarEspecialidad(especialidad.nombre)" 
+                    class="w-full md:w-1/2 lg:w-1/2 bg-blue-intermedio text-white py-2 px-4 rounded-md hover:bg-blue-oscuro transition duration-300 text-center"
+                >
+                    {{ especialidad.nombre }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
