@@ -1,0 +1,40 @@
+<div *ngIf="loading" class="loading-indicator">
+    <p>Cargando...</p>
+  </div>
+  
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+  
+  <div *ngIf="!loading && !errorMessage && facturas.length > 0">
+    <h2>Testing carga de datos</h2>
+    <table class="table-auto w-full text-left">
+      <thead>
+        <tr>
+          <!-- Asume que cada factura tiene propiedades id, fecha y total; ajusta según tus datos reales -->
+          <th class="px-4 py-2 border-b">ID</th>
+          <th class="px-4 py-2 border-b">Fecha</th>
+          <th class="px-4 py-2 border-b">Monto</th>
+          <th class="px-4 py-2 border-b">Pago</th>
+          <th class="px-4 py-2 border-b">FechaPago</th>
+          <th class="px-4 py-2 border-b">Paciente</th>
+          <!-- Agrega más encabezados según las propiedades de las facturas -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let factura of facturas">
+          <td class="px-4 py-2 border-b">{{ factura.id }}</td>
+          <td class="px-4 py-2 border-b">{{ factura.fecha }}</td>
+          <td class="px-4 py-2 border-b">{{ factura.monto }}</td>
+          <td class="px-4 py-2 border-b">{{ factura.pago ? 'SI' : 'NO' }}</td>
+          <td class="px-4 py-2 border-b">{{ factura.fechaPago === '1753-01-01T00:00:00' ? 'PENDIENTE DE PAGO' : (factura.fechaPago | date: 'dd/MM/yyyy') }}</td>
+          <td class="px-4 py-2 border-b">{{ factura.paciente.nombres }} {{ factura.paciente.apellidos }}</td>
+          <!-- Ajusta o agrega más celdas según las propiedades de la factura -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div *ngIf="!loading && !errorMessage && facturas.length === 0">
+    <p>No hay facturas para mostrar.</p>
+  </div>
