@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace BL.BLs
 {
@@ -284,18 +285,69 @@ namespace BL.BLs
             var memoryStream = new MemoryStream();
             Document document = new Document(PageSize.A4, 25, 25, 30, 30);
             PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
-            writer.CloseStream = false; // Importante para evitar que se cierre el stream al cerrar el documento
+            writer.CloseStream = false;
 
             document.Open();
 
-            document.Add(new Paragraph("Factura"));
-            document.Add(new Paragraph($"Fecha: {factura.Fecha:dd/MM/yyyy}"));
-            document.Add(new Paragraph($"Cliente: {factura.Paciente.Nombres} {factura.Paciente.Apellidos}"));
-            document.Add(new Paragraph($"Documento: {factura.Paciente.Documento}"));
+            // Encabezado de la factura
+            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+            var regularFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+            var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+
+            document.Add(new Paragraph("FACTURA", titleFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
             document.Add(new Paragraph("\n"));
 
+            // Información del cliente
+            document.Add(new Paragraph("Información del Cliente", boldFont));
+            document.Add(new Paragraph($"Nombre: {factura.Paciente.Nombres} {factura.Paciente.Apellidos}", regularFont));
+            document.Add(new Paragraph($"Documento: {factura.Paciente.Documento}", regularFont));
+            document.Add(new Paragraph("\n"));
+
+            // Información de la factura
+            document.Add(new Paragraph("Detalles de la Factura", boldFont));
+            document.Add(new Paragraph($"Fecha de Emisión: {factura.Fecha:dd/MM/yyyy}", regularFont));
+            document.Add(new Paragraph($"Fecha de Pago: {(factura.FechaPago.Year == 1753 ? "Pendiente de Pago" : factura.FechaPago.ToString("dd/MM/yyyy"))}", regularFont));
+            document.Add(new Paragraph("\n"));
+
+            // Tabla de detalles (solo ejemplo con un concepto y el monto)
+            PdfPTable table = new PdfPTable(2);
+            table.WidthPercentage = 100;
+            table.SetWidths(new float[] { 3, 1 }); // Ancho de columnas: Descripción, Monto
+
+            // Encabezado de la tabla
+            PdfPCell cell = new PdfPCell(new Phrase("Descripción", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+            cell.BackgroundColor = new BaseColor(230, 230, 230);
+            table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase("Monto", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+            cell.BackgroundColor = new BaseColor(230, 230, 230);
+            table.AddCell(cell);
+
+            // Detalle de la factura
+            table.AddCell(new PdfPCell(new Phrase("Monto de la factura", regularFont)));
+            table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+
+            // Total
+            cell = new PdfPCell(new Phrase("Total", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cell.Colspan = 1;
+            cell.Border = Rectangle.TOP_BORDER;
+            table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cell.Border = Rectangle.TOP_BORDER;
+            table.AddCell(cell);
+
+            document.Add(table);
+
             document.Close();
-            memoryStream.Position = 0; // Resetear la posición para leer desde el inicio al devolver
+            memoryStream.Position = 0;
 
             return memoryStream;
         }
