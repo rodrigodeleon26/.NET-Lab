@@ -50,6 +50,7 @@
                               <i *ngIf="!fechaAsc" class="material-icons text-blue-500">arrow_downward</i>
                           </th>
                           <th class="px-6 py-3 border-b">Monto</th>
+                          <th class="px-6 py-3 border-b">Motivo</th>
                           <th class="px-6 py-3 border-b">
                             <div class="relative">
                               <button (click)="togglePagoDropdown()" class="flex items-center border border-gray-300 rounded-full p-2 pr-4 shadow-sm hover:border-blue-500 focus:outline-none">
@@ -73,6 +74,7 @@
                           <td class="px-6 py-4 border-b text-gray-700">{{ factura.paciente.nombres }} {{ factura.paciente.apellidos }}</td>
                           <td class="px-6 py-4 border-b text-gray-700">{{ factura.fecha | date: 'dd/MM/yyyy' }}</td>
                           <td class="px-6 py-4 border-b text-gray-700 font-semibold">{{ factura.monto }} $</td>
+                          <td class="px-6 py-4 border-b text-gray-700 font-semibold">{{ factura.descripcion }}</td>
                           <td class="px-6 py-4 border-b text-gray-700">{{ factura.pago ? 'SI' : 'NO' }}</td>
                           <td class="px-6 py-4 border-b text-gray-700">
                               {{ factura.fechaPago === null ? 'PENDIENTE DE PAGO' : (factura.fechaPago | date: 'dd/MM/yyyy') }}
@@ -98,4 +100,23 @@
           </div>
       </div>
   </div>
+
+  <!-- Paginación -->
+  <div class="flex justify-center mt-6">
+    <button 
+        (click)="cambiarPagina(-1)" 
+        [disabled]="numPagina === 1"
+        class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 disabled:opacity-50"
+    >
+        Anterior
+    </button>
+    <span class="mx-4 text-gray-600">Página {{ numPagina }}</span>
+    <button 
+        (click)="cambiarPagina(1)" 
+        [disabled]="!hayMasResultados" 
+        class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 disabled:opacity-50"
+    >
+        Siguiente
+    </button>
+</div>
 </div>

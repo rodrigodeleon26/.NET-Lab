@@ -802,7 +802,8 @@ namespace DAL.DALs
 						Monto = f.Monto,
 						Pago = f.Pago,
 						FechaPago = f.FechaPago,
-						Paciente = new Paciente
+                        Descripcion = f.Descripcion,
+                        Paciente = new Paciente
 						{
 							Id = f.Paciente.Id,
 							Nombres = f.Paciente.Nombres,
@@ -845,6 +846,7 @@ namespace DAL.DALs
                         Monto = f.Monto,
                         Pago = f.Pago,
                         FechaPago = f.FechaPago,
+                        Descripcion = f.Descripcion,
                         Paciente = new Paciente
                         {
                             Id = f.Paciente.Id,
@@ -906,7 +908,8 @@ namespace DAL.DALs
 					Monto = factura.Monto,
 					Pago = factura.Pago,
 					FechaPago = factura.FechaPago,
-					PacienteId = factura.Paciente.Id
+                    Descripcion = factura.Descripcion,
+                    PacienteId = factura.Paciente.Id
 				};
 				_dbContext.Facturas.Add(nuevaFactura);
 				_dbContext.SaveChanges();
@@ -924,6 +927,7 @@ namespace DAL.DALs
 					facturaExistente.Monto = factura.Monto;
 					facturaExistente.Pago = factura.Pago;
 					facturaExistente.FechaPago = factura.FechaPago;
+					facturaExistente.Descripcion = factura.Descripcion;
 					facturaExistente.PacienteId = factura.Paciente.Id;
 					_dbContext.SaveChanges();
 				}

@@ -17,6 +17,7 @@ export class FacturasComponent implements OnInit {
   fechaAsc: boolean = false; // Orden de fecha
   estaPago: boolean | undefined = undefined;
   showPagoDropdown: boolean = false;
+  hayMasResultados: boolean = true; // Indica si hay más resultados
 
   constructor(
     private facturasService: FacturasService,
@@ -40,6 +41,7 @@ export class FacturasComponent implements OnInit {
     this.facturasService.getFacturasPaginadas(this.numPagina, this.pacienteString, this.fechaAsc, this.estaPago).subscribe(
       (data) => {
         this.facturas = data;
+        this.hayMasResultados = data.length === 20;
         this.loading = false; // Ocultar indicador de carga
       },
       (error) => {
@@ -53,7 +55,9 @@ export class FacturasComponent implements OnInit {
   // Cambia a la página anterior o siguiente
   cambiarPagina(incremento: number): void {
     this.numPagina += incremento;
-    if (this.numPagina < 1) this.numPagina = 1; // Evitar que sea menor a 1
+    if (this.numPagina < 1) {
+      this.numPagina = 1;
+    }
     this.cargarFacturas();
   }
 
