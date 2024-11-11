@@ -861,37 +861,41 @@ namespace DAL.DALs
         }
 
         public Factura GetFacturaById(long id)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				var factura = _dbContext.Facturas.Find(id);
-				if (factura != null)
-				{
-					return new Factura
-					{
-						Id = factura.Id,
-						Fecha = factura.Fecha,
-						Monto = factura.Monto,
-						Pago = factura.Pago,
-						FechaPago = factura.FechaPago,
-						Paciente = new Paciente
-						{
-							Id = factura.Paciente.Id,
-							Nombres = factura.Paciente.Nombres,
-							Apellidos = factura.Paciente.Apellidos,
-							Documento = factura.Paciente.Documento,
-							FechaDeNacimiento = factura.Paciente.FechaDeNacimiento,
-							Direccion = factura.Paciente.Direccion,
-							Telefono = factura.Paciente.Telefono,
-							Email = factura.Paciente.Email
-						}
-					};
-				}
-				return null;
-			}
-		}
+        {
+            using (var _dbContext = new DBContext())
+            {
+                // Carga la factura con su relación a Paciente
+                var factura = _dbContext.Facturas
+                                        .Include(f => f.Paciente)
+                                        .FirstOrDefault(f => f.Id == id);
 
-		public void AddFactura(Factura factura)
+                if (factura != null)
+                {
+                    return new Factura
+                    {
+                        Id = factura.Id,
+                        Fecha = factura.Fecha,
+                        Monto = factura.Monto,
+                        Pago = factura.Pago,
+                        FechaPago = factura.FechaPago,
+                        Paciente = new Paciente
+                        {
+                            Id = factura.Paciente.Id,
+                            Nombres = factura.Paciente.Nombres,
+                            Apellidos = factura.Paciente.Apellidos,
+                            Documento = factura.Paciente.Documento,
+                            FechaDeNacimiento = factura.Paciente.FechaDeNacimiento,
+                            Direccion = factura.Paciente.Direccion,
+                            Telefono = factura.Paciente.Telefono,
+                            Email = factura.Paciente.Email
+                        }
+                    };
+                }
+                return null;
+            }
+        }
+
+        public void AddFactura(Factura factura)
 		{
 			using (var _dbContext = new DBContext())
 			{

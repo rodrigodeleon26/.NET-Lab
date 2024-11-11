@@ -15,6 +15,11 @@ export class FacturasService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  generarFacturaPdf(id: number): Observable<Blob> {
+    const url = `${this.apiUrl}/pdf/${id}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
   getFacturasPaginadas(numPagina: number, pacienteString?: string, fechaAsc: boolean = true, estaPago?: boolean): Observable<any[]> {
     let params = new HttpParams()
       .set('numPagina', numPagina.toString())

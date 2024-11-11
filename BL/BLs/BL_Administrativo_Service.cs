@@ -1,5 +1,6 @@
 ﻿using BL.IBLs;
 using DAL.IDALs;
+using iTextSharp.text;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -244,6 +245,11 @@ namespace BL.BLs
         }
 
         public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MemoryStream GenerarFactura(long id)
         {
             throw new NotImplementedException();
         }

@@ -93,5 +93,15 @@ export class FacturasComponent implements OnInit {
   generarFactura(factura: any) {
     console.log(`Generando factura para: ${factura.paciente.nombres} ${factura.paciente.apellidos}, Monto: ${factura.monto} $`);
     // Aquí puedes agregar lógica adicional para manejar la generación de la factura real.
+    this.facturasService.generarFacturaPdf(factura.id).subscribe(
+      (data) => {
+        const blob = new Blob([data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url);
+      },
+      (error) => {
+        console.error('Error al generar factura:', error);
+      }
+    );
   }
 }

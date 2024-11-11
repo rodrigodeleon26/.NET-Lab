@@ -2,6 +2,8 @@
 using DAL.DALs;
 using DAL.IDALs;
 using DAL.Models;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 using Microsoft.Extensions.Logging;
 using Shared;
 using System;
@@ -275,12 +277,35 @@ namespace BL.BLs
 			dal.DeleteFactura(id);
 		}
 
-		#endregion
+        public MemoryStream GenerarFactura(long id)
+        {
+            Factura factura = dal.GetFacturaById((int)id);
 
-		//Medicos
-		#region MEDICOS
+            var memoryStream = new MemoryStream();
+            Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+            writer.CloseStream = false; // Importante para evitar que se cierre el stream al cerrar el documento
 
-		public List<Medico> getMedicos()
+            document.Open();
+
+            document.Add(new Paragraph("Factura"));
+            document.Add(new Paragraph($"Fecha: {factura.Fecha:dd/MM/yyyy}"));
+            document.Add(new Paragraph($"Cliente: {factura.Paciente.Nombres} {factura.Paciente.Apellidos}"));
+            document.Add(new Paragraph($"Documento: {factura.Paciente.Documento}"));
+            document.Add(new Paragraph("\n"));
+
+            document.Close();
+            memoryStream.Position = 0; // Resetear la posición para leer desde el inicio al devolver
+
+            return memoryStream;
+        }
+
+        #endregion
+
+        //Medicos
+        #region MEDICOS
+
+        public List<Medico> getMedicos()
 		{
 			return dal.GetMedicos();
 		}

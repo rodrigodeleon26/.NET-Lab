@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 
 namespace BL.IBLs
 {
@@ -55,9 +57,10 @@ namespace BL.IBLs
 		void addFactura(Factura factura);
 		void updateFactura(Factura factura);
 		void deleteFactura(long id);
+        MemoryStream GenerarFactura(long id);
 
-		// Medicos
-		List<Medico> getMedicos();
+        // Medicos
+        List<Medico> getMedicos();
 		Medico getMedicoById(long id);
 		void addMedico(Medico medico);
 		void updateMedico(Medico medico);

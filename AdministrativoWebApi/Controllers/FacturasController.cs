@@ -97,5 +97,26 @@ namespace AdministrativoWebApi.Controllers
             _blAdministrativo.deleteFactura(id);
             return NoContent();
         }
+
+        [HttpGet("pdf/{id}")]
+        public IActionResult GetFacturaPdf(long id)
+        {
+            try
+            {
+                var pdfStream = _blAdministrativo.GenerarFactura(id);
+
+                if (pdfStream == null)
+                {
+                    return NotFound();
+                }
+
+                // Devuelve el PDF como archivo descargable
+                return File(pdfStream, "application/pdf", $"Factura_{DateTime.Now}.pdf");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
