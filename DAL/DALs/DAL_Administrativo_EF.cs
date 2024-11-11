@@ -878,6 +878,7 @@ namespace DAL.DALs
                         Monto = factura.Monto,
                         Pago = factura.Pago,
                         FechaPago = factura.FechaPago,
+						Descripcion = factura.Descripcion,
                         Paciente = new Paciente
                         {
                             Id = factura.Paciente.Id,

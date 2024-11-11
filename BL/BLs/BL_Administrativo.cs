@@ -309,7 +309,7 @@ namespace BL.BLs
             // Información de la factura
             document.Add(new Paragraph("Detalles de la Factura", boldFont));
             document.Add(new Paragraph($"Fecha de Emisión: {factura.Fecha:dd/MM/yyyy}", regularFont));
-            document.Add(new Paragraph($"Fecha de Pago: {(factura.FechaPago.Year == 1753 ? "Pendiente de Pago" : factura.FechaPago.ToString("dd/MM/yyyy"))}", regularFont));
+            document.Add(new Paragraph($"Fecha de Pago: {(factura.FechaPago.HasValue ? (factura.FechaPago.Value.Year == 1753 ? "Pendiente de Pago" : factura.FechaPago.Value.ToString("dd/MM/yyyy")) : "Sin Fecha de Pago")}", regularFont));
             document.Add(new Paragraph("\n"));
 
             // Tabla de detalles (solo ejemplo con un concepto y el monto)
@@ -329,7 +329,7 @@ namespace BL.BLs
             table.AddCell(cell);
 
             // Detalle de la factura
-            table.AddCell(new PdfPCell(new Phrase("Monto de la factura", regularFont)));
+            table.AddCell(new PdfPCell(new Phrase($"{factura.Descripcion}", regularFont)));
             table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
 
             // Total

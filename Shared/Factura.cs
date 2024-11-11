@@ -10,7 +10,9 @@
 
         public bool Pago { get; set; } = false;
 
-        public DateTime FechaPago { get; set; } = new DateTime();
+        public string Descripcion { get; set; }
+
+        public DateTime? FechaPago { get; set; }
 
         public Paciente Paciente { get; set; } = new Paciente();
     }

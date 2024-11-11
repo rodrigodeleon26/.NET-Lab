@@ -17,12 +17,12 @@ namespace DAL.Models
 
         [Required]
         public bool Pago { get; set; } = false;
-
-        [Required]
-        public DateTime FechaPago { get; set; } = new DateTime();
+        public DateTime? FechaPago { get; set; }
 
         [Required]
         public long PacienteId { get; set; }
+
+        public string? Descripcion { get; set; }
 
         [ForeignKey(nameof(PacienteId))]
         public virtual Pacientes Paciente { get; set; }

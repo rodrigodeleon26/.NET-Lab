@@ -75,7 +75,7 @@
                           <td class="px-6 py-4 border-b text-gray-700 font-semibold">{{ factura.monto }} $</td>
                           <td class="px-6 py-4 border-b text-gray-700">{{ factura.pago ? 'SI' : 'NO' }}</td>
                           <td class="px-6 py-4 border-b text-gray-700">
-                              {{ factura.fechaPago === '1753-01-01T00:00:00' ? 'PENDIENTE DE PAGO' : (factura.fechaPago | date: 'dd/MM/yyyy') }}
+                              {{ factura.fechaPago === null ? 'PENDIENTE DE PAGO' : (factura.fechaPago | date: 'dd/MM/yyyy') }}
                           </td>
                           <td class="px-6 py-4 border-b text-gray-700">
                             <!-- Botón estilizado para generar factura si el pago está realizado -->
