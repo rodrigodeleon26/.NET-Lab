@@ -14,7 +14,7 @@ namespace DAL.DALs
         // {
         //     _dbContext = dbContext;
         // }
-
+        
         // Obtener todas las citas médicas
         public List<CitaMedica> getCitasMedicas()
         {

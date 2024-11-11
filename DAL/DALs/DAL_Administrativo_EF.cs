@@ -817,7 +817,50 @@ namespace DAL.DALs
 			}
 		}
 
-		public Factura GetFacturaById(long id)
+        public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.Facturas.AsQueryable();
+
+                if (!string.IsNullOrEmpty(pacienteString))
+                {
+                    query = query.Where(f => f.Paciente.Nombres.Contains(pacienteString) || f.Paciente.Apellidos.Contains(pacienteString) || f.Paciente.Documento.Contains(pacienteString));
+                }
+
+                if (estaPago.HasValue)
+                {
+                    query = query.Where(f => f.Pago == estaPago.Value);
+                }
+
+                query = fechaAsc ? query.OrderBy(f => f.Fecha) : query.OrderByDescending(f => f.Fecha);
+
+                return query
+                    .Skip((numPagina - 1) * 20)
+                    .Take(20)
+                    .Select(f => new Factura
+                    {
+                        Id = f.Id,
+                        Fecha = f.Fecha,
+                        Monto = f.Monto,
+                        Pago = f.Pago,
+                        FechaPago = f.FechaPago,
+                        Paciente = new Paciente
+                        {
+                            Id = f.Paciente.Id,
+                            Nombres = f.Paciente.Nombres,
+                            Apellidos = f.Paciente.Apellidos,
+                            Documento = f.Paciente.Documento,
+                            FechaDeNacimiento = f.Paciente.FechaDeNacimiento,
+                            Direccion = f.Paciente.Direccion,
+                            Telefono = f.Paciente.Telefono,
+                            Email = f.Paciente.Email
+                        }
+                    }).ToList();
+            }
+        }
+
+        public Factura GetFacturaById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{

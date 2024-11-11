@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -13,6 +13,22 @@ export class FacturasService {
 
   getFacturas(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
+  }
+
+  getFacturasPaginadas(numPagina: number, pacienteString?: string, fechaAsc: boolean = true, estaPago?: boolean): Observable<any[]> {
+    let params = new HttpParams()
+      .set('numPagina', numPagina.toString())
+      .set('fechaAsc', fechaAsc.toString());
+
+    if (pacienteString) {
+      params = params.set('pacienteString', pacienteString);
+    }
+    if (estaPago !== undefined) {
+      params = params.set('estaPago', estaPago.toString());
+    }
+
+    const url = `${this.apiUrl}/pagina/${numPagina}`;
+    return this.http.get<any[]>(url, { params });
   }
 
   getFacturaById(id: number): Observable<any> {

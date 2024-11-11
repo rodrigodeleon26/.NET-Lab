@@ -51,6 +51,8 @@ namespace DAL.IDALs
 
         // Facturas
         public List<Factura> GetFacturas();
+
+		public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);
 		public Factura GetFacturaById(long id);
 		public void AddFactura(Factura factura);
 		public void UpdateFactura(Factura factura);

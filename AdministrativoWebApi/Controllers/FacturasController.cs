@@ -25,6 +25,19 @@ namespace AdministrativoWebApi.Controllers
             return Ok(_blAdministrativo.getFacturas());
         }
 
+        // GET: api/<FacturasController>/pagina/1
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("pagina/{pag}")]
+        public IActionResult GetFacturasPaginadas(
+        int pag,
+        [FromQuery] string? pacienteString = null,
+        [FromQuery] bool fechaAsc = false,
+        [FromQuery] bool? estaPago = null)
+        {
+            var facturas = _blAdministrativo.getFacturasPaginadas(pag, pacienteString, fechaAsc, estaPago);
+            return Ok(facturas);
+        }
+
         // GET api/<FacturasController>/5
         [ProducesResponseType(typeof(Factura), 200)]
         [HttpGet("{id}")]

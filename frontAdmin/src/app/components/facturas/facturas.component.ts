@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FacturasService } from '../../services/factura.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-facturas',
@@ -10,16 +11,33 @@ export class FacturasComponent implements OnInit {
   facturas: any[] = [];
   loading: boolean = false;
   errorMessage: string = '';
+  successMessage: string = '';
+  numPagina: number = 1; // Página actual
+  pacienteString: string = ''; // Filtro de búsqueda de paciente
+  fechaAsc: boolean = false; // Orden de fecha
+  estaPago: boolean | undefined = undefined;
+  showPagoDropdown: boolean = false;
 
-  constructor(private facturasService: FacturasService) { }
+  constructor(
+    private facturasService: FacturasService,
+    private route: ActivatedRoute // Inyección de ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-    this.cargarFacturas();
+    // Lee los parámetros de la URL
+    this.route.queryParams.subscribe(params => {
+      this.pacienteString = params['pacienteString'] || this.pacienteString;
+      this.fechaAsc = params['fechaAsc'] === 'true'; // Convierte el parámetro a booleano
+      this.estaPago = params['estaPago'] === 'true' ? true : (params['estaPago'] === 'false' ? false : undefined);
+      
+      // Cargar las facturas con los parámetros iniciales
+      this.cargarFacturas();
+    });
   }
 
   cargarFacturas(): void {
     this.loading = true; // Mostrar indicador de carga
-    this.facturasService.getFacturas().subscribe(
+    this.facturasService.getFacturasPaginadas(this.numPagina, this.pacienteString, this.fechaAsc, this.estaPago).subscribe(
       (data) => {
         this.facturas = data;
         this.loading = false; // Ocultar indicador de carga
@@ -30,5 +48,50 @@ export class FacturasComponent implements OnInit {
         this.loading = false; // Ocultar indicador de carga
       }
     );
+  }
+
+  // Cambia a la página anterior o siguiente
+  cambiarPagina(incremento: number): void {
+    this.numPagina += incremento;
+    if (this.numPagina < 1) this.numPagina = 1; // Evitar que sea menor a 1
+    this.cargarFacturas();
+  }
+
+  // Cambiar el estado del filtro de pago
+  cambiarFiltroPago(estado: boolean | undefined): void {
+    this.estaPago = estado;
+    this.cargarFacturas();
+  }
+
+  // Cambiar el orden de la fecha
+  cambiarOrdenFecha(): void {
+    this.fechaAsc = !this.fechaAsc;
+    this.cargarFacturas();
+  }
+
+  // Actualizar filtro de paciente
+  actualizarFiltroPaciente(nombre: string): void {
+    this.pacienteString = nombre;
+    this.cargarFacturas();
+  }
+
+  toggleOrdenFecha(): void {
+    this.fechaAsc = !this.fechaAsc;
+    this.cargarFacturas();
+  }
+
+  togglePagoDropdown(): void {
+    this.showPagoDropdown = !this.showPagoDropdown;
+  }
+
+  setFiltroPago(estado: boolean | undefined): void {
+    this.estaPago = estado;
+    this.showPagoDropdown = false;
+    this.cargarFacturas();
+  }
+
+  generarFactura(factura: any) {
+    console.log(`Generando factura para: ${factura.paciente.nombres} ${factura.paciente.apellidos}, Monto: ${factura.monto} $`);
+    // Aquí puedes agregar lógica adicional para manejar la generación de la factura real.
   }
 }

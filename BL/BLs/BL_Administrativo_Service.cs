@@ -243,6 +243,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        {
+            throw new NotImplementedException();
+        }
+
         public Medico getMedicoById(long id)
         {
             throw new NotImplementedException();
