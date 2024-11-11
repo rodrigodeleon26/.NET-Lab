@@ -309,7 +309,6 @@ namespace BL.BLs
             // Información de la factura
             document.Add(new Paragraph("Detalles de la Factura", boldFont));
             document.Add(new Paragraph($"Fecha de Emisión: {factura.Fecha:dd/MM/yyyy}", regularFont));
-            document.Add(new Paragraph($"Fecha de Pago: {(factura.FechaPago.HasValue ? (factura.FechaPago.Value.Year == 1753 ? "Pendiente de Pago" : factura.FechaPago.Value.ToString("dd/MM/yyyy")) : "Sin Fecha de Pago")}", regularFont));
             document.Add(new Paragraph("\n"));
 
             // Tabla de detalles (solo ejemplo con un concepto y el monto)
