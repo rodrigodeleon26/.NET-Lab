@@ -109,5 +109,12 @@ namespace AdministrativoWebApi.Controllers
 
             return NoContent();
         }
+
+        // GET api/<CalendariosController>/medico/5
+        [HttpGet("medico/{id}")]
+        public IActionResult GetCalendariosMedico(long id)
+        {
+            return Ok(_blAdministrativo.getCalendarios().Where(c => c.Medico.Id == id));
+        }
     }
 }

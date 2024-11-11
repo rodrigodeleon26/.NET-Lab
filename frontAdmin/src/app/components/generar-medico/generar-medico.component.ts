@@ -3,6 +3,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EspecialidadesService } from '../../services/especialidades.service';
 import { MedicosService } from '../../services/medicos.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConsultoriosService } from '../../services/consultorios.service';
+import { CalendariosService } from '../../services/calendarios.service';
 
 @Component({
   selector: 'app-generar-medico',
@@ -15,8 +17,11 @@ export class GenerarMedicoComponent implements OnInit {
   loading: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
+  viendoCalendarios: boolean = true;
 
   especialidades: any[] = [];
+  consultorios: any[] = [];
+  calendariosDelMedico: any[] = [];
   medicoId: string | null = null;
 
   constructor(
@@ -24,6 +29,8 @@ export class GenerarMedicoComponent implements OnInit {
     private route: ActivatedRoute,
     private especialidadesService: EspecialidadesService,
     private medicosService: MedicosService,
+    private consultoriosService: ConsultoriosService,
+    private calendariosService: CalendariosService,
     private router: Router,
   ) {
     this.DatosMedicoForm = this.fb.group({
@@ -85,6 +92,26 @@ export class GenerarMedicoComponent implements OnInit {
         console.error(error);
       }
     });
+
+    this.consultoriosService.getConsultorios().subscribe({
+      next: (data) => {
+        this.consultorios = data;
+        console.log(data);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+
+    this.calendariosService.getCalendariosByMedicoId(id).subscribe({
+      next: (data) => {
+        this.calendariosDelMedico = data;
+        console.log(data);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   onCheckboxChange(event: any) {
@@ -92,15 +119,11 @@ export class GenerarMedicoComponent implements OnInit {
 
     if (event.target.checked) {
       especialidadesArray.push(this.fb.control(parseInt((event.target.value), 10)));
-      console.log("chequed",event.target.value);
     } else {
       
       const index = especialidadesArray.controls.findIndex(x => x.value === parseInt(event.target.value, 10));
-      console.log("index",index);
       especialidadesArray.removeAt(index);
-      console.log("unchequed",event);
     }
-    console.log(this.DatosMedicoForm.value.especialidades);
   }
 
   agregarMedico(){
@@ -118,11 +141,9 @@ export class GenerarMedicoComponent implements OnInit {
       if(this.medicoId){
         //editar medico
         medico['Id'] = this.medicoId;
-        console.log("editando" + medico)
         this.medicosService.updateMedico(this.medicoId, medico)
         .subscribe({
           next: (data) => {
-            console.log(data);
             this.showSuccessMessage('Médico editado exitosamente');
             this.DatosMedicoForm.reset();
             this.medicoId = null;
@@ -136,11 +157,9 @@ export class GenerarMedicoComponent implements OnInit {
         });
       }
       else{
-        console.log("agregando" + medico)
         this.medicosService.addMedico(medico)
         .subscribe({
           next: (data) => {
-            console.log(data);
             this.showSuccessMessage('Médico agregado exitosamente');
             this.DatosMedicoForm.reset();
           },

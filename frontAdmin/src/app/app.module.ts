@@ -18,6 +18,7 @@ import { ConsultoriosComponent } from './components/consultorios/consultorios.co
 import { CopagosComponent } from './components/copagos/copagos.component';
 import { ArticulosComponent } from './components/articulos/articulos.component';
 import { SeguroMedicoSelectComponent } from './components/seguro-medico-select/seguro-medico-select.component';
+import { CalendariosComponent } from './components/calendarios/calendarios.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { SeguroMedicoSelectComponent } from './components/seguro-medico-select/s
     CopagosComponent,
     ArticulosComponent,
     SeguroMedicoSelectComponent,
+    CalendariosComponent,
   ],
   imports: [
     BrowserModule,
