@@ -585,6 +585,63 @@ namespace DAL.DALs
             }
         }
 
+        public Precio GetPrecioBySeguro(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var precio = _dbContext.Precios
+                    .Include(Precios => Precios.Copago)
+                        .ThenInclude(c => c.Articulo)
+                    .Include(Precios => Precios.Copago)
+                        .ThenInclude(c => c.Especialidad)
+                    .Include(Precios => Precios.Copago)
+                        .ThenInclude(c => c.SeguroMedico)
+                    .Include(Precios => Precios.SeguroMedico)
+                    .FirstOrDefault(p => p.SeguroMedicoId == id);
+
+                if (precio != null)
+                {
+                    _logger.LogInformation($"Precio encontrado: {precio.Id}");
+                    return new Precio
+                    {
+                        Id = precio.Id,
+                        PrecioBase = precio.PrecioBase,
+                        FechaInicio = precio.FechaInicio,
+                        Copago = precio.Copago != null ? new Copago()
+                        {
+                            Id = precio.Copago.Id,
+                            Articulo = new Articulo
+                            {
+                                Id = precio.Copago.Articulo.Id,
+                                Nombre = precio.Copago.Articulo.Nombre
+                            },
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = precio.Copago.SeguroMedico.Id,
+                                Nombre = precio.Copago.SeguroMedico.Nombre,
+                                Descripcion = precio.Copago.SeguroMedico.Descripcion
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = precio.Copago.Especialidad.Id,
+                                Nombre = precio.Copago.Especialidad.Nombre,
+                                Descripcion = precio.Copago.Especialidad.Descripcion
+                            }
+                        } : null,
+                        SeguroMedico = precio.SeguroMedico != null ? new SeguroMedico()
+                        {
+                            Id = precio.SeguroMedico.Id,
+                            Nombre = precio.SeguroMedico.Nombre,
+                            Descripcion = precio.SeguroMedico.Descripcion
+                        } : null
+
+                    };
+                }
+                _logger.LogInformation("Precio encontrado: es null");
+                return null;
+            }
+        }
+
         public void AddPrecio(Precio precio)
 		{
 			using (var _dbContext = new DBContext())

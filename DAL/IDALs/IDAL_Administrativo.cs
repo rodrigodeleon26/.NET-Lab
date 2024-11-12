@@ -37,7 +37,8 @@ namespace DAL.IDALs
 		// Precios
 		public List<Precio> GetPrecios();
 		public Precio GetPrecioById(long id);
-		public void AddPrecio(Precio precio);
+        public Precio GetPrecioBySeguro(long id);
+        public void AddPrecio(Precio precio);
 		public void UpdatePrecio(Precio precio);
 		public void DeletePrecio(long id);
 

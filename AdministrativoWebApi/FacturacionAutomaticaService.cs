@@ -22,19 +22,19 @@ public class FacturacionAutomaticaService : BackgroundService
                 DateTime now = DateTime.Now;
 
                 // Verifica si es el primer día del mes y es la 1 AM
-                if (now.Day == 1)
+                if (now.Day == 12)
                 {
                     // Genera facturas automáticamente
                     await _blAdministrativo.GenerarFacturasAutomaticas();
 
                     Console.WriteLine("Es 1, facturas generadas, ahora espera 25 dias hasta el siguiente checkeo");
 
-                    await Task.Delay(TimeSpan.FromDays(25), stoppingToken);
+                    await Task.Delay(TimeSpan.FromSeconds(25), stoppingToken);
                 }
                 else
                 {
                     Console.WriteLine("Todavia no es 1, esperando 24 horas hasta el siguiente checkeo");
-                    await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                    await Task.Delay(TimeSpan.FromSeconds(24), stoppingToken);
                 }
             }
             catch (Exception ex)
