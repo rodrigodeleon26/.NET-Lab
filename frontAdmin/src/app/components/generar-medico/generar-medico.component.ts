@@ -13,11 +13,14 @@ import { CalendariosService } from '../../services/calendarios.service';
 })
 export class GenerarMedicoComponent implements OnInit {
   DatosMedicoForm: FormGroup;
+  DatosCalendarioForm: FormGroup;
 
   loading: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
+  errorModalMessage: string = '';
   viendoCalendarios: boolean = true;
+  isModalNuevoCalendarioVisible: boolean = false;
 
   especialidades: any[] = [];
   consultorios: any[] = [];
@@ -40,6 +43,16 @@ export class GenerarMedicoComponent implements OnInit {
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       email: ['', [Validators.required, Validators.email]],
       especialidades: this.fb.array([]),
+    });
+
+    this.DatosCalendarioForm = this.fb.group({
+      especialidadId: ['', Validators.required],
+      consultorioId: ['', Validators.required],
+      horaInicio: ['', Validators.required],
+      horaFin: ['', Validators.required],
+      tiempo: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      cantidad: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      dias: this.fb.array([]),
     });
   }
 
@@ -75,6 +88,13 @@ export class GenerarMedicoComponent implements OnInit {
     setTimeout(() => {
       this.errorMessage = '';
     }, 3000);
+  }
+
+  showErrorModalMessage(message: string) {
+    this.errorModalMessage = message;
+    setTimeout(() => {
+      this.errorModalMessage = '';
+    }, 6000);
   }
 
   loadMedico(id: string) {
@@ -126,6 +146,17 @@ export class GenerarMedicoComponent implements OnInit {
     }
   }
 
+  onCheckboxDiasChange(event: any) {
+    const diasArray: FormArray = this.DatosCalendarioForm.get('dias') as FormArray;
+
+    if (event.target.checked) {
+      diasArray.push(this.fb.control(event.target.value));
+    } else {
+      const index = diasArray.controls.findIndex(x => x.value === event.target.value);
+      diasArray.removeAt(index);
+    }
+  }
+
   agregarMedico(){
     if (this.DatosMedicoForm.valid) {
       const medico: any = {
@@ -174,6 +205,73 @@ export class GenerarMedicoComponent implements OnInit {
     } else {
       this.showErrorMessage('Por favor, complete todos los campos');
     }
+  }
+
+  agregarCalendario(){
+    this.errorModalMessage = '';
+    console.log(this.DatosCalendarioForm.value);
+    if(!this.DatosMedicoForm.value.especialidades.includes(parseInt(this.DatosCalendarioForm.value.especialidadId))){
+      this.showErrorModalMessage('El médico no tiene la especialidad seleccionada');
+      return;
+    }
+    if (!this.medicoId) {
+      this.showErrorModalMessage('No se ha seleccionado un médico');
+      return;
+    }
+    if (this.DatosCalendarioForm.value.horaInicio >= this.DatosCalendarioForm.value.horaFin){
+      this.showErrorModalMessage('La hora de inicio debe ser menor a la hora de fin');
+      return;
+    }
+    if (this.DatosCalendarioForm.value.tiempo <= 0) {
+      this.showErrorModalMessage('El tiempo debe ser mayor a 0');
+      return;
+    }
+    if (this.DatosCalendarioForm.value.cantidad <= 0) {
+      this.showErrorModalMessage('La cantidad debe ser mayor a 0');
+      return;
+    }
+    if (this.DatosCalendarioForm.value.dias.length === 0) {
+      this.showErrorModalMessage('Seleccione al menos un día');
+      return;
+    }
+    if (!this.DatosCalendarioForm.valid) {
+      this.showErrorModalMessage('Por favor, complete todos los campos');
+      return;
+    }
+
+    const Calendario: any = {
+      MedicoId: this.medicoId,
+      EspecialidadId: this.DatosCalendarioForm.value.especialidadId,
+      ConsultorioId: this.DatosCalendarioForm.value.consultorioId,
+      HoraInicio: this.DatosCalendarioForm.value.horaInicio,
+      HoraFin: this.DatosCalendarioForm.value.horaFin,
+      Tiempo: this.DatosCalendarioForm.value.tiempo,
+      Cantidad: this.DatosCalendarioForm.value.cantidad,
+      Dias: this.DatosCalendarioForm.value.dias,
+    }
+
+    //chequear conflictos con otros calendarios del medico
+    const horaInicio = this.DatosCalendarioForm.value.horaInicio;
+    const horaFin = this.DatosCalendarioForm.value.horaFin;
+    const dias = this.DatosCalendarioForm.value.dias;
+    const conflictos = this.calendariosDelMedico.filter((calendario: any) => {
+      if (calendario.diasSemana.some((dia: string) => dias.includes(dia))) {
+        console.log('conflicto de dias');
+        if (horaInicio >= calendario.horaInicio && horaInicio < calendario.horaFin) {
+          return true;
+        }
+        if (horaFin > calendario.horaInicio && horaFin <= calendario.horaFin) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    if (conflictos.length > 0) {
+      this.showErrorModalMessage('El calendario se superpone con otro calendario');
+      return;
+    }
+
   }
 
   private extractErrorMessage(error: any): string {

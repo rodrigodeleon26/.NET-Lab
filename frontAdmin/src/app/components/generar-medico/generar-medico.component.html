@@ -161,11 +161,132 @@
                 </div>
     
                 <div class="flex justify-center space-x-5 p-5">
-                    <button type="button" title="agregarCalendario" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+                    <button (click)="isModalNuevoCalendarioVisible = true" type="button" title="agregarCalendario" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
                         Agregar Calendario
                     </button>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- MODAL Nuevo Calendario-->
+<div *ngIf="isModalNuevoCalendarioVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="isModalNuevoCalendarioVisible = false">
+	<div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full" (click)="$event.stopPropagation()">
+        <p class="my-2">Nuevo Calendario</p>
+        <form [formGroup]="DatosCalendarioForm" (ngSubmit)="agregarCalendario()">
+			<div *ngIf="errorModalMessage" class="text-red-500 text-sm">
+				{{ errorModalMessage }}
+			</div>
+            <div class="flex flex-col w-full mb-2">
+
+				<div>
+					<label for="diasSemana" class="text-sm font-medium">Dias de la Semana</label>
+					<div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 place-items-center">
+						<div class="flex">
+							<input type="checkbox" id="lunes" value="LUNES" (change)="onCheckboxDiasChange($event)">
+							<label for="lunes" class="text-sm font-medium">Lunes</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="martes" value="MARTES" (change)="onCheckboxDiasChange($event)">
+							<label for="martes" class="text-sm font-medium">Martes</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="miercoles" value="MIERCOLES" (change)="onCheckboxDiasChange($event)">
+							<label for="miercoles" class="text-sm font-medium">Miercoles</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="jueves" value="JUEVES" (change)="onCheckboxDiasChange($event)">
+							<label for="jueves" class="text-sm font-medium">Jueves</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="viernes" value="VIERNES" (change)="onCheckboxDiasChange($event)">
+							<label for="viernes" class="text-sm font-medium">Viernes</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="sabado" value="SABADO" (change)="onCheckboxDiasChange($event)">
+							<label for="sabado" class="text-sm font-medium">Sabado</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="domingo" value="DOMINGO" (change)="onCheckboxDiasChange($event)">
+							<label for="domingo" class="text-sm font-medium">Domingo</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="flex justify-between w-full space-x-2">
+					
+					<div class="w-1/2 space-y-2">
+						<div class="">
+							<select name="especialidad" id="especialidadSelect" class="p-2 w-full" formControlName="especialidadId">
+								<option value="" disabled selected>Seleccione una especialidad</option>
+                                <option *ngFor="let especialidad of especialidades" [value]="especialidad.id" [hidden]="!DatosMedicoForm.value.especialidades.includes(especialidad.id)">{{ especialidad.nombre }}</option>
+							</select>
+						</div>
+						<div class="flex justify-between items-center">
+							<label for="horaInicio">Hora de Inicio</label>
+							<input type="time" formControlName="horaInicio" id="horaInicio" class="p-2 w-fit" required>
+						</div>
+						<div class="flex justify-between items-center">
+							<label for="horaFin">Hora de Fin</label>
+							<input type="time" formControlName="horaFin" id="horaFin" class="p-2 w-fit" required>
+						</div>
+					</div>
+	
+
+					<div class="w-1/2 space-y-2">
+
+						<div class="">
+							<select name="consultorio" class="p-2 w-full" formControlName="consultorioId">
+								<option value="" disabled selected>Seleccione un consultorio</option>
+								<option *ngFor="let consultorio of consultorios" [value]="consultorio.id">{{ 'Piso: ' + consultorio.piso + ' Numero: ' + consultorio.numero }}</option>
+							</select>
+						</div>
+	
+						<div class="flex justify-between items-center">
+							<label for="tiempo" class="text-sm font-medium">Tiempo Cita</label>
+							<input 
+							required
+							type="text" 
+							id="tiempo" 
+							formControlName="tiempo" 
+							class="border rounded-md p-2 w-2/3" 
+							placeholder="Tiempo Cita"
+							min="1" 
+							pattern="^[1-9]\d*$"
+							inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+							maxlength="3"
+							minlength="1"
+							/>
+						</div>
+						
+						<div class="flex justify-between items-center">
+							<label for="cantidad" class="text-sm font-medium">Cantidad Citas</label>
+							<input 
+							required
+							type="text" 
+							id="cantidad" 
+							formControlName="cantidad" 
+							class="border rounded-md p-2 w-2/3" 
+							placeholder="Cantidad"
+							min="1" 
+							pattern="^[1-9]\d*$"
+							inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+							maxlength="3"
+							minlength="1"
+							/>
+						</div>
+					</div>
+
+				</div>
+                
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="submit" class="bg-blue-claro hover:bg-blue-oscuro text-white font-bold py-2 px-4 rounded-md">Agregar</button>
+                <button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md" (click)="this.isModalNuevoCalendarioVisible = false">Cerrar</button>
+            </div>
+        </form>
+	</div>
 </div>

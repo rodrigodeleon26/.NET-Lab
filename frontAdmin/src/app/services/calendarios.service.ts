@@ -15,4 +15,9 @@ export class CalendariosService {
     console.log('Obteniendo calendarios');
     return this.http.get<any[]>(`${this.apiUrl}/medico/${medicoId}`);
   }
+
+  checkCalendarioOcupado(calendario: any): Observable<any> {
+    console.log('Verificando disponibilidad');
+    return this.http.post<any>(`${this.apiUrl}/check`, calendario);
+  }
 }
