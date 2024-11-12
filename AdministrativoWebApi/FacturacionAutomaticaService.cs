@@ -21,7 +21,7 @@ public class FacturacionAutomaticaService : BackgroundService
             {
                 DateTime now = DateTime.Now;
 
-                // Verifica si es el primer día del mes y es la 1 AM
+                // Verifica si es el primer día del mes
                 if (now.Day == 1)
                 {
                     // Genera facturas automáticamente
