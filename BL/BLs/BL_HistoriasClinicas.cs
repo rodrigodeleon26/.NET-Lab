@@ -10,17 +10,17 @@ namespace BL.BLs
     public class BL_HistoriasClinicas : IBL_HistoriasClinicas
     {
         private readonly IDAL_HistoriasClinicas dal;
-        private readonly BL_Administrativo_Service bL_Administrativo_Service;
-        private readonly BL_CitasMedicas_Service bL_CitasMedicas_Service;
+        private readonly IDAL_Administrativo_Service dalAdminService;
+        private readonly IDAL_CitasMedicas_Service dalCitasMedicasService;
 
         public BL_HistoriasClinicas(
-            IDAL_HistoriasClinicas dal, 
-            BL_Administrativo_Service bL_Administrativo_Service,
-            BL_CitasMedicas_Service bL_CitasMedicas_Service)
+            IDAL_HistoriasClinicas dal,
+            IDAL_Administrativo_Service dalAdminService,
+            IDAL_CitasMedicas_Service dalCitasMedicasService)
         {
             this.dal = dal;
-            this.bL_Administrativo_Service = bL_Administrativo_Service;
-            this.bL_CitasMedicas_Service = bL_CitasMedicas_Service;
+            this.dalAdminService = dalAdminService;
+            this.dalCitasMedicasService = dalCitasMedicasService;
         }
 
         public List<ConsultaMedica> getConsultasMedicas()
@@ -54,10 +54,10 @@ namespace BL.BLs
             var consultaMedica = dal.getConsultaMedica(id);
             if (consultaMedica == null) return null;
 
-            var citaMedica = bL_CitasMedicas_Service.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            var citaMedica = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
             if (citaMedica == null) return null;
 
-            var paciente = bL_Administrativo_Service.getPacienteById(citaMedica.PacienteId ?? 0);
+            var paciente = dalAdminService.GetPacienteById(citaMedica.PacienteId ?? 0);
             if (paciente == null) return null;
 
             return new ConsultaMedicaCompletaDTO
@@ -167,8 +167,8 @@ namespace BL.BLs
             };
 
             var consultaMedica = getConsultaMedica(idConsultaMedica);
-            var citaMedica = bL_CitasMedicas_Service.getCitaMedicaById(consultaMedica.CitaMedicaId);
-            var paciente = bL_Administrativo_Service.getPacienteById(citaMedica.PacienteId ?? 0);
+            var citaMedica = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            var paciente = dalAdminService.GetPacienteById(citaMedica.PacienteId ?? 0);
 
             // Generación de PDF y subida a S3
             PdfGenerator pdfGenerator = new PdfGenerator();
@@ -209,13 +209,13 @@ namespace BL.BLs
 
         public object GetHistoriaClinica(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
-            var paciente = bL_Administrativo_Service.getPacienteByDNI(dni);
+            var paciente = dalAdminService.GetPacienteByDNI(dni);
             if (paciente == null)
             {
                 return null;
             }
 
-            var citasMedicas = bL_CitasMedicas_Service.GetCitasMedicasByPacienteId(paciente.Id, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
+            var citasMedicas = dalCitasMedicasService.GetCitasMedicasByPacienteId(paciente.Id, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
 
             List<ConsultaMedicaConCitaDTO> consultasMedicasConCitas = new List<ConsultaMedicaConCitaDTO>();
             foreach (var cita in citasMedicas)
@@ -227,9 +227,8 @@ namespace BL.BLs
                     CitaMedica = cita
                 });
             }
-
             // Para obtener el total de citas, útil para calcular el número total de páginas
-            int totalCitas = bL_CitasMedicas_Service.CountCitasMedicasByPacienteId(paciente.Id, fechaInicio, fechaFin, orden, especialidadesIds);
+            int totalCitas = dalCitasMedicasService.CountCitasMedicasByPacienteId(paciente.Id, fechaInicio, fechaFin, orden, especialidadesIds);
 
             return new
             {
@@ -250,7 +249,7 @@ namespace BL.BLs
                 return null;
             }
 
-            var cita = bL_CitasMedicas_Service.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            var cita = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
             if (cita == null)
             {
                 return null;
@@ -258,7 +257,7 @@ namespace BL.BLs
 
             cita.Estado = "Completada";
             cita.ConsultaMedicaId = consultaMedica.Id;
-            bL_CitasMedicas_Service.updateCitaMedica(cita);
+            dalCitasMedicasService.updateCitaMedica(cita);
 
             return consultaMedica;
         }

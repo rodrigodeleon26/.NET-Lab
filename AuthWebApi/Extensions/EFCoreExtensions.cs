@@ -23,10 +23,11 @@ namespace AuthWebApi.Extensions
         {
             //  DALs
             services.AddTransient<IDAL_Pacientes, DAL_Pacientes_EF>();
-
+            services.AddTransient<IDAL_Administrativo, DAL_Administrativo_EF>();
             //  BLs
             services.AddTransient<IBL_Pacientes, BL_Pacientes>();
-                    
+            services.AddTransient<IBL_Administrativo, BL_Administrativo>();
+
             return services;
         }
 

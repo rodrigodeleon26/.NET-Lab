@@ -1,69 +1,37 @@
-using BL.BLs;
-using BL.IBLs;
 using DAL;
-using DAL.DALs;
-using DAL.IDALs;
+using HistoriaClinicaWebApi.Extensions;
 using HistoriaClinicaWebApi.Controllers;
+using DAL.Models;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
-
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowSpecificOrigin",
-            builder =>
-            {
-                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200")
-                       .AllowAnyHeader()
-                       .AllowAnyMethod();
-            });
-    });
+    DBContext.UpdateDatabase();
 
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
 
-    /**********************************************************/
-    /** Add Dependencies                                     **/
-    /**********************************************************/
-    #region Inyeccion de dependencias
-
-    // DALs
-    builder.Services.AddTransient<IDAL_HistoriasClinicas, DAL_HistoriasClinicas_EF>();
-    builder.Services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_EF>();
-    builder.Services.AddTransient<IDAL_Administrativo, DAL_Administrativo_EF>();
-
-    // BLs
-    builder.Services.AddTransient<IBL_HistoriasClinicas, BL_HistoriasClinicas>();
-    builder.Services.AddTransient<BL_Administrativo_Service>();
-    builder.Services.AddTransient<BL_CitasMedicas_Service>();
-
-
-    builder.Services.AddTransient<S3Service>();
-
-    #endregion
+    builder.Services.AddSwaggerExplorer()
+                    .InjectDBContext()
+                    .InjectDALandBL()
+                    .AddIdentityHandlersAndStores()
+                    .ConfigureIdentityOptions()
+                    .AddIdentityAuth();
 
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    app.UseHttpsRedirection();
-
-    app.UseCors("AllowSpecificOrigin");
-
-    app.UseAuthorization();
+    app.ConfigureSwaggerExplorer()
+       .ConfigureCORS()
+       .AddIdentityAuthMiddlewares()
+       .UseHttpsRedirection();
 
     app.MapControllers();
+    // Endpoints nativos de Identity
+    //app.MapIdentityApi<AppUsers>();
 
+
+    // Este comentario se borra
     app.Run();
 }
 catch (Exception ex)

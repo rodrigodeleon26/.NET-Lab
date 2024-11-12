@@ -57,7 +57,8 @@ namespace BL.IBLs
 		// Medicos
 		List<Medico> getMedicos();
 		Medico getMedicoById(long id);
-		void addMedico(Medico medico);
+		Medico getMedicoByDocumento(string ci);
+        void addMedico(Medico medico);
 		void updateMedico(Medico medico);
 		void deleteMedico(long id);
 		void asignarEspecialidad(long medId, long espId);

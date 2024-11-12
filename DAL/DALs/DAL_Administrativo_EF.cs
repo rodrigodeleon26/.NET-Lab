@@ -957,7 +957,38 @@ namespace DAL.DALs
 			}
 		}
 
-		public void AddMedico(Medico medico)
+        public Medico GetMedicoByDocumento(string ci)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var medico = _dbContext.Medicos
+                               .Include(m => m.EspecialidadesMedicos)
+                               .ThenInclude(me => me.Especialidad)
+                               .FirstOrDefault(m => m.Documento == ci);
+
+                if (medico != null)
+                {
+                    return new Medico
+                    {
+                        Id = medico.Id,
+                        Nombres = medico.Nombres,
+                        Apellidos = medico.Apellidos,
+                        Documento = medico.Documento,
+                        Email = medico.Email,
+                        Telefono = medico.Telefono,
+                        Especialidades = medico.EspecialidadesMedicos.Select(em => new Especialidad
+                        {
+                            Id = em.Especialidad.Id,
+                            Nombre = em.Especialidad.Nombre,
+                            Descripcion = em.Especialidad.Descripcion
+                        }).ToList()
+                    };
+                }
+                return null;
+            }
+        }
+
+        public void AddMedico(Medico medico)
 		{
 			using (var _dbContext = new DBContext())
 			{

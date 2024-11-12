@@ -44,4 +44,5 @@ export class AuthService {
   getClaims(){
     return JSON.parse(atob(this.getToken()!.split('.')[1]));
   }
+  
 }

@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ConsultaMedicaService } from '../../../services/consulta-medica.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-consulta-medica',
@@ -11,7 +13,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class ConsultaMedicaComponent implements OnInit {
   consultaMedicaForm: FormGroup;
-  consultaMedica: any = {};
+  consultaMedica: any = [];
   consultaMeciaDatos = false;
 
   citaMedica: any = {};
@@ -46,7 +48,9 @@ export class ConsultaMedicaComponent implements OnInit {
   constructor(
     private consultaMedicaService: ConsultaMedicaService,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService, 
+    private router: Router
   ) { 
     this.consultaMedicaForm = this.fb.group({
       id: [''],
@@ -93,6 +97,7 @@ export class ConsultaMedicaComponent implements OnInit {
         this.consultaMedica = response.consultaMedica;
         this.consultaMedicaForm.patchValue(this.consultaMedica);
         if (this.consultaMedica.descripcion && this.consultaMedica.diagnostico) {
+          console.log('consultaMedica', this.consultaMedica);
           this.consultaMeciaDatos = true;
         } else {
           this.consultaMeciaDatos = false;
@@ -102,6 +107,8 @@ export class ConsultaMedicaComponent implements OnInit {
         this.loading = false;
       },
       error => {
+        this.loading = false;
+        this.consultaMedica = {};
         this.errorMessage = 'Error al obtener la consulta médica';
         setTimeout(() => {
           this.errorMessage = '';
@@ -111,7 +118,6 @@ export class ConsultaMedicaComponent implements OnInit {
     this.consultaMedicaService.obtenerMedicamentos().subscribe(
       response => {
         this.medicamentos = response;
-        console.log(this.medicamentos);
       },
       error => {
         this.errorMessage = 'Error al obtener los medicamentos';
@@ -120,6 +126,10 @@ export class ConsultaMedicaComponent implements OnInit {
         }, 3000);
       }
     );
+  }
+
+  consultaMedicaNoEstaVacia(): boolean {
+    return this.consultaMedica && Object.keys(this.consultaMedica).length > 0;
   }
 
   openModalReceta() {
@@ -187,7 +197,6 @@ export class ConsultaMedicaComponent implements OnInit {
 
   abrirHistorialClinico() {
     const documento = this.paciente.documento;
-    console.log(documento);
     window.open(`/medico/historia-clinica?documento=${documento}`, '_blank');
   }
 
@@ -208,10 +217,7 @@ export class ConsultaMedicaComponent implements OnInit {
         this.consultaMedicaForm.patchValue(this.consultaMedica);
         this.consultaMeciaDatos = true;
         this.modalGuardarConsultaMedica = false;
-        this.successMessage = 'Consulta médica guardada correctamente';
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
+        window.close();
       },
       error => {
         this.loading = false;
@@ -256,14 +262,12 @@ export class ConsultaMedicaComponent implements OnInit {
   }
 
   eliminarConsultaMedica() {
+    this.modalEliminarConsultaMedica = false;
     this.loading = true;
     this.consultaMedicaService.eliminarConsultaMedica(this.consultaMedica.id).subscribe(
       response => {
         this.loading = false;
-        this.successMessage = 'Consulta médica eliminada correctamente';
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
+        window.close();
       },
       error => {
         this.loading = false;
@@ -295,7 +299,6 @@ export class ConsultaMedicaComponent implements OnInit {
         this.loading = false;
         this.consultaMedica = response; 
         this.recetaForm.reset();
-        console.log(this.recetaForm);
         this.successMessage = 'Receta agregada correctamente';
         setTimeout(() => {
           this.successMessage = '';
@@ -383,7 +386,6 @@ export class ConsultaMedicaComponent implements OnInit {
     };
     this.consultaMedicaService.agregarEstudio(this.consultaMedica.id, estudioAgregar).subscribe(
       response => {
-        console.log(response);
         this.loading = false;
         this.consultaMedica = response;
         this.estudioForm.reset();    
@@ -393,7 +395,6 @@ export class ConsultaMedicaComponent implements OnInit {
         }, 3000);
       },
       error => {
-        console.log(error);
         this.loading = false;
         this.errorMessage = 'Error al agregar el estudio';
         setTimeout(() => {
@@ -417,7 +418,6 @@ export class ConsultaMedicaComponent implements OnInit {
     const estudioActualizado = this.estudioForm.value;
     this.consultaMedicaService.editarEstudio(this.consultaMedica.id, estudioActualizado).subscribe(
       response => {
-        console.log(response);
         this.loading = false;
         this.consultaMedica = response;
         this.estudioForm.reset();    
@@ -427,7 +427,6 @@ export class ConsultaMedicaComponent implements OnInit {
         }, 3000);
       },
       error => {
-        console.log(error);
         this.loading = false;
         this.errorMessage = 'Error al editar el estudio';
         setTimeout(() => {

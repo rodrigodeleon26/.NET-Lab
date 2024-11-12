@@ -49,7 +49,6 @@ export class CitaMedicaComponent implements OnInit {
       if (fechaVisible) {
         const [year, month, day] = fechaVisible.split('-').map(Number);
         this.fechaVisible = new Date(year, month - 1, day);
-        console.log('Fecha visible:', this.fechaVisible);
       }
       else {
         this.fechaVisible = new Date();
@@ -134,18 +133,12 @@ export class CitaMedicaComponent implements OnInit {
     this.citaSeleccionada = null;
     this.loading = true;
     this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
-    const consultaData = {
-      descripcion: " ",  // Puedes establecer valores iniciales o vacíos aquí
-      diagnostico: " ",  // o incluso permitir que el usuario los complete
-      citaMedicaId: this.citaSeleccionada.id
-    };
-    this.ConsultaMedicaService.crearConsulta(consultaData).subscribe(
+    this.ConsultaMedicaService.crearConsultaSinDatos(this.citaSeleccionada.id).subscribe(
       (response) => {
         console.log('Consulta creada exitosamente:', response);
 
         // Asigna la ID de la nueva consulta a citaSeleccionada.consultaMedicaId
-        this.citaSeleccionada.consultaMedicaId = response.id;  // Asegúrate de que la respuesta contiene la ID
-        this.citaSeleccionada.estado = 'Completada';  // Cambia el estado de la cita a 'Completada'
+        this.citaSeleccionada.consultaMedicaId = response.id;  // Asegúrate de que la respuesta contiene la ID  // Cambia el estado de la cita a 'Completada'
         this.citasMedicasService.actualizarCitaMedica(this.citaSeleccionada.id, this.citaSeleccionada).subscribe(() => {
           this.route.queryParams.subscribe(params => {
             const especialidad = params['especialidad'];
@@ -185,7 +178,8 @@ export class CitaMedicaComponent implements OnInit {
   abrirConsultaMedica(id: number) {
     console.log(id);
     this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
-    window.open(`/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`, '_blank');
+    const documento = this.citaSeleccionada.paciente.documento; 
+    window.open(`/medico/historia-clinica?documento=${documento}`, '_blank');
   }
 
   asignarEstado(id: number, estado: string): void {

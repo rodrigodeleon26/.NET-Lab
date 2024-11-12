@@ -15,16 +15,13 @@ namespace HistoriaClinicaWebApi.Controllers
     public class HistoriasClinicasController : ControllerBase
     {
         private readonly IBL_HistoriasClinicas _blHistoriasClinicas;
-        private readonly S3Service _s3Service;
 
         public HistoriasClinicasController
             (
-            IBL_HistoriasClinicas blHistoriasClinicas, 
-            S3Service s3Service
+            IBL_HistoriasClinicas blHistoriasClinicas
             )
         {
             _blHistoriasClinicas = blHistoriasClinicas;
-            _s3Service = s3Service;
         }
 
         // GET: api/<HistoriasClinicasController>
@@ -231,31 +228,6 @@ namespace HistoriaClinicaWebApi.Controllers
                 return NotFound(new { Message = "No existe consulta médica con ese ID o no existe estudio con ese ID" });
             }
             return Ok(consultaMedicaSinEstudio);
-        }
-
-        // POST api/<HistoriasClinicasController>/5/Estudio/1/Resultado
-        [ProducesResponseType(typeof(ConsultaMedica), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [HttpPost("{id}/Estudio/{idEstudio}/Resultado")]
-        public async Task<IActionResult> Post(int id, int idEstudio, DateOnly fechaResultado, IFormFile imagenEstudio)
-        {
-            string imagenUrl = null;
-
-            if (imagenEstudio != null && imagenEstudio.Length > 0)
-            {
-                using var stream = imagenEstudio.OpenReadStream();
-                imagenUrl = await _s3Service.UploadFileAsync(stream, $"{Guid.NewGuid()}_{imagenEstudio.FileName}", imagenEstudio.ContentType);
-            }
-
-            var consultaMedicaConResultadoEstudio = _blHistoriasClinicas.addResultadoEstudio(id, idEstudio, fechaResultado, imagenUrl);
-
-            if (consultaMedicaConResultadoEstudio == null)
-            {
-                return NotFound(new { Message = "No existe consulta médica con ese ID o no existe estudio con ese ID" });
-            }
-
-            return Ok(consultaMedicaConResultadoEstudio);
         }
 
         // GET api/<HistoriasClinicasController>/12345678/historiaClinica?pageNumber=1&pageSize=10

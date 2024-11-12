@@ -59,7 +59,9 @@ namespace DAL.IDALs
 		// Medicos
 		public List<Medico> GetMedicos();
 		public Medico GetMedicoById(long id);
-		public void AddMedico(Medico medico);
+		public Medico GetMedicoByDocumento(string ci);
+
+        public void AddMedico(Medico medico);
 		public void UpdateMedico(Medico medico);
 		public void DeleteMedico(long id);
 		public List<Medico> GetMedicosPaginadosYFiltrados(int numPagina, string filtro);

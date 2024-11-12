@@ -23,8 +23,8 @@ namespace DAL.Models
 
         public long? PacienteId { get; set; } // Hacer nullable
 
-        [ForeignKey(nameof(PacienteId))]
-        public virtual Pacientes? Paciente { get; set; } // Hacer nullable
+        //[ForeignKey(nameof(PacienteId))]
+        //public virtual Pacientes? Paciente { get; set; } // Hacer nullable
 
         public long? ConsultaMedicaId { get; set; } // Hacer nullable
         [ForeignKey(nameof(ConsultaMedicaId))]

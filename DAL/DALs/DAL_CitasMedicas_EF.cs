@@ -240,11 +240,13 @@ namespace DAL.DALs
                     throw new Exception("El paciente ya tiene una cita en el mismo calendario y día.");
                 }
 
+                string pacienteIdEncriptado = AES.Encrypt(pacienteId.ToString());   
+
                 var citaEntity = new CitasMedicas
                 {
                     Fecha = nuevaCita.Fecha,
                     Estado = nuevaCita.Estado ?? "Agendada",
-                    PacienteId = pacienteId,
+                    PacienteId = pacienteIdEncriptado,
                     CalendarioId = calendarioId
                 };
 

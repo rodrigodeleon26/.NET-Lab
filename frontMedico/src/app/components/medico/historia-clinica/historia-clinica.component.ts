@@ -112,7 +112,6 @@ export class HistoriaClinicaComponent implements OnInit {
   }
 
   verReceta(recetas: any[]) {
-    console.log(recetas);
     this.recetas = recetas;
     this.modalRecetas = true;
   }
@@ -122,7 +121,6 @@ export class HistoriaClinicaComponent implements OnInit {
   }
 
   verEstudios(estudios: any[]) {
-    console.log(estudios);
     this.estudios = estudios;
     this.modalEstudios = true;
   }
@@ -177,7 +175,6 @@ export class HistoriaClinicaComponent implements OnInit {
             IsChecked: true
           };
         });
-        console.log(this.especialidades);
       },
       error => {
         console.log(error);

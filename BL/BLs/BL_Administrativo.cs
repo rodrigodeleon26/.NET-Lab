@@ -285,6 +285,11 @@ namespace BL.BLs
 			return dal.GetMedicoById(id);
 		}
 
+		public Medico getMedicoByDocumento(string documento)
+        {
+            return dal.GetMedicoByDocumento(documento);
+        }
+
 		public void addMedico(Medico medico)
 		{
 			dal.AddMedico(medico);

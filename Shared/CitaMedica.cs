@@ -13,7 +13,7 @@
         public long CalendarioId { get; set; }
 
 
-        public Paciente? Paciente { get; set; } = new Paciente();
+        //public Paciente? Paciente { get; set; } = new Paciente();
 
         //public long? ConsultorioId { get; set; }
 
