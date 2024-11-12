@@ -3,6 +3,8 @@ using BL.BLs;
 using BL.IBLs;
 using DAL.DALs;
 using DAL.IDALs;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 try
 {
@@ -37,6 +39,14 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+
+    // Agregar el servicio de facturación automática en segundo plano
+    builder.Services.AddHostedService<FacturacionAutomaticaService>();
+
+    // Registrar las dependencias necesarias
+    builder.Services.AddScoped<IBL_Administrativo, BL_Administrativo>();
+    builder.Services.AddScoped<IDAL_Administrativo, DAL_Administrativo_EF>();
+
     /**********************************************************/
     /** Add Dependencies                                     **/
     /**********************************************************/
@@ -70,6 +80,8 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+
 
     app.Run();
 }

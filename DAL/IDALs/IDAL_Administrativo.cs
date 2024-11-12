@@ -51,15 +51,16 @@ namespace DAL.IDALs
 
         // Facturas
         public List<Factura> GetFacturas();
-
 		public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);
 		public Factura GetFacturaById(long id);
 		public void AddFactura(Factura factura);
 		public void UpdateFactura(Factura factura);
 		public void DeleteFactura(long id);
+        IEnumerable<Contrato> GetContratosActivos();
+        Task SaveChangesAsync();
 
-		// Medicos
-		public List<Medico> GetMedicos();
+        // Medicos
+        public List<Medico> GetMedicos();
 		public Medico GetMedicoById(long id);
 		public void AddMedico(Medico medico);
 		public void UpdateMedico(Medico medico);

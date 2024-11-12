@@ -118,5 +118,26 @@ namespace AdministrativoWebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("pdf/lista")]
+        public IActionResult GetMultipleFacturasPdf([FromBody] List<long> ids)
+        {
+            try
+            {
+                var pdfStream = _blAdministrativo.GenerarFacturaListada(ids);
+
+                if (pdfStream == null)
+                {
+                    return NotFound("No se encontraron facturas para los IDs proporcionados.");
+                }
+
+                // Devuelve el PDF como archivo descargable
+                return File(pdfStream, "application/pdf", $"Facturas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

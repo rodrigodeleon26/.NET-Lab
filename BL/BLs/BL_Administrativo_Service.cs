@@ -254,6 +254,16 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public MemoryStream GenerarFacturaListada(List<long> ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task GenerarFacturasAutomaticas()
+        {
+            throw new NotImplementedException();
+        }
+
         public Medico getMedicoById(long id)
         {
             throw new NotImplementedException();

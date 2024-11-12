@@ -886,11 +886,7 @@ namespace DAL.DALs
                             Id = factura.Paciente.Id,
                             Nombres = factura.Paciente.Nombres,
                             Apellidos = factura.Paciente.Apellidos,
-                            Documento = factura.Paciente.Documento,
-                            FechaDeNacimiento = factura.Paciente.FechaDeNacimiento,
-                            Direccion = factura.Paciente.Direccion,
-                            Telefono = factura.Paciente.Telefono,
-                            Email = factura.Paciente.Email
+                            Documento = factura.Paciente.Documento
                         }
                     };
                 }
@@ -947,15 +943,58 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
+        public IEnumerable<Contrato> GetContratosActivos()
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Contratos
+                    .Where(c => c.Activo)
+                    .Include(c => c.Paciente)
+                    .Include(c => c.SeguroMedico)
+                    .ToList()
+                    .Select(c => new Contrato
+                    {
+                        Id = c.Id,
+                        FechaInicio = c.FechaInicio,
+                        Activo = c.Activo,
+                        Paciente = new Paciente
+                        {
+                            Id = c.Paciente.Id,
+                            Nombres = c.Paciente.Nombres,
+                            Apellidos = c.Paciente.Apellidos,
+                            Documento = c.Paciente.Documento,
+                            FechaDeNacimiento = c.Paciente.FechaDeNacimiento,
+                            Direccion = c.Paciente.Direccion,
+                            Telefono = c.Paciente.Telefono,
+                            Email = c.Paciente.Email
+                        },
+                        SeguroMedico = new SeguroMedico
+                        {
+                            Id = c.SeguroMedico.Id,
+                            Nombre = c.SeguroMedico.Nombre,
+                            Descripcion = c.SeguroMedico.Descripcion
+                        }
+                    });
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            using (var _dbContext = new DBContext())
+            {
+				await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        #endregion
 
 
-		/**********************************************************/
-		/**                     Medicos                          **/
-		/**********************************************************/
-		#region FUNCTIONES MEDICOS
+        /**********************************************************/
+        /**                     Medicos                          **/
+        /**********************************************************/
+        #region FUNCTIONES MEDICOS
 
-		public List<Medico> GetMedicos()
+        public List<Medico> GetMedicos()
 		{
 			using (var _dbContext = new DBContext())
 			{

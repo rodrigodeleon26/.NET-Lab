@@ -58,6 +58,9 @@ namespace BL.IBLs
 		void updateFactura(Factura factura);
 		void deleteFactura(long id);
         MemoryStream GenerarFactura(long id);
+        MemoryStream GenerarFacturaListada(List<long> ids);
+
+		Task GenerarFacturasAutomaticas();
 
         // Medicos
         List<Medico> getMedicos();
