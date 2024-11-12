@@ -291,7 +291,7 @@ namespace BL.BLs
                 {
                     Fecha = DateTime.Now,
                     Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
-                    Descripcion = $"Pago de seguro: {contrato.SeguroMedico.Nombre}",
+                    Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
                     FechaPago = null,
                     Pago = false,
                     Paciente = paciente
@@ -309,7 +309,7 @@ namespace BL.BLs
 			// Aquí puedes definir la lógica para calcular el monto de la factura basado en el contrato
 			Precio preciobtenido = dal.GetPrecioBySeguro(contrato.SeguroMedico.Id);
 			float numero = preciobtenido.PrecioBase;
-            return numero; // Este es solo un ejemplo
+            return numero;
         }
 
         public MemoryStream GenerarFactura(long id)

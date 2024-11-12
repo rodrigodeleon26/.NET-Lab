@@ -590,14 +590,16 @@ namespace DAL.DALs
             using (var _dbContext = new DBContext())
             {
                 var precio = _dbContext.Precios
-                    .Include(Precios => Precios.Copago)
-                        .ThenInclude(c => c.Articulo)
-                    .Include(Precios => Precios.Copago)
-                        .ThenInclude(c => c.Especialidad)
-                    .Include(Precios => Precios.Copago)
-                        .ThenInclude(c => c.SeguroMedico)
-                    .Include(Precios => Precios.SeguroMedico)
-                    .FirstOrDefault(p => p.SeguroMedicoId == id);
+					.Include(precio => precio.Copago)
+						.ThenInclude(c => c.Articulo)
+					.Include(precio => precio.Copago)
+						.ThenInclude(c => c.Especialidad)
+					.Include(precio => precio.Copago)
+						.ThenInclude(c => c.SeguroMedico)
+					.Include(precio => precio.SeguroMedico)
+					.Where(p => p.SeguroMedicoId == id)
+					.OrderByDescending(p => p.FechaInicio)
+					.FirstOrDefault();
 
                 if (precio != null)
                 {
