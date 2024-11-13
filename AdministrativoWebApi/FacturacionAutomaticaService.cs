@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading;
@@ -6,11 +7,11 @@ using System.Threading.Tasks;
 
 public class FacturacionAutomaticaService : BackgroundService
 {
-    private readonly IBL_Administrativo _blAdministrativo;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public FacturacionAutomaticaService(IBL_Administrativo blAdministrativo)
+    public FacturacionAutomaticaService(IServiceScopeFactory scopeFactory)
     {
-        _blAdministrativo = blAdministrativo;
+        _scopeFactory = scopeFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,16 +25,25 @@ public class FacturacionAutomaticaService : BackgroundService
                 // Verifica si es el primer día del mes
                 if (now.Day == 1)
                 {
-                    // Genera facturas automáticamente
-                    await _blAdministrativo.GenerarFacturasAutomaticas();
+                    // Crear un alcance para obtener el servicio con ciclo de vida Scoped
+                    using (var scope = _scopeFactory.CreateScope())
+                    {
+                        var blAdministrativo = scope.ServiceProvider.GetRequiredService<IBL_Administrativo>();
 
-                    Console.WriteLine("Es 1, facturas generadas, ahora espera 25 dias hasta el siguiente checkeo");
+                        // Genera facturas automáticamente
+                        await blAdministrativo.GenerarFacturasAutomaticas();
+                    }
 
+                    Console.WriteLine("Es 1, facturas generadas, ahora espera 25 días hasta el siguiente chequeo.");
+
+                    // Espera 25 días antes de volver a verificar
                     await Task.Delay(TimeSpan.FromDays(25), stoppingToken);
                 }
                 else
                 {
-                    Console.WriteLine("Todavia no es 1, esperando 24 horas hasta el siguiente checkeo");
+                    Console.WriteLine("Todavía no es 1, esperando 24 horas hasta el siguiente chequeo.");
+
+                    // Espera 24 horas antes de la próxima verificación
                     await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
                 }
             }

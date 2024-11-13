@@ -1,6 +1,15 @@
 ﻿using DAL.IDALs;
 using DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Shared;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL.DALs
 {
@@ -90,6 +99,26 @@ namespace DAL.DALs
                         Email = p.Email
                     }).FirstOrDefault();
                 return paciente;
+            }
+        }
+
+        public void AddNotificacion(Notificacion notificacion, long idPaciente)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var paciente = _dbContext.Pacientes.Find(idPaciente);
+                if (paciente == null)
+                {
+                    throw new Exception("Paciente no encontrado");
+                }
+                _dbContext.Notificaciones.Add(new Notificaciones
+                {
+                    Mensaje = notificacion.Mensaje,
+                    FechaEnvio = notificacion.FechaEnvio,
+                    Visto = notificacion.Visto,
+                    Paciente = paciente
+                });
+                _dbContext.SaveChanges();
             }
         }
     }

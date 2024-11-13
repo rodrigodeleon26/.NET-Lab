@@ -18,12 +18,14 @@ namespace BL.BLs
 	public class BL_Administrativo : IBL_Administrativo
 	{
 		private readonly IDAL_Administrativo dal;
+		private readonly IDAL_Administrativo_Service dal_service;
         private readonly ILogger<BL_Administrativo> _logger;
 
-        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger)
+        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger, IDAL_Administrativo_Service dal_service)
 		{
             _logger = logger;
 			this.dal = dal;
+			this.dal_service = dal_service;
         }
 
         //Pacientes 
@@ -298,10 +300,19 @@ namespace BL.BLs
                 };
 
                 // Guarda la factura en la base de datos
-                dal.AddFactura(factura);
+                //dal.AddFactura(factura);
+
+                var notificacion = new Notificacion
+                {
+                    Mensaje = $"Tiene una nueva factura para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}",
+                    FechaEnvio = DateTime.UtcNow,
+                    Visto = false
+                };
+
+                await dal_service.AddNotificacionService(notificacion, paciente.Id);
             }
 
-            await dal.SaveChangesAsync(); // Guarda todos los cambios en la base de datos
+            await dal.SaveChangesAsync();
         }
 
         private float ObtenerMontoFactura(Contrato contrato)

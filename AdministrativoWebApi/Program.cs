@@ -15,7 +15,7 @@ try
         options.AddPolicy("AllowSpecificOrigin",
             builder =>
             {
-                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200")
+                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200", "https://localhost:443")
                        .AllowAnyHeader()
                        .AllowAnyMethod();
             });
@@ -28,7 +28,7 @@ try
         options.AddPolicy("AllowSpecificOrigin",
             builder =>
             {
-                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200")
+                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200", "https://localhost:443")
                        .AllowAnyHeader()
                        .AllowAnyMethod();
             });
@@ -46,6 +46,8 @@ try
     // Registrar las dependencias necesarias
     builder.Services.AddScoped<IBL_Administrativo, BL_Administrativo>();
     builder.Services.AddScoped<IDAL_Administrativo, DAL_Administrativo_EF>();
+    builder.Services.AddScoped<IDAL_Administrativo_Service, DAL_Administrativo_Service>();
+    builder.Services.AddHttpClient<IDAL_Administrativo_Service, DAL_Administrativo_Service>();
 
     /**********************************************************/
     /** Add Dependencies                                     **/

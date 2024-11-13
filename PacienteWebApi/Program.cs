@@ -9,6 +9,30 @@ try
 { 
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigin",
+            builder =>
+            {
+                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200", "https://localhost:443")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+    });
+
+    // Add services to the container.
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigin",
+            builder =>
+            {
+                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200", "https://localhost:443")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+    });
+
     // Add services to the container.
     builder.Services.AddControllers();
 
@@ -21,8 +45,8 @@ try
 
     app.ConfigureSwaggerExplorer()
    .ConfigureCORS()
-   .AddIdentityAuthMiddlewares()
-   .UseHttpsRedirection();
+   .AddIdentityAuthMiddlewares();
+   //.UseHttpsRedirection();
 
     app.MapControllers();
 
