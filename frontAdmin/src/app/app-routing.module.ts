@@ -7,12 +7,11 @@ import { AddEspecialidadComponent } from './components/add-especialidad/add-espe
 import { ConsultoriosComponent } from './components/consultorios/consultorios.component';
 import { CopagosComponent } from './components/copagos/copagos.component';
 import { ArticulosComponent } from './components/articulos/articulos.component';
+import { PacientesComponent } from './components/pacientes/pacientes.component';
   
 const routes: Routes = [
   { path: 'login', component: LoginComponent},
 
-  { path: '', redirectTo: '/login', pathMatch: 'full'},
-  { path: '**', redirectTo: '/login'},
   { path: 'generarMedico', component: GenerarMedicoComponent },
   { path: 'generarMedico/:id', component: GenerarMedicoComponent },
   { path: 'listMedicos', component: ListMedicosComponent },
@@ -20,6 +19,7 @@ const routes: Routes = [
   { path: 'consultorios', component: ConsultoriosComponent },
   { path: 'copagos', component: CopagosComponent },
   { path: 'articulos', component: ArticulosComponent },//temporal quizas
+  { path: 'pacientes', component: PacientesComponent}
 ];
 
 @NgModule({

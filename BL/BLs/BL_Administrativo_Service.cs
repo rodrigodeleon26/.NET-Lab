@@ -258,6 +258,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro)
+        {
+            throw new NotImplementedException();
+        }
+
         public Paciente getPacienteByDNI(string dni)
         {
             return dal.GetPacienteByDNI(dni);
@@ -349,6 +354,16 @@ namespace BL.BLs
         }
 
         public void updateSeguroMedico(SeguroMedico seguroMedico)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool cedulaDuplicada(string cedula)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool emailDuplicado(string email)
         {
             throw new NotImplementedException();
         }

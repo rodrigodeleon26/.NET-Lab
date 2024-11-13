@@ -1,0 +1,300 @@
+<div class="container mx-auto px-4 mt-4 md:mt-8 md:p-0">
+    <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white text-lg">Cargando...</p>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden relative">
+
+            <div class="hidden sm:flex justify-between">
+                <div class="flex justify-start space-x-5 p-5 w-full">
+                    <div class="flex bg-zinc-300 p-2 rounded space-x-1 w-fit">
+                        <input [(ngModel)]="busqueda" type="text" id="busqueda" class="border rounded-md pl-1"
+                            placeholder="Buscar...">
+                        <button
+                            class="bg-gray-claro hover:bg-gray-intermedio rounded-full size-8 flex justify-center items-center"
+                            (click)="buscar()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                        <button *ngIf="this.busqueda != ''"
+                            class="bg-red-300 hover:bg-red-400 rounded-full size-8 flex justify-center items-center"
+                            (click)="LimpiarBusqueda()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <h1 class="text-center text-xl mt-5 w-full">Pacientes</h1>
+
+                <div class="flex justify-end space-x-5 p-5 w-full">
+                    <button (click)="abrirModalCrear()"
+                        class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:hidden justify-between">
+                <h1 class="text-center text-xl my-5 w-full">Pacientes</h1>
+                <div class="flex justify-end w-8 h-8 absolute right-5 top-5">
+                    <button (click)="abrirModalCrear()"
+                        class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex justify-start mx-5">
+                    <div class="flex bg-zinc-300 p-2 rounded space-x-1 w-full justify-between">
+                        <input [(ngModel)]="busqueda" type="text" id="nombres" class="border rounded-md pl-1"
+                            placeholder="Buscar...">
+                        <button
+                            class="bg-gray-claro hover:bg-gray-intermedio rounded-full size-8 w-full flex justify-center items-center"
+                            (click)="buscar()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                        <button *ngIf="this.busqueda != ''"
+                            class="bg-red-300 hover:bg-red-400 rounded-full size-8 w-full flex justify-center items-center"
+                            (click)="LimpiarBusqueda()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col p-5 space-y-4">
+                <div class="border-gray-intermedio bg-gray-claro rounded w-full shadow-md">
+                    <table class="table-auto w-full border-collapse border border-gray-oscuro">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-oscuro p-2">Nombre</th>
+                                <th class="border border-gray-oscuro p-2">Documento</th>
+                                <th class="border border-gray-oscuro p-2 hidden md:table-cell">Tel</th>
+                                <th class="border border-gray-oscuro p-2 hidden md:table-cell">Correo</th>
+                                <th class="border border-gray-oscuro p-2">Activo</th>
+                                <th class="border border-gray-oscuro p-2">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let paciente of pacientes" class="hover:bg-gray-200">
+                                <td class="border border-gray-oscuro p-2 text-wrap">
+                                    {{ paciente.nombres }} {{ ' ' }} {{ paciente.apellidos }}
+                                </td>
+                                <td class="border border-gray-oscuro p-2">
+                                    {{ paciente.documento }}
+                                </td>
+                                <td class="border border-gray-oscuro p-2 hidden md:table-cell">
+                                    {{ paciente.telefono }}
+                                </td>
+                                <td class="border border-gray-oscuro p-2 hidden md:table-cell">
+                                    {{ paciente.email }}
+                                </td>
+                                <td class="border border-gray-oscuro p-2 text-center">
+                                    <div [ngClass]="{'bg-green-500 text-white': paciente.activo, 'bg-red-500 text-white': !paciente.activo}"
+                                        class="rounded-full w-6 h-6 flex items-center justify-center mx-auto">
+                                        <span *ngIf="paciente.activo">✔</span>
+                                        <span *ngIf="!paciente.activo">✖</span>
+                                    </div>
+                                </td>
+                                <td
+                                    class="border border-gray-oscuro p-2 flex flex-col sm:flex-row justify-around items-center">
+                                    <button (click)="abrirModalVer(paciente)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                    </button>
+                                    <button (click)="abrirModalActualizar(paciente)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                                            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                                        </svg>
+                                    </button>
+                                    <button (click)="abrirModalConfirmarBorrado(paciente)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                            </path>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- PAGINADO -->
+                <div class="flex justify-center">
+                    <div class="flex">
+                        <button
+                            class="w-8 bg-zinc-300 hover:bg-zinc-400 border-2 border-gray-intermedio rounded-s-full flex justify-center items-center"
+                            (click)="cambiarPagina(paginaActual-1)">
+                            <img src="images/keyboard_double_arrow_left.svg" alt="Pagina Anterior" class="w-full">
+                        </button>
+                        <div
+                            class="w-8 bg-zinc-300 border-2 border-gray-intermedio flex justify-center items-center font-bold border-x-0">
+                            {{paginaActual}}
+                        </div>
+                        <button
+                            class="w-8 bg-zinc-300 hover:bg-zinc-400 border-2 border-gray-intermedio rounded-e-full flex justify-center items-center"
+                            (click)="cambiarPagina(paginaActual+1)">
+                            <img src="images/keyboard_double_arrow_right.svg" alt="Pagina Anterior" class="w-full">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/actualizar/ver paciente -->
+<div *ngIf="isModalVisibleCrear || isModalVisibleActualizar || isModalVisibleVer"
+    class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out overflow-y-auto">
+    <div
+        class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 transform transition-transform duration-300 ease-in-out my-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center bg-blue-500 text-white p-4 rounded-t-lg border-b border-gray-300">
+            <h2 class="text-xl">{{ modalTitle }}</h2>
+            <button (click)="isModalVisibleCrear = false; isModalVisibleActualizar = false; isModalVisibleVer = false" class="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <!-- Body -->
+        <div class="p-4 border-b border-gray-300">
+            <form [formGroup]="pacienteForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="nombres" class="block text-gray-700">Nombres</label>
+                        <input formControlName="nombres" id="nombres" type="text" class="border rounded-md w-full p-2" required>
+                        <div *ngIf="pacienteForm.get('nombres')?.invalid && (pacienteForm.get('nombres')?.dirty || pacienteForm.get('nombres')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('nombres')?.errors?.['required']">El nombre es requerido.</small>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="apellidos" class="block text-gray-700">Apellidos</label>
+                        <input formControlName="apellidos" id="apellidos" type="text" class="border rounded-md w-full p-2" required>
+                        <div *ngIf="pacienteForm.get('apellidos')?.invalid && (pacienteForm.get('apellidos')?.dirty || pacienteForm.get('apellidos')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('apellidos')?.errors?.['required']">El apellido es requerido.</small>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="documento" class="block text-gray-700">Documento</label>
+                        <input formControlName="documento" id="documento" type="text" class="border rounded-md w-full p-2" required>
+                        <div *ngIf="pacienteForm.get('documento')?.invalid && (pacienteForm.get('documento')?.dirty || pacienteForm.get('documento')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('documento')?.errors?.['required']">El documento es requerido.</small>
+                            <small *ngIf="pacienteForm.get('documento')?.errors?.['pattern']">El documento debe tener 8 dígitos numéricos.</small>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="fechaDeNacimiento" class="block text-gray-700">Fecha de Nacimiento</label>
+                        <input formControlName="fechaDeNacimiento" id="fechaDeNacimiento" type="date" class="border rounded-md w-full p-2">
+                        <div *ngIf="pacienteForm.get('fechaDeNacimiento')?.invalid && (pacienteForm.get('fechaDeNacimiento')?.dirty || pacienteForm.get('fechaDeNacimiento')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('fechaDeNacimiento')?.errors?.['required']">La fecha de nacimiento es requerida.</small>
+                            <small *ngIf="pacienteForm.get('fechaDeNacimiento')?.errors?.['fechaInvalida']">La fecha de nacimiento debe ser menor a hoy y mayor a 1920.</small>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="direccion" class="block text-gray-700">Dirección</label>
+                        <input formControlName="direccion" id="direccion" type="text" class="border rounded-md w-full p-2">
+                        <div *ngIf="pacienteForm.get('direccion')?.invalid && (pacienteForm.get('direccion')?.dirty || pacienteForm.get('direccion')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('direccion')?.errors?.['required']">La dirección es requerida.</small>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="telefono" class="block text-gray-700">Teléfono</label>
+                        <input formControlName="telefono" id="telefono" type="text" class="border rounded-md w-full p-2">
+                        <div *ngIf="pacienteForm.get('telefono')?.invalid && (pacienteForm.get('telefono')?.dirty || pacienteForm.get('telefono')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('telefono')?.errors?.['pattern']">El teléfono debe tener 8 o 9 dígitos.</small>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700">Email</label>
+                        <input formControlName="email" id="email" type="email" class="border rounded-md w-full p-2">
+                        <div *ngIf="pacienteForm.get('email')?.invalid && (pacienteForm.get('email')?.dirty || pacienteForm.get('email')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('email')?.errors?.['email']">El email no es válido.</small>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="seguroMedico" class="block text-gray-700">Seguro Médico</label>
+                        <select formControlName="seguroMedicoId" id="seguroMedico" class="border rounded-md w-full p-2" required>
+                            <option value="" disabled selected>Seleccione un seguro médico</option>
+                            <option *ngFor="let seguro of segurosMedicos" [value]="seguro.id">{{ seguro.nombre }}</option>
+                        </select>
+                        <div *ngIf="pacienteForm.get('seguroMedicoId')?.invalid && (pacienteForm.get('seguroMedicoId')?.dirty || pacienteForm.get('seguroMedicoId')?.touched)" class="text-red-600">
+                            <small *ngIf="pacienteForm.get('seguroMedicoId')?.errors?.['required']">El seguro médico es requerido.</small>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Footer -->
+        <div class="border-t border-gray-300 p-4 flex justify-end space-x-4">
+            <button type="button" (click)="isModalVisibleCrear = false; isModalVisibleActualizar = false; isModalVisibleVer = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
+            <button *ngIf="!isViewMode" type="submit" (click)="onSubmit()" class="bg-blue-intermedio hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmar borrado -->
+<div *ngIf="isModalVisibleConfirmarBorrado" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out overflow-y-auto">
+    <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 transform transition-transform duration-300 ease-in-out my-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center bg-red-500 text-white p-4 rounded-t-lg border-b border-gray-300">
+            <h2 class="text-xl">Confirmar Borrado</h2>
+            <button (click)="isModalVisibleConfirmarBorrado = false" class="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <!-- Body -->
+        <div class="p-4">
+            <p>¿Estás seguro de que deseas borrar al paciente <strong>{{ pacienteParaBorrar?.nombres }} {{ pacienteParaBorrar?.apellidos }}</strong>, con cédula <strong>{{ pacienteParaBorrar?.documento }}</strong>?</p>
+        </div>
+        <!-- Footer -->
+        <div class="border-t border-gray-300 p-4 flex justify-end space-x-4">
+            <button type="button" (click)="isModalVisibleConfirmarBorrado = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
+            <button type="button" (click)="confirmarBorrado()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Borrar</button>
+        </div>
+    </div>
+</div>

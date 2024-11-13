@@ -100,8 +100,6 @@ export class ListMedicosComponent implements OnInit{
                 console.error(error);
               }
             });
-          
-
         },
         error: (error) => {
           console.error(error);

@@ -14,4 +14,17 @@ export class PacientesService {
     console.log('Obteniendo pacientes');
     return this.http.get<any[]>(this.apiUrl);
   }
+
+  getPacientesFiltradosPaginados(pag: number, filtro: string): Observable<any[]> {
+    const url = `${this.apiUrl}/filtradosPaginados?pag=${pag}&filtro=${filtro}`;
+    return this.http.get<any[]>(url);
+  }
+
+  getPaciente(id: number): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  addPaciente(paciente: any): Observable<any[]> {
+    return this.http.post<any>(this.apiUrl, paciente);
+  }
 }

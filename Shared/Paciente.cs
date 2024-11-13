@@ -18,6 +18,8 @@
 
         public string? Email { get; set; } = null;
 
+        public bool? Activo { get; set; } = false;
+
         public List<CitaMedica>? CitasMedicas { get; set; } = new List<CitaMedica>();
 
         public List<Factura>? Facturas { get; set; } = new List<Factura>();

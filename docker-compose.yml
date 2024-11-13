@@ -1,55 +1,55 @@
 services:
-  pacientewebapi:
-    image: ${DOCKER_REGISTRY-}pacientewebapi
-    build:
-      context: .
-      dockerfile: PacienteWebApi/Dockerfile
-    ports:
-      - 5000:8080
-      - 5001:8081
-    container_name: PacienteWebApi_container
-    depends_on:
-      sqlserver:
-        condition: service_healthy
+  # pacientewebapi:
+  #   image: ${DOCKER_REGISTRY-}pacientewebapi
+  #   build:
+  #     context: .
+  #     dockerfile: PacienteWebApi/Dockerfile
+  #   ports:
+  #     - 5000:8080
+  #     - 5001:8081
+  #   container_name: PacienteWebApi_container
+  #   depends_on:
+  #     sqlserver:
+  #       condition: service_healthy
 
-  citasmedicaswebapi:
-    image: ${DOCKER_REGISTRY-}citasmedicaswebapi
-    build:
-      context: .
-      dockerfile: CitaMedicaWebApi/Dockerfile
-    ports:
-      - 5002:8080
-      - 5003:8081
-    container_name: CitasMedicasWebApi_container
-    depends_on:
-      sqlserver:
-        condition: service_healthy
+  # citasmedicaswebapi:
+  #   image: ${DOCKER_REGISTRY-}citasmedicaswebapi
+  #   build:
+  #     context: .
+  #     dockerfile: CitaMedicaWebApi/Dockerfile
+  #   ports:
+  #     - 5002:8080
+  #     - 5003:8081
+  #   container_name: CitasMedicasWebApi_container
+  #   depends_on:
+  #     sqlserver:
+  #       condition: service_healthy
 
-  historiaclinicawebapi:
-    image: ${DOCKER_REGISTRY-}historiaclinicawebapi
-    build:
-      context: .
-      dockerfile: HistoriaClinicaWebApi/Dockerfile
-    ports:
-      - 5004:8080
-      - 5005:8081
-    container_name: HistoriaClinicaWebApi_container
-    depends_on:
-      sqlserver:
-        condition: service_healthy
+  # historiaclinicawebapi:
+  #   image: ${DOCKER_REGISTRY-}historiaclinicawebapi
+  #   build:
+  #     context: .
+  #     dockerfile: HistoriaClinicaWebApi/Dockerfile
+  #   ports:
+  #     - 5004:8080
+  #     - 5005:8081
+  #   container_name: HistoriaClinicaWebApi_container
+  #   depends_on:
+  #     sqlserver:
+  #       condition: service_healthy
 
-  authwebapi:
-    image: ${DOCKER_REGISTRY-}authwebapi
-    build:
-      context: .
-      dockerfile: AuthWebApi/Dockerfile
-    ports:
-      - 5006:8080
-      - 5007:8081
-    container_name: AuthWebApi_container
-    depends_on:
-      sqlserver:
-        condition: service_healthy
+  # authwebapi:
+  #   image: ${DOCKER_REGISTRY-}authwebapi
+  #   build:
+  #     context: .
+  #     dockerfile: AuthWebApi/Dockerfile
+  #   ports:
+  #     - 5006:8080
+  #     - 5007:8081
+  #   container_name: AuthWebApi_container
+  #   depends_on:
+  #     sqlserver:
+  #       condition: service_healthy
 
   administrativowebapi:
     image: ${DOCKER_REGISTRY-}administrativowebapi
@@ -90,9 +90,9 @@ services:
       - ./ssl/server.key:/etc/nginx/certs/server.key
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - citasmedicaswebapi
-      - pacientewebapi
-      - historiaclinicawebapi
+      # - citasmedicaswebapi
+      # - pacientewebapi
+      # - historiaclinicawebapi
       - administrativowebapi
 
   frontenda:
@@ -107,44 +107,44 @@ services:
       - ./frontAdmin/ssl/server.key:/etc/nginx/certs/server.key
       - ./frontAdmin/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - pacientewebapi
-      - citasmedicaswebapi
-      - historiaclinicawebapi
+      # - pacientewebapi
+      # - citasmedicaswebapi
+      # - historiaclinicawebapi
       - administrativowebapi
   
-  frontendm:
-    image: ${DOCKER_REGISTRY-}frontendm
-    build:
-      context: ./frontMedico
-      dockerfile: Dockerfile  
-    ports:
-      - "5011:444"
-    volumes:
-      - ./frontMedico/ssl/server.crt:/etc/nginx/certs/server.crt
-      - ./frontMedico/ssl/server.key:/etc/nginx/certs/server.key
-      - ./frontMedico/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - pacientewebapi
-      - citasmedicaswebapi
-      - historiaclinicawebapi
-      - administrativowebapi
+  # frontendm:
+  #   image: ${DOCKER_REGISTRY-}frontendm
+  #   build:
+  #     context: ./frontMedico
+  #     dockerfile: Dockerfile  
+  #   ports:
+  #     - "5011:444"
+  #   volumes:
+  #     - ./frontMedico/ssl/server.crt:/etc/nginx/certs/server.crt
+  #     - ./frontMedico/ssl/server.key:/etc/nginx/certs/server.key
+  #     - ./frontMedico/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+  #   depends_on:
+  #     - pacientewebapi
+  #     - citasmedicaswebapi
+  #     - historiaclinicawebapi
+  #     - administrativowebapi
   
-  frontendc:
-    image: ${DOCKER_REGISTRY-}frontendc
-    build:
-      context: ./frontCliente
-      dockerfile: Dockerfile  
-    ports:
-      - "5012:445"
-    volumes:
-      - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
-      - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
-      - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - pacientewebapi
-      - citasmedicaswebapi
-      - historiaclinicawebapi
-      - administrativowebapi
+  # frontendc:
+  #   image: ${DOCKER_REGISTRY-}frontendc
+  #   build:
+  #     context: ./frontCliente
+  #     dockerfile: Dockerfile  
+  #   ports:
+  #     - "5012:445"
+  #   volumes:
+  #     - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
+  #     - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
+  #     - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+  #   depends_on:
+  #     - pacientewebapi
+  #     - citasmedicaswebapi
+  #     - historiaclinicawebapi
+  #     - administrativowebapi
 
 volumes:
   sqlserver-data:

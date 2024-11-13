@@ -17,9 +17,12 @@ namespace BL.IBLs
 		void updatePaciente(Paciente paciente);
 		void deletePaciente(long id);
 		void ContratarSeguroMedico(long idPaciente, long idSeguroMedico);
+		List <Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro);
+		public bool emailDuplicado(string email);
+		public bool cedulaDuplicada(string cedula);
 
-		// Seguros Medicos
-		List<SeguroMedico> getSegurosMedicos();
+        // Seguros Medicos
+        List<SeguroMedico> getSegurosMedicos();
 		SeguroMedico getSeguroMedicoById(long id);
 		void addSeguroMedico(SeguroMedico seguroMedico);
 		void updateSeguroMedico(SeguroMedico seguroMedico);

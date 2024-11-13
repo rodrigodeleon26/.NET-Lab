@@ -56,12 +56,27 @@ namespace BL.BLs
 			dal.UpdatePaciente(paciente);
 		}
 
-		#endregion
+		public List<Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro)
+        {
+            return dal.GetPacientesFiltradosPaginados(numPagina, filtro);
+        }
 
-		//Seguros Medicos
-		#region SEGUROS MEDICOS
+		public bool emailDuplicado(string email)
+        {
+            return dal.emailDuplicado(email);
+        }
 
-		public void addSeguroMedico(SeguroMedico seguroMedico)
+        public bool cedulaDuplicada(string cedula)
+        {
+            return dal.cedulaDuplicada(cedula);
+        }
+
+        #endregion
+
+        //Seguros Medicos
+        #region SEGUROS MEDICOS
+
+        public void addSeguroMedico(SeguroMedico seguroMedico)
 		{
 			dal.AddSeguroMedico(seguroMedico);
 		}

@@ -19,6 +19,9 @@ namespace DAL.IDALs
 		public void UpdatePaciente(Paciente paciente);
 		public void DeletePaciente(long id);
 		public bool nuevaCedulaOcupada(string nuevaCi, long pacienteId);
+		public List<Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro);
+        public bool cedulaDuplicada(string cedula);
+        public bool emailDuplicado(string email);
 
         // Seguros Medicos
         public List<SeguroMedico> GetSegurosMedicos();

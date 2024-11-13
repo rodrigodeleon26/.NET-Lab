@@ -16,18 +16,18 @@ namespace DAL.DALs
 	public class DAL_Administrativo_EF : IDAL_Administrativo
 	{
 
-        private readonly ILogger<DAL_Administrativo_EF> _logger;
+		private readonly ILogger<DAL_Administrativo_EF> _logger;
 
-        public DAL_Administrativo_EF(ILogger<DAL_Administrativo_EF> logger)
-        {
-            _logger = logger;
-        }
-        /**********************************************************/
-        /**                  PACIENTES                           **/
-        /**********************************************************/
-        #region FUNCTIONES PACIENTES
+		public DAL_Administrativo_EF(ILogger<DAL_Administrativo_EF> logger)
+		{
+			_logger = logger;
+		}
+		/**********************************************************/
+		/**                  PACIENTES                           **/
+		/**********************************************************/
+		#region FUNCTIONES PACIENTES
 
-        public List<Paciente> GetPacientes()
+		public List<Paciente> GetPacientes()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -118,43 +118,43 @@ namespace DAL.DALs
 		}
 
 		public Paciente GetPacienteByDNI(string dni)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var paciente = _dbContext.Pacientes
-                    .Include(p => p.Contrato)
-                    .ThenInclude(c => c.SeguroMedico)
-                    .FirstOrDefault(p => p.Documento == dni);
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var paciente = _dbContext.Pacientes
+					.Include(p => p.Contrato)
+					.ThenInclude(c => c.SeguroMedico)
+					.FirstOrDefault(p => p.Documento == dni);
 
-                if (paciente != null)
-                {
-                    return new Paciente
-                    {
-                        Id = paciente.Id,
-                        Nombres = paciente.Nombres,
-                        Apellidos = paciente.Apellidos,
-                        Documento = paciente.Documento,
-                        FechaDeNacimiento = paciente.FechaDeNacimiento,
-                        Direccion = paciente.Direccion,
-                        Telefono = paciente.Telefono,
-                        Email = paciente.Email,
-                        Contrato = paciente.Contrato != null ? new Contrato
-                        {
-                            Id = paciente.Contrato.Id,
-                            FechaInicio = paciente.Contrato.FechaInicio,
-                            Activo = paciente.Contrato.Activo,
-                            SeguroMedico = new SeguroMedico
-                            {
-                                Id = paciente.Contrato.SeguroMedico.Id,
-                                Nombre = paciente.Contrato.SeguroMedico.Nombre,
-                                Descripcion = paciente.Contrato.SeguroMedico.Descripcion
-                            }
-                        } : null
-                    };
-                }
-                return null;
-            }
-        }
+				if (paciente != null)
+				{
+					return new Paciente
+					{
+						Id = paciente.Id,
+						Nombres = paciente.Nombres,
+						Apellidos = paciente.Apellidos,
+						Documento = paciente.Documento,
+						FechaDeNacimiento = paciente.FechaDeNacimiento,
+						Direccion = paciente.Direccion,
+						Telefono = paciente.Telefono,
+						Email = paciente.Email,
+						Contrato = paciente.Contrato != null ? new Contrato
+						{
+							Id = paciente.Contrato.Id,
+							FechaInicio = paciente.Contrato.FechaInicio,
+							Activo = paciente.Contrato.Activo,
+							SeguroMedico = new SeguroMedico
+							{
+								Id = paciente.Contrato.SeguroMedico.Id,
+								Nombre = paciente.Contrato.SeguroMedico.Nombre,
+								Descripcion = paciente.Contrato.SeguroMedico.Descripcion
+							}
+						} : null
+					};
+				}
+				return null;
+			}
+		}
 
 		public void UpdatePaciente(Paciente paciente)
 		{
@@ -164,10 +164,10 @@ namespace DAL.DALs
 
 				if (existingPaciente != null)
 				{
-					if(nuevaCedulaOcupada(paciente.Documento, paciente.Id))
-                    {
-                        throw new Exception("Ya existe un paciente con la cedula ingresada");
-                    }
+					if (nuevaCedulaOcupada(paciente.Documento, paciente.Id))
+					{
+						throw new Exception("Ya existe un paciente con la cedula ingresada");
+					}
 
 					existingPaciente.Nombres = paciente.Nombres;
 					existingPaciente.Apellidos = paciente.Apellidos;
@@ -211,22 +211,66 @@ namespace DAL.DALs
 		}
 
 		public bool nuevaCedulaOcupada(string nuevaCi, long pacienteId)
-        {
+		{
 			using (var _dbContext = new DBContext())
-            {
-                return _dbContext.Pacientes.Any(p => p.Documento == nuevaCi && p.Id != pacienteId);
-            }
+			{
+				return _dbContext.Pacientes.Any(p => p.Documento == nuevaCi && p.Id != pacienteId);
+			}
 		}
 
-		#endregion
+		public List<Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var query = _dbContext.Pacientes.AsQueryable();
+
+				if (!string.IsNullOrEmpty(filtro))
+				{
+					query = query.Where(p => p.Nombres.Contains(filtro) || p.Apellidos.Contains(filtro) || p.Documento.Contains(filtro));
+				}
+
+				return query
+					.Skip((numPagina - 1) * 5)
+					.Take(5)
+					.Select(p => new Paciente
+					{
+						Id = p.Id,
+						Nombres = p.Nombres,
+						Apellidos = p.Apellidos,
+						Documento = p.Documento,
+						Direccion = p.Direccion,
+						Telefono = p.Telefono,
+						Email = p.Email,
+						Activo = p.Activo
+					}).ToList();
+			}
+		}
+
+		public bool emailDuplicado(string email)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Pacientes.Any(p => p.Email == email);
+			}
+		}
+
+		public bool cedulaDuplicada(string cedula)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Pacientes.Any(p => p.Documento == cedula);
+			}
+		}
+
+            #endregion
 
 
-		/**********************************************************/
-		/**                    Seguros                           **/
-		/**********************************************************/
-		#region FUNCTIONES SEGUROS
+            /**********************************************************/
+            /**                    Seguros                           **/
+            /**********************************************************/
+            #region FUNCTIONES SEGUROS
 
-		public List<SeguroMedico> GetSegurosMedicos()
+            public List<SeguroMedico> GetSegurosMedicos()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -465,7 +509,7 @@ namespace DAL.DALs
 				}
 			}
 		}
-
+		
 		public void DeleteContrato(long id)
 		{
 			using (var _dbContext = new DBContext())
