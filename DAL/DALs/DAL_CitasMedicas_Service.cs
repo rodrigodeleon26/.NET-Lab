@@ -1,4 +1,5 @@
 ﻿using DAL.IDALs;
+using Microsoft.EntityFrameworkCore;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -22,13 +23,6 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        Paciente = new Paciente
-                        {
-                            Id = p.Paciente.Id,
-                            Nombres = p.Paciente.Nombres,
-                            Apellidos = p.Paciente.Apellidos,
-                            Documento = p.Paciente.Documento
-                        },
                         ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
@@ -86,26 +80,43 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
-                var query = _dbContext.CitasMedicas
-                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
+                Console.WriteLine("LLEGUE");
+                var citasFiltro = _dbContext.CitasMedicas
+                    .Include(c => c.Calendario)
+                    .ThenInclude(cal => cal.Especialidad)
+                    .Include(c => c.Calendario)
+                    .ThenInclude(cal => cal.Medico)
+                    .Where(c => c.Estado == "Completada"); 
 
-                Console.WriteLine("hola");
+                Console.WriteLine("LLEGUE2");
                 // Aplicar filtro de fechas si ambas fechas están presentes
                 if (fechaInicio.HasValue && fechaFin.HasValue)
                 {
-                    Console.WriteLine("entro");
-                    Console.WriteLine(fechaFin.Value);
-                    Console.WriteLine(fechaInicio.Value);
-                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
+                    citasFiltro = citasFiltro.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
                 }
-
+                Console.WriteLine("LLEGUE3");
                 if (especialidadesIds.Any())
                 {
-                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
+                    citasFiltro = citasFiltro.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
                 }
-
+                foreach (var cita in citasFiltro)
+                {
+                    Console.WriteLine("Cita Id:" + cita.CalendarioId);
+                    if (cita.Calendario != null)
+                    {
+                        Console.WriteLine("Calendario Id: " + cita.Calendario.Id);
+                    }
+                }
+                Console.WriteLine("LLEGUE4");
                 // Aplicar orden
-                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha);
+                citasFiltro = orden.ToLower() == "asc" ? citasFiltro.OrderBy(c => c.Fecha) : citasFiltro.OrderByDescending(c => c.Fecha);
+                Console.WriteLine("LLEGUE5");
+                var queryList = citasFiltro.ToList();
+                Console.WriteLine("LLEGUE6");
+                var query = queryList
+                    .Where(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
+                Console.WriteLine("LLEGUE7");
+                Console.WriteLine(query.Count());
 
                 return query
                     .Skip((pageNumber - 1) * pageSize)
@@ -116,9 +127,9 @@ namespace DAL.DALs
                         Fecha = c.Fecha,
                         Estado = c.Estado,
                         PacienteId = c.PacienteId,
-                        Calendario = new Calendario
+                        Calendario = c.Calendario != null ? new Calendario
                         {
-                            Medico = new Medico
+                            Medico = c.Calendario.Medico != null ? new Medico
                             {
                                 Id = c.Calendario.Medico.Id,
                                 Nombres = c.Calendario.Medico.Nombres,
@@ -126,17 +137,18 @@ namespace DAL.DALs
                                 Documento = c.Calendario.Medico.Documento,
                                 Email = c.Calendario.Medico.Email,
                                 Telefono = c.Calendario.Medico.Telefono
-                            },
-                            Especialidad = new Especialidad
+                            } : null,
+                            Especialidad = c.Calendario.Especialidad != null ? new Especialidad
                             {
                                 Id = c.Calendario.Especialidad.Id,
                                 Nombre = c.Calendario.Especialidad.Nombre,
                                 Descripcion = c.Calendario.Especialidad.Descripcion
-                            }
-                        },
+                            } : null
+                        } : null,
                         ConsultaMedicaId = c.ConsultaMedicaId
                     })
                     .ToList();
+
             }
         }
 
@@ -144,19 +156,27 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
-                var query = _dbContext.CitasMedicas
-                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
+                Console.WriteLine("LLEGUE5");
+
+                var citasFiltro = _dbContext.CitasMedicas
+                    .Where(c => c.Estado == "Completada");
 
                 // Aplicar filtro de rango de fechas solo si ambos valores están presentes
                 if (fechaInicio.HasValue && fechaFin.HasValue)
                 {
-                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
+                    citasFiltro = citasFiltro.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
                 }
 
                 if (especialidadesIds.Any())
                 {
-                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
+                    citasFiltro = citasFiltro.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
                 }
+                Console.WriteLine("LLEGUE6");
+
+                var queryList = citasFiltro.ToList();
+                Console.WriteLine("LLEGUE6");
+                var query = queryList
+                    .Where(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
 
                 // Contar los resultados después de aplicar los filtros
                 return query.Count();

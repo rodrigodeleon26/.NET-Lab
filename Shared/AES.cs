@@ -10,14 +10,20 @@ namespace Shared
     public class AES
     {
         // Clave y IV deben ser de longitud adecuada (16 bytes para AES-128, 32 bytes para AES-256, etc.)
-        private static readonly string key = "vamoPeñarol"; // 16 caracteres para AES-128 (128 bits)
-        private static readonly string iv = "teAmoLeo";  // 16 caracteres para AES-128 (128 bits)
+        private static readonly string key = "vamoPeñarolQuer"; // 16 caracteres para AES-128 (128 bits)
+        private static readonly string iv = "tAmoLeoFernandez";  // 16 caracteres para AES-128 (128 bits)
 
         // Función de encriptación
         public static string Encrypt(string plainText)
         {
             using (Aes aesAlg = Aes.Create())
             {
+                byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+                byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
+
+                Console.WriteLine($"Key Length: {keyBytes.Length}");
+                Console.WriteLine($"IV Length: {ivBytes.Length}");
+
                 aesAlg.Key = Encoding.UTF8.GetBytes(key); // Convierte la clave a bytes
                 aesAlg.IV = Encoding.UTF8.GetBytes(iv);   // Convierte el IV a bytes
 

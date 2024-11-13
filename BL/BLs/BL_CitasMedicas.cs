@@ -8,22 +8,66 @@ namespace BL.BLs
     public class BL_CitasMedicas : IBL_CitasMedicas
     {
         private readonly IDAL_CitasMedicas dal;
+        private readonly IDAL_Administrativo_Service dalAdmin;
 
-        public BL_CitasMedicas(IDAL_CitasMedicas dal)
+        public BL_CitasMedicas(
+            IDAL_CitasMedicas dal,
+            IDAL_Administrativo_Service dalAdmin)
         {
             this.dal = dal;
+            this.dalAdmin = dalAdmin;
         }
 
         // Obtener todas las citas médicas
-        public List<CitaMedica> getCitasMedicas()
+        public List<CitaMedicaDTO> getCitasMedicas()
         {
-            return dal.getCitasMedicas();
+            List<CitaMedica> listaCitas = dal.getCitasMedicas();
+            List<CitaMedicaDTO> listaCitasDTO = new List<CitaMedicaDTO>();
+            foreach (CitaMedica cita in listaCitas)
+            {
+                string pacienteDesId = AES.Decrypt(cita.PacienteId);
+                long pacienteId = long.Parse(pacienteDesId);
+                Paciente paciente = dalAdmin.GetPacienteById(pacienteId);
+                CitaMedicaDTO citaMedicaDTO = new CitaMedicaDTO
+                {
+                    Id = cita.Id,
+                    Fecha = cita.Fecha,
+                    Estado = cita.Estado,
+                    Calendario = cita.Calendario,
+                    CalendarioId = cita.CalendarioId,
+                    ConsultaMedicaId = cita.ConsultaMedicaId,
+                    PacienteId = cita.PacienteId,
+                    Paciente = paciente
+                };
+                listaCitasDTO.Add(citaMedicaDTO);
+            }
+            return listaCitasDTO;
         }
 
         // Citas medicas por especialidad
-        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
+        public List<CitaMedicaDTO> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
         {
-            return dal.getCitasMedicasPorEspecialidad(nombreEspecialidad, numPagina, fecha);
+            List<CitaMedica> listaCitas = dal.getCitasMedicasPorEspecialidad(nombreEspecialidad, numPagina, fecha);
+            List<CitaMedicaDTO> listaCitasDTO = new List<CitaMedicaDTO>();
+            foreach (CitaMedica cita in listaCitas)
+            {
+                string pacienteDesId = AES.Decrypt(cita.PacienteId);
+                long pacienteId = long.Parse(pacienteDesId);
+                Paciente paciente = dalAdmin.GetPacienteById(pacienteId);
+                CitaMedicaDTO citaMedicaDTO = new CitaMedicaDTO
+                {
+                    Id = cita.Id,
+                    Fecha = cita.Fecha,
+                    Estado = cita.Estado,
+                    Calendario = cita.Calendario,
+                    CalendarioId = cita.CalendarioId,
+                    ConsultaMedicaId = cita.ConsultaMedicaId,
+                    PacienteId = cita.PacienteId,
+                    Paciente = paciente
+                };
+                listaCitasDTO.Add(citaMedicaDTO);
+            }
+            return listaCitasDTO;
         }
 
         public bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha)
@@ -32,9 +76,24 @@ namespace BL.BLs
         }
 
         // Obtener una cita médica por ID
-        public CitaMedica getCitaMedicaById(long id)
+        public CitaMedicaDTO getCitaMedicaById(long id)
         {
-            return dal.getCitaMedicaById(id);
+            CitaMedica cita = dal.getCitaMedicaById(id);
+            string pacienteDesId = AES.Decrypt(cita.PacienteId);
+            long pacienteId = long.Parse(pacienteDesId);
+            Paciente paciente = dalAdmin.GetPacienteById(pacienteId);
+            CitaMedicaDTO citaMedicaDTO = new CitaMedicaDTO
+            {
+                Id = cita.Id,
+                Fecha = cita.Fecha,
+                Estado = cita.Estado,
+                Calendario = cita.Calendario,
+                CalendarioId = cita.CalendarioId,
+                ConsultaMedicaId = cita.ConsultaMedicaId,
+                PacienteId = cita.PacienteId,
+                Paciente = paciente
+            };
+            return citaMedicaDTO;
         }
 
         // Crear una nueva cita médica
@@ -44,7 +103,7 @@ namespace BL.BLs
         }
 
         // Actualizar una cita médica existente
-        public void updateCitaMedica(CitaMedica citaActualizada)
+        public void updateCitaMedica(CitaMedicaDTO citaActualizada)
         {
             dal.updateCitaMedica(citaActualizada);
         }
@@ -66,3 +125,5 @@ namespace BL.BLs
         }
     }
 }
+
+

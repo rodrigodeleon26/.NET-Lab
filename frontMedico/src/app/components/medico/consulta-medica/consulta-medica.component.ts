@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-consulta-medica',
@@ -50,7 +51,8 @@ export class ConsultaMedicaComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private toastr: ToastrService, 
-    private router: Router
+    private router: Router,
+    private location: Location
   ) { 
     this.consultaMedicaForm = this.fb.group({
       id: [''],
@@ -217,7 +219,13 @@ export class ConsultaMedicaComponent implements OnInit {
         this.consultaMedicaForm.patchValue(this.consultaMedica);
         this.consultaMeciaDatos = true;
         this.modalGuardarConsultaMedica = false;
-        window.close();
+        const previousUrl = localStorage.getItem('previousUrl');
+        if (previousUrl) {
+          localStorage.removeItem('previousUrl');
+          this.router.navigateByUrl(previousUrl);
+        } else {
+          this.router.navigate(['/elegir-especialidad']); // Ruta por defecto si no hay URL guardada
+        }
       },
       error => {
         this.loading = false;
@@ -267,7 +275,13 @@ export class ConsultaMedicaComponent implements OnInit {
     this.consultaMedicaService.eliminarConsultaMedica(this.consultaMedica.id).subscribe(
       response => {
         this.loading = false;
-        window.close();
+        const previousUrl = localStorage.getItem('previousUrl');
+        if (previousUrl) {
+          localStorage.removeItem('previousUrl');
+          this.router.navigateByUrl(previousUrl);
+        } else {
+          this.router.navigate(['/elegir-especialidad']); // Ruta por defecto si no hay URL guardada
+        }
       },
       error => {
         this.loading = false;

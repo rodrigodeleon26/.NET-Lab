@@ -32,6 +32,7 @@ try
 
     // DALs
     builder.Services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_EF>();
+    builder.Services.AddTransient<IDAL_Administrativo_Service, DAL_Administrativo_Service>();
 
     // BLs
     builder.Services.AddTransient<IBL_CitasMedicas, BL_CitasMedicas>();
@@ -50,7 +51,7 @@ try
     //app.UseHttpsRedirection();
 
     app.UseCors("AllowSpecificOrigin");
-    
+
     app.UseAuthorization();
 
     app.MapControllers();

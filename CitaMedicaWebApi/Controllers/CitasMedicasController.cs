@@ -101,7 +101,7 @@ namespace PacienteWebApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] CitaMedica citaActualizada)
+        public IActionResult Put(int id, [FromBody] CitaMedicaDTO citaActualizada)
         {
             if (citaActualizada == null)
             {

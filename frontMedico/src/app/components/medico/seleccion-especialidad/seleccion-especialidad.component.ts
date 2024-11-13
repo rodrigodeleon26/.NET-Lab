@@ -41,6 +41,6 @@ export class SeleccionEspecialidadComponent {
     const fechaHoy = `${year}-${month}-${day}`; // Formato YYYY-MM-DD
   
     // Abre la URL en una nueva ventana con la especialidad y la fecha de hoy
-    window.open(`/medico/cita-medica?especialidad=${especialidad}&fecha=${fechaHoy}`, '_blank');
+    window.location.href = `/medico/cita-medica?especialidad=${especialidad}&fecha=${fechaHoy}`;
   }
 }

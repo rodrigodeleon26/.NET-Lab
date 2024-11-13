@@ -33,8 +33,6 @@ namespace DAL.Models
         [MaxLength(100)]
         public string? Email { get; set; } = null;
 
-        public virtual ICollection<CitasMedicas>? CitasMedicas { get; set; } = new List<CitasMedicas>(); // Usar virtual si necesitas Lazy Loading
-
         public virtual ICollection<Facturas>? Facturas { get; set; } = new List<Facturas>(); // Usar virtual si necesitas Lazy Loading
 
         public virtual ICollection<Notificaciones>? Notificaciones { get; set; } = new List<Notificaciones>(); // Usar virtual si necesitas Lazy Loading

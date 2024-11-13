@@ -57,7 +57,9 @@ namespace BL.BLs
             var citaMedica = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
             if (citaMedica == null) return null;
 
-            var paciente = dalAdminService.GetPacienteById(citaMedica.PacienteId ?? 0);
+            string pacienteDesId = AES.Decrypt(citaMedica.PacienteId);
+            long pacienteId = long.Parse(pacienteDesId);
+            var paciente = dalAdminService.GetPacienteById(pacienteId);
             if (paciente == null) return null;
 
             return new ConsultaMedicaCompletaDTO
@@ -131,7 +133,7 @@ namespace BL.BLs
             }
             return dal.addReceta(idConsultaMedica, receta);
         }
-        
+
         public ConsultaMedica updateReceta(int idConsultaMedica, Receta receta)
         {
             if (receta == null)
@@ -168,7 +170,9 @@ namespace BL.BLs
 
             var consultaMedica = getConsultaMedica(idConsultaMedica);
             var citaMedica = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
-            var paciente = dalAdminService.GetPacienteById(citaMedica.PacienteId ?? 0);
+            string pacienteDesId = AES.Decrypt(citaMedica.PacienteId ?? "");
+            long pacienteId = long.Parse(pacienteDesId);
+            var paciente = dalAdminService.GetPacienteById(pacienteId);
 
             // Generación de PDF y subida a S3
             PdfGenerator pdfGenerator = new PdfGenerator();

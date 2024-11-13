@@ -5,6 +5,7 @@ import { ConsultaMedicaService } from '../../../services/consulta-medica.service
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, lastValueFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-cita-medica',
@@ -29,7 +30,8 @@ export class CitaMedicaComponent implements OnInit {
     private ConsultaMedicaService: ConsultaMedicaService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private location: Location
   ) {
     // Inicializa el formulario de nueva cita
     this.nuevaCitaForm = this.fb.group({
@@ -160,9 +162,10 @@ export class CitaMedicaComponent implements OnInit {
         
         /* this.citasMedicasService.editarEstado(id, 'Completada').subscribe(() => {
         }); */
-        
+        const currentUrl = this.router.url;
+        localStorage.setItem('previousUrl', currentUrl);
         // Abre una nueva ventana con la ID de la consulta
-        window.open(`/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`, '_blank');
+        window.location.href = `/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`;
 
         this.loading = false;
         // Puedes actualizar el estado o mostrar una notificación de éxito aquí

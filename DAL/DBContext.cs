@@ -26,11 +26,11 @@ namespace DAL
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<CitasMedicas>()
-               .HasOne(c => c.Paciente)
-               .WithMany(p => p.CitasMedicas)
-               .HasForeignKey(c => c.PacienteId)
-               .IsRequired(false); // La relación con Paciente es opcional
+            //modelBuilder.Entity<CitasMedicas>()
+            //   .HasOne(c => c.Paciente)
+            //   .WithMany(p => p.CitasMedicas)
+            //   .HasForeignKey(c => c.PacienteId)
+            //   .IsRequired(false); // La relación con Paciente es opcional
 
             modelBuilder.Entity<CitasMedicas>()
                 .HasOne(c => c.ConsultaMedica)

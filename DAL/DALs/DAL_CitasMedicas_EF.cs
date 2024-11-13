@@ -27,13 +27,6 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        Paciente = new Paciente
-                        {
-                            Id = p.Paciente.Id,
-                            Nombres = p.Paciente.Nombres,
-                            Apellidos = p.Paciente.Apellidos,
-                            Documento = p.Paciente.Documento
-                        },
                         ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
@@ -97,13 +90,6 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        Paciente = new Paciente
-                        {
-                            Id = p.Paciente.Id,
-                            Nombres = p.Paciente.Nombres,
-                            Apellidos = p.Paciente.Apellidos,
-                            Documento = p.Paciente.Documento
-                        },
                         ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
@@ -163,13 +149,6 @@ namespace DAL.DALs
                         Fecha = p.Fecha,
                         Estado = p.Estado,
                         PacienteId = p.PacienteId,
-                        Paciente = new Paciente
-                        {
-                            Id = p.Paciente.Id,
-                            Nombres = p.Paciente.Nombres,
-                            Apellidos = p.Paciente.Apellidos,
-                            Documento = p.Paciente.Documento
-                        },
                         ConsultaMedicaId = p.ConsultaMedicaId,
                         Calendario = new Calendario
                         {
@@ -233,14 +212,16 @@ namespace DAL.DALs
                 // ((Luego tengo que cambiarlo para que solo revise la ESPECIALIDAD, ya que como está permite registrarse dos veces para por ejemplo
                 // el odontologo si son medicos distintos y eso no está bien))
                 var citaPacienteExistente = _dbContext.CitasMedicas
-                    .FirstOrDefault(c => c.PacienteId == pacienteId && c.CalendarioId == calendarioId && c.Fecha.Date == nuevaCita.Fecha.Date);
+                    .Where(c => c.CalendarioId == calendarioId && c.Fecha.Date == nuevaCita.Fecha.Date)
+                    .AsEnumerable() // Trae los datos a memoria
+                    .FirstOrDefault(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
 
                 if (citaPacienteExistente != null)
                 {
                     throw new Exception("El paciente ya tiene una cita en el mismo calendario y día.");
                 }
 
-                string pacienteIdEncriptado = AES.Encrypt(pacienteId.ToString());   
+                string pacienteIdEncriptado = AES.Encrypt(pacienteId.ToString());
 
                 var citaEntity = new CitasMedicas
                 {
@@ -259,7 +240,7 @@ namespace DAL.DALs
         }
 
         // Actualizar una cita médica existente
-        public void updateCitaMedica(CitaMedica citaActualizada)
+        public void updateCitaMedica(CitaMedicaDTO citaActualizada)
         {
             using (var _dbContext = new DBContext())
             {
@@ -268,8 +249,8 @@ namespace DAL.DALs
                 {
                     citaEntity.Fecha = citaActualizada.Fecha;
                     citaEntity.Estado = citaActualizada.Estado;
-                    citaEntity.PacienteId= citaActualizada.PacienteId;
-                    citaEntity.ConsultaMedicaId  = citaActualizada.ConsultaMedicaId;
+                    citaEntity.PacienteId = citaActualizada.PacienteId;
+                    citaEntity.ConsultaMedicaId = citaActualizada.ConsultaMedicaId;
 
                     _dbContext.CitasMedicas.Update(citaEntity);
                     _dbContext.SaveChanges();
@@ -297,15 +278,13 @@ namespace DAL.DALs
             using (var _dbContext = new DBContext())
             {
                 var query = _dbContext.CitasMedicas
-                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
+                     .Where(c => c.Estado == "Completada")
+                     .AsEnumerable()
+                     .Where(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
 
-                Console.WriteLine("hola");
                 // Aplicar filtro de fechas si ambas fechas están presentes
                 if (fechaInicio.HasValue && fechaFin.HasValue)
                 {
-                    Console.WriteLine("entro");
-                    Console.WriteLine(fechaFin.Value);
-                    Console.WriteLine(fechaInicio.Value);
                     query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
                 }
 
@@ -315,7 +294,7 @@ namespace DAL.DALs
                 }
 
                 // Aplicar orden
-                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha);
+                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha); ;
 
                 return query
                     .Skip((pageNumber - 1) * pageSize)
@@ -355,7 +334,9 @@ namespace DAL.DALs
             using (var _dbContext = new DBContext())
             {
                 var query = _dbContext.CitasMedicas
-                    .Where(c => c.PacienteId == pacienteId && c.Estado == "Completada");
+                     .Where(c => c.Estado == "Completada")
+                     .AsEnumerable()
+                     .Where(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
 
                 // Aplicar filtro de rango de fechas solo si ambos valores están presentes
                 if (fechaInicio.HasValue && fechaFin.HasValue)
