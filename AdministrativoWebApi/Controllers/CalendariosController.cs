@@ -120,8 +120,8 @@ namespace AdministrativoWebApi.Controllers
 		// POST api/<CalendariosController>/check
 		[HttpPost("check")]
 		public IActionResult CheckCalendario([FromBody] Calendario calendario)
-		{
-			
+		{		
+			return Ok(calendario);
 		}
 	}
 }

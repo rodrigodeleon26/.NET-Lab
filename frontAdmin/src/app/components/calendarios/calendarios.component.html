@@ -1,1 +1,43 @@
 <p>calendarios works!</p>
+<div>
+    <table class="min-w-full bg-white rounded-lg shadow-md">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Fecha</th>
+                <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Especialidad</th>
+                <th class="py-2 text-center font-semibold w-3/12 border-b border-gray-300">Descripción</th>
+                <th class="py-2 text-center font-semibold w-4/12 border-b border-gray-300">Diagnóstico</th>
+                <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="hover:bg-gray-100">
+                <td class="py-1 text-center w-1/12 border-b border-gray-300">{{ '12/12/12' }}</td>
+                <td class="py-1 text-center w-2/12 border-b border-gray-300">{{ 'DOCTOR' }}</td>
+                <td class="py-1 text-center w-3/12 border-b border-gray-300">
+                    <p class="truncate" title="{{ 'cita.consultaMedica.descripcion' }}">
+                        {{ 'cita.consultaMedica.descripcion' }}
+                    </p>
+                </td>
+                <td class="py-1 text-center w-4/12 border-b border-gray-300">
+                    <p class="truncate" title="{{ 'cita.consultaMedica.diagnostico' }}">
+                        {{ 'cita.consultaMedica.diagnostico' }}
+                    </p>
+                </td>
+                <td class="py-1 text-center w-2/12 border-b border-gray-300">
+                    <button  class="text-blue-intermedio font-medium hover:underline hover:text-blue-oscuro">Ver Recetas</button>
+                    <br>
+                    <button class="text-blue-intermedio font-medium hover:underline hover:text-blue-oscuro">Ver Estudios</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="py-2 text-center" colspan="5">
+                    <p class="text-center text-lg font-semibold">
+                        No se encontraron resultados con los filtros aplicados.
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
