@@ -27,4 +27,12 @@ export class PacientesService {
   addPaciente(paciente: any): Observable<any[]> {
     return this.http.post<any>(this.apiUrl, paciente);
   }
+
+  updatePaciente(id:number, paciente: any): Observable<any[]> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, paciente);
+  }
+
+  deletePaciente(id:number): Observable<any[]> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
 }

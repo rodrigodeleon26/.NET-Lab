@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared;
+using Shared.Services;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-public class AddPacienteRequest
+public class PacienteRequest
 {
     public string Nombres { get; set; }
     public string Apellidos { get; set; }
@@ -29,12 +31,14 @@ namespace AdministrativoWebApi.Controllers
         private readonly IBL_Administrativo _blAdministrativo;
         private readonly UserManager<AppUsers> _userManager;
         private readonly DBContext _db;
+        private readonly IEmailService emailService;
 
         public PacientesController(IBL_Administrativo blAdministrativo, UserManager<AppUsers> userManager, DBContext dbContext)
         {
             _blAdministrativo = blAdministrativo;
             _userManager = userManager;
             _db = dbContext;
+            emailService = new EmailService();
         }
 
         // GET: api/<PacienteController>
@@ -60,7 +64,7 @@ namespace AdministrativoWebApi.Controllers
 
         [ProducesResponseType(typeof(Paciente), 201)]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AddPacienteRequest pacienteRequest)
+        public async Task<IActionResult> Post([FromBody] PacienteRequest pacienteRequest)
         {
             try
             {
@@ -93,9 +97,6 @@ namespace AdministrativoWebApi.Controllers
                         description = "No se encontró el seguro médico"
                     });
                 }
-
-                // Formatear el documento
-                pacienteRequest.Documento = FormatearDocumento(pacienteRequest.Documento);
 
                 var paciente = new Paciente
                 {
@@ -143,6 +144,25 @@ namespace AdministrativoWebApi.Controllers
 
                 await _userManager.AddToRoleAsync(user, "PACIENTE");
 
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedEmail = WebUtility.UrlEncode(user.Email);
+                var encodedToken = WebUtility.UrlEncode(token);
+                var resetLink = $"http://localhost:4201/cliente/resetPassword?email={encodedEmail}&token={encodedToken}";
+
+                // Construir el mensaje de bienvenida
+                var htmlMessage = $@"
+                <h1>Bienvenido a SistemaHCE</h1>
+                <p>Hola {user.FullName},</p>
+                <p>Tu cuenta ha sido creada exitosamente. Por favor, haz clic en el siguiente enlace para establecer tu contraseña:</p>
+                <a href='{resetLink}'>Establecer Contraseña</a>
+                <p>Si no puedes hacer clic en el enlace, copia y pega la siguiente URL en tu navegador:</p>
+                <p>{resetLink}</p>
+                <p>Saludos,</p>
+                <p>El equipo de SistemaHCE</p>";
+
+                // Enviar el correos
+                await emailService.SendEmailAsync(user.Email, "Bienvenido a SistemaHCE - Establece tu Contraseña", htmlMessage);
+
                 // Crear el contrato
                 var contrato = new Contrato
                 {
@@ -163,42 +183,97 @@ namespace AdministrativoWebApi.Controllers
             catch (Exception ex)
             {
                 // Manejo genérico de errores
-                return StatusCode(500, new { code = "Error Interno", description = "Ocurrió un error inesperado" });
+                return StatusCode(500, new { code = "Error Interno", description = ex.Message });
             }
         }
-
 
         // PUT api/<PacienteController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(long id, [FromBody] Paciente paciente)
+        public IActionResult Put(long id, [FromBody] PacienteRequest pacienteRequest)
         {
-            if (paciente == null || paciente.Id != id)
+            try
             {
-                return BadRequest();
-            }
+                ValidarPacienteRequest(pacienteRequest);
 
-            var existingPaciente = _blAdministrativo.getPacienteById(id);
-            if (existingPaciente == null)
+                var pacienteExistente = _blAdministrativo.getPacienteById(id);
+                if (pacienteExistente == null)
+                {
+                    return NotFound(new
+                    {
+                        code = "Paciente no encontrado",
+                        description = "No se encontró el paciente con el ID proporcionado"
+                    });
+                }
+
+                if (pacienteExistente.Documento != pacienteRequest.Documento && _blAdministrativo.cedulaDuplicada(pacienteRequest.Documento))
+                {
+                    return BadRequest(new
+                    {
+                        code = "Documento Duplicado",
+                        description = $"El paciente con documento {pacienteRequest.Documento} ya tiene un usuario asociado"
+                    });
+                }
+
+                if (pacienteExistente.Email != pacienteRequest.Email && _blAdministrativo.emailDuplicado(pacienteRequest.Email))
+                {
+                    return BadRequest(new
+                    {
+                        code = "Email duplicado",
+                        description = $"El paciente con email {pacienteRequest.Email} ya tiene un usuario asociado"
+                    });
+                }
+
+                pacienteExistente.Nombres = pacienteRequest.Nombres;
+                pacienteExistente.Apellidos = pacienteRequest.Apellidos;
+                pacienteExistente.Documento = pacienteRequest.Documento;
+                pacienteExistente.Direccion = pacienteRequest.Direccion;
+                pacienteExistente.Telefono = pacienteRequest.Telefono;
+                pacienteExistente.Email = pacienteRequest.Email;
+                pacienteExistente.FechaDeNacimiento = pacienteRequest.FechaDeNacimiento;
+
+                _blAdministrativo.updatePaciente(pacienteExistente);
+
+                return Ok(pacienteExistente);
+            }
+            catch (ValidationException ex)
             {
-                return NotFound();
+                return BadRequest(new { code = ex.Code, description = ex.Message });
             }
-
-            _blAdministrativo.updatePaciente(paciente);
-            return NoContent();
+            catch (Exception ex)
+            {
+                // Manejo genérico de errores
+                return StatusCode(500, new { code = "Error Interno", description = ex.Message });
+            }
         }
 
-        // DELETE api/<PacienteController>/5
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
-            var paciente = _blAdministrativo.getPacienteById(id);
-            if (paciente == null)
+            try
             {
-                return NotFound();
-            }
+                var paciente = _blAdministrativo.getPacienteById(id);
+                if (paciente == null)
+                {
+                    return NotFound(new
+                    {
+                        code = "Paciente no encontrado",
+                        description = "No se encontró el paciente con el ID proporcionado"
+                    });
+                }
 
-            _blAdministrativo.deletePaciente(id);
-            return NoContent();
+                _blAdministrativo.deletePaciente(id);
+
+                return Ok(new
+                {
+                    code = "Paciente Eliminado",
+                    description = "El paciente fue eliminado exitosamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                // Manejo genérico de errores
+                return StatusCode(500, new { code = "Error Interno", description = ex.Message });
+            }
         }
 
         [ProducesResponseType(typeof(List<Paciente>), 200)]
@@ -230,7 +305,7 @@ namespace AdministrativoWebApi.Controllers
             }
             return documento;
         }
-        private void ValidarPacienteRequest(AddPacienteRequest request)
+        private void ValidarPacienteRequest(PacienteRequest request)
         {
             if (request == null ||
                 string.IsNullOrEmpty(request.Nombres) ||

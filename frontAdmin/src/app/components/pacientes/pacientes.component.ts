@@ -27,6 +27,8 @@ export class PacientesComponent implements OnInit {
   isModalVisibleConfirmarBorrado: boolean = false;
   isViewMode: boolean = false;
   pacienteParaBorrar: any | null = null;
+  loadingModal: boolean = false;
+  pacienteId: number | null = null; // Propiedad para almacenar el ID del paciente seleccionado
 
   constructor(
     private pacienteService: PacientesService,
@@ -148,6 +150,7 @@ export class PacientesComponent implements OnInit {
     this.pacienteForm.reset();
     this.modalTitle = 'Actualizar Paciente';
     this.isViewMode = false;
+    this.pacienteId = paciente.id;
     this.pacienteService.getPaciente(paciente.id).subscribe({
       next: (data: any) => {
         this.pacienteForm.patchValue({
@@ -188,8 +191,6 @@ export class PacientesComponent implements OnInit {
     this.isModalVisibleConfirmarBorrado = true;
   }
 
-  confirmarBorrado(): void {}
-
   enableFormControls(): void {
     Object.keys(this.pacienteForm.controls).forEach(controlName => {
       this.pacienteForm.get(controlName)?.enable();
@@ -204,6 +205,7 @@ export class PacientesComponent implements OnInit {
 
   onSubmit(): void {
     if (this.pacienteForm.valid){
+      this.loadingModal = true;
       if (this.isModalVisibleCrear) {
         this.crearPaciente();
       }
@@ -220,8 +222,10 @@ export class PacientesComponent implements OnInit {
         this.getPacientes();
         this.isModalVisibleCrear = false;
         this.toastr.success('Paciente creado exitosamente');
+        this.loadingModal = false;
       },
       error: (error) => {
+        this.loadingModal = false;
         console.error(error);
         if (error.error && error.error.description) {
           this.toastr.error(error.error.description, error.error.code);
@@ -233,6 +237,50 @@ export class PacientesComponent implements OnInit {
   }
 
   editarPaciente(): void {
-    console.log("Editando paciente");
+    console.log(this.pacienteForm.value);
+    const pacienteActualizado = this.pacienteForm.value;
+    if (this.pacienteId !== null && pacienteActualizado) {
+      this.pacienteService.updatePaciente(this.pacienteId, pacienteActualizado).subscribe({
+        next: () => {
+          this.getPacientes();
+          this.isModalVisibleActualizar = false;
+          this.toastr.success('Paciente actualizado exitosamente');
+          this.loadingModal = false;
+        },
+        error: (error) => {
+          this.loadingModal = false;
+          console.error(error);
+          if (error.error && error.error.description) {
+            this.toastr.error(error.error.description, error.error.code);
+          } else {
+            this.toastr.error('Error al actualizar el paciente');
+          }
+        }
+      });
+    }
+  }
+
+  confirmarBorrado(): void {
+    if (this.pacienteParaBorrar && this.pacienteParaBorrar.id) {
+      this.loadingModal = true;
+      this.pacienteService.deletePaciente(this.pacienteParaBorrar.id).subscribe({
+        next: () => {
+          this.getPacientes();
+          this.isModalVisibleConfirmarBorrado = false;
+          this.pacienteParaBorrar = null;
+          this.toastr.success('Paciente eliminado exitosamente');
+          this.loadingModal = false;
+        },
+        error: (error) => {
+          this.loadingModal = false;
+          console.error(error);
+          if (error.error && error.error.description) {
+            this.toastr.error(error.error.description, error.error.code);
+          } else {
+            this.toastr.error('Error al eliminar el paciente');
+          }
+        }
+      });
+    }
   }
 }

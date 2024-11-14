@@ -65,20 +65,22 @@ namespace DAL.DALs
 			}
 		}
 
-		public void DeletePaciente(long id)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				var paciente = _dbContext.Pacientes.Find(id);
-				if (paciente != null)
-				{
-					_dbContext.Pacientes.Remove(paciente);
-					_dbContext.SaveChanges();
-				}
-			}
-		}
+        public void DeletePaciente(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var paciente = _dbContext.Pacientes.Find(id);
+                if (paciente != null)
+                {
+                    paciente.Activo = false; // Cambiar el estado a inactivo
+                    _dbContext.Pacientes.Update(paciente);
+                    _dbContext.SaveChanges();
+                }
+            }
+        }
 
-		public Paciente GetPacienteById(long id)
+
+        public Paciente GetPacienteById(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{

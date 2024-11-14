@@ -188,7 +188,12 @@
     <div
         class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 transform transition-transform duration-300 ease-in-out my-8">
         <!-- Header -->
-        <div class="flex justify-between items-center bg-blue-500 text-white p-4 rounded-t-lg border-b border-gray-300">
+        <div class="flex justify-between items-center text-white p-4 rounded-t-lg border-b border-gray-300"
+            [ngClass]="{
+                'bg-blue-500': isModalVisibleCrear,
+                'bg-yellow-500': isModalVisibleActualizar,
+                'bg-gray-500': isModalVisibleVer
+            }">
             <h2 class="text-xl">{{ modalTitle }}</h2>
             <button (click)="isModalVisibleCrear = false; isModalVisibleActualizar = false; isModalVisibleVer = false" class="text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -269,7 +274,13 @@
         <!-- Footer -->
         <div class="border-t border-gray-300 p-4 flex justify-end space-x-4">
             <button type="button" (click)="isModalVisibleCrear = false; isModalVisibleActualizar = false; isModalVisibleVer = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
-            <button *ngIf="!isViewMode" type="submit" (click)="onSubmit()" class="bg-blue-intermedio hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Guardar</button>
+                        <button *ngIf="!isViewMode" type="submit" (click)="onSubmit()" class="bg-blue-intermedio hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
+                <span *ngIf="!loadingModal">Guardar</span>
+                <svg *ngIf="loadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
         </div>
     </div>
 </div>
@@ -294,7 +305,13 @@
         <!-- Footer -->
         <div class="border-t border-gray-300 p-4 flex justify-end space-x-4">
             <button type="button" (click)="isModalVisibleConfirmarBorrado = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
-            <button type="button" (click)="confirmarBorrado()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Borrar</button>
+            <button type="button" (click)="confirmarBorrado()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
+                <span *ngIf="!loadingModal">Borrar</span>
+                <svg *ngIf="loadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
         </div>
     </div>
 </div>
