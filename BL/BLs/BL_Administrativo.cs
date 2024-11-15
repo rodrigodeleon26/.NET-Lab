@@ -300,7 +300,7 @@ namespace BL.BLs
                 };
 
                 // Guarda la factura en la base de datos
-                //dal.AddFactura(factura);
+                dal.AddFactura(factura);
 
                 var notificacion = new Notificacion
                 {
