@@ -877,6 +877,47 @@ namespace DAL.DALs
 			}
 		}
 
+        public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Where(f => f.Paciente.Contrato.Id == contratoId)
+                    .OrderByDescending(f => f.Fecha)
+                    .Take(cantidad)
+                    .Select(f => new Factura
+                    {
+                        Id = f.Id,
+                        Fecha = f.Fecha,
+                        Monto = f.Monto,
+                        Pago = f.Pago,
+                        FechaPago = f.FechaPago,
+                        Descripcion = f.Descripcion,
+                        Paciente = new Paciente
+                        {
+                            Id = f.Paciente.Id,
+                            Nombres = f.Paciente.Nombres,
+                            Apellidos = f.Paciente.Apellidos,
+                            Documento = f.Paciente.Documento,
+                            FechaDeNacimiento = f.Paciente.FechaDeNacimiento,
+                            Direccion = f.Paciente.Direccion,
+                            Telefono = f.Paciente.Telefono,
+                            Email = f.Paciente.Email
+                        }
+                    })
+                    .ToList();
+            }
+        }
+
+        public bool ExisteFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Any(f => f.Paciente.Id == pacienteId && f.Fecha.Month == mes && f.Fecha.Year == año);
+            }
+        }
+
         public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
         {
             using (var _dbContext = new DBContext())

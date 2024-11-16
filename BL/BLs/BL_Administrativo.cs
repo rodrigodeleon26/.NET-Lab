@@ -288,31 +288,54 @@ namespace BL.BLs
             foreach (var contrato in contratosActivos)
             {
                 Paciente paciente = dal.GetPacienteById(contrato.Paciente.Id);
-                // Crea una nueva factura para cada contrato
-                var factura = new Factura
+
+
+                // Verifica si ya existe una factura para el paciente en el mes actual
+                bool facturaExistente = dal.ExisteFacturaParaPacienteEnMes(paciente.Id, DateTime.Now.Month, DateTime.Now.Year);
+
+                if (facturaExistente)
                 {
-                    Fecha = DateTime.Now,
-                    Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
-                    Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
-                    FechaPago = null,
-                    Pago = false,
-                    Paciente = paciente
-                };
+					// Verifica si ya existen dos facturas sin pagar entre las tres últimas facturas
+					var ultimasFacturas = dal.ObtenerUltimasFacturasDelContrato(contrato.Id, 3);
+					int facturasNoPagadas = ultimasFacturas.Count(f => !f.Pago);
+                    if (facturasNoPagadas >= 2)
+                    {
+                        Console.WriteLine($"El contrato {contrato.Id} tiene dos facturas sin pagar. Generando la tercera factura y desactivando el contrato.");
+                        // Desactiva el contrato
+                        contrato.Activo = false;
+                        dal.UpdateContrato(contrato);
+                    }
 
-                // Guarda la factura en la base de datos
-                dal.AddFactura(factura);
+                    // Crea una nueva factura para cada contrato
+                    var factura = new Factura
+					{
+						Fecha = DateTime.Now,
+						Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
+						Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
+						FechaPago = null,
+						Pago = false,
+						Paciente = paciente
+					};
 
-                var notificacion = new Notificacion
+					// Guarda la factura en la base de datos
+					dal.AddFactura(factura);
+
+					var notificacion = new Notificacion
+					{
+						Mensaje = $"Tiene una nueva factura para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}",
+						FechaEnvio = DateTime.UtcNow,
+						Visto = false
+					};
+
+					await dal_service.AddNotificacionService(notificacion, paciente.Id);
+                }
+				else
                 {
-                    Mensaje = $"Tiene una nueva factura para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}",
-                    FechaEnvio = DateTime.UtcNow,
-                    Visto = false
-                };
+                    Console.WriteLine($"La factura para el contrato {contrato.Id} ya fue emitida este mes.");
+                }
 
-                await dal_service.AddNotificacionService(notificacion, paciente.Id);
-            }
-
-            await dal.SaveChangesAsync();
+                await dal.SaveChangesAsync();
+			}
         }
 
         private float ObtenerMontoFactura(Contrato contrato)

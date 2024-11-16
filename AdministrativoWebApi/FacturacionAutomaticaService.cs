@@ -34,14 +34,14 @@ public class FacturacionAutomaticaService : BackgroundService
                         await blAdministrativo.GenerarFacturasAutomaticas();
                     }
 
-                    Console.WriteLine("Es 1, facturas generadas, ahora espera 25 días hasta el siguiente chequeo.");
+                    Console.WriteLine("Es 1, facturas generadas, ahora no vuelve a entrar aca hasta el siguiente 1.");
 
                     // Espera 25 días antes de volver a verificar
-                    await Task.Delay(TimeSpan.FromDays(25), stoppingToken);
+                    await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
                 }
                 else
                 {
-                    Console.WriteLine("Todavía no es 1, esperando 24 horas hasta el siguiente chequeo.");
+                    Console.WriteLine("Todavía no es 1, esperando 24 horas hasta el siguiente chequeo de fecha.");
 
                     // Espera 24 horas antes de la próxima verificación
                     await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
