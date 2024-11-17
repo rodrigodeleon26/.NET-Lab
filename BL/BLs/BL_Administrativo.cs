@@ -412,13 +412,46 @@ namespace BL.BLs
 			}
 		}
 
-		#endregion
+        public bool checkOcupacionConsultorio(Calendario calendario)
+		{
+			var calendarios = getCalendarios();
+			if(calendarios == null || calendarios.Count == 0)
+			{
+				_logger.LogInformation("no hay calendarios");
+                return false;
+			}
 
-		//Consultorios
-		#region CONSULTORIOS
+            //verificar que no haya otro calendario que se cruce con el nuevo
+            foreach (var c in calendarios)
+            {
+                if (c.Consultorio.Id == calendario.Consultorio.Id)
+                {
+					_logger.LogInformation("conflicto con calendario en consultorio " + c.Consultorio.Id + " para el consultorio " + calendario.Consultorio.Id);
+                    if (c.DiasSemana.Intersect(calendario.DiasSemana).Any())
+                    {
+						_logger.LogInformation("conflicto con calendario en los dias " + string.Join(",", c.DiasSemana) + " para los dias " + string.Join(",", calendario.DiasSemana));
+                        if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
+                            (c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
+							(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
+							(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
+                        {
+			                _logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
+                            return true;
+                        }
+                    }
+                }
+            }
+			_logger.LogInformation("saliendo sin conflictos");
+            return false;
+        }
+
+        #endregion
+
+        //Consultorios
+        #region CONSULTORIOS
 
 
-		public List<Consultorio> getConsultorios()
+        public List<Consultorio> getConsultorios()
 		{
 			return dal.GetConsultorios();
 		}

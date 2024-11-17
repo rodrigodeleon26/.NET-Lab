@@ -88,6 +88,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public bool checkOcupacionConsultorio(Calendario calendario)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
         {
             throw new NotImplementedException();

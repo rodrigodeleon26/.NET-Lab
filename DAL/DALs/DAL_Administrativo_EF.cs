@@ -1320,9 +1320,9 @@ namespace DAL.DALs
 			using (var _dbContext = new DBContext())
 			{
 				//chequeo que no exista un calendario con el medico y la especialidad
-				if(_dbContext.Calendarios.Any(c => c.MedicoId == calendario.Medico.Id && c.EspecialidadId == calendario.Especialidad.Id)){
-					throw new Exception("Ya existe un calendario para el medico y especialidad seleccionados");
-				}
+				//if(_dbContext.Calendarios.Any(c => c.MedicoId == calendario.Medico.Id && c.EspecialidadId == calendario.Especialidad.Id)){
+				//	throw new Exception("Ya existe un calendario para el medico y especialidad seleccionados");
+				//}
 
 				var nuevoCalendario = new Calendarios
 				{

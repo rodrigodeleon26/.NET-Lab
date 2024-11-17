@@ -117,11 +117,18 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(_blAdministrativo.getCalendarios().Where(c => c.Medico.Id == id));
 		}
 
-		// POST api/<CalendariosController>/check
-		[HttpPost("check")]
-		public IActionResult CheckCalendario([FromBody] Calendario calendario)
-		{		
-			return Ok(calendario);
+        // POST api/<CalendariosController>/checkOcupacionConsultorio
+        [HttpPost("checkOcupacionConsultorio")]
+		public IActionResult checkOcupacionConsultorio([FromBody] Calendario calendario)
+		{
+            if (calendario == null)
+            {
+                return BadRequest();
+            }
+
+            bool ocupado = _blAdministrativo.checkOcupacionConsultorio(calendario);
+			
+            return Ok(ocupado);
 		}
 	}
 }

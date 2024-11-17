@@ -18,6 +18,11 @@ export class CalendariosService {
 
   checkCalendarioOcupado(calendario: any): Observable<any> {
     console.log('Verificando disponibilidad');
-    return this.http.post<any>(`${this.apiUrl}/check`, calendario);
+    return this.http.post<any>(`${this.apiUrl}/checkOcupacionConsultorio`, calendario);
+  }
+
+  addCalendario(calendario: any): Observable<any> {
+    console.log('Agregando calendario');
+    return this.http.post<any>(`${this.apiUrl}`, calendario);
   }
 }
