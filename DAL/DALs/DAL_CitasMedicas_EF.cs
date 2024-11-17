@@ -277,10 +277,11 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
+                string IdEncriptada = AES.Encrypt(pacienteId.ToString());
+
                 var query = _dbContext.CitasMedicas
-                     .Where(c => c.Estado == "Completada")
-                     .AsEnumerable()
-                     .Where(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
+                    .Where(c => c.Estado == "Completada" && c.PacienteId == IdEncriptada);
+
 
                 // Aplicar filtro de fechas si ambas fechas están presentes
                 if (fechaInicio.HasValue && fechaFin.HasValue)
@@ -333,10 +334,10 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
+                string IdEncriptada = AES.Encrypt(pacienteId.ToString());
+
                 var query = _dbContext.CitasMedicas
-                     .Where(c => c.Estado == "Completada")
-                     .AsEnumerable()
-                     .Where(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
+                    .Where(c => c.Estado == "Completada" && c.PacienteId == IdEncriptada);
 
                 // Aplicar filtro de rango de fechas solo si ambos valores están presentes
                 if (fechaInicio.HasValue && fechaFin.HasValue)
