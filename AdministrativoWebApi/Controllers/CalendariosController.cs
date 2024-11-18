@@ -1,4 +1,5 @@
-﻿using BL.IBLs;
+﻿using BL.BLs;
+using BL.IBLs;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using System.Globalization;
@@ -7,15 +8,18 @@ using System.Globalization;
 
 namespace AdministrativoWebApi.Controllers
 {
-	[Route("api/[controller]")]
+
+    [Route("api/[controller]")]
 	[ApiController]
 	public class CalendariosController : ControllerBase
 	{
+		private readonly ILogger<CalendariosController> _logger;
 		private readonly IBL_Administrativo _blAdministrativo;
 
-		public CalendariosController(IBL_Administrativo blAdministrativo)
+		public CalendariosController(IBL_Administrativo blAdministrativo, ILogger<CalendariosController> logger)
 		{
 			_blAdministrativo = blAdministrativo;
+			_logger = logger;
 		}
 
 		// GET: api/<CalendariosController>
@@ -121,8 +125,10 @@ namespace AdministrativoWebApi.Controllers
         [HttpPost("checkOcupacionConsultorio")]
 		public IActionResult checkOcupacionConsultorio([FromBody] Calendario calendario)
 		{
+			_logger.LogInformation("calendario: " + calendario.ToString());
             if (calendario == null)
             {
+				_logger.LogInformation("Calendario es null" + calendario);
                 return BadRequest();
             }
 

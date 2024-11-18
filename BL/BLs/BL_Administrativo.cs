@@ -424,20 +424,44 @@ namespace BL.BLs
             //verificar que no haya otro calendario que se cruce con el nuevo
             foreach (var c in calendarios)
             {
+				
                 if (c.Consultorio.Id == calendario.Consultorio.Id)
                 {
 					_logger.LogInformation("conflicto con calendario en consultorio " + c.Consultorio.Id + " para el consultorio " + calendario.Consultorio.Id);
                     if (c.DiasSemana.Intersect(calendario.DiasSemana).Any())
                     {
 						_logger.LogInformation("conflicto con calendario en los dias " + string.Join(",", c.DiasSemana) + " para los dias " + string.Join(",", calendario.DiasSemana));
-                        if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
-                            (c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
-							(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
-							(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
-                        {
-			                _logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
-                            return true;
-                        }
+						if (c.Id == calendario.Id)
+						{
+							_logger.LogInformation("es el mismo calendario");
+                            //en caso de que sea el mismo calendario, significa que es un update, por lo que hay que chequear dia por dia
+                            foreach (var dia in calendario.DiasSemana)
+							{
+								if (c.DiasSemana.Contains(dia))
+								{
+                                    _logger.LogInformation("revisando el dia " + dia);
+                                    if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
+										(c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
+										(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
+										(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
+									{
+										_logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
+										return true;
+									}
+								}
+							}
+						}
+						else
+						{
+							if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
+								(c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
+								(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
+								(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
+							{
+								_logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
+								return true;
+							}
+						}
                     }
                 }
             }
