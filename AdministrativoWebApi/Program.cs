@@ -42,6 +42,7 @@ try
 
     // Agregar el servicio de facturación automática en segundo plano
     builder.Services.AddHostedService<FacturacionAutomaticaService>();
+    builder.Services.AddScoped<PayPalService>();
 
     // Registrar las dependencias necesarias
     builder.Services.AddScoped<IBL_Administrativo, BL_Administrativo>();
