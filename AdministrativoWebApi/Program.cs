@@ -19,19 +19,6 @@ try
             });
     });
 
-    // Add services to the container.
-
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowSpecificOrigin",
-            builder =>
-            {
-                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200")
-                       .AllowAnyHeader()
-                       .AllowAnyMethod();
-            });
-    });
-
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -43,7 +30,11 @@ try
     #region Inyeccion de dependencias
 
     // DALs
-    builder.Services.AddTransient<IDAL_Administrativo, DAL_Administrativo_EF>();
+    builder.Services.AddScoped<IDAL_Administrativo, DAL_Administrativo_EF>();
+
+    // Registrar las dependencias necesarias
+    builder.Services.AddScoped<IDAL_Pacientes, DAL_Paciente_Service>();
+    builder.Services.AddHttpClient<IDAL_Pacientes, DAL_Paciente_Service>();
 
     // BLs
     builder.Services.AddTransient<IBL_Administrativo, BL_Administrativo>();
@@ -59,11 +50,7 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
-
-    app.UseCors("AllowSpecificOrigin");
-
-    app.UseCors("AllowSpecificOrigin");
+    //app.UseHttpsRedirection();
 
     app.UseCors("AllowSpecificOrigin");
 

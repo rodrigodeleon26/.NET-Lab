@@ -1,5 +1,6 @@
 ﻿using BL.BLs;
 using BL.IBLs;
+using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using System.Globalization;
@@ -9,7 +10,7 @@ using System.Globalization;
 namespace AdministrativoWebApi.Controllers
 {
 
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
 	[ApiController]
 	public class CalendariosController : ControllerBase
 	{
@@ -121,20 +122,35 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(_blAdministrativo.getCalendarios().Where(c => c.Medico.Id == id));
 		}
 
-        // POST api/<CalendariosController>/checkOcupacionConsultorio
-        [HttpPost("checkOcupacionConsultorio")]
+		// POST api/<CalendariosController>/checkOcupacionConsultorio
+		[HttpPost("checkOcupacionConsultorio")]
 		public IActionResult checkOcupacionConsultorio([FromBody] Calendario calendario)
 		{
-			_logger.LogInformation("calendario: " + calendario.ToString());
-            if (calendario == null)
-            {
-				_logger.LogInformation("Calendario es null" + calendario);
-                return BadRequest();
-            }
+			if (calendario == null)
+			{
+				return BadRequest();
+			}
 
-            bool ocupado = _blAdministrativo.checkOcupacionConsultorio(calendario);
-			
-            return Ok(ocupado);
+			bool ocupado = _blAdministrativo.checkOcupacionConsultorio(calendario);
+
+			return Ok(ocupado);
 		}
-	}
+
+		// POST api/<CalendariosController>/validarEspecialidadesParaBorrar/5
+		[HttpPost("validarEspecialidadesParaBorrar/{medicoId}")]
+		public IActionResult validarEspecialidadesParaBorrar(long medicoId, [FromBody] List<Especialidad> especialidades)
+		{
+			bool valido = _blAdministrativo.validarEspecialidadesParaBorrar(medicoId, especialidades);
+
+			return Ok(valido);
+		}
+
+        // POST api/<CalendariosController>/borrarCalendariosIncompatibles/5
+        [HttpPost("borrarCalendariosIncompatibles/{medicoId}")]
+		public IActionResult borrarCalendariosIncompatibles(long medicoId, [FromBody] List<Especialidad> especialidades)
+		{
+			_blAdministrativo.borrarCalendariosIncompatibles(medicoId, especialidades);
+            return NoContent();
+        }
+    }
 }

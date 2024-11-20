@@ -19,16 +19,25 @@ export class GenerarMedicoComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   errorModalMessage: string = '';
-  viendoCalendarios: boolean = true;
+  viendoCalendarios: boolean = false;
   isModalNuevoCalendarioVisible: boolean = false;
   isModalBorrarVisible: boolean = false;
+  isModalAlertaEspVisible: boolean = false;
+  mostrarEspecialidadSelect: boolean = false;
+  mostrarDiaSelect: boolean = false;
+  mostrarHoraSelect: boolean = false;
+  ordenActualDeCalendariosEspecialidad: string = 'PorDefecto';
+  ordenActualDeCalendariosDia: string = 'PorDefecto';
+  ordenActualDeCalendariosHora: string = 'PorDefecto';
 
   especialidades: any[] = [];
   consultorios: any[] = [];
   calendariosDelMedico: any[] = [];
+  calendariosShow: any[] = [];
   medicoId: string | null = null;
   calendarioABorrarId: number | null = null;
   calendarioEditId: number | null = null;
+  medicoAlerta: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -168,6 +177,7 @@ export class GenerarMedicoComponent implements OnInit {
     this.calendariosService.getCalendariosByMedicoId(id).subscribe({
       next: (data) => {
         this.calendariosDelMedico = data;
+        this.calendariosShow = data;
         console.log(data);
       },
       error: (error) => {
@@ -211,25 +221,58 @@ export class GenerarMedicoComponent implements OnInit {
         Especialidades: this.DatosMedicoForm.value.especialidades.map((id: string) => ({ id })),
       }
 
-      if(this.medicoId){
+      if(this.medicoId !== null){
         //editar medico
         medico['Id'] = this.medicoId;
-        this.medicosService.updateMedico(this.medicoId, medico)
-        .subscribe({
+        //verificar las especialidades para no sacar una que ya tenga calendarios
+        this.calendariosService.validarEspecialidadesParaBorrar(this.medicoId, medico.Especialidades).subscribe({
           next: (data) => {
-            this.showSuccessMessage('Médico editado exitosamente');
-            this.DatosMedicoForm.reset();
-            this.medicoId = null;
-            this.router.navigate(['/listMedicos']);
+            if(data === true){
+              console.log('Especialidades validadas, es seguro eliminar');
+              this.medicosService.updateMedico(this.medicoId, medico)
+              .subscribe({
+                next: (data) => {
+                  this.showSuccessMessage('Médico editado exitosamente');
+                  this.DatosMedicoForm.reset();
+                  this.medicoId = null;
+                  this.router.navigate(['/listMedicos']);
+                },
+                error: (error) => {
+                  console.error(error);
+                  const errorMessage = this.extractErrorMessage(error);
+                  this.showErrorMessage(errorMessage);
+                }
+              });
+            }
+            else{
+              console.log('Especialidades no validadas, no se puede eliminar');
+              this.showErrorMessage('Hay calendarios para este medico que dependen de especialidades que serán eliminadas');
+              this.isModalAlertaEspVisible = true;
+              this.medicoAlerta = medico;
+            }
           },
           error: (error) => {
             console.error(error);
-            const errorMessage = this.extractErrorMessage(error);
-            this.showErrorMessage(errorMessage);
+            this.showErrorModalMessage(error);
           }
         });
+        // this.medicosService.updateMedico(this.medicoId, medico)
+        // .subscribe({
+        //   next: (data) => {
+        //     this.showSuccessMessage('Médico editado exitosamente');
+        //     this.DatosMedicoForm.reset();
+        //     this.medicoId = null;
+        //     this.router.navigate(['/listMedicos']);
+        //   },
+        //   error: (error) => {
+        //     console.error(error);
+        //     const errorMessage = this.extractErrorMessage(error);
+        //     this.showErrorMessage(errorMessage);
+        //   }
+        // });
       }
       else{
+        //agregar medico
         this.medicosService.addMedico(medico)
         .subscribe({
           next: (data) => {
@@ -307,7 +350,7 @@ export class GenerarMedicoComponent implements OnInit {
 
     //si es editar le pongo la id
     if(this.calendarioEditId !== null){
-      Calendario['Id'] = String(this.calendarioEditId);
+      Calendario['Id'] = this.calendarioEditId;
     }
 
     //chequear conflictos con otros calendarios del medico
@@ -373,8 +416,9 @@ export class GenerarMedicoComponent implements OnInit {
 
     //chequear disponibilidad del consultorio
     //agregar :00 a las horas por compativilidad
-    Calendario.HoraInicio += ':00';
-    Calendario.HoraFin += ':00';
+    if(Calendario.HoraInicio.length === 5) Calendario.HoraInicio += ':00';
+    if(Calendario.HoraFin.length === 5) Calendario.HoraFin += ':00';
+
     console.log(Calendario);
     this.calendariosService.checkCalendarioOcupado(Calendario).subscribe({
       next: (data) => {
@@ -383,33 +427,35 @@ export class GenerarMedicoComponent implements OnInit {
           this.showErrorModalMessage('El consultorio está ocupado en el horario seleccionado');
         }
         else{
-
+          console.log('Consultorio disponible');
           //divido segun si es agregar o editar
           if(this.calendarioEditId !== null){
 
             //editar el calendario
             Calendario['Id'] = this.calendarioEditId;
-            // this.calendariosService.updateCalendario(Calendario).subscribe({
-            //   next: (data) => {
-            //     this.showSuccessMessage('Calendario editado exitosamente');
-            //     this.closeEditModal();
-            //     if (this.medicoId) {
-            //       this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
-            //         next: (data) => {
-            //           this.calendariosDelMedico = data;
-            //         },
-            //         error: (error) => {
-            //           console.error(error);
-            //         }
-            //       });
-            //     }
-            //   },
-            //   error: (error) => {
-            //     console.error(error);
-            //     const errorMessage = this.extractErrorMessage(error);
-            //     this.showErrorModalMessage(errorMessage);
-            //   }
-            // });
+            this.calendariosService.updateCalendario(Calendario).subscribe({
+              next: (data) => {
+                this.showSuccessMessage('Calendario editado exitosamente');
+                this.closeEditarModal();
+                if (this.medicoId) {
+                  this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
+                    next: (data) => {
+                      this.calendariosDelMedico = data;
+                      this.calendariosShow = data;
+                      this.ordenarCalnedariosPorEspecialidad(this.ordenActualDeCalendariosEspecialidad);
+                    },
+                    error: (error) => {
+                      console.error(error);
+                    }
+                  });
+                }
+              },
+              error: (error) => {
+                console.error(error);
+                const errorMessage = this.extractErrorMessage(error);
+                this.showErrorModalMessage(errorMessage);
+              }
+            });
           }
           else{
 
@@ -428,6 +474,8 @@ export class GenerarMedicoComponent implements OnInit {
                   this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
                     next: (data) => {
                       this.calendariosDelMedico = data;
+                      this.calendariosShow = data;
+                      this.ordenarCalnedariosPorEspecialidad(this.ordenActualDeCalendariosEspecialidad);
                     },
                     error: (error) => {
                       console.error(error);
@@ -473,6 +521,7 @@ export class GenerarMedicoComponent implements OnInit {
           this.showSuccessMessage('Calendario eliminado exitosamente');
           this.isModalBorrarVisible = false;
           this.calendariosDelMedico = this.calendariosDelMedico.filter((calendario) => calendario.id !== this.calendarioABorrarId);
+          this.calendariosShow = this.calendariosShow.filter((calendario) => calendario.id !== this.calendarioABorrarId);
           this.calendarioABorrarId = null;
         },
         error: (error) => {
@@ -489,12 +538,12 @@ export class GenerarMedicoComponent implements OnInit {
     const calendario = this.calendariosDelMedico.find((calendario) => calendario.id === id);
     if (calendario) {
       this.DatosCalendarioForm.patchValue({
-        especialidadId: String(calendario.especialidad.id),
-        consultorioId: String(calendario.consultorio.id),
+        especialidadId: calendario.especialidad.id,
+        consultorioId: calendario.consultorio.id,
         horaInicio: calendario.horaInicio,
         horaFin: calendario.horaFin,
-        tiempo: String(calendario.tiempoCita),
-        cantidad: String(calendario.cantidadCitas),
+        tiempo: calendario.tiempoCita,
+        cantidad: calendario.cantidadCitas,
         dias: calendario.diasSemana,
       });
     }
@@ -518,6 +567,104 @@ export class GenerarMedicoComponent implements OnInit {
     while (diasArray.length !== 0) {
       diasArray.removeAt(0);
     }
+  }
+
+  ordenarCalnedariosPorEspecialidad(orden: any){
+    console.log('Ordenar por:', orden);
+    this.ordenActualDeCalendariosEspecialidad = orden;
+    this.mostrarEspecialidadSelect = false;
+
+    this.aplicarOrdenCalendarios();
+  }
+
+  ordenarCalendariosPorDia(dia: string){
+    console.log('Ordenar por:', dia);
+    this.ordenActualDeCalendariosDia = dia;
+    this.mostrarDiaSelect = false;
+
+    this.aplicarOrdenCalendarios();
+  }
+  
+  ordenarCalendariosPorHora(orden: any){
+    console.log('Ordenar por:', orden);
+    this.ordenActualDeCalendariosHora = orden;
+    this.mostrarHoraSelect = false;
+
+    this.aplicarOrdenCalendarios();
+  }
+
+  aplicarOrdenCalendarios(){
+    let calendarios = [...this.calendariosDelMedico];
+
+    if(this.ordenActualDeCalendariosEspecialidad !== 'PorDefecto'){
+      if(this.ordenActualDeCalendariosEspecialidad === 'Agrupar'){
+        calendarios = calendarios.sort((a, b) => a.especialidad.nombre.localeCompare(b.especialidad.nombre));
+      }
+      else{
+        calendarios = calendarios.filter((calendario) => calendario.especialidad.nombre === this.ordenActualDeCalendariosEspecialidad);  
+      }
+    }
+
+    if(this.ordenActualDeCalendariosDia !== 'PorDefecto'){
+      calendarios = calendarios.filter((calendario) => calendario.diasSemana.includes(this.ordenActualDeCalendariosDia));
+    }
+
+    if(this.ordenActualDeCalendariosHora !== 'PorDefecto'){
+      if(this.ordenActualDeCalendariosHora === 'Ascendente'){
+        calendarios = calendarios.sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
+      }
+      else{
+        calendarios = calendarios.sort((a, b) => b.horaInicio.localeCompare(a.horaInicio));
+      }
+    }
+
+    if(this.ordenActualDeCalendariosEspecialidad === 'PorDefecto' && this.ordenActualDeCalendariosDia === 'PorDefecto' && this.ordenActualDeCalendariosHora === 'PorDefecto'){
+      console.log('Sin filtros');
+      this.calendariosShow = this.calendariosDelMedico;
+    }
+    else{
+      console.log('Filtrando por dia y especialidad');
+      this.calendariosShow = calendarios;
+    }
+  }
+
+  confirmarAlertaEspecialidad(){
+    //primero borrar los calendarios que dependen de las especialidades que se borraran y luego actualizar
+    if(this.medicoId === null || this.medicoAlerta === null){
+      this.showErrorModalMessage('Error al resolver los conflictos con las especialidades');
+      return;
+    }
+    this.calendariosService.BorrarCalendariosIncompatibles(this.medicoId, this.medicoAlerta.Especialidades).subscribe({
+      next: (data) => {
+        console.log('Calendarios borrados exitosamente' + data);
+
+
+        //Actualizar Medico
+        // this.medicosService.updateMedico(this.medicoId, this.medicoAlerta)
+        // .subscribe({
+        //   next: (data) => {
+        //     this.showSuccessMessage('Médico editado exitosamente');
+        //     this.DatosMedicoForm.reset();
+        //     this.medicoId = null;
+        //     this.medicoAlerta = null;
+        //     this.isModalAlertaEspVisible = false;
+        //     this.router.navigate(['/listMedicos']);
+        //   },
+        //   error: (error) => {
+        //     console.error(error);
+        //     const errorMessage = this.extractErrorMessage(error);
+        //     this.showErrorMessage(errorMessage);
+        //   }
+        // });
+
+      },
+      error: (error) => {
+        console.error(error);
+        this.showErrorModalMessage(error);
+      }
+    });
+
+    
   }
 
 }

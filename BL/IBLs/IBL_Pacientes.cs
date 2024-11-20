@@ -16,5 +16,7 @@ namespace BL.IBLs
         public Paciente getXDocumento(string documento);
 
         public Paciente GetPaciente(long id);
+
+        public void AddNotificacion(Notificacion notificacion, long idPaciente);
     }
 }

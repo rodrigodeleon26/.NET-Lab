@@ -26,7 +26,7 @@ export class MedicosService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  updateMedico(id: string, medico: any): Observable<any> {
+  updateMedico(id: string | null, medico: any): Observable<any> {
     console.log('Actualizando médico');
     return this.http.put<any>(`${this.apiUrl}/${id}`, medico);
   }

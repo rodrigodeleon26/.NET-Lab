@@ -2,6 +2,7 @@
 using DAL.DALs;
 using DAL.IDALs;
 using DAL.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Shared;
 using System;
@@ -15,12 +16,14 @@ namespace BL.BLs
 	public class BL_Administrativo : IBL_Administrativo
 	{
 		private readonly IDAL_Administrativo dal;
+        private readonly IDAL_Pacientes dal_Paciente;
         private readonly ILogger<BL_Administrativo> _logger;
 
-        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger)
+        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger, IDAL_Pacientes dal_Paciente)
 		{
             _logger = logger;
 			this.dal = dal;
+            this.dal_Paciente = dal_Paciente;
         }
 
         //Pacientes 
@@ -417,50 +420,28 @@ namespace BL.BLs
 			var calendarios = getCalendarios();
 			if(calendarios == null || calendarios.Count == 0)
 			{
-				_logger.LogInformation("no hay calendarios");
                 return false;
 			}
 
             //verificar que no haya otro calendario que se cruce con el nuevo
             foreach (var c in calendarios)
             {
-				
+				if(c.Id == calendario.Id)
+				{
+					continue;
+				}
                 if (c.Consultorio.Id == calendario.Consultorio.Id)
                 {
-					_logger.LogInformation("conflicto con calendario en consultorio " + c.Consultorio.Id + " para el consultorio " + calendario.Consultorio.Id);
                     if (c.DiasSemana.Intersect(calendario.DiasSemana).Any())
                     {
 						_logger.LogInformation("conflicto con calendario en los dias " + string.Join(",", c.DiasSemana) + " para los dias " + string.Join(",", calendario.DiasSemana));
-						if (c.Id == calendario.Id)
+						if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
+							(c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
+							(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
+							(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
 						{
-							_logger.LogInformation("es el mismo calendario");
-                            //en caso de que sea el mismo calendario, significa que es un update, por lo que hay que chequear dia por dia
-                            foreach (var dia in calendario.DiasSemana)
-							{
-								if (c.DiasSemana.Contains(dia))
-								{
-                                    _logger.LogInformation("revisando el dia " + dia);
-                                    if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
-										(c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
-										(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
-										(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
-									{
-										_logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
-										return true;
-									}
-								}
-							}
-						}
-						else
-						{
-							if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
-								(c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
-								(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
-								(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
-							{
-								_logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
-								return true;
-							}
+							_logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
+							return true;
 						}
                     }
                 }
@@ -468,6 +449,70 @@ namespace BL.BLs
 			_logger.LogInformation("saliendo sin conflictos");
             return false;
         }
+
+		public bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades)
+		{
+			//validar que de los calendarios del medico, ninguno sea para una especialidad que no este en la lista
+			var calendarios = getCalendarios().Where(c => c.Medico.Id == medicoId).ToList();
+			if (calendarios.Count == 0 || calendarios == null)
+			{
+                return true;
+            }
+
+            foreach (var calendario in calendarios)
+			{
+				if(!especialidades.Any(e => e.Id == calendario.Especialidad.Id)){
+					_logger.LogInformation("Especialidad no encontrada en la lista de especialidades a borrar");
+					return false;
+				}
+
+            }
+
+            return true;
+		}
+
+		public void borrarCalendariosIncompatibles(long medicoId, List<Especialidad> especialidades)
+		{
+			//eliminar aquellos calendarios de este medico cuya especialidad no este en la lsita de especialidades
+			var calendarios = getCalendarios().Where(c => c.Medico.Id == medicoId).ToList();
+			foreach (var calendario in calendarios)
+			{
+				if (!especialidades.Any(e => e.Id == calendario.Especialidad.Id))
+				{
+                    //borrar el calendario y cancelar las citas asociadas
+                    var citas = getCitasMedicas()
+						.Where(c => c.Calendario.Id == calendario.Id)
+						.Where(c => c.Estado == "Agendada")
+                        .ToList();
+
+                    foreach(var cita in citas)
+                    {
+                        cita.Estado = "Cancelada";
+                        updateCitaMedica(cita);
+
+                        //Creo la notificacion para el paciente
+						if(cita.PacienteId != null)
+						{
+							var notificacion = new Notificacion()
+							{
+								Mensaje = $"Su Cita medica para la fecha {cita.Fecha} ha tenido que ser cancelada, por favor agende nuevamente",
+								FechaEnvio = DateTime.Now,
+								Visto = false
+							};
+							Console.WriteLine("enviando notificacion al paciente" + cita.PacienteId);
+							long id = (long)cita.PacienteId;
+							dal_Paciente.AddNotificacion(notificacion, id);
+
+						}
+                    }
+
+					_logger.LogInformation("Se eliminaron las ciras");
+
+                    //se desactiva el calendario
+                    deleteCalendario(calendario.Id);
+                }
+			}
+		}
 
         #endregion
 

@@ -32,5 +32,12 @@ namespace BL.BLs
         {
             return dal.GetPaciente(id);
         }
+
+        //Notificaciones
+
+        public void AddNotificacion(Notificacion notificacion, long idPaciente)
+        {
+            dal.AddNotificacion(notificacion, idPaciente);
+        }
     }
 }

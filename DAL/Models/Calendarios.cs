@@ -49,4 +49,7 @@ public class Calendarios
     public virtual Medicos Medico { get; set; } // Usar virtual si necesitas Lazy Loading
 
     public virtual ICollection<CitasMedicas> CitasMedicas { get; set; } = new List<CitasMedicas>(); // Usar virtual si necesitas Lazy Loading
+
+    [Required]
+    public bool Activo { get; set; } = true;
 }

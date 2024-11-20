@@ -34,6 +34,16 @@ export class CalendariosService {
 
   updateCalendario(calendario: any): Observable<any> {
     console.log('Actualizando calendario');
-    return this.http.put<any>(`${this.apiUrl}`, calendario);
+    return this.http.put<any>(`${this.apiUrl}/${calendario.Id}`, calendario);
+  }
+
+  validarEspecialidadesParaBorrar(medicoId: string, especialidades: any): Observable<any> {
+    console.log('Validando especialidades para borrar');
+    console.log(especialidades);
+    return this.http.post<any>(`${this.apiUrl}/validarEspecialidadesParaBorrar/${medicoId}`, especialidades);
+  }
+
+  BorrarCalendariosIncompatibles(medicoId: string, especialidades: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/borrarCalendariosIncompatibles/${medicoId}`, especialidades);
   }
 }

@@ -88,6 +88,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public void borrarCalendariosIncompatibles(long medicoId, List<Especialidad> especialidades)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool checkOcupacionConsultorio(Calendario calendario)
         {
             throw new NotImplementedException();
@@ -354,6 +359,11 @@ namespace BL.BLs
         }
 
         public void updateSeguroMedico(SeguroMedico seguroMedico)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades)
         {
             throw new NotImplementedException();
         }
