@@ -8,11 +8,11 @@ namespace BL.BLs
     public class BL_CitasMedicas : IBL_CitasMedicas
     {
         private readonly IDAL_CitasMedicas dal;
-        private readonly IDAL_Administrativo_Service dalAdmin;
+        private readonly IDAL_Administrativo dalAdmin;
 
         public BL_CitasMedicas(
             IDAL_CitasMedicas dal,
-            IDAL_Administrativo_Service dalAdmin)
+            IDAL_Administrativo dalAdmin)
         {
             this.dal = dal;
             this.dalAdmin = dalAdmin;

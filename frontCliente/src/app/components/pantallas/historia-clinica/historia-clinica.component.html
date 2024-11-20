@@ -1,0 +1,316 @@
+<div class="container mx-auto px-1 md:px-4 mt-4 md:mt-8 md:p-0">
+    <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white text-lg">Cargando...</p>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-full md:max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">     
+            <div *ngIf="historiaClinica && historiaClinica.length > 0 || filtroActivo" class="p-2 md:p-5">
+                <h2 class="text-xl font-semibold text-center">Mi Historia Clínica</h2>
+                <div class="flex space-x-5">
+                    <div class="flex justify-start py-6">
+                        <button (click)="abrirModalFiltro()" title="Aplicar filtro" class="text-white border rounded-md py-1 px-2 bg-gray-400 border-gray-400 hover:bg-gray-500 transition duration-300">
+                            Aplicar Filtro
+                        </button>
+                    </div>
+                    <div *ngIf="fechaFin && fechaInicio && filtroActivo" class="flex justify-start py-6">
+                        <button type="button" (click)="eliminarRango()" title="Eliminar rango" class="flex items-center text-white border rounded-md py-1 px-2 bg-red-300 border-red-300 hover:bg-red-400 transition duration-300">
+                            <span class="material-icons">close</span>
+                            <span class="ml-1">Eliminar rango</span>
+                        </button>
+                    </div>
+                    <div *ngIf="mostrarEliminarEspecialidadesButton()" class="flex justify-start py-6">
+                        <button type="button" (click)="eliminarEspecialidades()" title="Eliminar especialidades" class="flex items-center text-white border rounded-md py-1 px-2 bg-red-300 border-red-300 hover:bg-red-400 transition duration-300">
+                            <span class="material-icons">close</span>
+                            <span class="ml-1">Eliminar especilidades</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-hidden rounded-md">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Fecha</th>
+                                <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Especialidad</th>
+                                <th class="py-2 text-center font-semibold w-3/12 border-b border-gray-300 hidden md:table-cell">Descripción</th>
+                                <th class="py-2 text-center font-semibold w-4/12 border-b border-gray-300 hidden md:table-cell">Diagnóstico</th>
+                                <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let cita of historiaClinica" class="hover:bg-gray-100">
+                                <td class="py-1 text-center w-1/12 border-b border-gray-300">{{ cita.citaMedica.fecha | date:'dd/MM/yyyy' }}</td>
+                                <td class="py-1 text-center w-2/12 border-b border-gray-300">{{ cita.citaMedica.calendario.especialidad.nombre }}</td>
+                                <td class="py-1 text-center w-3/12 border-b border-gray-300 hidden md:table-cell">
+                                    {{ cita.consultaMedica.descripcion }}
+                                </td>
+                                <td class="py-1 text-center w-4/12 border-b border-gray-300 hidden md:table-cell">
+                                    {{ cita.consultaMedica.diagnostico }}
+                                </td>
+                                <td class="py-1 text-center w-2/12 border-b border-gray-300">
+                                    <button (click)="verConsulta(cita.consultaMedica)" class="text-blue-intermedio font-medium hover:underline hover:text-blue-oscuro md:hidden">Ver Consulta</button>
+                                    <br class="md:hidden">
+                                    <button *ngIf="cita.consultaMedica.recetas.length > 0" (click)="verReceta(cita.consultaMedica.recetas)" class="text-blue-intermedio font-medium hover:underline hover:text-blue-oscuro">Ver Recetas</button>
+                                    <span *ngIf="cita.consultaMedica.recetas.length === 0">Sin Recetas</span>
+                                    <br>
+                                    <button *ngIf="cita.consultaMedica.estudios.length > 0" (click)="verEstudios(cita.consultaMedica.estudios)" class="text-blue-intermedio font-medium hover:underline hover:text-blue-oscuro">Ver Estudios</button>
+                                    <span *ngIf="cita.consultaMedica.estudios.length === 0">Sin Estudios</span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="historiaClinica && historiaClinica.length === 0 && filtroActivo">
+                                <td class="py-2 text-center" colspan="5">
+                                    <p class="text-center text-lg font-semibold">
+                                        No se encontraron resultados con los filtros aplicados.
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="totalPages > 1" class="text-center space-x-5 mt-5">
+                    <!-- Botón de Inicio -->
+                    <button 
+                        (click)="changePage(1)" 
+                        [disabled]="pageNumber === 1"
+                        [ngClass]="{
+                            'text-gray-400 cursor-not-allowed': pageNumber === 1,
+                            'text-black': pageNumber !== 1
+                        }"
+                    >
+                        <strong><<</strong>
+                    </button>
+                    
+                    <!-- Botón de Anterior -->
+                    <button 
+                        (click)="changePage(pageNumber - 1)" 
+                        [disabled]="pageNumber === 1"
+                        [ngClass]="{
+                            'text-gray-400 cursor-not-allowed': pageNumber === 1,
+                            'text-black': pageNumber !== 1
+                        }"
+                    >
+                        <strong><</strong>
+                    </button>
+                    
+                    <!-- Información de la página actual -->
+                    <span *ngFor="let page of pages" (click)="changePage(page)">
+                        <button 
+                        [disabled]="page === pageNumber" 
+                        [ngClass]="{
+                            'font-bold underline': page === pageNumber,
+                            'text-black': page !== pageNumber
+                        }"
+                        >
+                        {{ page }}
+                        </button>
+                    </span>
+                    
+                    <!-- Botón de Siguiente -->
+                    <button 
+                        (click)="changePage(pageNumber + 1)" 
+                        [disabled]="pageNumber === totalPages"
+                        [ngClass]="{
+                        'text-gray-500 cursor-not-allowed': pageNumber === totalPages,
+                        'text-black': pageNumber !== totalPages
+                        }"
+                    >
+                        <strong>></strong>
+                    </button>
+                    
+                    <!-- Botón de Fin -->
+                    <button 
+                        (click)="changePage(totalPages)" 
+                        [disabled]="pageNumber === totalPages"
+                        [ngClass]="{
+                            'text-gray-500 cursor-not-allowed': pageNumber === totalPages,
+                            'text-black': pageNumber !== totalPages
+                        }"
+                    >
+                        <strong>>></strong>
+                    </button>
+                    </div>  
+            </div>
+            <div *ngIf="historiaClinica && historiaClinica.length === 0 && !filtroActivo" class="p-5">
+                <p class="text-center text-lg font-semibold">
+                    El paciente no tiene historia clínica registrada.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="modalConsulta">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white w-11/12 p-5 rounded-lg shadow-lg space-y-3 max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h1 class="text-lg font-bold">Consulta</h1>
+                <button type="button" title="Cerrar" (click)="closeModalConsulta()" class="text-red-600 hover:text-red-800 transition duration-300">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <div>
+                    <label class="font-semibold">Descripción:</label>
+                    <p>{{ consulta.descripcion }}</p>
+                </div>
+                <div>
+                    <label class="font-semibold">Diagnóstico:</label>
+                    <p>{{ consulta.diagnostico }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="modalRecetas">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white w-full sm:w-1/2 max-w-sm md:max-w-full lg:w-1/2 p-5 rounded-lg shadow-lg space-y-3 max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h1 class="text-lg font-bold">Recetas</h1>
+                <button type="button" title="Cerrar" (click)="closeModalRecetas()" class="text-red-600 hover:text-red-800 transition duration-300">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <!-- Table for larger screens -->
+            <div class="hidden sm:block overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b text-center">Medicamento</th>
+                            <th class="py-2 px-4 border-b text-center">Cantidad</th>
+                            <th class="py-2 px-4 border-b text-center">Frecuencia</th>
+                            <th class="py-2 px-4 border-b text-center">Vencimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let receta of recetas">
+                            <td class="py-2 px-4 border-b text-center">{{ receta.nombreMedicamento }}</td>
+                            <td class="py-2 px-4 border-b text-center">{{ receta.cantidad }}</td>
+                            <td class="py-2 px-4 border-b text-center">{{ receta.frecuencia }}</td>
+                            <td class="py-2 px-4 border-b text-center">{{ receta.vencimiento | date:'dd/MM/yyyy' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Cards for mobile -->
+            <div class="block sm:hidden space-y-4">
+                <div *ngFor="let receta of recetas" class="border rounded-lg p-3">
+                    <p><span class="font-bold">Medicamento:</span> {{ receta.nombreMedicamento }}</p>
+                    <p><span class="font-bold">Cantidad:</span> {{ receta.cantidad }}</p>
+                    <p><span class="font-bold">Frecuencia:</span> {{ receta.frecuencia }}</p>
+                    <p><span class="font-bold">Vencimiento:</span> {{ receta.vencimiento | date:'dd/MM/yyyy' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="modalEstudios">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white w-full sm:w-1/2 max-w-sm sm:max-w-md lg:w-1/2 p-5 rounded-lg shadow-lg space-y-3 max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h1 class="text-lg font-bold">Estudios</h1>
+                <button type="button" title="Cerrar" (click)="closeModalEstudios()" class="text-red-600 hover:text-red-800 transition duration-300">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <!-- Table for larger screens -->
+            <div class="hidden sm:block overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b text-center">Nombre</th>
+                            <th class="py-2 px-4 border-b text-center">Descripción</th>
+                            <th class="py-2 px-4 border-b text-center">Fecha realizado</th>
+                            <th class="py-2 px-4 border-b text-center">Fecha resultado</th>
+                            <th class="py-2 px-4 border-b text-center">Resultado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let estudio of estudios">
+                            <td class="py-2 px-4 border-b text-center">{{ estudio.nombre }}</td>
+                            <td class="py-2 px-4 border-b text-center">{{ estudio.descripcion }}</td>
+                            <td class="py-2 px-4 border-b text-center">{{ estudio.fechaRealizado | date:'dd/MM/yyyy' }}</td>
+                            <td class="py-2 px-4 border-b text-center">{{ estudio.fechaResultado | date:'dd/MM/yyyy' }}</td>
+                            <td class="py-2 px-4 border-b text-center">
+                                <button class="text-blue-intermedio hover:text-blue-oscuro hover:underline transition duration-300" (click)="descargarPdf(estudio.imagenUrl)">Ver pdf</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Cards for mobile -->
+            <div class="block sm:hidden space-y-4">
+                <div *ngFor="let estudio of estudios" class="border rounded-lg p-3">
+                    <p><span class="font-bold">Nombre:</span> {{ estudio.nombre }}</p>
+                    <p><span class="font-bold">Descripción:</span> {{ estudio.descripcion }}</p>
+                    <p><span class="font-bold">Fecha realizado:</span> {{ estudio.fechaRealizado | date:'dd/MM/yyyy' }}</p>
+                    <p><span class="font-bold">Fecha resultado:</span> {{ estudio.fechaResultado | date:'dd/MM/yyyy' }}</p>
+                    <p><span class="font-bold">Resultado:</span>
+                        <button class="text-blue-intermedio hover:text-blue-oscuro hover:underline transition duration-300" (click)="descargarPdf(estudio.imagenUrl)">Ver pdf</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="modalFiltro" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
+    <div class="bg-white p-5 rounded-lg shadow-lg w-11/12 md:w-1/3">
+        <div class="flex justify-between items-center">
+            <h1 class="text-lg font-bold">Filtros</h1>
+            <button type="button" title="Cerrar" (click)="cerrarModalFiltro()" class="text-red-600 hover:text-red-800 transition duration-300">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="py-5">
+            <h2 class="text-lg font-bold">Fechas</h2>
+            <div class="flex justify-between p-5">
+                <div class="flex flex-col">
+                    <label class="font-semibold">Orden:</label>
+                    <div class="flex flex-row space-x-5">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="ascendente" [(ngModel)]="ordenAscendente" (change)="toggleOrden('ascendente')">
+                            <label for="ascendente">Asc</label>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="descendente" [(ngModel)]="ordenDescendente" (change)="toggleOrden('descendente')">
+                            <label for="descendente">Desc</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4">
+                    <div class="flex flex-col">
+                        <label for="fechaInicio" class="font-semibold">Fecha Inicio</label>
+                        <input type="date" [max]="fechaFin" id="fechaInicio" class="border border-gray-300 rounded-md px-2 py-1" [(ngModel)]="fechaInicio">
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="fechaFin" class="font-semibold">Fecha Fin</label>
+                        <input type="date" [min]="fechaInicio" [disabled]="!fechaInicio" id="fechaFin" class="border border-gray-300 rounded-md px-2 py-1" [(ngModel)]="fechaFin">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2 class="text-lg font-bold">Especialidades</h2>
+            <div class="p-5 grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div *ngFor="let especialidad of especialidades" class="flex items-center space-x-2">
+                    <input
+                        type="checkbox"
+                        id="{{ especialidad.id }}"
+                        [(ngModel)]="especialidad.IsChecked"
+                        [disabled]="isCheckboxDisabled(especialidad)"
+                    />
+                    <label for="{{ especialidad.id }}">{{ especialidad.nombre }}</label>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center py-1">
+            <button type="button" (click)="aplicarFiltros()" title="Aplicar filtros" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+                Aplicar
+            </button>
+        </div>
+    </div>
+</div>

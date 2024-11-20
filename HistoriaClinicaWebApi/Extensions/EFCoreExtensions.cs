@@ -22,8 +22,11 @@ namespace HistoriaClinicaWebApi.Extensions
         {
             //  DALs
             services.AddTransient<IDAL_HistoriasClinicas, DAL_HistoriasClinicas_EF>();
-            services.AddTransient<IDAL_Administrativo_Service, DAL_Administrativo_Service>();
-            services.AddTransient<IDAL_CitasMedicas_Service, DAL_CitasMedicas_Service>();
+            services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_Service>();
+            services.AddTransient<IDAL_Administrativo, DAL_Administrativo_Service>();
+            services.AddHttpClient<DAL_CitasMedicas_Service>();
+            services.AddHttpClient<DAL_HistoriasClinicas_Service>();
+            services.AddHttpContextAccessor();
 
             //  BLs
             services.AddTransient<IBL_HistoriasClinicas, BL_HistoriasClinicas>();

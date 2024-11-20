@@ -1,17 +1,35 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PacienteService {
-  private apiUrl = 'https://localhost:5001/api/pacientes'; // URL del microservicio
+  private apiUrl = 'https://localhost:5001/api/Pacientes'; // URL del microservicio
 
   constructor(private http: HttpClient) {}
 
-  getPacientes(): Observable<any[]> {
-    console.log('Obteniendo pacientes');
-    return this.http.get<any[]>(this.apiUrl);
+  obtenerMiHistoriaClinica(documento: string, pageNumber: number, pageSize: number,
+    orden: string, fechaInicio: string, fechaFin: string, especialidades: any[]
+  ): Observable<any> {
+    const url = `${this.apiUrl}/${documento}/miHistoriaClinica`;
+    let params = new HttpParams()
+        .set('pageNumber', pageNumber.toString())
+        .set('pageSize', pageSize.toString())
+        .set('orden', orden);
+
+    if (fechaInicio && fechaFin) {
+      params = params.set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    }
+
+    console.log('Especialidades:', especialidades);
+
+    // Convertimos el array de especialidades a JSON y lo agregamos a los parámetros
+    params = params.set('especialidades', JSON.stringify(especialidades));
+
+    console.log(params.toString());
+
+    return this.http.get<any>(url, { params });
   }
 }

@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System.Text;
 
-namespace AuthWebApi.Extensions
+namespace HistoriaClinicaWebApi.Extensions
 {
     public static class IdentityExtensions
     {
@@ -16,7 +16,8 @@ namespace AuthWebApi.Extensions
             services
                 .AddIdentityApiEndpoints<AppUsers>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<DBContext>();
+                .AddEntityFrameworkStores<DBContext>()
+                .AddDefaultTokenProviders();
             return services;
         }
 
@@ -36,7 +37,6 @@ namespace AuthWebApi.Extensions
                 options.Password.RequiredLength = 8;
                 // Requerimientos del usuario
                 options.User.RequireUniqueEmail = true;
-                //options.SignIn.RequireConfirmedEmail = true;
             });
             return services;
         }
@@ -57,19 +57,18 @@ namespace AuthWebApi.Extensions
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey())),
                     ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ValidateAudience = false
                 };
             });
-            services.AddAuthorization(options =>
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser()
-                    .Build());
+            //services.AddAuthorization(options =>
+            //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+            //        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+            //        .RequireAuthenticatedUser()
+            //        .Build());
 
-                //  Acá agrego politicas en caso de que precise
+            //  Acá agrego politicas en caso de que precise
 
+            services.AddAuthorization();
             return services;
         }
 

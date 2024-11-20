@@ -250,7 +250,10 @@ namespace DAL.DALs
                     citaEntity.Fecha = citaActualizada.Fecha;
                     citaEntity.Estado = citaActualizada.Estado;
                     citaEntity.PacienteId = citaActualizada.PacienteId;
-                    citaEntity.ConsultaMedicaId = citaActualizada.ConsultaMedicaId;
+                    if (citaActualizada.ConsultaMedicaId != null)
+                    {
+                        citaEntity.ConsultaMedicaId = citaActualizada.ConsultaMedicaId;
+                    }
 
                     _dbContext.CitasMedicas.Update(citaEntity);
                     _dbContext.SaveChanges();
@@ -277,6 +280,9 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
+                Console.WriteLine("====================================");
+                Console.WriteLine("PacienteId: " + pacienteId);
+                Console.WriteLine("====================================");
                 string IdEncriptada = AES.Encrypt(pacienteId.ToString());
 
                 var query = _dbContext.CitasMedicas
@@ -295,7 +301,7 @@ namespace DAL.DALs
                 }
 
                 // Aplicar orden
-                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha); ;
+                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha);
 
                 return query
                     .Skip((pageNumber - 1) * pageSize)

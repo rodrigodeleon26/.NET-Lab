@@ -38,8 +38,21 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(paciente);
 		}
 
-		// POST api/<PacienteController>
-		[ProducesResponseType(typeof(Paciente), 201)]
+        // GET api/<PacienteController>/12345678
+        [ProducesResponseType(typeof(Paciente), 200)]
+        [HttpGet("dni/{dni}")]
+        public IActionResult Get(string dni)
+        {
+            var paciente = _blAdministrativo.getPacienteByDNI(dni);
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+            return Ok(paciente);
+        }
+
+        // POST api/<PacienteController>
+        [ProducesResponseType(typeof(Paciente), 201)]
 		[HttpPost]
 		public IActionResult Post([FromBody] Paciente paciente)
 		{

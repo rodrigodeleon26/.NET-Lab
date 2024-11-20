@@ -17,6 +17,9 @@ import { ResetPasswordComponent } from './components/user/reset-password/reset-p
 import { ConfirmEmailComponent } from './components/user/confirm-email/confirm-email.component';
 import { ResendEmailConfirmationComponent } from './components/user/resend-email-confirmation/resend-email-confirmation.component';
 import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-factor-auth.component';
+import { NavComponent } from '../app/components/web/nav/nav.component';
+import { InicioComponent } from './components/pantallas/inicio/inicio.component';
+import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component'; 
 
 @NgModule({
   declarations: [
@@ -29,6 +32,9 @@ import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-fa
     ConfirmEmailComponent,
     ResendEmailConfirmationComponent,
     TwoFactorAuthComponent,
+    NavComponent,
+    InicioComponent,
+    HistoriaClinicaComponent
   ],
   imports: [
     BrowserModule,

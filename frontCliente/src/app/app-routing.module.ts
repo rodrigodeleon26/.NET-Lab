@@ -9,6 +9,8 @@ import { ConfirmEmailComponent } from './components/user/confirm-email/confirm-e
 import { ResendEmailConfirmationComponent } from './components/user/resend-email-confirmation/resend-email-confirmation.component';
 import { authGuard } from './shared/auth.guard';
 import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-factor-auth.component';
+import { InicioComponent } from './components/pantallas/inicio/inicio.component';
+import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component';
 
 const routes: Routes = [
   { path: '', component: UserComponent,
@@ -22,7 +24,8 @@ const routes: Routes = [
     ]
   },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-  { path: '**', redirectTo: '' }
+  { path : 'inicio', component: InicioComponent, canActivate: [authGuard] },
+  { path : 'historia-clinica', component: HistoriaClinicaComponent, canActivate: [authGuard] }
 ];
 
 @NgModule({

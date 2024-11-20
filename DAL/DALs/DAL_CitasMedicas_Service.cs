@@ -1,161 +1,230 @@
 ﻿using DAL.IDALs;
+using iTextSharp.text;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DAL.DALs
 {
-    public class DAL_CitasMedicas_Service : IDAL_CitasMedicas_Service
+    public class DAL_CitasMedicas_Service : IDAL_CitasMedicas
     {
         public CitaMedica getCitaMedicaById(long id)
         {
-            using (var _dbContext = new DBContext())
+            try
             {
-                return _dbContext.CitasMedicas
-                    .Where(p => p.Id == id)
-                    .Select(p => new CitaMedica
-                    {
-                        Id = p.Id,
-                        Fecha = p.Fecha,
-                        Estado = p.Estado,
-                        PacienteId = p.PacienteId,
-                        ConsultaMedicaId = p.ConsultaMedicaId,
-                        Calendario = new Calendario
-                        {
-                            HoraInicio = p.Calendario.HoraInicio,
-                            HoraFin = p.Calendario.HoraFin,
-                            TiempoCita = p.Calendario.TiempoCita,
-                            CantidadCitas = p.Calendario.CantidadCitas,
-                            DiasSemana = p.Calendario.DiasSemana,
-                            Medico = new Medico
-                            {
-                                Id = p.Calendario.Medico.Id,
-                                Nombres = p.Calendario.Medico.Nombres,
-                                Apellidos = p.Calendario.Medico.Apellidos,
-                                Documento = p.Calendario.Medico.Documento,
-                                Email = p.Calendario.Medico.Email,
-                                Telefono = p.Calendario.Medico.Telefono
-                            },
-                            Especialidad = new Especialidad
-                            {
-                                Id = p.Calendario.Especialidad.Id,
-                                Nombre = p.Calendario.Especialidad.Nombre,
-                                Descripcion = p.Calendario.Especialidad.Descripcion
-                            },
-                            Consultorio = new Consultorio
-                            {
-                                Id = p.Calendario.Consultorio.Id,
-                                Numero = p.Calendario.Consultorio.Numero,
-                                Piso = p.Calendario.Consultorio.Piso
-                            }
-                        }
-                    })
-                    .FirstOrDefault(); // Obtener la primera cita que coincida con el ID
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{id}";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<CitaMedica>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener la cita médica");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener la cita médica: {ex.Message}");
+                return null;
             }
         }
 
-        public void updateCitaMedica(CitaMedica citaActualizada)
+        public void updateCitaMedica(CitaMedicaDTO citaActualizada)
         {
-            using (var _dbContext = new DBContext())
-            {
-                var citaEntity = _dbContext.CitasMedicas.FirstOrDefault(p => p.Id == citaActualizada.Id);
-                if (citaEntity != null)
+            try
+            {                 
+                var handler = new HttpClientHandler
                 {
-                    citaEntity.Fecha = citaActualizada.Fecha;
-                    citaEntity.Estado = citaActualizada.Estado;
-                    citaEntity.PacienteId = citaActualizada.PacienteId;
-                    citaEntity.ConsultaMedicaId = citaActualizada.ConsultaMedicaId;
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
 
-                    _dbContext.CitasMedicas.Update(citaEntity);
-                    _dbContext.SaveChanges();
+                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{citaActualizada.Id}";
+
+                var citaMedicaJson = JsonConvert.SerializeObject(citaActualizada);
+                var content = new StringContent(citaMedicaJson, Encoding.UTF8, "application/json");
+
+                var response = _httpClient.PutAsync(url, content).Result;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Error al actualizar la cita médica");
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar la cita médica: {ex.Message}");
             }
         }
 
         public List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
-            using (var _dbContext = new DBContext())
+            try
             {
-                string IdEncriptada = AES.Encrypt(pacienteId.ToString());
-
-                var query = _dbContext.CitasMedicas
-                    .Where(c => c.Estado == "Completada" && c.PacienteId == IdEncriptada);
- 
-
-                // Aplicar filtro de fechas si ambas fechas están presentes
-                if (fechaInicio.HasValue && fechaFin.HasValue)
+                var handler = new HttpClientHandler
                 {
-                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                // Construcción de la URL con parámetros de la cadena de consulta (query string)
+                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/paciente/{pacienteId}";
+
+                // Construcción de los parámetros de la cadena de consulta
+                var queryParams = new List<string>
+                {
+                    $"pageNumber={pageNumber}",
+                    $"pageSize={pageSize}",
+                    $"orden={orden}"
+                };
+
+                if (fechaInicio.HasValue)
+                {
+                    queryParams.Add($"fechaInicio={fechaInicio.Value.ToString("yyyy-MM-dd")}");
                 }
 
-                if (especialidadesIds.Any())
+                if (fechaFin.HasValue)
                 {
-                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
+                    queryParams.Add($"fechaFin={fechaFin.Value.ToString("yyyy-MM-dd")}");
                 }
 
-                // Aplicar orden
-                query = orden.ToLower() == "asc" ? query.OrderBy(c => c.Fecha) : query.OrderByDescending(c => c.Fecha); ;
+                if (especialidadesIds != null && especialidadesIds.Any())
+                {
+                    var especialidadesStr = string.Join(",", especialidadesIds);
+                    queryParams.Add($"especialidadesIds={especialidadesStr}");
+                }
 
-                return query
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(c => new CitaMedica
-                    {
-                        Id = c.Id,
-                        Fecha = c.Fecha,
-                        Estado = c.Estado,
-                        PacienteId = c.PacienteId,
-                        Calendario = new Calendario
-                        {
-                            Medico = new Medico
-                            {
-                                Id = c.Calendario.Medico.Id,
-                                Nombres = c.Calendario.Medico.Nombres,
-                                Apellidos = c.Calendario.Medico.Apellidos,
-                                Documento = c.Calendario.Medico.Documento,
-                                Email = c.Calendario.Medico.Email,
-                                Telefono = c.Calendario.Medico.Telefono
-                            },
-                            Especialidad = new Especialidad
-                            {
-                                Id = c.Calendario.Especialidad.Id,
-                                Nombre = c.Calendario.Especialidad.Nombre,
-                                Descripcion = c.Calendario.Especialidad.Descripcion
-                            }
-                        },
-                        ConsultaMedicaId = c.ConsultaMedicaId
-                    })
-                    .ToList();
+                // Unir los parámetros a la URL
+                var queryString = string.Join("&", queryParams);
+                var fullUrl = $"{url}?{queryString}";
+
+                Console.WriteLine($"URL de la solicitud: {fullUrl}");
+
+                var response = _httpClient.GetAsync(fullUrl).Result;
+
+                Console.WriteLine($"Respuesta del servidor: {response.StatusCode}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<List<CitaMedica>>(responseData);
+                }
+                else
+                {
+                    // Manejar el error según sea necesario
+                    throw new Exception("Error al obtener las citas médicas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener paciente: {ex.Message}");
+                return null;
             }
         }
 
         public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
-            using (var _dbContext = new DBContext())
+            try
             {
-                string IdEncriptada = AES.Encrypt(pacienteId.ToString());
-
-                var query = _dbContext.CitasMedicas
-                    .Where(c => c.Estado == "Completada" && c.PacienteId == IdEncriptada);
-
-                // Aplicar filtro de rango de fechas solo si ambos valores están presentes
-                if (fechaInicio.HasValue && fechaFin.HasValue)
+                var handler = new HttpClientHandler
                 {
-                    query = query.Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value);
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                // Construcción de la URL con parámetros de la cadena de consulta (query string)
+                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/cant/{pacienteId}";
+
+                // Construcción de los parámetros de la cadena de consulta
+                var queryParams = new List<string>
+                {
+                    $"orden={orden}"
+                };
+
+                if (fechaInicio.HasValue)
+                {
+                    queryParams.Add($"fechaInicio={fechaInicio.Value.ToString("yyyy-MM-dd")}");
                 }
 
-                if (especialidadesIds.Any())
+                if (fechaFin.HasValue)
                 {
-                    query = query.Where(c => especialidadesIds.Contains(c.Calendario.Especialidad.Id));
+                    queryParams.Add($"fechaFin={fechaFin.Value.ToString("yyyy-MM-dd")}");
                 }
 
-                // Contar los resultados después de aplicar los filtros
-                return query.Count();
+                if (especialidadesIds != null && especialidadesIds.Any())
+                {
+                    var especialidadesStr = string.Join(",", especialidadesIds);
+                    queryParams.Add($"especialidadesIds={especialidadesStr}");
+                }
+
+                // Unir los parámetros a la URL
+                var queryString = string.Join("&", queryParams);
+                var fullUrl = $"{url}?{queryString}";
+
+                Console.WriteLine($"URL de la solicitud: {fullUrl}");
+
+                var response = _httpClient.GetAsync(fullUrl).Result;
+
+                Console.WriteLine($"Respuesta del servidor: {response.StatusCode}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<int>(responseData);
+                }
+                else
+                {
+                    // Manejar el error según sea necesario
+                    throw new Exception("Error al obtener las citas médicas");
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener paciente: {ex.Message}");
+                return 0;
+            }
+        }
+
+        public List<CitaMedica> getCitasMedicas()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void deleteCitaMedica(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

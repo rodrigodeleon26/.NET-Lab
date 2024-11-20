@@ -18,12 +18,6 @@ namespace Shared
         {
             using (Aes aesAlg = Aes.Create())
             {
-                byte[] keyBytes = Encoding.UTF8.GetBytes(key);
-                byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
-
-                Console.WriteLine($"Key Length: {keyBytes.Length}");
-                Console.WriteLine($"IV Length: {ivBytes.Length}");
-
                 aesAlg.Key = Encoding.UTF8.GetBytes(key); // Convierte la clave a bytes
                 aesAlg.IV = Encoding.UTF8.GetBytes(iv);   // Convierte el IV a bytes
 

@@ -205,6 +205,8 @@ namespace DAL.Migrations
 
                     b.HasIndex("CalendarioId");
 
+                    b.HasIndex("ConsultaMedicaId");
+
                     b.HasIndex("ConsultoriosId");
 
                     b.ToTable("CitasMedicas");
@@ -218,9 +220,6 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CitaMedicaId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -230,9 +229,6 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CitaMedicaId")
-                        .IsUnique();
 
                     b.ToTable("ConsultasMedicas");
                 });
@@ -825,20 +821,17 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DAL.Models.ConsultasMedicas", "ConsultaMedica")
+                        .WithMany()
+                        .HasForeignKey("ConsultaMedicaId");
+
                     b.HasOne("DAL.Models.Consultorios", null)
                         .WithMany("CitasMedicas")
                         .HasForeignKey("ConsultoriosId");
 
                     b.Navigation("Calendario");
-                });
 
-            modelBuilder.Entity("DAL.Models.ConsultasMedicas", b =>
-                {
-                    b.HasOne("DAL.Models.CitasMedicas", "CitaMedica")
-                        .WithOne("ConsultaMedica")
-                        .HasForeignKey("DAL.Models.ConsultasMedicas", "CitaMedicaId");
-
-                    b.Navigation("CitaMedica");
+                    b.Navigation("ConsultaMedica");
                 });
 
             modelBuilder.Entity("DAL.Models.Contratos", b =>
@@ -1026,11 +1019,6 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Models.Articulos", b =>
                 {
                     b.Navigation("Copagos");
-                });
-
-            modelBuilder.Entity("DAL.Models.CitasMedicas", b =>
-                {
-                    b.Navigation("ConsultaMedica");
                 });
 
             modelBuilder.Entity("DAL.Models.ConsultasMedicas", b =>

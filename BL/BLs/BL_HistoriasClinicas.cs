@@ -10,13 +10,13 @@ namespace BL.BLs
     public class BL_HistoriasClinicas : IBL_HistoriasClinicas
     {
         private readonly IDAL_HistoriasClinicas dal;
-        private readonly IDAL_Administrativo_Service dalAdminService;
-        private readonly IDAL_CitasMedicas_Service dalCitasMedicasService;
+        private readonly IDAL_Administrativo dalAdminService;
+        private readonly IDAL_CitasMedicas dalCitasMedicasService;
 
         public BL_HistoriasClinicas(
             IDAL_HistoriasClinicas dal,
-            IDAL_Administrativo_Service dalAdminService,
-            IDAL_CitasMedicas_Service dalCitasMedicasService)
+            IDAL_Administrativo dalAdminService,
+            IDAL_CitasMedicas dalCitasMedicasService)
         {
             this.dal = dal;
             this.dalAdminService = dalAdminService;
@@ -46,15 +46,16 @@ namespace BL.BLs
 
         public ConsultaMedica getConsultaMedica(long id)
         {
+            Console.WriteLine($"Obteniendo consulta médica con ID: {id}");
             return dal.getConsultaMedica(id);
         }
 
-        public ConsultaMedicaCompletaDTO getConsultaMedicaCompleta(long id)
+        public ConsultaMedicaCompletaDTO getConsultaMedicaCompleta(long id, long idCita)
         {
             var consultaMedica = dal.getConsultaMedica(id);
             if (consultaMedica == null) return null;
 
-            var citaMedica = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            var citaMedica = dalCitasMedicasService.getCitaMedicaById(idCita);
             if (citaMedica == null) return null;
 
             string pacienteDesId = AES.Decrypt(citaMedica.PacienteId);
@@ -148,7 +149,7 @@ namespace BL.BLs
             return dal.deleteReceta(idConsultaMedica, idReceta);
         }
 
-        public async Task<ConsultaMedica> addEstudio(int idConsultaMedica, Estudio estudio)
+        public async Task<ConsultaMedica> addEstudio(int idConsultaMedica, long idCita, Estudio estudio)
         {
             if (estudio == null)
             {
@@ -169,7 +170,7 @@ namespace BL.BLs
             };
 
             var consultaMedica = getConsultaMedica(idConsultaMedica);
-            var citaMedica = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            var citaMedica = dalCitasMedicasService.getCitaMedicaById(idCita);
             string pacienteDesId = AES.Decrypt(citaMedica.PacienteId ?? "");
             long pacienteId = long.Parse(pacienteDesId);
             var paciente = dalAdminService.GetPacienteById(pacienteId);
@@ -245,7 +246,7 @@ namespace BL.BLs
             };
         }
 
-        public ConsultaMedica GuardarConsulta(long id)
+        public ConsultaMedica GuardarConsulta(long id, long idCita)
         {
             var consultaMedica = getConsultaMedica(id);
             if (consultaMedica == null)
@@ -253,15 +254,22 @@ namespace BL.BLs
                 return null;
             }
 
-            var cita = dalCitasMedicasService.getCitaMedicaById(consultaMedica.CitaMedicaId);
+            var cita = dalCitasMedicasService.getCitaMedicaById(idCita);
             if (cita == null)
             {
                 return null;
             }
 
-            cita.Estado = "Completada";
-            cita.ConsultaMedicaId = consultaMedica.Id;
-            dalCitasMedicasService.updateCitaMedica(cita);
+            var citaDTO = new CitaMedicaDTO
+            {
+                Id = cita.Id,
+                Fecha = cita.Fecha,
+                Estado = "Completada",
+                ConsultaMedicaId = consultaMedica.Id,
+                PacienteId = cita.PacienteId
+            };
+
+            dalCitasMedicasService.updateCitaMedica(citaDTO);
 
             return consultaMedica;
         }

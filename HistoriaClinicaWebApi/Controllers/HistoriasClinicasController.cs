@@ -5,6 +5,7 @@ using DAL.Models;
 using Microsoft.Extensions.Logging;
 using BL.BLs;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HistoriaClinicaWebApi.Controllers
 
@@ -25,6 +26,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // GET: api/<HistoriasClinicasController>
+        [Authorize (Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<ConsultaMedica>), 200)]
         [ProducesResponseType(404)]
         [HttpGet]
@@ -41,12 +43,30 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // GET api/<HistoriasClinicasController>/5
-        [ProducesResponseType(typeof(ConsultaMedicaCompletaDTO), 200)]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
+        [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(404)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
         {
-            var consultaMedicaCompleta = _blHistoriasClinicas.getConsultaMedicaCompleta(id);
+            var consultaMedida = _blHistoriasClinicas.getConsultaMedica(id);
+
+            if (consultaMedida == null)
+            {
+                return NotFound(new { Message = "No existe consulta médica con ese ID" });
+            }
+
+            return Ok(consultaMedida);
+        }
+
+        // GET api/<HistoriasClinicasController>/5/5
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(ConsultaMedicaCompletaDTO), 200)]
+        [ProducesResponseType(404)]
+        [HttpGet("{id}/{idCita}")]
+        public IActionResult Get(long id, long idCita)
+        {
+            var consultaMedicaCompleta = _blHistoriasClinicas.getConsultaMedicaCompleta(id, idCita);
 
             if (consultaMedicaCompleta == null)
             {
@@ -58,6 +78,7 @@ namespace HistoriaClinicaWebApi.Controllers
 
 
         //POST api/<HistoriasClinicasController>/
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 201)]
         [ProducesResponseType(400)]
         [HttpPost]
@@ -74,6 +95,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         //POST api/<HistoriasClinicasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 201)]
         [ProducesResponseType(400)]
         [HttpPost("{id}")]
@@ -85,6 +107,7 @@ namespace HistoriaClinicaWebApi.Controllers
 
 
         // PUT api/<HistoriasClinicasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -108,6 +131,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         //DELETE api/<HistoriasClinicasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(404)]
         [HttpDelete("{id}")]
@@ -124,6 +148,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // POST api/<HistoriasClinicasController>/5/Receta
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -143,6 +168,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // PUT api/<HistoriasClinicasController>/5/Receta
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -162,6 +188,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // DELETE api/<HistoriasClinicasController>/5/Receta/1
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
@@ -177,18 +204,19 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // POST api/<HistoriasClinicasController>/5/Estudio
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [HttpPost("{id}/Estudio")]
-        public async Task<IActionResult> Post(int id, [FromBody] Estudio estudio)
+        [HttpPost("{id}/{idCita}/Estudio")]
+        public async Task<IActionResult> Post(int id, long idCita, [FromBody] Estudio estudio)
         {
             if (estudio == null)
             {
                 return BadRequest(new { Message = "El estudio no puede ser nulo" });
             }
 
-            var consultaMedicaConEstudio = await _blHistoriasClinicas.addEstudio(id, estudio);
+            var consultaMedicaConEstudio = await _blHistoriasClinicas.addEstudio(id, idCita, estudio);
             if (consultaMedicaConEstudio == null)
             {
                 return NotFound(new { Message = "No existe consulta médica con ese ID" });
@@ -199,6 +227,7 @@ namespace HistoriaClinicaWebApi.Controllers
 
 
         // PUT api/<HistoriasClinicasController>/5/Estudio
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -218,6 +247,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // DELETE api/<HistoriasClinicasController>/5/Estudio/1
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(404)]
         [HttpDelete("{id}/Estudio/{idEstudio}")]
@@ -231,6 +261,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // GET api/<HistoriasClinicasController>/12345678/historiaClinica?pageNumber=1&pageSize=10
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(404)]
         [HttpGet("{dni}/historiaClinica")]
@@ -252,13 +283,14 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         // PUT api/<HistoriasClinicasController>/5/guardarConsulta
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(ConsultaMedica), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [HttpPut("{id}/guardarConsulta")]
-        public IActionResult Put(long id)
+        [HttpPut("{id}/{idCita}/guardarConsulta")]
+        public IActionResult Put(long id, long idCita)
         {
-            var consultaMedica = _blHistoriasClinicas.GuardarConsulta(id);
+            var consultaMedica = _blHistoriasClinicas.GuardarConsulta(id, idCita);
             if (consultaMedica == null)
             {
                 return NotFound(new { Message = "No existe consulta médica con ese ID" });
@@ -268,6 +300,7 @@ namespace HistoriaClinicaWebApi.Controllers
         }
 
         //GET api/<HistoriaClinicasController>/Medicamentos
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Medicamento>), 200)]
         [ProducesResponseType(404)]
         [HttpGet("Medicamentos")]

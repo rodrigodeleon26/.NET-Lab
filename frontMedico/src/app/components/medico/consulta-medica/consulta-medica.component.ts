@@ -45,6 +45,7 @@ export class ConsultaMedicaComponent implements OnInit {
   successMessage: string = '';
 
   consultaSeleccionadaUrl: any = null;
+  citaMedicaSeleccionada: any = null;
 
   constructor(
     private consultaMedicaService: ConsultaMedicaService,
@@ -67,11 +68,11 @@ export class ConsultaMedicaComponent implements OnInit {
       nombreMedicamento: ['', Validators.required],
       cantidad: [
         '', 
-        [Validators.required, Validators.pattern('^[1-9]\\d*$')] // Solo números positivos mayores que 0
+        [Validators.required, Validators.pattern('^[1-9]\\d*$')] 
       ],
       frecuencia: [
         '', 
-        [Validators.required, Validators.pattern('^[1-9]\\d*$')] // Solo números positivos mayores que 0
+        [Validators.required, Validators.pattern('^[1-9]\\d*$')] 
       ],
       vencimiento: ['', Validators.required],
     });
@@ -93,8 +94,11 @@ export class ConsultaMedicaComponent implements OnInit {
       const consultaSeleccionada = params['consultaSeleccionada'];
       if (!consultaSeleccionada) return;
       this.consultaSeleccionadaUrl = consultaSeleccionada;
+      const citaMedicaId = params['citaSeleccionada'];
+      if(!citaMedicaId) return;
+      this.citaMedicaSeleccionada = citaMedicaId;
     });
-    this.consultaMedicaService.obtenerConsultaMedica(this.consultaSeleccionadaUrl).subscribe(
+    this.consultaMedicaService.obtenerConsultaMedica(this.consultaSeleccionadaUrl, this.citaMedicaSeleccionada).subscribe(
       response => {
         this.consultaMedica = response.consultaMedica;
         this.consultaMedicaForm.patchValue(this.consultaMedica);
@@ -212,7 +216,7 @@ export class ConsultaMedicaComponent implements OnInit {
     }
     this.loading = true;
     const consultaMedicaGuardar = this.consultaMedicaForm.value;
-    this.consultaMedicaService.guardarConsultaMedica(consultaMedicaGuardar.id).subscribe(
+    this.consultaMedicaService.guardarConsultaMedica(consultaMedicaGuardar.id, this.citaMedica.id).subscribe(
       response => {
         this.loading = false;
         this.consultaMedica = response;
@@ -398,7 +402,7 @@ export class ConsultaMedicaComponent implements OnInit {
       consultaMedicaId: this.consultaMedica.id,
       id: 0 
     };
-    this.consultaMedicaService.agregarEstudio(this.consultaMedica.id, estudioAgregar).subscribe(
+    this.consultaMedicaService.agregarEstudio(this.consultaMedica.id, this.citaMedica.id, estudioAgregar).subscribe(
       response => {
         this.loading = false;
         this.consultaMedica = response;

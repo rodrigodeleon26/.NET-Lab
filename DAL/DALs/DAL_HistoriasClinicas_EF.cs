@@ -26,7 +26,6 @@ namespace DAL.DALs
                         Id = c.Id,
                         Descripcion = c.Descripcion,
                         Diagnostico = c.Diagnostico,
-                        CitaMedicaId = c.CitaMedicaId,
                         Estudios = c.Estudios.Select(e => new Estudio
                         {
                             Id = e.Id,
@@ -64,7 +63,6 @@ namespace DAL.DALs
                     Id = c.Id,
                     Descripcion = c.Descripcion,
                     Diagnostico = c.Diagnostico,
-                    CitaMedicaId = c.CitaMedicaId,
                     Estudios = c.Estudios.Select(e => new Estudio
                     {
                         Id = e.Id,
@@ -102,7 +100,6 @@ namespace DAL.DALs
                 {
                     Descripcion = consultaMedica.Descripcion,
                     Diagnostico = consultaMedica.Diagnostico,
-                    CitaMedicaId = consultaMedica.CitaMedicaId
                 };
                 context.ConsultasMedicas.Add(consultaMedicaEF);
                 context.SaveChanges();
@@ -112,7 +109,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -143,7 +139,6 @@ namespace DAL.DALs
                 {
                     Descripcion = "",
                     Diagnostico = "",
-                    CitaMedicaId = citeMedicaId
                 };
                 context.ConsultasMedicas.Add(consultaMedicaEF);
                 context.SaveChanges();
@@ -152,7 +147,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -191,14 +185,12 @@ namespace DAL.DALs
                     }
                     consultaMedicaEF.Descripcion = consultaMedica.Descripcion;
                     consultaMedicaEF.Diagnostico = consultaMedica.Diagnostico;
-                    consultaMedicaEF.CitaMedicaId = consultaMedica.CitaMedicaId;
                     context.SaveChanges();
                     return new ConsultaMedica
                     {
                         Id = consultaMedicaEF.Id,
                         Descripcion = consultaMedicaEF.Descripcion,
                         Diagnostico = consultaMedicaEF.Diagnostico,
-                        CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                         Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                         {
                             Id = r.Id,
@@ -250,7 +242,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -301,7 +292,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -351,7 +341,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -398,7 +387,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -451,7 +439,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -502,7 +489,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -549,7 +535,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,
@@ -602,7 +587,6 @@ namespace DAL.DALs
                     Id = consultaMedicaEF.Id,
                     Descripcion = consultaMedicaEF.Descripcion,
                     Diagnostico = consultaMedicaEF.Diagnostico,
-                    CitaMedicaId = consultaMedicaEF.CitaMedicaId,
                     Recetas = consultaMedicaEF.Recetas.Select(r => new Receta
                     {
                         Id = r.Id,

@@ -12,7 +12,7 @@ namespace BL.IBLs
     {
         List<ConsultaMedica> getConsultasMedicas();
         ConsultaMedica getConsultaMedica(long id);
-        ConsultaMedicaCompletaDTO getConsultaMedicaCompleta(long id);
+        ConsultaMedicaCompletaDTO getConsultaMedicaCompleta(long id, long idCita);
         ConsultaMedica createConsultaMedica(ConsultaMedicaDTO consultaMedica);
         ConsultaMedica createConsultaMedicaSD(long consultaMedicaId);
         ConsultaMedica updateConsultaMedica(ConsultaMedica consultaMedica);
@@ -20,12 +20,12 @@ namespace BL.IBLs
         ConsultaMedica addReceta(int idConsultaMedica, Receta receta);
         ConsultaMedica updateReceta(int idConsultaMedica, Receta receta);
         ConsultaMedica deleteReceta(int idConsultaMedica, int idReceta);
-        Task<ConsultaMedica> addEstudio(int idConsultaMedica, Estudio estudio);
+        Task<ConsultaMedica> addEstudio(int idConsultaMedica, long idCita,Estudio estudio);
         ConsultaMedica updateEstudio(int idConsultaMedica, Estudio estudio);
         ConsultaMedica deleteEstudio(int idConsultaMedica, int idEstudio);
         ConsultaMedica addResultadoEstudio(int idConsultaMedica, int idEstudio, DateOnly fechaResultado, string imagenUrl);
         object GetHistoriaClinica(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
-        ConsultaMedica GuardarConsulta(long id);
+        ConsultaMedica GuardarConsulta(long id, long idCita);
         public List<Medicamento> getMedicamentos();
 
     }

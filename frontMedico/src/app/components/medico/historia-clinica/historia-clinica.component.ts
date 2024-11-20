@@ -59,9 +59,17 @@ export class HistoriaClinicaComponent implements OnInit {
       if (!documento) return;
       this.search = documento;
       this.disableSearch = true;
-      this.obtenerHistoriaClinica(this.search);     
+      this.obtenerDatos(); 
     });
     this.getEspecialidades();
+  }
+
+  obtenerDatos(): void {
+    this.getEspecialidades().then(() => {
+      this.obtenerHistoriaClinica(this.search);
+    }).catch(error => {
+      console.error('Error al obtener especialidades', error);
+    });
   }
 
   obtenerHistoriaClinica(documento: string): void {
@@ -165,21 +173,25 @@ export class HistoriaClinicaComponent implements OnInit {
     this.obtenerHistoriaClinica(this.paciente.documento);
   }
 
-  getEspecialidades() {
-    this.consultaMedicaService.getEspecialidades().subscribe(
-      response => {
-        this.especialidades = response.map((especialidad: any) => {
-          return {
-            id: especialidad.id,
-            nombre: especialidad.nombre,
-            IsChecked: true
-          };
-        });
-      },
-      error => {
-        console.log(error);
-      }
-    );
+  getEspecialidades(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.consultaMedicaService.getEspecialidades().subscribe(
+        response => {
+          this.especialidades = response.map((especialidad: any) => {
+            return {
+              id: especialidad.id,
+              nombre: especialidad.nombre,
+              IsChecked: true
+            };
+          });
+          resolve(this.especialidades);
+        },
+        error => {
+          console.log(error);
+          reject(error);
+        }
+      );
+    });
   }
   isCheckboxDisabled(especialidad: any): boolean {
     const selectedCount = this.especialidades.filter(e => e.IsChecked).length;

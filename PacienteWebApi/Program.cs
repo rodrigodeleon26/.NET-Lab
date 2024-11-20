@@ -4,6 +4,7 @@ using BL.IBLs;
 using DAL;
 using DAL.DALs;
 using DAL.IDALs;
+using HistoriaClinicaWebApi.Extensions;
 
 try 
 { 
@@ -13,16 +14,18 @@ try
     builder.Services.AddControllers();
 
     builder.Services.AddSwaggerExplorer()
-                .InjectDBContext()
-                .InjectDALandBL()
-                .AddIdentityAuth();
+                   .InjectDBContext()
+                   .InjectDALandBL()
+                   .AddIdentityHandlersAndStores()
+                   .ConfigureIdentityOptions()
+                   .AddIdentityAuth();
 
     var app = builder.Build();
 
     app.ConfigureSwaggerExplorer()
-   .ConfigureCORS()
-   .AddIdentityAuthMiddlewares()
-   .UseHttpsRedirection();
+       .ConfigureCORS()
+       .AddIdentityAuthMiddlewares()
+       .UseHttpsRedirection();
 
     app.MapControllers();
 

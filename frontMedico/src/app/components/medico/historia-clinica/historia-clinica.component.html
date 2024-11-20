@@ -89,14 +89,10 @@
                                 <td class="py-1 text-center w-1/12 border-b border-gray-300">{{ cita.citaMedica.fecha | date:'dd/MM/yyyy' }}</td>
                                 <td class="py-1 text-center w-2/12 border-b border-gray-300">{{ cita.citaMedica.calendario.especialidad.nombre }}</td>
                                 <td class="py-1 text-center w-3/12 border-b border-gray-300">
-                                    <p class="truncate" title="{{ cita.consultaMedica.descripcion }}">
-                                        {{ cita.consultaMedica.descripcion }}
-                                    </p>
+                                    {{ cita.consultaMedica.descripcion }}
                                 </td>
                                 <td class="py-1 text-center w-4/12 border-b border-gray-300">
-                                    <p class="truncate" title="{{ cita.consultaMedica.diagnostico }}">
-                                        {{ cita.consultaMedica.diagnostico }}
-                                    </p>
+                                    {{ cita.consultaMedica.diagnostico }}
                                 </td>
                                 <td class="py-1 text-center w-2/12 border-b border-gray-300">
                                     <button *ngIf="cita.consultaMedica.recetas.length > 0" (click)="verReceta(cita.consultaMedica.recetas)" class="text-blue-intermedio font-medium hover:underline hover:text-blue-oscuro">Ver Recetas</button>
@@ -223,7 +219,7 @@
 
 <div *ngIf="modalEstudios">
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-        <div class="bg-white w-2/5 p-5 rounded-lg shadow-lg space-y-3 max-h-screen overflow-y-auto">
+        <div class="bg-white w-1/2 p-5 rounded-lg shadow-lg space-y-3 max-h-screen overflow-y-auto">
             <div class="flex justify-between items-center">
                 <h1 class="text-lg font-bold">Estudios</h1>
                 <button type="button" title="Cerrar" (click)="closeModalEstudios()" class="text-red-600 hover:text-red-800 transition duration-300">

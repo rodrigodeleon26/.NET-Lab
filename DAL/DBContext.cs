@@ -33,12 +33,13 @@ namespace DAL
             //   .IsRequired(false); // La relación con Paciente es opcional
 
             modelBuilder.Entity<CitasMedicas>()
-                .HasOne(c => c.ConsultaMedica)
-                .WithOne(cm => cm.CitaMedica)
-                .HasForeignKey<ConsultasMedicas>(cm => cm.CitaMedicaId)
-                .IsRequired(false); // La relación con ConsultasMedicas es opcional
+                .HasOne(c => c.ConsultaMedica) // CitasMedicas tiene una referencia a ConsultasMedicas
+                .WithMany() // No hay referencia inversa desde ConsultasMedicas
+                .HasForeignKey(c => c.ConsultaMedicaId) // La clave foránea está en CitasMedicas
+                .IsRequired(false); // Relación opcional
 
-            
+
+
             modelBuilder.Entity<Precios>()
                 .HasOne(p => p.Copago)
                 .WithMany(c => c.Precios)

@@ -104,39 +104,39 @@ namespace AuthWebApi.Controllers
         DBContext db,
         [FromBody] UserRegistrationModel userRegistrationModel)
         {
-            //Paciente paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
+            Paciente paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
 
-            //if (paciente == null)
-            //{
-            //    paciente = new Paciente
-            //    {
-            //        Nombres = userRegistrationModel.Nombres.ToUpper(),
-            //        Apellidos = userRegistrationModel.Apellidos.ToUpper(),
-            //        Documento = userRegistrationModel.Documento,
-            //        Email = userRegistrationModel.Email
-            //    };
-            //    blPacientes.addPaciente(paciente);
+            if (paciente == null)
+            {
+                paciente = new Paciente
+                {
+                    Nombres = userRegistrationModel.Nombres.ToUpper(),
+                    Apellidos = userRegistrationModel.Apellidos.ToUpper(),
+                    Documento = userRegistrationModel.Documento,
+                    Email = userRegistrationModel.Email
+                };
+                blPacientes.addPaciente(paciente);
 
-            //    //// Asegúrate de que el paciente se ha guardado correctamente y tiene un Id asignado
-            //    //paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
-            //    //if (paciente == null)
-            //    //{
-            //    //    return Results.BadRequest(new { message = "Error al guardar el paciente." });
-            //    //}
-            //}
-            //else
-            //{
-            //    AppUsers userAux = userManager.Users.FirstOrDefault(x => x.PacienteId == paciente.Id);
-            //    if (userAux != null)
-            //    {
-            //        return Results.BadRequest(new
-            //        {
-            //            code = "DuplicateDocumento",
-            //            description = $"El paciente con documento {userRegistrationModel.Documento} ya tiene un usuario asociado, el mismo es {userAux.UserName}"
-            //        });
-            //    }
-            //}
-            Medico medico = bL_Administrativo.getMedicoByDocumento(userRegistrationModel.Documento);
+                //// Asegúrate de que el paciente se ha guardado correctamente y tiene un Id asignado
+                //paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
+                //if (paciente == null)
+                //{
+                //    return Results.BadRequest(new { message = "Error al guardar el paciente." });
+                //}
+            }
+            else
+            {
+                AppUsers userAux = userManager.Users.FirstOrDefault(x => x.PacienteId == paciente.Id);
+                if (userAux != null)
+                {
+                    return Results.BadRequest(new
+                    {
+                        code = "DuplicateDocumento",
+                        description = $"El paciente con documento {userRegistrationModel.Documento} ya tiene un usuario asociado, el mismo es {userAux.UserName}"
+                    });
+                }
+            }
+            //Medico medico = bL_Administrativo.getMedicoByDocumento(userRegistrationModel.Documento);
 
             AppUsers user = new AppUsers
             {
@@ -145,11 +145,11 @@ namespace AuthWebApi.Controllers
                 FullName = $"{userRegistrationModel.Nombres.ToUpper()} {userRegistrationModel.Apellidos.ToUpper()}",
             };
 
-            //user.Paciente = db.Pacientes.Find(paciente.Id);
-            user.Medico = db.Medicos.Find(medico.Id);
+            user.Paciente = db.Pacientes.Find(paciente.Id);
+            //user.Medico = db.Medicos.Find(medico.Id);
             var result = await userManager.CreateAsync(user, userRegistrationModel.Password);
 
-            await userManager.AddToRoleAsync(user, "MEDICO");
+            await userManager.AddToRoleAsync(user, "PACIENTE");
             if (result.Succeeded)
                 return Results.Ok(result);
             else
@@ -440,6 +440,13 @@ namespace AuthWebApi.Controllers
                 new Claim("emailConfirmed", user.EmailConfirmed.ToString()),
                 new Claim("TwoFactorEnabled", user.TwoFactorEnabled.ToString())
             });
+
+            if (user.PacienteId != null)
+            { 
+                var db = new DBContext();
+                var paciente = db.Pacientes.Find(user.PacienteId);
+                claims.AddClaim(new Claim("cedula", paciente.Documento));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

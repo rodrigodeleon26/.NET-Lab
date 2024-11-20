@@ -137,8 +137,7 @@ export class CitaMedicaComponent implements OnInit {
     this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
     this.ConsultaMedicaService.crearConsultaSinDatos(this.citaSeleccionada.id).subscribe(
       (response) => {
-        console.log('Consulta creada exitosamente:', response);
-
+        console.log('--------------');
         // Asigna la ID de la nueva consulta a citaSeleccionada.consultaMedicaId
         this.citaSeleccionada.consultaMedicaId = response.id;  // Asegúrate de que la respuesta contiene la ID  // Cambia el estado de la cita a 'Completada'
         this.citasMedicasService.actualizarCitaMedica(this.citaSeleccionada.id, this.citaSeleccionada).subscribe(() => {
@@ -158,6 +157,9 @@ export class CitaMedicaComponent implements OnInit {
             this.loading = false;
           });
         });
+        console.log('--------------');
+        console.log('Consulta creada exitosamente:', response);
+        console.log('--------------');
         
         
         /* this.citasMedicasService.editarEstado(id, 'Completada').subscribe(() => {
@@ -165,7 +167,7 @@ export class CitaMedicaComponent implements OnInit {
         const currentUrl = this.router.url;
         localStorage.setItem('previousUrl', currentUrl);
         // Abre una nueva ventana con la ID de la consulta
-        window.location.href = `/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`;
+        window.location.href = `/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}&citaSeleccionada=${this.citaSeleccionada.id}`;
 
         this.loading = false;
         // Puedes actualizar el estado o mostrar una notificación de éxito aquí
