@@ -21,6 +21,7 @@ import { SeguroMedicoSelectComponent } from './components/seguro-medico-select/s
 import { PacientesComponent } from './components/pacientes/pacientes.component';
 import { ContratosComponent } from './components/contratos/contratos.component';
 import { CalendariosComponent } from './components/calendarios/calendarios.component';
+import { FacturasComponent } from './components/facturas/facturas.component';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { CalendariosComponent } from './components/calendarios/calendarios.compo
     PacientesComponent,
     ContratosComponent,
     CalendariosComponent,
+    FacturasComponent,
   ],
   imports: [
     BrowserModule,

@@ -25,6 +25,19 @@ namespace AdministrativoWebApi.Controllers
             return Ok(_blAdministrativo.getFacturas());
         }
 
+        // GET: api/<FacturasController>/pagina/1
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("pagina/{pag}")]
+        public IActionResult GetFacturasPaginadas(
+        int pag,
+        [FromQuery] string? pacienteString = null,
+        [FromQuery] bool fechaAsc = false,
+        [FromQuery] bool? estaPago = null)
+        {
+            var facturas = _blAdministrativo.getFacturasPaginadas(pag, pacienteString, fechaAsc, estaPago);
+            return Ok(facturas);
+        }
+
         // GET api/<FacturasController>/5
         [ProducesResponseType(typeof(Factura), 200)]
         [HttpGet("{id}")]
@@ -83,6 +96,48 @@ namespace AdministrativoWebApi.Controllers
 
             _blAdministrativo.deleteFactura(id);
             return NoContent();
+        }
+
+        [HttpGet("pdf/{id}")]
+        public IActionResult GetFacturaPdf(long id)
+        {
+            try
+            {
+                var pdfStream = _blAdministrativo.GenerarFactura(id);
+
+                if (pdfStream == null)
+                {
+                    return NotFound();
+                }
+
+                // Devuelve el PDF como archivo descargable
+                return File(pdfStream, "application/pdf", $"Factura_{DateTime.Now}.pdf");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("pdf/lista")]
+        public IActionResult GetMultipleFacturasPdf([FromBody] List<long> ids)
+        {
+            try
+            {
+                var pdfStream = _blAdministrativo.GenerarFacturaListada(ids);
+
+                if (pdfStream == null)
+                {
+                    return NotFound("No se encontraron facturas para los IDs proporcionados.");
+                }
+
+                // Devuelve el PDF como archivo descargable
+                return File(pdfStream, "application/pdf", $"Facturas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import { ArticulosComponent } from './components/articulos/articulos.component';
 import { PacientesComponent } from './components/pacientes/pacientes.component';
 import { ContratosComponent } from './components/contratos/contratos.component';
 import { CalendariosComponent } from './components/calendarios/calendarios.component';
+import { FacturasComponent } from './components/facturas/facturas.component';
   
 const routes: Routes = [
   { path: 'login', component: LoginComponent},
@@ -26,6 +27,7 @@ const routes: Routes = [
   { path: 'pacientes', component: PacientesComponent},
   { path: 'contratos', component: ContratosComponent},
   { path: 'calendarios', component: CalendariosComponent },
+  { path: 'facturas', component: FacturasComponent },
 ];
 
 @NgModule({

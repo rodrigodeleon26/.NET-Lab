@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 
 namespace BL.IBLs
 {
@@ -54,13 +56,19 @@ namespace BL.IBLs
 
 		// Facturas
 		List<Factura> getFacturas();
+
+		List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);
 		Factura getFacturaById(long id);
 		void addFactura(Factura factura);
 		void updateFactura(Factura factura);
 		void deleteFactura(long id);
+        MemoryStream GenerarFactura(long id);
+        MemoryStream GenerarFacturaListada(List<long> ids);
 
-		// Medicos
-		List<Medico> getMedicos();
+		Task GenerarFacturasAutomaticas();
+
+        // Medicos
+        List<Medico> getMedicos();
 		Medico getMedicoById(long id);
 		void addMedico(Medico medico);
 		void updateMedico(Medico medico);
@@ -108,5 +116,10 @@ namespace BL.IBLs
 		void updateArticulo(Articulo articulo);
 		void deleteArticulo(long id);
 		List<Articulo> getArticulosFiltrados(string filtro);
+
+		// Pago PayPal
+		List<PagoPayPal> GetPaypalPagos();
+        PagoPayPal GetPaypalPagoById(long id);
+        void AddPaypalPago(PagoPayPal nuevoPago);
     }
 }

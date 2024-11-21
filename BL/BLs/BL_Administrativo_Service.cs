@@ -1,5 +1,6 @@
 ﻿using BL.IBLs;
 using DAL.IDALs;
+using iTextSharp.text;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -258,6 +259,26 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MemoryStream GenerarFactura(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MemoryStream GenerarFacturaListada(List<long> ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task GenerarFacturasAutomaticas()
+        {
+            throw new NotImplementedException();
+        }
+
         public Medico getMedicoById(long id)
         {
             throw new NotImplementedException();
@@ -387,6 +408,11 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+        
+        public List<PagoPayPal> GetPaypalPagos()
+        {
+            throw new NotImplementedException();
+        }
 
         public bool emailDuplicado(string email)
         {
@@ -394,6 +420,16 @@ namespace BL.BLs
         }
         
         Task IBL_Administrativo.borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public PagoPayPal GetPaypalPagoById(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPaypalPago(PagoPayPal nuevoPago)
         {
             throw new NotImplementedException();
         }

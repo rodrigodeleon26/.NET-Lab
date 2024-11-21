@@ -403,10 +403,13 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("FechaPago")
+                    b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
 
                     b.Property<float>("Monto")
@@ -418,9 +421,14 @@ namespace DAL.Migrations
                     b.Property<bool>("Pago")
                         .HasColumnType("bit");
 
+                    b.Property<long?>("PagoPayPalId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PacienteId");
+
+                    b.HasIndex("PagoPayPalId");
 
                     b.ToTable("Facturas");
                 });
@@ -561,6 +569,27 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pacientes");
+                });
+
+            modelBuilder.Entity("DAL.Models.PagosPayPal", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("linkPago")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("pagoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PagosPayPal");
                 });
 
             modelBuilder.Entity("DAL.Models.Precios", b =>
@@ -928,7 +957,13 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DAL.Models.PagosPayPal", "PagoPayPal")
+                        .WithMany()
+                        .HasForeignKey("PagoPayPalId");
+
                     b.Navigation("Paciente");
+
+                    b.Navigation("PagoPayPal");
                 });
 
             modelBuilder.Entity("DAL.Models.Notificaciones", b =>

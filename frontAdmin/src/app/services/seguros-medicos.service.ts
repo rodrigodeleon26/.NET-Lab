@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class SegurosMedicosService {
 
-  private apiUrl = 'https://localhost:5009/api/SegurosMedicos'; // URL del microservicio
+  private apiUrl = 'https://localhost/gestion/api/SegurosMedicos'; // URL del microservicio
 
   constructor(private http: HttpClient) { }
 

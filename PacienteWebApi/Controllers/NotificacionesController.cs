@@ -1,4 +1,3 @@
-﻿
 using BL.BLs;
 using BL.IBLs;
 using DAL.Models;
@@ -27,7 +26,6 @@ namespace PacienteWebApi.Controllers
         [HttpPost("{idPaciente}")]
         public IActionResult Post(long idPaciente, [FromBody] Notificacion notificacion)
         {
-            Console.WriteLine("Llego a notificaciones");
             if (notificacion == null)
             {
                 return BadRequest();

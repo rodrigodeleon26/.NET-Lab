@@ -666,7 +666,66 @@ namespace DAL.DALs
 			}
 		}
 
-		public void AddPrecio(Precio precio)
+        public Precio GetPrecioBySeguro(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var precio = _dbContext.Precios
+					.Include(precio => precio.Copago)
+						.ThenInclude(c => c.Articulo)
+					.Include(precio => precio.Copago)
+						.ThenInclude(c => c.Especialidad)
+					.Include(precio => precio.Copago)
+						.ThenInclude(c => c.SeguroMedico)
+					.Include(precio => precio.SeguroMedico)
+					.Where(p => p.SeguroMedicoId == id)
+					.OrderByDescending(p => p.FechaInicio)
+					.FirstOrDefault();
+
+                if (precio != null)
+                {
+                    _logger.LogInformation($"Precio encontrado: {precio.Id}");
+                    return new Precio
+                    {
+                        Id = precio.Id,
+                        PrecioBase = precio.PrecioBase,
+                        FechaInicio = precio.FechaInicio,
+                        Copago = precio.Copago != null ? new Copago()
+                        {
+                            Id = precio.Copago.Id,
+                            Articulo = new Articulo
+                            {
+                                Id = precio.Copago.Articulo.Id,
+                                Nombre = precio.Copago.Articulo.Nombre
+                            },
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = precio.Copago.SeguroMedico.Id,
+                                Nombre = precio.Copago.SeguroMedico.Nombre,
+                                Descripcion = precio.Copago.SeguroMedico.Descripcion
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = precio.Copago.Especialidad.Id,
+                                Nombre = precio.Copago.Especialidad.Nombre,
+                                Descripcion = precio.Copago.Especialidad.Descripcion
+                            }
+                        } : null,
+                        SeguroMedico = precio.SeguroMedico != null ? new SeguroMedico()
+                        {
+                            Id = precio.SeguroMedico.Id,
+                            Nombre = precio.SeguroMedico.Nombre,
+                            Descripcion = precio.SeguroMedico.Descripcion
+                        } : null
+
+                    };
+                }
+                _logger.LogInformation("Precio encontrado: es null");
+                return null;
+            }
+        }
+
+        public void AddPrecio(Precio precio)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -883,7 +942,8 @@ namespace DAL.DALs
 						Monto = f.Monto,
 						Pago = f.Pago,
 						FechaPago = f.FechaPago,
-						Paciente = new Paciente
+                        Descripcion = f.Descripcion,
+                        Paciente = new Paciente
 						{
 							Id = f.Paciente.Id,
 							Nombres = f.Paciente.Nombres,
@@ -898,38 +958,124 @@ namespace DAL.DALs
 			}
 		}
 
-		public Factura GetFacturaById(long id)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				var factura = _dbContext.Facturas.Find(id);
-				if (factura != null)
-				{
-					return new Factura
-					{
-						Id = factura.Id,
-						Fecha = factura.Fecha,
-						Monto = factura.Monto,
-						Pago = factura.Pago,
-						FechaPago = factura.FechaPago,
-						Paciente = new Paciente
-						{
-							Id = factura.Paciente.Id,
-							Nombres = factura.Paciente.Nombres,
-							Apellidos = factura.Paciente.Apellidos,
-							Documento = factura.Paciente.Documento,
-							FechaDeNacimiento = factura.Paciente.FechaDeNacimiento,
-							Direccion = factura.Paciente.Direccion,
-							Telefono = factura.Paciente.Telefono,
-							Email = factura.Paciente.Email
-						}
-					};
-				}
-				return null;
-			}
-		}
+        public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Where(f => f.Paciente.Contrato.Id == contratoId)
+                    .OrderByDescending(f => f.Fecha)
+                    .Take(cantidad)
+                    .Select(f => new Factura
+                    {
+                        Id = f.Id,
+                        Fecha = f.Fecha,
+                        Monto = f.Monto,
+                        Pago = f.Pago,
+                        FechaPago = f.FechaPago,
+                        Descripcion = f.Descripcion,
+                        Paciente = new Paciente
+                        {
+                            Id = f.Paciente.Id,
+                            Nombres = f.Paciente.Nombres,
+                            Apellidos = f.Paciente.Apellidos,
+                            Documento = f.Paciente.Documento,
+                            FechaDeNacimiento = f.Paciente.FechaDeNacimiento,
+                            Direccion = f.Paciente.Direccion,
+                            Telefono = f.Paciente.Telefono,
+                            Email = f.Paciente.Email
+                        }
+                    })
+                    .ToList();
+            }
+        }
 
-		public void AddFactura(Factura factura)
+        public bool ExisteFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Any(f => f.Paciente.Id == pacienteId && f.Fecha.Month == mes && f.Fecha.Year == año);
+            }
+        }
+
+        public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.Facturas.AsQueryable();
+
+                if (!string.IsNullOrEmpty(pacienteString))
+                {
+                    query = query.Where(f => f.Paciente.Nombres.Contains(pacienteString) || f.Paciente.Apellidos.Contains(pacienteString) || f.Paciente.Documento.Contains(pacienteString));
+                }
+
+                if (estaPago.HasValue)
+                {
+                    query = query.Where(f => f.Pago == estaPago.Value);
+                }
+
+                query = fechaAsc ? query.OrderBy(f => f.Fecha) : query.OrderByDescending(f => f.Fecha);
+
+                return query
+                    .Skip((numPagina - 1) * 20)
+                    .Take(20)
+                    .Select(f => new Factura
+                    {
+                        Id = f.Id,
+                        Fecha = f.Fecha,
+                        Monto = f.Monto,
+                        Pago = f.Pago,
+                        FechaPago = f.FechaPago,
+                        Descripcion = f.Descripcion,
+                        Paciente = new Paciente
+                        {
+                            Id = f.Paciente.Id,
+                            Nombres = f.Paciente.Nombres,
+                            Apellidos = f.Paciente.Apellidos,
+                            Documento = f.Paciente.Documento,
+                            FechaDeNacimiento = f.Paciente.FechaDeNacimiento,
+                            Direccion = f.Paciente.Direccion,
+                            Telefono = f.Paciente.Telefono,
+                            Email = f.Paciente.Email
+                        }
+                    }).ToList();
+            }
+        }
+
+        public Factura GetFacturaById(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                // Carga la factura con su relación a Paciente
+                var factura = _dbContext.Facturas
+                                        .Include(f => f.Paciente)
+                                        .FirstOrDefault(f => f.Id == id);
+
+                if (factura != null)
+                {
+                    return new Factura
+                    {
+                        Id = factura.Id,
+                        Fecha = factura.Fecha,
+                        Monto = factura.Monto,
+                        Pago = factura.Pago,
+                        FechaPago = factura.FechaPago,
+						Descripcion = factura.Descripcion,
+                        Paciente = new Paciente
+                        {
+                            Id = factura.Paciente.Id,
+                            Nombres = factura.Paciente.Nombres,
+                            Apellidos = factura.Paciente.Apellidos,
+                            Documento = factura.Paciente.Documento
+                        }
+                    };
+                }
+                return null;
+            }
+        }
+
+        public void AddFactura(Factura factura)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -939,7 +1085,8 @@ namespace DAL.DALs
 					Monto = factura.Monto,
 					Pago = factura.Pago,
 					FechaPago = factura.FechaPago,
-					PacienteId = factura.Paciente.Id
+                    Descripcion = factura.Descripcion,
+                    PacienteId = factura.Paciente.Id
 				};
 				_dbContext.Facturas.Add(nuevaFactura);
 				_dbContext.SaveChanges();
@@ -957,6 +1104,7 @@ namespace DAL.DALs
 					facturaExistente.Monto = factura.Monto;
 					facturaExistente.Pago = factura.Pago;
 					facturaExistente.FechaPago = factura.FechaPago;
+					facturaExistente.Descripcion = factura.Descripcion;
 					facturaExistente.PacienteId = factura.Paciente.Id;
 					_dbContext.SaveChanges();
 				}
@@ -976,15 +1124,58 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
+        public IEnumerable<Contrato> GetContratosActivos()
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Contratos
+                    .Where(c => c.Activo)
+                    .Include(c => c.Paciente)
+                    .Include(c => c.SeguroMedico)
+                    .ToList()
+                    .Select(c => new Contrato
+                    {
+                        Id = c.Id,
+                        FechaInicio = c.FechaInicio,
+                        Activo = c.Activo,
+                        Paciente = new Paciente
+                        {
+                            Id = c.Paciente.Id,
+                            Nombres = c.Paciente.Nombres,
+                            Apellidos = c.Paciente.Apellidos,
+                            Documento = c.Paciente.Documento,
+                            FechaDeNacimiento = c.Paciente.FechaDeNacimiento,
+                            Direccion = c.Paciente.Direccion,
+                            Telefono = c.Paciente.Telefono,
+                            Email = c.Paciente.Email
+                        },
+                        SeguroMedico = new SeguroMedico
+                        {
+                            Id = c.SeguroMedico.Id,
+                            Nombre = c.SeguroMedico.Nombre,
+                            Descripcion = c.SeguroMedico.Descripcion
+                        }
+                    });
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            using (var _dbContext = new DBContext())
+            {
+				await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        #endregion
 
 
-		/**********************************************************/
-		/**                     Medicos                          **/
-		/**********************************************************/
-		#region FUNCTIONES MEDICOS
+        /**********************************************************/
+        /**                     Medicos                          **/
+        /**********************************************************/
+        #region FUNCTIONES MEDICOS
 
-		public List<Medico> GetMedicos()
+        public List<Medico> GetMedicos()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -1899,6 +2090,60 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
-	}
+        #endregion
+
+        /**********************************************************/
+        /**                 PayPalPago                           **/
+        /**********************************************************/
+        #region FUNCTIONES PAYPALPAGO
+
+		public List<PagoPayPal> GetPaypalPagos()
+		{
+            using (var _dbContext = new DBContext())
+			{
+                return _dbContext.PagosPayPal
+                    .Select(f => new PagoPayPal
+                    {
+                        Id = f.Id,
+                        linkPago = f.linkPago,
+                        pagoId = f.pagoId
+                    }).ToList();
+            }
+        }
+
+        public PagoPayPal GetPaypalPagoById(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var pago = _dbContext.PagosPayPal
+                    .Where(p => p.Id == id)
+                    .Select(f => new PagoPayPal
+                    {
+                        Id = f.Id,
+                        linkPago = f.linkPago,
+                        pagoId = f.pagoId
+                    })
+                    .FirstOrDefault();
+
+                return pago;
+            }
+        }
+
+        public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var pago = new PagosPayPal // Asegúrate de usar la entidad de tu modelo de base de datos
+                {
+                    linkPago = nuevoPago.linkPago,
+                    pagoId = nuevoPago.pagoId
+                };
+
+                _dbContext.PagosPayPal.Add(pago); // Agrega el registro al contexto
+                _dbContext.SaveChanges();         // Guarda los cambios en la base de datos
+            }
+        }
+
+        #endregion
+    }
 }

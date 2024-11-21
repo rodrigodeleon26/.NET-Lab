@@ -3,6 +3,8 @@ using DAL.DALs;
 using DAL.IDALs;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Shared;
@@ -14,6 +16,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace BL.BLs
 {
@@ -279,6 +282,11 @@ namespace BL.BLs
 			return dal.GetFacturas();
 		}
 
+		public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+		{
+			return dal.GetFacturasPaginadas(numPagina, pacienteString, fechaAsc, estaPago);
+		}
+
 		public Factura getFacturaById(long id)
 		{
 			return dal.GetFacturaById(id);
@@ -299,12 +307,224 @@ namespace BL.BLs
 			dal.DeleteFactura(id);
 		}
 
-		#endregion
+        public async Task GenerarFacturasAutomaticas()
+        {
+            // Obtén todos los contratos activos
+            var contratosActivos = dal.GetContratosActivos();
 
-		//Medicos
-		#region MEDICOS
+            foreach (var contrato in contratosActivos)
+            {
+                Paciente paciente = dal.GetPacienteById(contrato.Paciente.Id);
 
-		public List<Medico> getMedicos()
+
+                // Verifica si ya existe una factura para el paciente en el mes actual
+                bool facturaExistente = dal.ExisteFacturaParaPacienteEnMes(paciente.Id, DateTime.Now.Month, DateTime.Now.Year);
+
+                if (facturaExistente)
+                {
+					// Verifica si ya existen dos facturas sin pagar entre las tres últimas facturas
+					var ultimasFacturas = dal.ObtenerUltimasFacturasDelContrato(contrato.Id, 3);
+					int facturasNoPagadas = ultimasFacturas.Count(f => !f.Pago);
+                    if (facturasNoPagadas >= 2)
+                    {
+                        Console.WriteLine($"El contrato {contrato.Id} tiene dos facturas sin pagar. Generando la tercera factura y desactivando el contrato.");
+                        // Desactiva el contrato
+                        contrato.Activo = false;
+                        dal.UpdateContrato(contrato);
+                    }
+
+                    // Crea una nueva factura para cada contrato
+                    var factura = new Factura
+					{
+						Fecha = DateTime.Now,
+						Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
+						Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
+						FechaPago = null,
+						Pago = false,
+						Paciente = paciente
+					};
+
+					// Guarda la factura en la base de datos
+					dal.AddFactura(factura);
+
+					var notificacion = new Notificacion
+					{
+						Mensaje = $"Tiene una nueva factura para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}",
+						FechaEnvio = DateTime.UtcNow,
+						Visto = false
+					};
+
+					await dal_service.AddNotificacionService(notificacion, paciente.Id);
+                }
+				else
+                {
+                    Console.WriteLine($"La factura para el contrato {contrato.Id} ya fue emitida este mes.");
+                }
+
+                await dal.SaveChangesAsync();
+			}
+        }
+
+        private float ObtenerMontoFactura(Contrato contrato)
+        {
+			// Aquí puedes definir la lógica para calcular el monto de la factura basado en el contrato
+			Precio preciobtenido = dal.GetPrecioBySeguro(contrato.SeguroMedico.Id);
+			float numero = preciobtenido.PrecioBase;
+            return numero;
+        }
+
+        public MemoryStream GenerarFactura(long id)
+        {
+            Factura factura = dal.GetFacturaById((int)id);
+
+            var memoryStream = new MemoryStream();
+            Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+            writer.CloseStream = false;
+
+            document.Open();
+
+            // Encabezado de la factura
+            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+            var regularFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+            var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+
+            document.Add(new Paragraph("FACTURA", titleFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("\n"));
+
+            // Información del cliente
+            document.Add(new Paragraph("Información del Cliente", boldFont));
+            document.Add(new Paragraph($"Nombre: {factura.Paciente.Nombres} {factura.Paciente.Apellidos}", regularFont));
+            document.Add(new Paragraph($"Documento: {factura.Paciente.Documento}", regularFont));
+            document.Add(new Paragraph("\n"));
+
+            // Información de la factura
+            document.Add(new Paragraph("Detalles de la Factura", boldFont));
+            document.Add(new Paragraph($"Fecha de Emisión: {factura.Fecha:dd/MM/yyyy}", regularFont));
+            document.Add(new Paragraph("\n"));
+
+            // Tabla de detalles (solo ejemplo con un concepto y el monto)
+            PdfPTable table = new PdfPTable(2);
+            table.WidthPercentage = 100;
+            table.SetWidths(new float[] { 3, 1 }); // Ancho de columnas: Descripción, Monto
+
+            // Encabezado de la tabla
+            PdfPCell cell = new PdfPCell(new Phrase("Descripción", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+            cell.BackgroundColor = new BaseColor(230, 230, 230);
+            table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase("Monto", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+            cell.BackgroundColor = new BaseColor(230, 230, 230);
+            table.AddCell(cell);
+
+            // Detalle de la factura
+            table.AddCell(new PdfPCell(new Phrase($"{factura.Descripcion}", regularFont)));
+            table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+
+            // Total
+            cell = new PdfPCell(new Phrase("Total", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cell.Colspan = 1;
+            cell.Border = Rectangle.TOP_BORDER;
+            table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cell.Border = Rectangle.TOP_BORDER;
+            table.AddCell(cell);
+
+            document.Add(table);
+
+            document.Close();
+            memoryStream.Position = 0;
+
+            return memoryStream;
+        }
+
+        public MemoryStream GenerarFacturaListada(List<long> ids)
+        {
+            var memoryStream = new MemoryStream();
+            Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+            writer.CloseStream = false;
+
+            document.Open();
+
+            // Estilos de fuente
+            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+            var regularFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+            var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+
+            // Encabezado del documento
+            document.Add(new Paragraph("FACTURAS", titleFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
+            document.Add(new Paragraph("\n"));
+
+            // Inicializar tabla
+            PdfPTable table = new PdfPTable(2);
+            table.WidthPercentage = 100;
+            table.SetWidths(new float[] { 3, 1 }); // Ancho de columnas: Descripción, Monto
+
+            // Encabezado de la tabla
+            PdfPCell cell = new PdfPCell(new Phrase("Descripción", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+            cell.BackgroundColor = new BaseColor(230, 230, 230);
+            table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase("Monto", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+            cell.BackgroundColor = new BaseColor(230, 230, 230);
+            table.AddCell(cell);
+
+            // Acumular monto total
+            decimal montoTotal = 0;
+
+            // Recorrer los IDs y agregar cada factura
+            foreach (var id in ids)
+            {
+                Factura factura = dal.GetFacturaById((int)id);
+
+                if (factura != null)
+                {
+                    table.AddCell(new PdfPCell(new Phrase($"{factura.Descripcion}", regularFont)));
+                    table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+
+                    montoTotal += (decimal)factura.Monto;
+                }
+            }
+
+            // Total de las facturas
+            cell = new PdfPCell(new Phrase("Total", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cell.Border = Rectangle.TOP_BORDER;
+            table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase($"{montoTotal.ToString("C", new CultureInfo("en-US"))}", boldFont));
+            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cell.Border = Rectangle.TOP_BORDER;
+            table.AddCell(cell);
+
+            document.Add(table);
+
+            document.Close();
+            memoryStream.Position = 0;
+
+            return memoryStream;
+        }
+
+        #endregion
+
+        //Medicos
+        #region MEDICOS
+
+        public List<Medico> getMedicos()
 		{
 			return dal.GetMedicos();
 		}
@@ -663,6 +883,25 @@ namespace BL.BLs
 		public List<Articulo> getArticulosFiltrados(string filtro)
         {
             return dal.GetArticulosFiltrados(filtro);
+        }
+
+		#endregion
+
+		//Pago PayPal
+		#region PAGO PAYPAL
+		public List<PagoPayPal> GetPaypalPagos()
+		{
+			return dal.GetPaypalPagos();
+        }
+
+        public PagoPayPal GetPaypalPagoById(long id)
+        {
+            return dal.GetPaypalPagoById(id);
+        }
+
+        public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            dal.AddPaypalPago(nuevoPago);
         }
 
 		#endregion

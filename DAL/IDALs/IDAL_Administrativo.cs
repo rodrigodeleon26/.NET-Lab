@@ -41,6 +41,7 @@ namespace DAL.IDALs
         // Precios
         public List<Precio> GetPrecios();
 		public Precio GetPrecioById(long id);
+		public Precio GetPrecioBySeguro(long id);
 		public void AddPrecio(Precio precio);
 		public void UpdatePrecio(Precio precio);
 		public void DeletePrecio(long id);
@@ -55,13 +56,19 @@ namespace DAL.IDALs
 
         // Facturas
         public List<Factura> GetFacturas();
+		public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad);
+
+        public bool ExisteFacturaParaPacienteEnMes(long pacienteId, int mes, int año);
+        public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);
 		public Factura GetFacturaById(long id);
 		public void AddFactura(Factura factura);
 		public void UpdateFactura(Factura factura);
 		public void DeleteFactura(long id);
+        IEnumerable<Contrato> GetContratosActivos();
+        Task SaveChangesAsync();
 
-		// Medicos
-		public List<Medico> GetMedicos();
+        // Medicos
+        public List<Medico> GetMedicos();
 		public Medico GetMedicoById(long id);
 		public void AddMedico(Medico medico);
 		public void UpdateMedico(Medico medico);
@@ -104,5 +111,11 @@ namespace DAL.IDALs
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
 		public List<Articulo> GetArticulosFiltrados(string filtro);
+
+		// Pago PayPal
+		public List<PagoPayPal> GetPaypalPagos();
+        public PagoPayPal GetPaypalPagoById(long id);
+        public void AddPaypalPago(PagoPayPal nuevoPago);
+
     }
 }
