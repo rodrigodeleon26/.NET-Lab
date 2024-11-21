@@ -908,7 +908,8 @@ namespace DAL.DALs
 			using (var _dbContext = new DBContext())
 			{
 				return _dbContext.Medicos
-					.Select(m => new Medico
+                    .Where(m => m.Activo)
+                    .Select(m => new Medico
 					{
 						Id = m.Id,
 						Nombres = m.Nombres,
@@ -930,8 +931,8 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var medico = _dbContext.Medicos
-							   .Include(m => m.EspecialidadesMedicos)
+				var medico = _dbContext.Medicos.Where(m => m.Activo)
+                               .Include(m => m.EspecialidadesMedicos)
 							   .ThenInclude(me => me.Especialidad)
 							   .FirstOrDefault(m => m.Id == id);
 
@@ -1042,8 +1043,9 @@ namespace DAL.DALs
 				var medico = _dbContext.Medicos.Find(id);
 				if (medico != null)
 				{
-					_dbContext.Medicos.Remove(medico);
-					_dbContext.SaveChanges();
+                    //_dbContext.Medicos.Remove(medico);
+                    medico.Activo = false;
+                    _dbContext.SaveChanges();
 				}
 			}
 		}
@@ -1062,7 +1064,8 @@ namespace DAL.DALs
 				return query
 					.Skip((numPagina - 1) * 10)
 					.Take(10)
-					.Select(m => new Medico
+                    .Where(m => m.Activo)
+                    .Select(m => new Medico
 					{
 						Id = m.Id,
 						Nombres = m.Nombres,

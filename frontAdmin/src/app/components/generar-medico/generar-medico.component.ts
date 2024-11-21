@@ -640,22 +640,22 @@ export class GenerarMedicoComponent implements OnInit {
 
 
         //Actualizar Medico
-        // this.medicosService.updateMedico(this.medicoId, this.medicoAlerta)
-        // .subscribe({
-        //   next: (data) => {
-        //     this.showSuccessMessage('Médico editado exitosamente');
-        //     this.DatosMedicoForm.reset();
-        //     this.medicoId = null;
-        //     this.medicoAlerta = null;
-        //     this.isModalAlertaEspVisible = false;
-        //     this.router.navigate(['/listMedicos']);
-        //   },
-        //   error: (error) => {
-        //     console.error(error);
-        //     const errorMessage = this.extractErrorMessage(error);
-        //     this.showErrorMessage(errorMessage);
-        //   }
-        // });
+        this.medicosService.updateMedico(this.medicoId, this.medicoAlerta)
+        .subscribe({
+          next: (data) => {
+            this.showSuccessMessage('Médico editado exitosamente');
+            this.DatosMedicoForm.reset();
+            this.medicoId = null;
+            this.medicoAlerta = null;
+            this.isModalAlertaEspVisible = false;
+            this.router.navigate(['/listMedicos']);
+          },
+          error: (error) => {
+            console.error(error);
+            const errorMessage = this.extractErrorMessage(error);
+            this.showErrorMessage(errorMessage);
+          }
+        });
 
       },
       error: (error) => {

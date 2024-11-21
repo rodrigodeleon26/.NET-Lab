@@ -88,7 +88,7 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
-        public void borrarCalendariosIncompatibles(long medicoId, List<Especialidad> especialidades)
+        public void borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades)
         {
             throw new NotImplementedException();
         }
@@ -364,6 +364,11 @@ namespace BL.BLs
         }
 
         public bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IBL_Administrativo.borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades)
         {
             throw new NotImplementedException();
         }

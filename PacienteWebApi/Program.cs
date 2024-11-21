@@ -4,6 +4,10 @@ using BL.IBLs;
 using DAL;
 using DAL.DALs;
 using DAL.IDALs;
+using PacienteWebApi;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
 
 try 
 {
@@ -28,6 +32,14 @@ try
                 .InjectDBContext()
                 .InjectDALandBL()
                 .AddIdentityAuth();
+
+    //inyeccion de dependencias
+    //Rabbit
+
+    builder.Services.AddHostedService<RabbitNotificacionConsumer>();
+    builder.Services.AddHttpClient<RabbitNotificacionConsumer>();
+
+    //fin de rabbit
 
     var app = builder.Build();
 

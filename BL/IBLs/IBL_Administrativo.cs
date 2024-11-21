@@ -80,7 +80,7 @@ namespace BL.IBLs
 		void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias);
 		bool checkOcupacionConsultorio(Calendario calendario);
 		bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades);
-		void borrarCalendariosIncompatibles(long medicoId, List<Especialidad> especialidades);
+        Task borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades);
 
         // Consultorios
         List<Consultorio> getConsultorios();

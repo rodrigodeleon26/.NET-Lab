@@ -147,9 +147,9 @@ namespace AdministrativoWebApi.Controllers
 
         // POST api/<CalendariosController>/borrarCalendariosIncompatibles/5
         [HttpPost("borrarCalendariosIncompatibles/{medicoId}")]
-		public IActionResult borrarCalendariosIncompatibles(long medicoId, [FromBody] List<Especialidad> especialidades)
+		public async Task<IActionResult> borrarCalendariosIncompatiblesAsync(long medicoId, [FromBody] List<Especialidad> especialidades)
 		{
-			_blAdministrativo.borrarCalendariosIncompatibles(medicoId, especialidades);
+			await _blAdministrativo.borrarCalendariosIncompatiblesAsync(medicoId, especialidades);
             return NoContent();
         }
     }
