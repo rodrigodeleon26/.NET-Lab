@@ -1918,5 +1918,59 @@ namespace DAL.DALs
         }
 
         #endregion
+
+        /**********************************************************/
+        /**                 PayPalPago                           **/
+        /**********************************************************/
+        #region FUNCTIONES PAYPALPAGO
+
+		public List<PagoPayPal> GetPaypalPagos()
+		{
+            using (var _dbContext = new DBContext())
+			{
+                return _dbContext.PagosPayPal
+                    .Select(f => new PagoPayPal
+                    {
+                        Id = f.Id,
+                        linkPago = f.linkPago,
+                        pagoId = f.pagoId
+                    }).ToList();
+            }
+        }
+
+        public PagoPayPal GetPaypalPagoById(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var pago = _dbContext.PagosPayPal
+                    .Where(p => p.Id == id)
+                    .Select(f => new PagoPayPal
+                    {
+                        Id = f.Id,
+                        linkPago = f.linkPago,
+                        pagoId = f.pagoId
+                    })
+                    .FirstOrDefault();
+
+                return pago;
+            }
+        }
+
+        public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var pago = new PagosPayPal // Asegúrate de usar la entidad de tu modelo de base de datos
+                {
+                    linkPago = nuevoPago.linkPago,
+                    pagoId = nuevoPago.pagoId
+                };
+
+                _dbContext.PagosPayPal.Add(pago); // Agrega el registro al contexto
+                _dbContext.SaveChanges();         // Guarda los cambios en la base de datos
+            }
+        }
+
+        #endregion
     }
 }
