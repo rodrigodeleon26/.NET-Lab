@@ -66,26 +66,25 @@ public class PayPalService
         }
     }
 
-    public async Task<PayPalOrderResponse> CreateOrderAsync(
-    List<PayPalPurchaseUnit> purchaseUnits,
-    string currency,
-    string returnUrl,
-    string cancelUrl)
+    public async Task<PayPalOrderResponse> CreateOrderAsync(string value, string currency, string returnUrl, string cancelUrl)
     {
         var accessToken = await GetAccessTokenAsync();
 
-        foreach (var unit in purchaseUnits)
-        {
-            if (string.IsNullOrEmpty(unit.reference_id))
-            {
-                unit.reference_id = Guid.NewGuid().ToString(); // Generar un identificador único
-            }
-        }
-
-        // Construir el objeto de solicitud con la lista de unidades de compra
+        // Construir el objeto de solicitud
         var orderRequest = new PayPalOrderRequest
         {
-            purchase_units = purchaseUnits,
+            purchase_units = new List<PayPalPurchaseUnit>
+            {
+                new PayPalPurchaseUnit
+                {
+                    description = "Pago de factura médica",
+                    amount = new PayPalAmount
+                    {
+                        currency_code = currency,
+                        value = value
+                    }
+                }
+            },
             intent = "CAPTURE",
             application_context = new PayPalApplicationContext
             {
@@ -94,66 +93,53 @@ public class PayPalService
             }
         };
 
+        Console.WriteLine($"El infame OrderReqest: {JsonSerializer.Serialize(orderRequest)}");
+
+        // Convertir a JSON
         var jsonRequest = JsonSerializer.Serialize(orderRequest);
 
+        // Configurar la solicitud HTTP
         var request = new HttpRequestMessage(HttpMethod.Post, "https://api-m.sandbox.paypal.com/v2/checkout/orders")
         {
             Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json")
         };
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
+        // Enviar la solicitud
         var response = await _httpClient.SendAsync(request);
+        Console.WriteLine($"El infame response: {response}");
         var responseBody = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"El infame responseBODY: {responseBody}");
 
+        // Asegurarse de que la respuesta sea exitosa
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Error al crear la orden de PayPal: {responseBody}");
         }
 
-        return JsonSerializer.Deserialize<PayPalOrderResponse>(responseBody);
+        // Parsear la respuesta
+        var orderResponse = JsonSerializer.Deserialize<PayPalOrderResponse>(responseBody);
+        Console.WriteLine($"El infame responseBODY DESERIALIZADO: {JsonSerializer.Serialize(orderRequest)}");
+        return orderResponse;
     }
 
     public async Task<PayPalCaptureResponse> CaptureOrderAsync(string orderId)
     {
         var accessToken = await GetAccessTokenAsync();
 
-        // Configurar la solicitud HTTP
         var request = new HttpRequestMessage(HttpMethod.Post, $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}/capture");
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")); // Header obligatorio
-        request.Content = new StringContent("{}", Encoding.UTF8, "application/json"); // Payload vacío pero válido JSON
 
-        // Enviar la solicitud
         var response = await _httpClient.SendAsync(request);
         var responseBody = await response.Content.ReadAsStringAsync();
 
-        // Asegurarse de que la respuesta sea exitosa
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Error al capturar la orden de PayPal: {responseBody}");
         }
 
-        // Parsear la respuesta
         var captureResponse = JsonSerializer.Deserialize<PayPalCaptureResponse>(responseBody);
         return captureResponse;
-    }
-
-    public async Task<PayPalOrderResponse> GetOrderDetailsAsync(string orderId)
-    {
-        var accessToken = await GetAccessTokenAsync();
-
-        var request = new HttpRequestMessage(HttpMethod.Get, $"https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderId}");
-        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-
-        var response = await _httpClient.SendAsync(request);
-        var responseBody = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception($"Error al obtener los detalles de la orden de PayPal: {responseBody}");
-        }
-
-        return JsonSerializer.Deserialize<PayPalOrderResponse>(responseBody);
     }
 }
 
@@ -223,16 +209,8 @@ public class PayPalPayer
     public string PaymentMethod { get; set; }
 }
 
-public class PayPalOrderRequest
-{
-    public List<PayPalPurchaseUnit> purchase_units { get; set; }
-    public string intent { get; set; } = "CAPTURE";
-    public PayPalApplicationContext application_context { get; set; }
-}
-
 public class PayPalPurchaseUnit
 {
-    public string reference_id { get; set; } // Identificador único para la unidad de compra
     public PayPalAmount amount { get; set; }
     public string description { get; set; }
 }
@@ -241,6 +219,13 @@ public class PayPalAmount
 {
     public string currency_code { get; set; }
     public string value { get; set; }
+}
+
+public class PayPalOrderRequest
+{
+    public List<PayPalPurchaseUnit> purchase_units { get; set; }
+    public string intent { get; set; } = "CAPTURE";
+    public PayPalApplicationContext application_context { get; set; }
 }
 
 public class PayPalOrderResponse

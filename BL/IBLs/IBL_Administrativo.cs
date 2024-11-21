@@ -107,10 +107,5 @@ namespace BL.IBLs
 		void updateArticulo(Articulo articulo);
 		void deleteArticulo(long id);
 		List<Articulo> getArticulosFiltrados(string filtro);
-
-		// Pago PayPal
-		List<PagoPayPal> GetPaypalPagos();
-        PagoPayPal GetPaypalPagoById(long id);
-        void AddPaypalPago(PagoPayPal nuevoPago);
     }
 }

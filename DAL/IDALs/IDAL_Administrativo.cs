@@ -106,11 +106,5 @@ namespace DAL.IDALs
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
 		public List<Articulo> GetArticulosFiltrados(string filtro);
-
-		// Pago PayPal
-		public List<PagoPayPal> GetPaypalPagos();
-        public PagoPayPal GetPaypalPagoById(long id);
-        public void AddPaypalPago(PagoPayPal nuevoPago);
-
-    }
+	}
 }
