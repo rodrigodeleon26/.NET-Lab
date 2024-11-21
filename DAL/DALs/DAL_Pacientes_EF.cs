@@ -92,5 +92,25 @@ namespace DAL.DALs
                 return paciente;
             }
         }
+
+        public void AddNotificacion(Notificacion notificacion, long idPaciente)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var paciente = _dbContext.Pacientes.Find(idPaciente);
+                if (paciente == null)
+                {
+                    throw new Exception("Paciente no encontrado");
+                }
+                _dbContext.Notificaciones.Add(new Notificaciones
+                {
+                    Mensaje = notificacion.Mensaje,
+                    FechaEnvio = notificacion.FechaEnvio,
+                    Visto = notificacion.Visto,
+                    Paciente = paciente
+                });
+                _dbContext.SaveChanges();
+            }
+        }
     }
 }

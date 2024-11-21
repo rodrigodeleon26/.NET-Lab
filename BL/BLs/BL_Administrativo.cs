@@ -2,12 +2,17 @@
 using DAL.DALs;
 using DAL.IDALs;
 using DAL.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace BL.BLs
@@ -15,12 +20,16 @@ namespace BL.BLs
 	public class BL_Administrativo : IBL_Administrativo
 	{
 		private readonly IDAL_Administrativo dal;
+        private readonly IDAL_Pacientes dal_Paciente;
         private readonly ILogger<BL_Administrativo> _logger;
+		private readonly IChannel channel;
 
-        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger)
+        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger, IDAL_Pacientes dal_Paciente, IChannel channel)
 		{
             _logger = logger;
 			this.dal = dal;
+            this.dal_Paciente = dal_Paciente;
+            this.channel = channel;
         }
 
         //Pacientes 
@@ -317,7 +326,14 @@ namespace BL.BLs
 
 		public void deleteMedico(long id)
 		{
-			dal.DeleteMedico(id);
+            //desactivar los calendarios del medico
+            var calendarios = getCalendarios().Where(c => c.Medico.Id == id).ToList();
+            foreach (var calendario in calendarios)
+            {
+                deleteCalendario(calendario.Id);
+            }
+
+            dal.DeleteMedico(id);
 		}
 
 		public void asignarEspecialidad(long medId, long espId)
@@ -393,10 +409,55 @@ namespace BL.BLs
 			dal.UpdateCalendario(calendario);
 		}
 
-		public void deleteCalendario(long id)
+		public async void deleteCalendario(long calendarioId)
 		{
-			dal.DeleteCalendario(id);
-		}
+            //borrar el calendario y cancelar las citas asociadas
+            var citas = getCitasMedicas()
+                .Where(c => c.Calendario.Id == calendarioId)
+                .Where(c => c.Estado == "Agendada")
+                .ToList();
+			Console.WriteLine("cantidad de citas a borrar" + citas.Count);
+            foreach (var cita in citas)
+            {
+                cita.Estado = "Cancelada";
+                updateCitaMedica(cita);
+
+                //Creo la notificacion para el paciente
+                if (cita.PacienteId != null)
+                {
+                    var notificacion = new Notificacion()
+                    {
+                        Mensaje = $"Su Cita medica para la fecha {cita.Fecha} ha tenido que ser cancelada, por favor agende nuevamente",
+                        FechaEnvio = DateTime.Now,
+                        Visto = false
+                    };
+                    long id = (long)cita.PacienteId;
+                    notificacion.Paciente.Id = id;
+                    //dal_Paciente.AddNotificacion(notificacion, id);
+
+
+                    //uso la coneccion a rabbimq para enviar la notificacion a la cola
+                    try
+                    {
+                        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notificacion));
+
+                        //envio la notificacion por rabbit
+                        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "Notificaciones", body: body);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Error al enviar notificación: {ex.Message}");
+                        throw;
+                    }
+
+                }
+            }
+
+            _logger.LogInformation("Se eliminaron las ciras");
+
+            //se desactiva el calendario
+            dal.DeleteCalendario(calendarioId);
+        }
 
 		public void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias)
 		{
@@ -432,13 +493,89 @@ namespace BL.BLs
 			}
 		}
 
-		#endregion
+        public bool checkOcupacionConsultorio(Calendario calendario)
+		{
+			var calendarios = getCalendarios();
+			if(calendarios == null || calendarios.Count == 0)
+			{
+                return false;
+			}
 
-		//Consultorios
-		#region CONSULTORIOS
+            //verificar que no haya otro calendario que se cruce con el nuevo
+            foreach (var c in calendarios)
+            {
+				if(c.Id == calendario.Id)
+				{
+					continue;
+				}
+                if (c.Consultorio.Id == calendario.Consultorio.Id)
+                {
+                    if (c.DiasSemana.Intersect(calendario.DiasSemana).Any())
+                    {
+						_logger.LogInformation("conflicto con calendario en los dias " + string.Join(",", c.DiasSemana) + " para los dias " + string.Join(",", calendario.DiasSemana));
+						if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
+							(c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
+							(c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
+							(c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
+						{
+							_logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
+							return true;
+						}
+                    }
+                }
+            }
+			_logger.LogInformation("saliendo sin conflictos");
+            return false;
+        }
+
+		public bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades)
+		{
+			//validar que de los calendarios del medico, ninguno sea para una especialidad que no este en la lista
+			var calendarios = getCalendarios().Where(c => c.Medico.Id == medicoId).ToList();
+			if (calendarios.Count == 0 || calendarios == null)
+			{
+                return true;
+            }
+
+            foreach (var calendario in calendarios)
+			{
+				if(!especialidades.Any(e => e.Id == calendario.Especialidad.Id)){
+					_logger.LogInformation("Especialidad no encontrada en la lista de especialidades a borrar");
+					return false;
+				}
+
+            }
+
+            return true;
+		}
+
+		public async Task borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades)
+		{
+			//eliminar aquellos calendarios de este medico cuya especialidad no este en la lsita de especialidades
+			var calendarios = getCalendarios().Where(c => c.Medico.Id == medicoId).ToList();
+			foreach (var calendario in calendarios)
+			{
+				if (!especialidades.Any(e => e.Id == calendario.Especialidad.Id))
+				{
+                    //se desactiva el calendario
+                    deleteCalendario(calendario.Id);
+                }
+			}
+		}
+
+		public List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio)
+		{
+			return dal.GetCalendariosFiltrados(medicoId, filtroEspecialidad, filtroDia, filtroHoraInicio);
+
+        }
+
+        #endregion
+
+        //Consultorios
+        #region CONSULTORIOS
 
 
-		public List<Consultorio> getConsultorios()
+        public List<Consultorio> getConsultorios()
 		{
 			return dal.GetConsultorios();
 		}

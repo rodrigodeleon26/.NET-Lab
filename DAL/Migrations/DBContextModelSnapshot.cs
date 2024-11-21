@@ -30,6 +30,9 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<int>("CantidadCitas")
                         .HasColumnType("int");
 
@@ -422,6 +425,29 @@ namespace DAL.Migrations
                     b.ToTable("Facturas");
                 });
 
+            modelBuilder.Entity("DAL.Models.Medicamentos", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medicamentos");
+                });
+
             modelBuilder.Entity("DAL.Models.Medicos", b =>
                 {
                     b.Property<long>("Id")
@@ -429,6 +455,9 @@ namespace DAL.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Apellidos")
                         .IsRequired()
@@ -543,7 +572,6 @@ namespace DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CopagoId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("FechaInicio")
@@ -553,7 +581,6 @@ namespace DAL.Migrations
                         .HasColumnType("real");
 
                     b.Property<long?>("SeguroMedicoId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -919,11 +946,13 @@ namespace DAL.Migrations
                 {
                     b.HasOne("DAL.Models.Copagos", "Copago")
                         .WithMany("Precios")
-                        .HasForeignKey("CopagoId");
+                        .HasForeignKey("CopagoId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DAL.Models.SegurosMedicos", "SeguroMedico")
                         .WithMany("Precios")
-                        .HasForeignKey("SeguroMedicoId");
+                        .HasForeignKey("SeguroMedicoId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Copago");
 

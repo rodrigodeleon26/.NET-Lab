@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.router.navigateByUrl('/consulta-medica');
+      this.router.navigateByUrl('/listMedicos');
     }
 
     this.form = this.formBuilder.group({
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (res:any) => {
           this.authService.saveToken(res.token, res.refreshToken);
-          this.router.navigateByUrl('/consulta-medica');
+          this.router.navigateByUrl('/listMedicos');
           this.toastr.success('Inicio de sesión exitoso', 'Bienvenido');
           this.isLoading = false;
         },

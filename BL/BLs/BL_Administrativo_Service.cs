@@ -88,6 +88,16 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public void borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool checkOcupacionConsultorio(Calendario calendario)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
         {
             throw new NotImplementedException();
@@ -179,6 +189,11 @@ namespace BL.BLs
         }
 
         public List<Calendario> getCalendarios()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio)
         {
             throw new NotImplementedException();
         }
@@ -367,8 +382,18 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+        
+        public bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades)
+        {
+            throw new NotImplementedException();
+        }
 
         public bool emailDuplicado(string email)
+        {
+            throw new NotImplementedException();
+        }
+        
+        Task IBL_Administrativo.borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades)
         {
             throw new NotImplementedException();
         }

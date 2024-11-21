@@ -95,7 +95,6 @@ namespace AuthWebApi.Controllers
             return app;
         }
 
-
         [AllowAnonymous]
         private static async Task<IResult> RegisterUser(
         UserManager<AppUsers> userManager,
@@ -103,38 +102,19 @@ namespace AuthWebApi.Controllers
         DBContext db,
         [FromBody] UserRegistrationModel userRegistrationModel)
         {
-            Paciente paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
+            //Medico medico = blAdministrativo.getMedicoByDocumento(userRegistrationModel.Documento);
 
-            if (paciente == null)
-            {
-                paciente = new Paciente
-                {
-                    Nombres = userRegistrationModel.Nombres.ToUpper(),
-                    Apellidos = userRegistrationModel.Apellidos.ToUpper(),
-                    Documento = userRegistrationModel.Documento,
-                    Email = userRegistrationModel.Email
-                };
-                blPacientes.addPaciente(paciente);
-
-                //// Asegúrate de que el paciente se ha guardado correctamente y tiene un Id asignado
-                //paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
-                //if (paciente == null)
-                //{
-                //    return Results.BadRequest(new { message = "Error al guardar el paciente." });
-                //}
-            }
-            else
-            {
-                AppUsers userAux = userManager.Users.FirstOrDefault(x => x.PacienteId == paciente.Id);
-                if (userAux != null)
-                {
-                    return Results.BadRequest(new
-                    {
-                        code = "DuplicateDocumento",
-                        description = $"El paciente con documento {userRegistrationModel.Documento} ya tiene un usuario asociado, el mismo es {userAux.UserName}"
-                    });
-                }
-            }
+            //if (medico == null)
+            //{
+            //    medico = new Medico
+            //    {
+            //        Nombres = userRegistrationModel.Nombres.ToUpper(),
+            //        Apellidos = userRegistrationModel.Apellidos.ToUpper(),
+            //        Documento = userRegistrationModel.Documento,
+            //        Email = userRegistrationModel.Email,
+            //    };
+            //    blAdministrativo.addMedico(medico);
+            //}
 
             AppUsers user = new AppUsers
             {
@@ -143,10 +123,11 @@ namespace AuthWebApi.Controllers
                 FullName = $"{userRegistrationModel.Nombres.ToUpper()} {userRegistrationModel.Apellidos.ToUpper()}",
             };
 
-            user.Paciente = db.Pacientes.Find(paciente.Id);
+            //user.Paciente = db.Pacientes.Find(paciente.Id);
+            //user.Medico = db.Medicos.Find(medico.Id);
             var result = await userManager.CreateAsync(user, userRegistrationModel.Password);
 
-            await userManager.AddToRoleAsync(user, "PACIENTE");
+            await userManager.AddToRoleAsync(user, "ADMIN");
             if (result.Succeeded)
                 return Results.Ok(result);
             else

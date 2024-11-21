@@ -47,8 +47,6 @@ namespace AdministrativoWebApi.Controllers
             {
                 return BadRequest();
             }
-            CitaMedica.PacienteId = null;
-            CitaMedica.ConsultaMedicaId = null;
 
             _blAdministrativo.addCitaMedica(CitaMedica);
             return CreatedAtAction(nameof(Get), new { id = CitaMedica.Id }, CitaMedica);

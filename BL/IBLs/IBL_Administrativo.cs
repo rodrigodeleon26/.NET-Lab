@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using Microsoft.AspNetCore.Mvc;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,9 +82,13 @@ namespace BL.IBLs
 		void updateCalendario(Calendario calendario);
 		void deleteCalendario(long id);
 		void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias);
+		bool checkOcupacionConsultorio(Calendario calendario);
+		bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades);
+        Task borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades);
+        List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
 
-		// Consultorios
-		List<Consultorio> getConsultorios();
+        // Consultorios
+        List<Consultorio> getConsultorios();
 		Consultorio getConsultorioById(long id);
 		void addConsultorio(Consultorio consultorio);
 		void updateConsultorio(Consultorio consultorio);

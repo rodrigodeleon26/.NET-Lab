@@ -4,7 +4,7 @@
         <p class="text-white text-lg">Cargando...</p>
     </div>
     <div class="flex justify-center">
-        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
+        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-visible relative">
             <div *ngIf="successMessage" class="w-full bg-green-intermedio text-center text-white text-lg max-h-10">
                 {{ successMessage }}
             </div>
@@ -12,9 +12,25 @@
                 {{ errorMessage }}
             </div> 
             
-            <form [formGroup]="DatosMedicoForm" (ngSubmit)="agregarMedico()">
+            <h1 *ngIf="medicoId == null" class="text-center text-xl mt-5">Añadir Medico</h1>
+            <h1 *ngIf="medicoId != null && !viendoCalendarios" class="text-center text-xl mt-5">Editar Medico</h1>
+            <h1 *ngIf="medicoId != null && viendoCalendarios" class="text-center text-xl mt-5">Calendarios del Medico</h1>
+            <button *ngIf="medicoId != null" type="button" (click)="viendoCalendarios = !viendoCalendarios" title="verCalendario" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300 absolute right-4 top-4 flex">
+                <div *ngIf="!viendoCalendarios" class="flex">
+                    <p class="hidden sm:block mr-2">Calendarios</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <div *ngIf="viendoCalendarios" class="flex">
+                    <p class="hidden sm:block mr-2">Datos Medico</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+            </button>
 
-                <h1 class="text-center text-xl mt-5">Añadir Medico</h1>
+            <form *ngIf="!viendoCalendarios" [formGroup]="DatosMedicoForm" (ngSubmit)="agregarMedico()">
+
+
                 <div class="flex flex-col md:flex-row p-5">
                     <!-- INFO MEDICO -->
                     <div class="w-full md:w-1/2 flex flex-col space-y-5 order-2 md:order-1"> <!-- Fondo de color agregado -->
@@ -88,6 +104,264 @@
 				</div> 
 
             </form>
+
+            <!-- SECCION DE LOS CALENDARIOS -->
+            <div *ngIf="viendoCalendarios">
+                <div *ngIf="viendoCalendarios" class="flex flex-col md:flex-row p-5">
+                    <!-- LISTA DE CALENDARIOS -->
+                    <div class="w-full flex flex-col space-y-5 order-2 md:order-1"> <!-- Fondo de color agregado -->
+                        
+                        <div class="w-full">
+                            <table class="table-auto w-full bg-white rounded-lg shadow-md">
+                                <thead class="bg-gray-200">
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">
+                                        <button type="button" (click)="this.mostrarHoraSelect = !this.mostrarHoraSelect">
+                                            <div class="flex justify-center w-full">
+                                                Inicio
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </div>
+                                            <div *ngIf="ordenActualDeCalendariosHora !== 'PorDefecto'" class="text-xs">{{ordenActualDeCalendariosHora}}</div>
+                                        </button>
+                                        <div *ngIf="mostrarHoraSelect" class="z-20 absolute bg-gray-50 flex flex-col rounded py-2 border shadow-md">
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorHora('PorDefecto')">Por defecto</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorHora('Ascendente')">Ascendente</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorHora('Descendente')">Descendente</button>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Fin</th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Tiempo Cita</th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Cupos</th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">
+                                        <button type="button" (click)="this.mostrarDiaSelect = !this.mostrarDiaSelect">
+                                            <div class="flex justify-center w-full">
+                                                Dias Semana
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </div>
+                                            <div *ngIf="ordenActualDeCalendariosDia !== 'PorDefecto'" class="text-xs">{{ordenActualDeCalendariosDia}}</div>
+                                        </button>
+                                        <div *ngIf="mostrarDiaSelect" class="z-20 absolute bg-gray-50 flex flex-col rounded py-2 border shadow-md">
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('PorDefecto')">Por defecto</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('LUNES')">Lunes</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('MARTES')">Martes</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('MIERCOLES')">Miércoles</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('JUEVES')">Jueves</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('VIERNES')">Viernes</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('SABADO')">Sábado</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('DOMINGO')">Domingo</button>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">
+                                        <button type="button" (click)="this.mostrarEspecialidadSelect = !this.mostrarEspecialidadSelect">
+                                            <div class="flex justify-center w-full">
+                                                Especialidad
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </div>
+                                            <div *ngIf="this.ordenActualDeCalendariosEspecialidad !== 'PorDefecto'" class="text-xs">{{ordenActualDeCalendariosEspecialidad}}</div>
+                                        </button>
+                                        <div *ngIf="mostrarEspecialidadSelect" class="z-20 absolute bg-gray-50 flex flex-col rounded py-2 border shadow-md">
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalnedariosPorEspecialidad('PorDefecto')">Por defecto</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalnedariosPorEspecialidad('Agrupar')">Agrupar</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalnedariosPorEspecialidad(especialidad.nombre)" *ngFor="let especialidad of especialidades" [hidden]="!DatosMedicoForm.value.especialidades.includes(especialidad.id)">{{especialidad.nombre}}</button>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Consultorio</th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Acciones</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let calendario of calendariosShow" class="hover:bg-gray-100">
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">{{calendario.horaInicio.slice(0, 5)}}</td>
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">{{calendario.horaFin.slice(0, 5)}}</td>
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">{{calendario.tiempoCita}}</td>
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">{{calendario.cantidadCitas}}</td>
+                                        <!-- <td class="border border-gray-oscuro p-2">{{calendario.diasSemana}}</td> -->
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">
+                                            <div class="flex w-full justify-between">
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('LUNES')}" class="w-full h-full border border-gray-500 text-center rounded-s-xl pl-1">L</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('MARTES')}" class="w-full h-full border border-gray-500 text-center">M</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('MIERCOLES')}" class="w-full h-full border border-gray-500 text-center">X</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('JUEVES')}" class="w-full h-full border border-gray-500 text-center">J</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('VIERNES')}" class="w-full h-full border border-gray-500 text-center">V</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('SABADO')}" class="w-full h-full border border-gray-500 text-center">S</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('DOMINGO')}" class="w-full h-full border border-gray-500 text-center rounded-e-xl pr-1">D</div>
+                                            </div>
+                                        </td>
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">{{calendario.especialidad.nombre}}</td>
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">{{'Piso:' + calendario.consultorio.piso + 'Numero:' + calendario.consultorio.numero}}</td>
+                                        <td class="py-2 text-center w-1/12 border-b border-gray-300">
+                                            <div class="flex justify-between items-center">
+                                                <button (click)="selectCalendarioEdit(calendario.id)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg>
+                                                </button>
+                                                <button (click)="this.calendarioABorrarId = calendario.id; this.isModalBorrarVisible = true">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                            </table>
+                        </div>
+                    </div>
+    
+                </div>
+    
+                <div class="flex justify-center space-x-5 p-5">
+                    <button (click)="isModalNuevoCalendarioVisible = true" type="button" title="agregarCalendario" class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+                        Agregar Calendario
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+<!-- MODAL Nuevo Calendario-->
+<div *ngIf="isModalNuevoCalendarioVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="closeEditarModal()">
+	<div class="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full" (click)="$event.stopPropagation()">
+        <p class="my-2">Nuevo Calendario</p>
+        <form [formGroup]="DatosCalendarioForm" (ngSubmit)="agregarCalendario()">
+			<div *ngIf="errorModalMessage" class="text-red-500 text-sm">
+				{{ errorModalMessage }}
+			</div>
+            <div class="flex flex-col w-full mb-2">
+
+				<div>
+					<label for="diasSemana" class="text-sm font-medium">Dias de la Semana</label>
+					<div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 place-items-center">
+						<div class="flex">
+							<input type="checkbox" id="lunes" value="LUNES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('LUNES')">
+							<label for="lunes" class="text-sm font-medium">Lunes</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="martes" value="MARTES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('MARTES')">
+							<label for="martes" class="text-sm font-medium">Martes</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="miercoles" value="MIERCOLES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('MIERCOLES')">
+							<label for="miercoles" class="text-sm font-medium">Miercoles</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="jueves" value="JUEVES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('JUEVES')">
+							<label for="jueves" class="text-sm font-medium">Jueves</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="viernes" value="VIERNES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('VIERNES')">
+							<label for="viernes" class="text-sm font-medium">Viernes</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="sabado" value="SABADO" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('SABADO')">
+							<label for="sabado" class="text-sm font-medium">Sabado</label>
+						</div>
+						<div class="flex">
+							<input type="checkbox" id="domingo" value="DOMINGO" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('DOMINGO')">
+							<label for="domingo" class="text-sm font-medium">Domingo</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="flex justify-between w-full space-x-2">
+					
+					<div class="w-1/2 space-y-2">
+						<div class="">
+							<select name="especialidad" id="especialidadSelect" class="p-2 w-full" formControlName="especialidadId">
+								<option value="" disabled selected>Seleccione una especialidad</option>
+                                <option *ngFor="let especialidad of especialidades" [value]="especialidad.id" [hidden]="!DatosMedicoForm.value.especialidades.includes(especialidad.id)">{{ especialidad.nombre }}</option>
+							</select>
+						</div>
+						<div class="flex justify-between items-center">
+							<label for="horaInicio">Hora de Inicio</label>
+							<input type="time" formControlName="horaInicio" id="horaInicio" class="p-2 w-fit" required>
+						</div>
+						<div class="flex justify-between items-center">
+							<label for="horaFin">Hora de Fin</label>
+                            <input type="time" formControlName="horaFin" id="horaFin" class="p-2 w-fit" required>
+						</div>
+					</div>
+	
+
+					<div class="w-1/2 space-y-2">
+
+						<div class="">
+							<select name="consultorio" class="p-2 w-full" formControlName="consultorioId">
+								<option value="" disabled selected>Seleccione un consultorio</option>
+								<option *ngFor="let consultorio of consultorios" [value]="consultorio.id">{{ 'Piso: ' + consultorio.piso + ' Numero: ' + consultorio.numero }}</option>
+							</select>
+						</div>
+	
+						<div class="flex justify-between items-center">
+							<label for="tiempo" class="text-sm font-medium">Tiempo Cita</label>
+							<input 
+							required
+							type="text" 
+							id="tiempo" 
+							formControlName="tiempo" 
+							class="border rounded-md p-2 w-2/3" 
+							placeholder="Tiempo Cita"
+							min="1" 
+							pattern="^[1-9]\d*$"
+							inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+							maxlength="3"
+							minlength="1"
+							/>
+						</div>
+						
+						<div class="flex justify-between items-center">
+							<label for="cantidad" class="text-sm font-medium">Cantidad Citas</label>
+							<input 
+							required
+							type="text" 
+							id="cantidad" 
+							formControlName="cantidad" 
+							class="border rounded-md p-2 w-2/3" 
+							placeholder="Cantidad"
+							min="1" 
+							pattern="^[1-9]\d*$"
+							inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+							maxlength="3"
+							minlength="1"
+							/>
+						</div>
+					</div>
+
+				</div>
+                
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="submit" class="bg-blue-claro hover:bg-blue-oscuro text-white font-bold py-2 px-4 rounded-md">Guardar</button>
+                <button type="button" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md" (click)="closeEditarModal()">Cerrar</button>
+            </div>
+        </form>
+	</div>
+</div>
+
+<!-- MODAL BORRAR CALENDARIO-->
+<div *ngIf="isModalBorrarVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="this.isModalBorrarVisible=false; this.calendarioABorrarId = null">
+	<div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full" (click)="$event.stopPropagation()">
+        <p class="my-2">¿SEGURO QUE QUIERES BORRAR ESTE CALENDARIO?</p>
+		<div class="flex justify-end space-x-4">
+			<button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md" (click)="borrarCalendario()">Borrar</button>
+			<button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md" (click)="this.isModalBorrarVisible=false; this.calendarioABorrarId = null">Cerrar</button>
+		</div>
+	</div>
+</div>
+
+<!-- MODAL ALERTA ESPECIALIDAD-->
+<div *ngIf="isModalAlertaEspVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="this.isModalAlertaEspVisible=false; medicoAlerta = null">
+	<div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full" (click)="$event.stopPropagation()">
+        <p class="my-2 text-lg">Calentarios Serán Eliminados.</p>
+
+        <p>Hay calendarios para este medico que dependen de especialidades que serán eliminadas.</p>
+        <p>¿Deseas continuar?</p>
+		<div class="flex justify-end space-x-4">
+			<button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md" (click)="confirmarAlertaEspecialidad()">Aceptar</button>
+			<button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md" (click)="this.isModalAlertaEspVisible=false; medicoAlerta = null">Cerrar</button>
+		</div>
+	</div>
 </div>

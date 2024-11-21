@@ -20,6 +20,8 @@ import { ArticulosComponent } from './components/articulos/articulos.component';
 import { SeguroMedicoSelectComponent } from './components/seguro-medico-select/seguro-medico-select.component';
 import { PacientesComponent } from './components/pacientes/pacientes.component';
 import { ContratosComponent } from './components/contratos/contratos.component';
+import { CalendariosComponent } from './components/calendarios/calendarios.component';
+
 
 @NgModule({
   declarations: [
@@ -35,6 +37,7 @@ import { ContratosComponent } from './components/contratos/contratos.component';
     SeguroMedicoSelectComponent,
     PacientesComponent,
     ContratosComponent,
+    CalendariosComponent,
   ],
   imports: [
     BrowserModule,

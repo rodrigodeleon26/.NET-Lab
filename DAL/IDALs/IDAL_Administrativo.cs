@@ -81,6 +81,7 @@ namespace DAL.IDALs
 		public void AddCalendario(Calendario calendario);
 		public void UpdateCalendario(Calendario calendario);
 		public void DeleteCalendario(long id);
+        public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
 
 		// Consultorios
 		public List<Consultorio> GetConsultorios();
@@ -103,5 +104,5 @@ namespace DAL.IDALs
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
 		public List<Articulo> GetArticulosFiltrados(string filtro);
-	}
+    }
 }

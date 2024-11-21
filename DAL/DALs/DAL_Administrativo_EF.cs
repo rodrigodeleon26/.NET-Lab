@@ -302,7 +302,7 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-                var seguro = _dbContext.SegurosMedicos
+				var seguro = _dbContext.SegurosMedicos
 					.Include(s => s.Contratos)
 					.Include(s => s.Precios)
 					.Include(s => s.Copagos)
@@ -312,7 +312,7 @@ namespace DAL.DALs
 					.Include(s => s.Copagos)
 						.ThenInclude(c => c.Precios)
 					.FirstOrDefault(s => s.Id == id);
-                
+				
 				if (seguro != null)
 				{
 					return new SeguroMedico
@@ -332,28 +332,28 @@ namespace DAL.DALs
 							PrecioBase = p.PrecioBase,
 							FechaInicio = p.FechaInicio
 						}).ToList(),
-                        Copagos = seguro.Copagos.Select(c => new Copago
-                        {
-                            Id = c.Id,
-                            Articulo = new Articulo
-                            {
-                                Id = c.Articulo.Id,
-                                Nombre = c.Articulo.Nombre
-                            },
-                            Especialidad = new Especialidad
-                            {
-                                Id = c.Especialidad.Id,
-                                Nombre = c.Especialidad.Nombre,
-                                Descripcion = c.Especialidad.Descripcion
-                            },
-                            Precios = c.Precios.Select(p => new Precio
-                            {
-                                Id = p.Id,
-                                PrecioBase = p.PrecioBase,
-                                FechaInicio = p.FechaInicio
-                            }).ToList()
-                        }).ToList()
-                    };
+						Copagos = seguro.Copagos.Select(c => new Copago
+						{
+							Id = c.Id,
+							Articulo = new Articulo
+							{
+								Id = c.Articulo.Id,
+								Nombre = c.Articulo.Nombre
+							},
+							Especialidad = new Especialidad
+							{
+								Id = c.Especialidad.Id,
+								Nombre = c.Especialidad.Nombre,
+								Descripcion = c.Especialidad.Descripcion
+							},
+							Precios = c.Precios.Select(p => new Precio
+							{
+								Id = p.Id,
+								PrecioBase = p.PrecioBase,
+								FechaInicio = p.FechaInicio
+							}).ToList()
+						}).ToList()
+					};
 				}
 				return null;
 			}
@@ -563,12 +563,12 @@ namespace DAL.DALs
         #endregion
 
 
-        /**********************************************************/
-        /**                    Precios                           **/
-        /**********************************************************/
-        #region FUNCTIONES PRECIOS
+		/**********************************************************/
+		/**                    Precios                           **/
+		/**********************************************************/
+		#region FUNCTIONES PRECIOS
 
-        public List<Precio> GetPrecios()
+		public List<Precio> GetPrecios()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -609,28 +609,28 @@ namespace DAL.DALs
 			}
 		}
 
-        public Precio GetPrecioById(long id)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var precio = _dbContext.Precios
+		public Precio GetPrecioById(long id)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var precio = _dbContext.Precios
 					.Include(Precios => Precios.Copago)
-                        .ThenInclude(c => c.Articulo)
+						.ThenInclude(c => c.Articulo)
 					.Include(Precios => Precios.Copago)
-                        .ThenInclude(c => c.Especialidad)
+						.ThenInclude(c => c.Especialidad)
 					.Include(Precios => Precios.Copago)
 						.ThenInclude(c => c.SeguroMedico)
 					.Include(Precios => Precios.SeguroMedico)
 					.FirstOrDefault(p => p.Id == id);
 
-                if (precio != null)
-                {
-                    _logger.LogInformation($"Precio encontrado: {precio.Id}");
-                    return new Precio
-                    {
-                        Id = precio.Id,
-                        PrecioBase = precio.PrecioBase,
-                        FechaInicio = precio.FechaInicio,
+				if (precio != null)
+				{
+					_logger.LogInformation($"Precio encontrado: {precio.Id}");
+					return new Precio
+					{
+						Id = precio.Id,
+						PrecioBase = precio.PrecioBase,
+						FechaInicio = precio.FechaInicio,
 						Copago = precio.Copago != null ? new Copago()
 						{
 							Id = precio.Copago.Id,
@@ -640,17 +640,17 @@ namespace DAL.DALs
 								Nombre = precio.Copago.Articulo.Nombre
 							},
 							SeguroMedico = new SeguroMedico
-                            {
-                                Id = precio.Copago.SeguroMedico.Id,
-                                Nombre = precio.Copago.SeguroMedico.Nombre,
-                                Descripcion = precio.Copago.SeguroMedico.Descripcion
-                            },
+							{
+								Id = precio.Copago.SeguroMedico.Id,
+								Nombre = precio.Copago.SeguroMedico.Nombre,
+								Descripcion = precio.Copago.SeguroMedico.Descripcion
+							},
 							Especialidad = new Especialidad
-                            {
-                                Id = precio.Copago.Especialidad.Id,
-                                Nombre = precio.Copago.Especialidad.Nombre,
-                                Descripcion = precio.Copago.Especialidad.Descripcion
-                            }
+							{
+								Id = precio.Copago.Especialidad.Id,
+								Nombre = precio.Copago.Especialidad.Nombre,
+								Descripcion = precio.Copago.Especialidad.Descripcion
+							}
 						} : null,
 						SeguroMedico = precio.SeguroMedico != null ? new SeguroMedico()
 						{
@@ -659,14 +659,14 @@ namespace DAL.DALs
 							Descripcion = precio.SeguroMedico.Descripcion
 						} : null
 
-                    };
-                }
-                _logger.LogInformation("Precio encontrado: es null");
-                return null;
-            }
-        }
+					};
+				}
+				_logger.LogInformation("Precio encontrado: es null");
+				return null;
+			}
+		}
 
-        public void AddPrecio(Precio precio)
+		public void AddPrecio(Precio precio)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -678,14 +678,14 @@ namespace DAL.DALs
 					SeguroMedicoId = null
 				};
 				if(precio.Copago != null)
-                {
-                    nuevoPrecio.CopagoId = precio.Copago.Id;
-                }
-                if (precio.SeguroMedico != null)
-                {
-                    nuevoPrecio.SeguroMedicoId = precio.SeguroMedico.Id;
-                }
-                _dbContext.Precios.Add(nuevoPrecio);
+				{
+					nuevoPrecio.CopagoId = precio.Copago.Id;
+				}
+				if (precio.SeguroMedico != null)
+				{
+					nuevoPrecio.SeguroMedicoId = precio.SeguroMedico.Id;
+				}
+				_dbContext.Precios.Add(nuevoPrecio);
 				_dbContext.SaveChanges();
 			}
 		}
@@ -989,7 +989,8 @@ namespace DAL.DALs
 			using (var _dbContext = new DBContext())
 			{
 				return _dbContext.Medicos
-					.Select(m => new Medico
+                    .Where(m => m.Activo)
+                    .Select(m => new Medico
 					{
 						Id = m.Id,
 						Nombres = m.Nombres,
@@ -997,13 +998,13 @@ namespace DAL.DALs
 						Documento = m.Documento,
 						Email = m.Email,
 						Telefono = m.Telefono,
-                        Especialidades = m.EspecialidadesMedicos.Select(em => new Especialidad
-                        {
-                            Id = em.Especialidad.Id,
-                            Nombre = em.Especialidad.Nombre,
-                            Descripcion = em.Especialidad.Descripcion
-                        }).ToList()
-                    }).ToList();
+						Especialidades = m.EspecialidadesMedicos.Select(em => new Especialidad
+						{
+							Id = em.Especialidad.Id,
+							Nombre = em.Especialidad.Nombre,
+							Descripcion = em.Especialidad.Descripcion
+						}).ToList()
+					}).ToList();
 			}
 		}
 
@@ -1011,12 +1012,12 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-                var medico = _dbContext.Medicos
+				var medico = _dbContext.Medicos.Where(m => m.Activo)
                                .Include(m => m.EspecialidadesMedicos)
-                               .ThenInclude(me => me.Especialidad)
-                               .FirstOrDefault(m => m.Id == id);
+							   .ThenInclude(me => me.Especialidad)
+							   .FirstOrDefault(m => m.Id == id);
 
-                if (medico != null)
+				if (medico != null)
 				{
 					return new Medico
 					{
@@ -1026,13 +1027,13 @@ namespace DAL.DALs
 						Documento = medico.Documento,
 						Email = medico.Email,
 						Telefono = medico.Telefono,
-                        Especialidades = medico.EspecialidadesMedicos.Select(em => new Especialidad
-                        {
-                            Id = em.Especialidad.Id,
-                            Nombre = em.Especialidad.Nombre,
-                            Descripcion = em.Especialidad.Descripcion
-                        }).ToList()
-                    };
+						Especialidades = medico.EspecialidadesMedicos.Select(em => new Especialidad
+						{
+							Id = em.Especialidad.Id,
+							Nombre = em.Especialidad.Nombre,
+							Descripcion = em.Especialidad.Descripcion
+						}).ToList()
+					};
 				}
 				return null;
 			}
@@ -1044,9 +1045,9 @@ namespace DAL.DALs
 			{
 				//chequear que no existan con la misma ci
 				if (_dbContext.Medicos.Any(m => m.Documento == medico.Documento))
-                {
-                    throw new Exception("Ya existe un medico con la cedula ingresada");
-                }
+				{
+					throw new Exception("Ya existe un medico con la cedula ingresada");
+				}
 
 				var nuevoMedico = new Medicos
 				{
@@ -1084,80 +1085,94 @@ namespace DAL.DALs
                     // Obtener todos los Ids de Especialidades del nuevo medico
                     var especialidadesIds = medico.Especialidades.Select(e => e.Id).ToList();
 
-                    // Consulta de los registros existentes para el medico específico
+                    // Especialidades que ya existen y se mantienen, estan en el arreglo especialidadesIds
                     var especialidadesExistentes = _dbContext.EspecialidadesMedicos
-                        .Where(em => em.MedicoId == medico.Id && especialidadesIds.Contains(em.EspecialidadId))
-                        .Select(em => em.EspecialidadId)
-                        .ToList();
+                    .Where(em => em.MedicoId == medico.Id && especialidadesIds.Contains(em.EspecialidadId))
+                    .Select(em => em.EspecialidadId)
+                    .ToList();
+
+                    //especialidades que ya existen pero no estan en especialidadesIds por lo que hay que borrarlas
+                    var especialidadesABorrar = _dbContext.EspecialidadesMedicos
+                    .Where(em => em.MedicoId == medico.Id && !especialidadesIds.Contains(em.EspecialidadId))
+                    .ToList();
 
                     // Filtrar para agregar solo las especialidades que aún no existen
                     medicoExistente.EspecialidadesMedicos = medico.Especialidades
-                        .Where(e => !especialidadesExistentes.Contains(e.Id))
-                        .Select(e => new EspecialidadesMedicos
-                        {
-                            MedicoId = medico.Id,
-                            EspecialidadId = e.Id
-                        })
-                        .ToList();
+                    .Where(e => !especialidadesExistentes.Contains(e.Id))
+                    .Select(e => new EspecialidadesMedicos
+                    {
+                        MedicoId = medico.Id,
+                        EspecialidadId = e.Id
+                    })
+                    .ToList();
+
+                    // Borrar aquellas especialidades que ya no existen
+                    foreach (var especialidad in especialidadesABorrar)
+                    {
+                        medicoExistente.EspecialidadesMedicos.Remove(especialidad);
+                    }
+
                     _dbContext.SaveChanges();
                 }
             }
         }
 
-        public void DeleteMedico(long id)
+		public void DeleteMedico(long id)
 		{
 			using (var _dbContext = new DBContext())
 			{
 				var medico = _dbContext.Medicos.Find(id);
 				if (medico != null)
 				{
-					_dbContext.Medicos.Remove(medico);
-					_dbContext.SaveChanges();
+                    //_dbContext.Medicos.Remove(medico);
+                    medico.Activo = false;
+                    _dbContext.SaveChanges();
 				}
 			}
 		}
 
-        public List<Medico> GetMedicosPaginadosYFiltrados(int numPagina, string filtro)
-        {
-            using (var _dbContext = new DBContext())
-            {
-                var query = _dbContext.Medicos.AsQueryable();
+		public List<Medico> GetMedicosPaginadosYFiltrados(int numPagina, string filtro)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var query = _dbContext.Medicos.AsQueryable();
 
-                if (!string.IsNullOrEmpty(filtro))
-                {
-                    query = query.Where(m => m.Nombres.Contains(filtro) || m.Apellidos.Contains(filtro) || m.Documento.Contains(filtro));
-                }
+				if (!string.IsNullOrEmpty(filtro))
+				{
+					query = query.Where(m => m.Nombres.Contains(filtro) || m.Apellidos.Contains(filtro) || m.Documento.Contains(filtro));
+				}
 
-                return query
-                    .Skip((numPagina - 1) * 10)
-                    .Take(10)
+				return query
+					.Skip((numPagina - 1) * 10)
+					.Take(10)
+                    .Where(m => m.Activo)
                     .Select(m => new Medico
-                    {
-                        Id = m.Id,
-                        Nombres = m.Nombres,
-                        Apellidos = m.Apellidos,
-                        Documento = m.Documento,
-                        Email = m.Email,
-                        Telefono = m.Telefono,
-                        Especialidades = m.EspecialidadesMedicos.Select(em => new Especialidad
-                        {
-                            Id = em.Especialidad.Id,
-                            Nombre = em.Especialidad.Nombre,
-                            Descripcion = em.Especialidad.Descripcion
-                        }).ToList()
-                    }).ToList();
-            }
-        }
+					{
+						Id = m.Id,
+						Nombres = m.Nombres,
+						Apellidos = m.Apellidos,
+						Documento = m.Documento,
+						Email = m.Email,
+						Telefono = m.Telefono,
+						Especialidades = m.EspecialidadesMedicos.Select(em => new Especialidad
+						{
+							Id = em.Especialidad.Id,
+							Nombre = em.Especialidad.Nombre,
+							Descripcion = em.Especialidad.Descripcion
+						}).ToList()
+					}).ToList();
+			}
+		}
 
-        #endregion
+		#endregion
 
 
-        /**********************************************************/
-        /**                 Citas Medicas                        **/
-        /**********************************************************/
-        #region FUNCTIONES CITAS MEDICAS
+		/**********************************************************/
+		/**                 Citas Medicas                        **/
+		/**********************************************************/
+		#region FUNCTIONES CITAS MEDICAS
 
-        public List<CitaMedica> GetCitasMedicas()
+		public List<CitaMedica> GetCitasMedicas()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -1243,46 +1258,47 @@ namespace DAL.DALs
 		public void AddCitasMedicas(CitaMedica citasMedicas)
 		{
 			using (var _dbContext = new DBContext())
-            {
-                var nuevaCita = new CitasMedicas
-                {
-                    Fecha = citasMedicas.Fecha,
-                    Estado = citasMedicas.Estado,
-                    CalendarioId = citasMedicas.CalendarioId,
+			{
+				_logger.LogInformation("pacienteID: " + citasMedicas.PacienteId);
+				var nuevaCita = new CitasMedicas
+				{
+					Fecha = citasMedicas.Fecha,
+					Estado = citasMedicas.Estado,
+					CalendarioId = citasMedicas.CalendarioId,
                     PacienteId = citasMedicas.PacienteId
-                };
-                _dbContext.CitasMedicas.Add(nuevaCita);
-                _dbContext.SaveChanges();
-            }
+				};
+				_dbContext.CitasMedicas.Add(nuevaCita);
+				_dbContext.SaveChanges();
+			}
 		}
 
-        public void UpdateCitasMedicas(CitaMedica citasMedicas)
+		public void UpdateCitasMedicas(CitaMedica citasMedicas)
 		{
 			using (var _dbContext = new DBContext())
-            {
-                var citaExistente = _dbContext.CitasMedicas.Find(citasMedicas.Id);
-                if (citaExistente != null)
-                {
-                    citaExistente.Fecha = citasMedicas.Fecha;
-                    citaExistente.Estado = citasMedicas.Estado;
-                    citaExistente.CalendarioId = citasMedicas.Calendario.Id;
+			{
+				var citaExistente = _dbContext.CitasMedicas.Find(citasMedicas.Id);
+				if (citaExistente != null)
+				{
+					citaExistente.Fecha = citasMedicas.Fecha;
+					citaExistente.Estado = citasMedicas.Estado;
+					citaExistente.CalendarioId = citasMedicas.Calendario.Id;
 					citaExistente.PacienteId = citasMedicas.PacienteId;
-                    _dbContext.SaveChanges();
-                }
-            }
+					_dbContext.SaveChanges();
+				}
+			}
 		}
 
 		public void DeleteCitasMedicas(long id)
 		{
 			using (var _dbContext = new DBContext())
-            {
-                var cita = _dbContext.CitasMedicas.Find(id);
-                if (cita != null)
-                {
-                    _dbContext.CitasMedicas.Remove(cita);
-                    _dbContext.SaveChanges();
-                }
-            }
+			{
+				var cita = _dbContext.CitasMedicas.Find(id);
+				if (cita != null)
+				{
+					_dbContext.CitasMedicas.Remove(cita);
+					_dbContext.SaveChanges();
+				}
+			}
 		}
 
 		#endregion
@@ -1298,6 +1314,7 @@ namespace DAL.DALs
 			using (var _dbContext = new DBContext())
 			{
 				return _dbContext.Calendarios
+					.Where(c => c.Activo) // filtrar calendarios activos
 					.Select(c => new Calendario
 					{
 						Id = c.Id,
@@ -1306,13 +1323,13 @@ namespace DAL.DALs
 						TiempoCita = c.TiempoCita,
 						CantidadCitas = c.CantidadCitas,
 						DiasSemana = c.DiasSemana,
-                        Consultorio = new Consultorio
-                        {
-                            Id = c.Consultorio.Id,
-                            Numero = c.Consultorio.Numero,
-                            Piso = c.Consultorio.Piso
-                        },
-                        Medico = new Medico
+						Consultorio = new Consultorio
+						{
+							Id = c.Consultorio.Id,
+							Numero = c.Consultorio.Numero,
+							Piso = c.Consultorio.Piso
+						},
+						Medico = new Medico
 						{
 							Id = c.Medico.Id,
 							Nombres = c.Medico.Nombres,
@@ -1342,17 +1359,18 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var c = _dbContext.Calendarios.Include(c => c.Medico)
+				var c = _dbContext.Calendarios.Where(c => c.Activo)
+					.Include(c => c.Medico)
 					.Include(c => c.Especialidad)
 					.Include(c => c.Consultorio)
 					.FirstOrDefault(c => c.Id == id);
 
-                if (c != null)
+				if (c != null)
 				{
 					var citas = _dbContext.CitasMedicas
-                        .Include(cm => cm.Paciente)
-                        .Where(cm => cm.CalendarioId == c.Id)
-                        .ToList();
+						.Include(cm => cm.Paciente)
+						.Where(cm => cm.CalendarioId == c.Id)
+						.ToList();
 
 					return new Calendario
 					{
@@ -1362,13 +1380,13 @@ namespace DAL.DALs
 						TiempoCita = c.TiempoCita,
 						CantidadCitas = c.CantidadCitas,
 						DiasSemana = c.DiasSemana,
-                        Consultorio = new Consultorio
-                        {
-                            Id = c.Consultorio.Id,
-                            Numero = c.Consultorio.Numero,
-                            Piso = c.Consultorio.Piso
-                        },
-                        Medico = new Medico
+						Consultorio = new Consultorio
+						{
+							Id = c.Consultorio.Id,
+							Numero = c.Consultorio.Numero,
+							Piso = c.Consultorio.Piso
+						},
+						Medico = new Medico
 						{
 							Id = c.Medico.Id,
 							Nombres = c.Medico.Nombres,
@@ -1386,12 +1404,12 @@ namespace DAL.DALs
 						CitasMedicas = !citas.IsNullOrEmpty() ? citas.Select(cm => new CitaMedica
 						{
 							Id = cm.Id,
-                            Fecha = cm.Fecha,
-                            Estado = cm.Estado,
+							Fecha = cm.Fecha,
+							Estado = cm.Estado,
 							PacienteId = cm.Paciente.Id
 						}).ToList() : new List<CitaMedica>()
 					};
-                }
+				}
 				return null;
 			}
 		}
@@ -1401,9 +1419,9 @@ namespace DAL.DALs
 			using (var _dbContext = new DBContext())
 			{
 				//chequeo que no exista un calendario con el medico y la especialidad
-				if(_dbContext.Calendarios.Any(c => c.MedicoId == calendario.Medico.Id && c.EspecialidadId == calendario.Especialidad.Id)){
-					throw new Exception("Ya existe un calendario para el medico y especialidad seleccionados");
-				}
+				//if(_dbContext.Calendarios.Any(c => c.MedicoId == calendario.Medico.Id && c.EspecialidadId == calendario.Especialidad.Id)){
+				//	throw new Exception("Ya existe un calendario para el medico y especialidad seleccionados");
+				//}
 
 				var nuevoCalendario = new Calendarios
 				{
@@ -1415,7 +1433,7 @@ namespace DAL.DALs
 					MedicoId = calendario.Medico.Id,
 					EspecialidadId = calendario.Especialidad.Id,
 					ConsultorioId = calendario.Consultorio.Id
-                };
+				};
 				_dbContext.Calendarios.Add(nuevoCalendario);
 				_dbContext.SaveChanges();
 			}
@@ -1434,8 +1452,8 @@ namespace DAL.DALs
 					ExistCalendario.TiempoCita = calendario.TiempoCita;
 					ExistCalendario.CantidadCitas = calendario.CantidadCitas;
 					ExistCalendario.DiasSemana = calendario.DiasSemana;
-                    ExistCalendario.ConsultorioId = calendario.Consultorio.Id;
-                    _dbContext.SaveChanges();
+					ExistCalendario.ConsultorioId = calendario.Consultorio.Id;
+					_dbContext.SaveChanges();
 				}
 			}
 		}
@@ -1444,21 +1462,95 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var medico = _dbContext.Medicos.Find(id);
-				if (medico != null)
-				{
-					_dbContext.Medicos.Remove(medico);
-					_dbContext.SaveChanges();
-				}
-
 				var calendario = _dbContext.Calendarios.Find(id);
 				if (calendario != null)
 				{
-					_dbContext.Calendarios.Remove(calendario);
+					//_dbContext.Calendarios.Remove(calendario);
+
+					calendario.Activo = false;
 					_dbContext.SaveChanges();
 				}
 			}
 		}
+
+        public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                // Obtener la consulta base para los calendarios del médico
+                var query = _dbContext.Calendarios
+                    .Where(c => c.MedicoId == medicoId && c.Activo)
+                    .AsQueryable();
+
+                // Filtrar por especialidad
+                if (!string.IsNullOrEmpty(filtroEspecialidad) && filtroEspecialidad != "PorDefecto")
+                {
+                    if (filtroEspecialidad == "Agrupar")
+                    {
+                        // Agrupar por especialidad
+                        query = query.OrderBy(c => c.Especialidad.Nombre);
+                    }
+                    else
+                    {
+                        // Filtrar por nombre de especialidad
+                        query = query.Where(c => c.Especialidad.Nombre == filtroEspecialidad);
+                    }
+                }
+
+                // Filtrar por día
+                if (!string.IsNullOrEmpty(filtroDia) && filtroDia != "PorDefecto")
+                {
+                    query = query.Where(c => c.DiasSemana.Contains(filtroDia));
+                }
+
+                // Ordenar por hora de inicio
+                if (!string.IsNullOrEmpty(filtroHoraInicio) && filtroHoraInicio != "PorDefecto")
+                {
+                    query = filtroHoraInicio.Equals("Ascendente", StringComparison.OrdinalIgnoreCase)
+                        ? query.OrderBy(c => c.HoraInicio)
+                        : query.OrderByDescending(c => c.HoraInicio);
+                }
+
+                // Seleccionar los calendarios con las relaciones necesarias
+                return query.Select(c => new Calendario
+                {
+                    Id = c.Id,
+                    HoraInicio = c.HoraInicio,
+                    HoraFin = c.HoraFin,
+                    TiempoCita = c.TiempoCita,
+                    CantidadCitas = c.CantidadCitas,
+                    DiasSemana = c.DiasSemana,
+                    Consultorio = new Consultorio
+                    {
+                        Id = c.Consultorio.Id,
+                        Numero = c.Consultorio.Numero,
+                        Piso = c.Consultorio.Piso
+                    },
+                    Medico = new Medico
+                    {
+                        Id = c.Medico.Id,
+                        Nombres = c.Medico.Nombres,
+                        Apellidos = c.Medico.Apellidos,
+                        Documento = c.Medico.Documento,
+                        Email = c.Medico.Email,
+                        Telefono = c.Medico.Telefono
+                    },
+                    Especialidad = new Especialidad
+                    {
+                        Id = c.Especialidad.Id,
+                        Nombre = c.Especialidad.Nombre,
+                        Descripcion = c.Especialidad.Descripcion
+                    },
+                    CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
+                    {
+                        Id = cm.Id,
+                        Fecha = cm.Fecha,
+                        Estado = cm.Estado
+                    }).ToList()
+                }).ToList();
+            }
+        }
+
 
         #endregion
 
@@ -1469,67 +1561,67 @@ namespace DAL.DALs
         #region FUNCTIONES CONSULTORIOS
 
         public List<Consultorio> GetConsultorios()
-        {
+		{
 			using (var _dbContext = new DBContext())
-            {
-                return _dbContext.Consultorios
-                    .Select(c => new Consultorio
-                    {
-                        Id = c.Id,
-                        Numero = c.Numero,
-                        Piso = c.Piso
-                    }).ToList();
-            }
-        }
+			{
+				return _dbContext.Consultorios
+					.Select(c => new Consultorio
+					{
+						Id = c.Id,
+						Numero = c.Numero,
+						Piso = c.Piso
+					}).ToList();
+			}
+		}
 
-        public Consultorio GetConsultorioById(long id)
-        {
+		public Consultorio GetConsultorioById(long id)
+		{
 			using (var _dbContext = new DBContext())
-            {
-                var consultorio = _dbContext.Consultorios.Find(id);
-                if (consultorio != null)
-                {
-                    return new Consultorio
-                    {
-                        Id = consultorio.Id,
-                        Numero = consultorio.Numero,
-                        Piso = consultorio.Piso
-                    };
-                }
-                return null;
-            }
-        }
+			{
+				var consultorio = _dbContext.Consultorios.Find(id);
+				if (consultorio != null)
+				{
+					return new Consultorio
+					{
+						Id = consultorio.Id,
+						Numero = consultorio.Numero,
+						Piso = consultorio.Piso
+					};
+				}
+				return null;
+			}
+		}
 
-        public void AddConsultorio(Consultorio consultorio)
-        {
+		public void AddConsultorio(Consultorio consultorio)
+		{
 			using (var _dbContext = new DBContext())
-            {
-                var nuevoConsultorio = new Consultorios
-                {
-                    Numero = consultorio.Numero,
-                    Piso = consultorio.Piso
-                };
-                _dbContext.Consultorios.Add(nuevoConsultorio);
-                _dbContext.SaveChanges();
-            }
-        }
+			{
+				var nuevoConsultorio = new Consultorios
+				{
+					Numero = consultorio.Numero,
+					Piso = consultorio.Piso
+				};
+				_dbContext.Consultorios.Add(nuevoConsultorio);
+				_dbContext.SaveChanges();
+			}
+		}
 
-        public void UpdateConsultorio(Consultorio consultorio)
-        {
+		public void UpdateConsultorio(Consultorio consultorio)
+		{
 			using (var _dbContext = new DBContext())
-            {
-                var consultorioExistente = _dbContext.Consultorios.Find(consultorio.Id);
-                if (consultorioExistente != null)
-                {
-                    consultorioExistente.Numero = consultorio.Numero;
-                    consultorioExistente.Piso = consultorio.Piso;
-                    _dbContext.SaveChanges();
-                }
-            }
-        }
+			{
+				var consultorioExistente = _dbContext.Consultorios.Find(consultorio.Id);
+				if (consultorioExistente != null)
+				{
+					consultorioExistente.Numero = consultorio.Numero;
+					consultorioExistente.Piso = consultorio.Piso;
+					_dbContext.SaveChanges();
+				}
+			}
+		}
 
-        public void DeleteConsultorio(long id)
-        {
+		public void DeleteConsultorio(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var consultorio = _dbContext.Consultorios.Find(id);
@@ -1539,78 +1631,78 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        #endregion
+		#endregion
 
 
-        /**********************************************************/
-        /**                 Especialidades                       **/
-        /**********************************************************/
-        #region FUNCTIONES ESPECIALIDADES
+		/**********************************************************/
+		/**                 Especialidades                       **/
+		/**********************************************************/
+		#region FUNCTIONES ESPECIALIDADES
 
-        public List<Especialidad> GetEspecialidades()
-        {
+		public List<Especialidad> GetEspecialidades()
+		{
 			using (var _dbContext = new DBContext())
-            {
-                return _dbContext.Especialidades
-                    .Select(e => new Especialidad
-                    {
-                        Id = e.Id,
-                        Nombre = e.Nombre,
-                        Descripcion = e.Descripcion
-                    }).ToList();
-            }
-        }
+			{
+				return _dbContext.Especialidades
+					.Select(e => new Especialidad
+					{
+						Id = e.Id,
+						Nombre = e.Nombre,
+						Descripcion = e.Descripcion
+					}).ToList();
+			}
+		}
 
-        public Especialidad GetEspecialidadById(long id)
-        {
+		public Especialidad GetEspecialidadById(long id)
+		{
 			using (var _dbContext = new DBContext())
-            {
-                var especialidad = _dbContext.Especialidades.Find(id);
-                if (especialidad != null)
-                {
-                    return new Especialidad
-                    {
-                        Id = especialidad.Id,
-                        Nombre = especialidad.Nombre,
-                        Descripcion = especialidad.Descripcion
-                    };
-                }
-                return null;
-            }
-        }
+			{
+				var especialidad = _dbContext.Especialidades.Find(id);
+				if (especialidad != null)
+				{
+					return new Especialidad
+					{
+						Id = especialidad.Id,
+						Nombre = especialidad.Nombre,
+						Descripcion = especialidad.Descripcion
+					};
+				}
+				return null;
+			}
+		}
 
-        public void AddEspecialidad(Especialidad especialidad)
-        {
+		public void AddEspecialidad(Especialidad especialidad)
+		{
 			using (var _dbContext = new DBContext())
-            {
-                var nuevaEspecialidad = new Especialidades
-                {
-                    Nombre = especialidad.Nombre,
-                    Descripcion = especialidad.Descripcion
-                };
-                _dbContext.Especialidades.Add(nuevaEspecialidad);
-                _dbContext.SaveChanges();
-            }
-        }
+			{
+				var nuevaEspecialidad = new Especialidades
+				{
+					Nombre = especialidad.Nombre,
+					Descripcion = especialidad.Descripcion
+				};
+				_dbContext.Especialidades.Add(nuevaEspecialidad);
+				_dbContext.SaveChanges();
+			}
+		}
 
-        public void UpdateEspecialidad(Especialidad especialidad)
-        {
+		public void UpdateEspecialidad(Especialidad especialidad)
+		{
 			using (var _dbContext = new DBContext())
-            {
-                var especialidadExistente = _dbContext.Especialidades.Find(especialidad.Id);
-                if (especialidadExistente != null)
-                {
-                    especialidadExistente.Nombre = especialidad.Nombre;
-                    especialidadExistente.Descripcion = especialidad.Descripcion;
-                    _dbContext.SaveChanges();
-                }
-            }
-        }
+			{
+				var especialidadExistente = _dbContext.Especialidades.Find(especialidad.Id);
+				if (especialidadExistente != null)
+				{
+					especialidadExistente.Nombre = especialidad.Nombre;
+					especialidadExistente.Descripcion = especialidad.Descripcion;
+					_dbContext.SaveChanges();
+				}
+			}
+		}
 
-        public void DeleteEspecialidad(long id)
-        {
+		public void DeleteEspecialidad(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var especialidad = _dbContext.Especialidades.Find(id);
@@ -1620,18 +1712,18 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        #endregion
+		#endregion
 
 
-        /**********************************************************/
-        /**                 Articulos                            **/
-        /**********************************************************/
-        #region FUNCTIONES ARTICULOS
+		/**********************************************************/
+		/**                 Articulos                            **/
+		/**********************************************************/
+		#region FUNCTIONES ARTICULOS
 
-        public List<Articulo> GetArticulos()
-        {
+		public List<Articulo> GetArticulos()
+		{
 			using (var _dbContext = new DBContext())
 			{
 				return _dbContext.Articulos.Include(a => a.Copagos)
@@ -1640,33 +1732,33 @@ namespace DAL.DALs
 						Id = a.Id,
 						Nombre = a.Nombre,
 						Copagos = a.Copagos.Select(c => new Copago
-                        {
-                            Id = c.Id,
-                            SeguroMedico = new SeguroMedico
-                            {
-                                Id = c.SeguroMedico.Id,
-                                Nombre = c.SeguroMedico.Nombre,
-                                Descripcion = c.SeguroMedico.Descripcion
-                            },
-                            Especialidad = new Especialidad
-                            {
-                                Id = c.Especialidad.Id,
-                                Nombre = c.Especialidad.Nombre,
-                                Descripcion = c.Especialidad.Descripcion
-                            },
-                            Precios = c.Precios.Select(p => new Precio
-                            {
-                                Id = p.Id,
-                                PrecioBase = p.PrecioBase,
-                                FechaInicio = p.FechaInicio
-                            }).ToList()
-                        }).ToList()
+						{
+							Id = c.Id,
+							SeguroMedico = new SeguroMedico
+							{
+								Id = c.SeguroMedico.Id,
+								Nombre = c.SeguroMedico.Nombre,
+								Descripcion = c.SeguroMedico.Descripcion
+							},
+							Especialidad = new Especialidad
+							{
+								Id = c.Especialidad.Id,
+								Nombre = c.Especialidad.Nombre,
+								Descripcion = c.Especialidad.Descripcion
+							},
+							Precios = c.Precios.Select(p => new Precio
+							{
+								Id = p.Id,
+								PrecioBase = p.PrecioBase,
+								FechaInicio = p.FechaInicio
+							}).ToList()
+						}).ToList()
 					}).ToList();
 			}
-        }
+		}
 
-        public Articulo GetArticuloById(long id)
-        {
+		public Articulo GetArticuloById(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var articulo = _dbContext.Articulos.Include(a => a.Copagos).FirstOrDefault(a => a.Id == id);
@@ -1703,33 +1795,33 @@ namespace DAL.DALs
 				}
 				return null;
 			}
-        }
+		}
 
-        public void AddArticulo(Articulo articulo)
-        {
+		public void AddArticulo(Articulo articulo)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var nuevoArticulo = new Articulos
 				{
 					Nombre = articulo.Nombre,
 					Copagos = nameof(articulo.Copagos) != null ? articulo.Copagos.Select(c => new Copagos
-                    {
-                        SeguroMedicoId = c.SeguroMedico.Id,
-                        EspecialidadId = c.Especialidad.Id,
-                        Precios = c.Precios.Select(p => new Precios
-                        {
-                            PrecioBase = p.PrecioBase,
-                            FechaInicio = p.FechaInicio
-                        }).ToList()
-                    }).ToList() : new List<Copagos>()
+					{
+						SeguroMedicoId = c.SeguroMedico.Id,
+						EspecialidadId = c.Especialidad.Id,
+						Precios = c.Precios.Select(p => new Precios
+						{
+							PrecioBase = p.PrecioBase,
+							FechaInicio = p.FechaInicio
+						}).ToList()
+					}).ToList() : new List<Copagos>()
 				};
-                _dbContext.Articulos.Add(nuevoArticulo);
-                _dbContext.SaveChanges();
-            }
-        }
+				_dbContext.Articulos.Add(nuevoArticulo);
+				_dbContext.SaveChanges();
+			}
+		}
 
-        public void UpdateArticulo(Articulo articulo)
-        {
+		public void UpdateArticulo(Articulo articulo)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var articuloExistente = _dbContext.Articulos.Find(articulo.Id);
@@ -1750,10 +1842,10 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        public void DeleteArticulo(long id)
-        {
+		public void DeleteArticulo(long id)
+		{
 			using (var _dbContext = new DBContext())
 			{
 				var articulo = _dbContext.Articulos.Find(id);
@@ -1763,9 +1855,9 @@ namespace DAL.DALs
 					_dbContext.SaveChanges();
 				}
 			}
-        }
+		}
 
-        public List<Articulo> GetArticulosFiltrados(string filtro)
+		public List<Articulo> GetArticulosFiltrados(string filtro)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -1777,36 +1869,36 @@ namespace DAL.DALs
 				}
 
 				return query
-                    .Select(a => new Articulo
-                    {
-                        Id = a.Id,
-                        Nombre = a.Nombre,
-                        Copagos = a.Copagos.Select(c => new Copago
-                        {
-                            Id = c.Id,
-                            SeguroMedico = new SeguroMedico
-                            {
-                                Id = c.SeguroMedico.Id,
-                                Nombre = c.SeguroMedico.Nombre,
-                                Descripcion = c.SeguroMedico.Descripcion
-                            },
-                            Especialidad = new Especialidad
-                            {
-                                Id = c.Especialidad.Id,
-                                Nombre = c.Especialidad.Nombre,
-                                Descripcion = c.Especialidad.Descripcion
-                            },
-                            Precios = c.Precios.Select(p => new Precio
-                            {
-                                Id = p.Id,
-                                PrecioBase = p.PrecioBase,
-                                FechaInicio = p.FechaInicio
-                            }).ToList()
-                        }).ToList()
-                    }).ToList();
+					.Select(a => new Articulo
+					{
+						Id = a.Id,
+						Nombre = a.Nombre,
+						Copagos = a.Copagos.Select(c => new Copago
+						{
+							Id = c.Id,
+							SeguroMedico = new SeguroMedico
+							{
+								Id = c.SeguroMedico.Id,
+								Nombre = c.SeguroMedico.Nombre,
+								Descripcion = c.SeguroMedico.Descripcion
+							},
+							Especialidad = new Especialidad
+							{
+								Id = c.Especialidad.Id,
+								Nombre = c.Especialidad.Nombre,
+								Descripcion = c.Especialidad.Descripcion
+							},
+							Precios = c.Precios.Select(p => new Precio
+							{
+								Id = p.Id,
+								PrecioBase = p.PrecioBase,
+								FechaInicio = p.FechaInicio
+							}).ToList()
+						}).ToList()
+					}).ToList();
 			}
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

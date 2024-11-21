@@ -9,10 +9,13 @@ import { CopagosComponent } from './components/copagos/copagos.component';
 import { ArticulosComponent } from './components/articulos/articulos.component';
 import { PacientesComponent } from './components/pacientes/pacientes.component';
 import { ContratosComponent } from './components/contratos/contratos.component';
+import { CalendariosComponent } from './components/calendarios/calendarios.component';
   
 const routes: Routes = [
   { path: 'login', component: LoginComponent},
 
+  { path: '', redirectTo: '/login', pathMatch: 'full'},
+  //{ path: '**', redirectTo: '/login'},
   { path: 'generarMedico', component: GenerarMedicoComponent },
   { path: 'generarMedico/:id', component: GenerarMedicoComponent },
   { path: 'listMedicos', component: ListMedicosComponent },
@@ -21,7 +24,8 @@ const routes: Routes = [
   { path: 'copagos', component: CopagosComponent },
   { path: 'articulos', component: ArticulosComponent },//temporal quizas
   { path: 'pacientes', component: PacientesComponent},
-  { path: 'contratos', component: ContratosComponent}
+  { path: 'contratos', component: ContratosComponent},
+  { path: 'calendarios', component: CalendariosComponent },
 ];
 
 @NgModule({
