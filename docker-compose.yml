@@ -63,8 +63,6 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
-    networks:
-      - default_network
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -147,10 +145,6 @@ services:
       - citasmedicaswebapi
       - historiaclinicawebapi
       - administrativowebapi
-
-networks:
-  default_network:
-    driver: bridge
 
 volumes:
   sqlserver-data:
