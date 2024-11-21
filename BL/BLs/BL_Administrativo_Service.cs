@@ -373,5 +373,20 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+
+        public List<PagoPayPal> GetPaypalPagos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagoPayPal GetPaypalPagoById(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
