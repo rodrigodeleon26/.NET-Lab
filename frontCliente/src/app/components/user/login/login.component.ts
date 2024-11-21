@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
     ngOnInit(): void {
       if (this.authService.isLoggedIn()) {
         if (this.authService.getEmailConfirmedStatus()) {
-          this.router.navigateByUrl('/dashboard');
+          this.router.navigateByUrl('/inicio');
         } else {
           this.toastr.warning('Por favor, confirma tu correo electrónico para continuar.', 'Correo no confirmado');
           this.router.navigateByUrl('/resendEmailConfirmation');
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
         next: (res:any) => {
           this.authService.saveToken(res.token, res.refreshToken);
           if (this.authService.getEmailConfirmedStatus()) {
-            this.router.navigateByUrl('/dashboard');
+            this.router.navigateByUrl('/inicio');
           } else {
             this.router.navigateByUrl('/resendEmailConfirmation');
           }

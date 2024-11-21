@@ -23,6 +23,8 @@ namespace BL.IBLs
 		List <Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro);
 		public bool emailDuplicado(string email);
 		public bool cedulaDuplicada(string cedula);
+        List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize);
+		int CountNotificaciones(long id);
 
         // Seguros Medicos
         List<SeguroMedico> getSegurosMedicos();
@@ -70,6 +72,7 @@ namespace BL.IBLs
         // Medicos
         List<Medico> getMedicos();
 		Medico getMedicoById(long id);
+		Medico getMedicoByDocumento(string ci);
 		void addMedico(Medico medico);
 		void updateMedico(Medico medico);
 		void deleteMedico(long id);

@@ -9,8 +9,13 @@ import { ConfirmEmailComponent } from './components/user/confirm-email/confirm-e
 import { ResendEmailConfirmationComponent } from './components/user/resend-email-confirmation/resend-email-confirmation.component';
 import { authGuard } from './shared/auth.guard';
 import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-factor-auth.component';
+import { InicioComponent } from './components/pantallas/inicio/inicio.component';
+import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component';
+import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.component';
+import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/inicio', pathMatch: 'full' },
   { path: '', component: UserComponent,
     children: [
       { path: 'register', component: RegisterComponent },
@@ -22,7 +27,10 @@ const routes: Routes = [
     ]
   },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-  { path: '**', redirectTo: '' }
+  { path : 'inicio', component: InicioComponent, canActivate: [authGuard] },
+  { path : 'historia-clinica', component: HistoriaClinicaComponent, canActivate: [authGuard] },
+  { path : 'mis-datos', component: MisDatosComponent, canActivate: [authGuard] },
+  { path : 'notificaciones', component: NotificacionesComponent, canActivate: [authGuard] }
 ];
 
 @NgModule({

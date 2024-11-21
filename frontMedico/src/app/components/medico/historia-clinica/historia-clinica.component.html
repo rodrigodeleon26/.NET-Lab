@@ -89,14 +89,10 @@
                                 <td class="py-1 text-center w-1/12 border-b border-gray-300">{{ cita.citaMedica.fecha | date:'dd/MM/yyyy' }}</td>
                                 <td class="py-1 text-center w-2/12 border-b border-gray-300">{{ cita.citaMedica.calendario.especialidad.nombre }}</td>
                                 <td class="py-1 text-center w-3/12 border-b border-gray-300">
-                                    <p class="truncate" title="{{ cita.consultaMedica.descripcion }}">
-                                        {{ cita.consultaMedica.descripcion }}
-                                    </p>
+                                    {{ cita.consultaMedica.descripcion }}
                                 </td>
                                 <td class="py-1 text-center w-4/12 border-b border-gray-300">
-                                    <p class="truncate" title="{{ cita.consultaMedica.diagnostico }}">
-                                        {{ cita.consultaMedica.diagnostico }}
-                                    </p>
+                                    {{ cita.consultaMedica.diagnostico }}
                                 </td>
                                 <td class="py-1 text-center w-2/12 border-b border-gray-300">
                                     <button *ngIf="cita.consultaMedica.recetas.length > 0" (click)="verReceta(cita.consultaMedica.recetas)" class="text-blue-intermedio font-medium hover:underline hover:text-blue-oscuro">Ver Recetas</button>
@@ -223,7 +219,7 @@
 
 <div *ngIf="modalEstudios">
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-        <div class="bg-white w-2/5 p-5 rounded-lg shadow-lg space-y-3 max-h-screen overflow-y-auto">
+        <div class="bg-white w-1/2 p-5 rounded-lg shadow-lg space-y-3 max-h-screen overflow-y-auto">
             <div class="flex justify-between items-center">
                 <h1 class="text-lg font-bold">Estudios</h1>
                 <button type="button" title="Cerrar" (click)="closeModalEstudios()" class="text-red-600 hover:text-red-800 transition duration-300">
@@ -234,20 +230,20 @@
                 <table class="min-w-full bg-white">
                     <thead>
                         <tr>
-                            <th class="py-2 px-4 border-b text-center">Nombre</th>
-                            <th class="py-2 px-4 border-b text-center">Descripción</th>
-                            <th class="py-2 px-4 border-b text-center">Fecha realizado</th>
-                            <th class="py-2 px-4 border-b text-center">Fecha resultado</th>
-                            <th class="py-2 px-4 border-b text-center">Resultado</th>
+                            <th class="py-2 px-4 border-b text-center w-2/12">Nombre</th>
+                            <th class="py-2 px-4 border-b text-center w-5/12">Descripción</th>
+                            <th class="py-2 px-4 border-b text-center w-2/12">Fecha realizado</th>
+                            <th class="py-2 px-4 border-b text-center w-2/12">Fecha resultado</th>
+                            <th class="py-2 px-4 border-b text-center w-1/12">Resultado</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let estudio of estudios">
-                            <td class="py-2 px-4 border-b text-center">{{ estudio.nombre }}</td>
-                            <td class="py-2 px-4 border-b text-center">{{ estudio.descripcion }}</td>
-                            <td class="py-2 px-4 border-b text-center">{{ estudio.fechaRealizado }}</td>
-                            <td class="py-2 px-4 border-b text-center">{{ estudio.fechaResultado }}</td>
-                            <td class="py-2 px-4 border-b text-center">
+                            <td class="py-2 px-4 border-b text-center w-2/12">{{ estudio.nombre }}</td>
+                            <td class="py-2 px-4 border-b text-center w-5/12">{{ estudio.descripcion }}</td>
+                            <td class="py-2 px-4 border-b text-center w-2/12">{{ estudio.fechaRealizado | date:'dd/MM/yyyy' }}</td>
+                            <td class="py-2 px-4 border-b text-center w-2/12">{{ estudio.fechaResultado | date:'dd/MM/yyyy' }}</td>
+                            <td class="py-2 px-4 border-b text-center w-1/12">
                                 <button class="text-blue-intermedio hover:text-blue-oscuro hover:underline transition duration-300" (click)="descargarPdf(estudio.imagenUrl)">Ver pdf</button>
                             </td>
                         </tr>

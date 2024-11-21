@@ -83,6 +83,16 @@ namespace BL.BLs
             return dal.cedulaDuplicada(cedula);
         }
 
+        public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize)
+		{
+			return dal.getNotificaciones(id, pageNumber, pageSize);
+		}
+
+		public int CountNotificaciones(long id)
+		{
+			return dal.CountNotificaciones(id);
+		}
+
         #endregion
 
         //Seguros Medicos
@@ -533,6 +543,11 @@ namespace BL.BLs
 		{
 			return dal.GetMedicoById(id);
 		}
+
+		public Medico getMedicoByDocumento(string documento)
+        {
+            return dal.GetMedicoByDocumento(documento);
+        }
 
 		public void addMedico(Medico medico)
 		{

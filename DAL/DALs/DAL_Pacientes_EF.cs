@@ -121,5 +121,24 @@ namespace DAL.DALs
                 _dbContext.SaveChanges();
             }
         }
+        
+        public bool notificacionVista(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                Notificaciones notificacion = _dbContext.Notificaciones.Find(id);
+
+                if (notificacion == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    notificacion.Visto = true;
+                    _dbContext.SaveChanges();
+                    return true;
+                }
+            }
+        }
     }
 }

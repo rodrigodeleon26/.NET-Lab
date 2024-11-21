@@ -5,6 +5,7 @@ import { ConsultaMedicaService } from '../../../services/consulta-medica.service
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, lastValueFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-cita-medica',
@@ -29,7 +30,8 @@ export class CitaMedicaComponent implements OnInit {
     private ConsultaMedicaService: ConsultaMedicaService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private location: Location
   ) {
     // Inicializa el formulario de nueva cita
     this.nuevaCitaForm = this.fb.group({
@@ -49,7 +51,6 @@ export class CitaMedicaComponent implements OnInit {
       if (fechaVisible) {
         const [year, month, day] = fechaVisible.split('-').map(Number);
         this.fechaVisible = new Date(year, month - 1, day);
-        console.log('Fecha visible:', this.fechaVisible);
       }
       else {
         this.fechaVisible = new Date();
@@ -134,18 +135,11 @@ export class CitaMedicaComponent implements OnInit {
     this.citaSeleccionada = null;
     this.loading = true;
     this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
-    const consultaData = {
-      descripcion: " ",  // Puedes establecer valores iniciales o vacíos aquí
-      diagnostico: " ",  // o incluso permitir que el usuario los complete
-      citaMedicaId: this.citaSeleccionada.id
-    };
-    this.ConsultaMedicaService.crearConsulta(consultaData).subscribe(
+    this.ConsultaMedicaService.crearConsultaSinDatos(this.citaSeleccionada.id).subscribe(
       (response) => {
-        console.log('Consulta creada exitosamente:', response);
-
+        console.log('--------------');
         // Asigna la ID de la nueva consulta a citaSeleccionada.consultaMedicaId
-        this.citaSeleccionada.consultaMedicaId = response.id;  // Asegúrate de que la respuesta contiene la ID
-        this.citaSeleccionada.estado = 'Completada';  // Cambia el estado de la cita a 'Completada'
+        this.citaSeleccionada.consultaMedicaId = response.id;  // Asegúrate de que la respuesta contiene la ID  // Cambia el estado de la cita a 'Completada'
         this.citasMedicasService.actualizarCitaMedica(this.citaSeleccionada.id, this.citaSeleccionada).subscribe(() => {
           this.route.queryParams.subscribe(params => {
             const especialidad = params['especialidad'];
@@ -163,13 +157,17 @@ export class CitaMedicaComponent implements OnInit {
             this.loading = false;
           });
         });
+        console.log('--------------');
+        console.log('Consulta creada exitosamente:', response);
+        console.log('--------------');
         
         
         /* this.citasMedicasService.editarEstado(id, 'Completada').subscribe(() => {
         }); */
-        
+        const currentUrl = this.router.url;
+        localStorage.setItem('previousUrl', currentUrl);
         // Abre una nueva ventana con la ID de la consulta
-        window.open(`/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`, '_blank');
+        window.location.href = `/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}&citaSeleccionada=${this.citaSeleccionada.id}`;
 
         this.loading = false;
         // Puedes actualizar el estado o mostrar una notificación de éxito aquí
@@ -185,7 +183,8 @@ export class CitaMedicaComponent implements OnInit {
   abrirConsultaMedica(id: number) {
     console.log(id);
     this.citaSeleccionada = this.citasMedicas.find(cita => cita.id === id);
-    window.open(`/medico/consulta-medica?consultaSeleccionada=${this.citaSeleccionada.consultaMedicaId}`, '_blank');
+    const documento = this.citaSeleccionada.paciente.documento; 
+    window.open(`/medico/historia-clinica?documento=${documento}`, '_blank');
   }
 
   asignarEstado(id: number, estado: string): void {

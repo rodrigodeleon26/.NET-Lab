@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { PruebaImagenComponent } from './prueba-imagen/prueba-imagen.component';
 import { NavComponent } from './components/web/nav/nav.component';
 import { ConsultaMedicaComponent } from './components/medico/consulta-medica/consulta-medica.component';
 import { FormsModule } from '@angular/forms'; 
@@ -23,7 +22,6 @@ import { SeleccionEspecialidadComponent } from './components/medico/seleccion-es
 @NgModule({
   declarations: [
     AppComponent,
-    PruebaImagenComponent,
     NavComponent,
     ConsultaMedicaComponent,
     LoginComponent,

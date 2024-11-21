@@ -27,9 +27,7 @@ export class SeleccionEspecialidadComponent {
 
   ngOnInit(): void {
     this.MedicoService.obtenerMedicoPorId(1).subscribe(medico => {
-      console.log('Médico:', medico);
       this.especialidades = medico.especialidades;
-      console.log('Especialidades:', this.especialidades);
       this.loading = false;
     }); 
   }
@@ -42,9 +40,7 @@ export class SeleccionEspecialidadComponent {
   
     const fechaHoy = `${year}-${month}-${day}`; // Formato YYYY-MM-DD
   
-    console.log("Especialidad seleccionada:", especialidad);
-  
     // Abre la URL en una nueva ventana con la especialidad y la fecha de hoy
-    window.open(`/medico/cita-medica?especialidad=${especialidad}&fecha=${fechaHoy}`, '_blank');
+    window.location.href = `/medico/cita-medica?especialidad=${especialidad}&fecha=${fechaHoy}`;
   }
 }

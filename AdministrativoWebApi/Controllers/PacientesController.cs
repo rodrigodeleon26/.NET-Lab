@@ -1,4 +1,5 @@
-﻿using BL.IBLs;
+using BL.IBLs;
+using BL.BLs;
 using DAL;
 using DAL.Models;
 using Microsoft.AspNetCore.Identity;
@@ -49,12 +50,25 @@ namespace AdministrativoWebApi.Controllers
             return Ok(_blAdministrativo.getPacientes());
         }
 
-        // GET api/<PacienteController>/5
+		// GET api/<PacienteController>/5
+		[ProducesResponseType(typeof(Paciente), 200)]
+		[HttpGet("{id}")]
+		public IActionResult Get(long id)
+		{
+			var paciente = _blAdministrativo.getPacienteById(id);
+			if (paciente == null)
+			{
+				return NotFound();
+			}
+			return Ok(paciente);
+		}
+
+        // GET api/<PacienteController>/12345678
         [ProducesResponseType(typeof(Paciente), 200)]
-        [HttpGet("{id}")]
-        public IActionResult Get(long id)
+        [HttpGet("dni/{dni}")]
+        public IActionResult Get(string dni)
         {
-            var paciente = _blAdministrativo.getPacienteById(id);
+            var paciente = _blAdministrativo.getPacienteByDNI(dni);
             if (paciente == null)
             {
                 return NotFound();
@@ -62,6 +76,7 @@ namespace AdministrativoWebApi.Controllers
             return Ok(paciente);
         }
 
+        // POST api/<PacienteController>
         [ProducesResponseType(typeof(Paciente), 201)]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PacienteRequest pacienteRequest)
@@ -359,5 +374,28 @@ namespace AdministrativoWebApi.Controllers
             }
         }
 
+        // GET api/<PacienteController>/12345678/notificaciones
+        [ProducesResponseType(typeof(List<Notificacion>), 200)]
+        [HttpGet("{id}/notificaciones")]
+        public IActionResult Get(long id, int pageNumber, int pageSize)
+        {
+			if (pageNumber < 1 || pageSize < 1 || id == null)
+			{
+				return BadRequest();
+			}
+			return Ok(_blAdministrativo.getNotificaciones(id, pageNumber, pageSize));	
+        }
+
+		// GET api/<PacienteController>/5/notificaciones/count
+		[ProducesResponseType(typeof(int), 200)]
+		[HttpGet("{id}/notificaciones/count")]
+		public IActionResult GetCount(long id)
+		{
+			if (id == null)
+			{
+				return BadRequest();
+			}
+			return Ok(_blAdministrativo.CountNotificaciones(id));
+		}
     }
 }

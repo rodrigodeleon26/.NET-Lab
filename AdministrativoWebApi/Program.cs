@@ -7,7 +7,6 @@ using DAL.IDALs;
 using Microsoft.EntityFrameworkCore.Metadata;
 using RabbitMQ.Client;
 using System.Text;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

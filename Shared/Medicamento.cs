@@ -12,6 +12,6 @@ namespace Shared
 
         public string Nombre { get; set; } = "-- Sin Nombre --";
 
-        public string Descripcion { get; set; } = "-- Sin Descripción --";
+        public string Descripcion { get; set; } = "-- Sin Descripcion --";
     }
 }

@@ -10,7 +10,7 @@
 
         //public CitaMedica CitaMedica { get; set; } = new CitaMedica();  
 
-        public long CitaMedicaId { get; set; }
+        //public long CitaMedicaId { get; set; }
 
         public List<Estudio> Estudios { get; set; } = new List<Estudio>();
 

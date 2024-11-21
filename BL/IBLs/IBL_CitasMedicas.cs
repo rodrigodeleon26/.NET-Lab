@@ -10,22 +10,22 @@ namespace BL.IBLs
     public interface IBL_CitasMedicas
     {
         // Método para obtener todas las citas médicas
-        List<CitaMedica> getCitasMedicas();
+        List<CitaMedicaDTO> getCitasMedicas();
 
         // Metodo citas medicas por especialidad
-        List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha);
+        List<CitaMedicaDTO> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha);
 
         bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha);
 
         // Método para obtener una cita médica por su ID
-        CitaMedica getCitaMedicaById(long id);
+        CitaMedicaDTO getCitaMedicaById(long id);
 
         // Método para crear una nueva cita médica
         CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
 
 
         // Método para actualizar una cita médica existente
-        void updateCitaMedica(CitaMedica citaActualizada);
+        void updateCitaMedica(CitaMedicaDTO citaActualizada);
 
         // Método para eliminar una cita médica por su ID
         void deleteCitaMedica(int id);

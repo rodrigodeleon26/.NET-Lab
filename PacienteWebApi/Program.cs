@@ -8,6 +8,7 @@ using PacienteWebApi;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using HistoriaClinicaWebApi.Extensions;
 
 try 
 {
@@ -29,9 +30,11 @@ try
     builder.Services.AddControllers();
 
     builder.Services.AddSwaggerExplorer()
-                .InjectDBContext()
-                .InjectDALandBL()
-                .AddIdentityAuth();
+                   .InjectDBContext()
+                   .InjectDALandBL()
+                   .AddIdentityHandlersAndStores()
+                   .ConfigureIdentityOptions()
+                   .AddIdentityAuth();
 
     //inyeccion de dependencias
     //Rabbit
@@ -44,9 +47,9 @@ try
     var app = builder.Build();
 
     app.ConfigureSwaggerExplorer()
-   .ConfigureCORS()
-   .AddIdentityAuthMiddlewares();
-   //.UseHttpsRedirection();
+        .ConfigureCORS()
+        .AddIdentityAuthMiddlewares();
+        //.UseHttpsRedirection();
 
     app.MapControllers();
 

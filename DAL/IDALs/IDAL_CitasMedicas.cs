@@ -20,7 +20,7 @@ namespace DAL.IDALs
         CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
 
         // Actualizar una cita médica existente
-        void updateCitaMedica(CitaMedica citaActualizada);
+        void updateCitaMedica(CitaMedicaDTO citaActualizada);
 
         // Eliminar una cita médica por ID
         void deleteCitaMedica(int id);

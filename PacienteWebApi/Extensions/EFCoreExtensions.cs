@@ -21,10 +21,18 @@ namespace AuthWebApi.Extensions
         {
             //  DALs
             services.AddTransient<IDAL_Pacientes, DAL_Pacientes_EF>();
+            services.AddTransient<IDAL_HistoriasClinicas, DAL_HistoriasClinicas_Service>();
+            services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_Service>();
+            services.AddTransient<IDAL_Administrativo, DAL_Administrativo_Service>();
+            services.AddHttpClient<DAL_Administrativo_Service>();
+            services.AddHttpClient<DAL_CitasMedicas_Service>();
+            services.AddHttpClient<DAL_HistoriasClinicas_Service>();
+            services.AddHttpContextAccessor();
+
 
             //  BLs
             services.AddTransient<IBL_Pacientes, BL_Pacientes>();
-                    
+
             return services;
         }
     }

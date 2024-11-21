@@ -1,5 +1,7 @@
 ﻿using BL.IBLs;
+using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Shared;
 using System.Collections.Generic;
 
@@ -101,7 +103,7 @@ namespace PacienteWebApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] CitaMedica citaActualizada)
+        public IActionResult Put(int id, [FromBody] CitaMedicaDTO citaActualizada)
         {
             if (citaActualizada == null)
             {
@@ -136,5 +138,28 @@ namespace PacienteWebApi.Controllers
             _blCitasMedicas.deleteCitaMedica(id);
             return NoContent();
         }
+
+        //OBTENER PAGINADO DE LAS CITAS MEDICAS DE UN PACIENTE
+        //GET api/<CitasMedicasController>/paciente/[idPaciente]
+        [ProducesResponseType(typeof(List<CitaMedica>), 200)]
+        [HttpGet("paciente/{idPaciente}")]
+        public IActionResult GetCitasMedicasByPacienteId(long idPaciente, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, string especialidadesIds)
+        {
+            var especialidadesList = especialidadesIds.Split(',').Select(long.Parse).ToList();
+
+            return Ok(_blCitasMedicas.GetCitasMedicasByPacienteId(idPaciente, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesList));
+        }
+
+        //OBTENER EL CONTEO DE LAS CITAS MEDICAS DE UN PACIENTE
+        //GET api/<CitasMedicasController>/cant/[idPaciente]
+        [ProducesResponseType(typeof(int), 200)]
+        [HttpGet("cant/{idPaciente}")]
+        public IActionResult CountCitasMedicasByPacienteId(long idPaciente, DateTime? fechaInicio, DateTime? fechaFin, string orden, string especialidadesIds)
+        {
+            var especialidadesList = especialidadesIds.Split(',').Select(long.Parse).ToList();
+
+            return Ok(_blCitasMedicas.CountCitasMedicasByPacienteId(idPaciente, fechaInicio, fechaFin, orden, especialidadesList));
+        }
+
     }
 }

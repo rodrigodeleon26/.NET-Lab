@@ -98,6 +98,9 @@ namespace DAL.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<long?>("MedicoId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -138,6 +141,8 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MedicoId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -193,16 +198,16 @@ namespace DAL.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("PacienteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("PacienteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CalendarioId");
 
-                    b.HasIndex("ConsultoriosId");
+                    b.HasIndex("ConsultaMedicaId");
 
-                    b.HasIndex("PacienteId");
+                    b.HasIndex("ConsultoriosId");
 
                     b.ToTable("CitasMedicas");
                 });
@@ -215,9 +220,6 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CitaMedicaId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -227,9 +229,6 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CitaMedicaId")
-                        .IsUnique();
 
                     b.ToTable("ConsultasMedicas");
                 });
@@ -836,9 +835,15 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Models.AppUsers", b =>
                 {
+                    b.HasOne("DAL.Models.Medicos", "Medico")
+                        .WithMany()
+                        .HasForeignKey("MedicoId");
+
                     b.HasOne("DAL.Models.Pacientes", "Paciente")
                         .WithMany()
                         .HasForeignKey("PacienteId");
+
+                    b.Navigation("Medico");
 
                     b.Navigation("Paciente");
                 });
@@ -851,26 +856,17 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DAL.Models.ConsultasMedicas", "ConsultaMedica")
+                        .WithMany()
+                        .HasForeignKey("ConsultaMedicaId");
+
                     b.HasOne("DAL.Models.Consultorios", null)
                         .WithMany("CitasMedicas")
                         .HasForeignKey("ConsultoriosId");
 
-                    b.HasOne("DAL.Models.Pacientes", "Paciente")
-                        .WithMany("CitasMedicas")
-                        .HasForeignKey("PacienteId");
-
                     b.Navigation("Calendario");
 
-                    b.Navigation("Paciente");
-                });
-
-            modelBuilder.Entity("DAL.Models.ConsultasMedicas", b =>
-                {
-                    b.HasOne("DAL.Models.CitasMedicas", "CitaMedica")
-                        .WithOne("ConsultaMedica")
-                        .HasForeignKey("DAL.Models.ConsultasMedicas", "CitaMedicaId");
-
-                    b.Navigation("CitaMedica");
+                    b.Navigation("ConsultaMedica");
                 });
 
             modelBuilder.Entity("DAL.Models.Contratos", b =>
@@ -1066,11 +1062,6 @@ namespace DAL.Migrations
                     b.Navigation("Copagos");
                 });
 
-            modelBuilder.Entity("DAL.Models.CitasMedicas", b =>
-                {
-                    b.Navigation("ConsultaMedica");
-                });
-
             modelBuilder.Entity("DAL.Models.ConsultasMedicas", b =>
                 {
                     b.Navigation("Estudios");
@@ -1104,8 +1095,6 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Models.Pacientes", b =>
                 {
-                    b.Navigation("CitasMedicas");
-
                     b.Navigation("Contrato");
 
                     b.Navigation("Facturas");

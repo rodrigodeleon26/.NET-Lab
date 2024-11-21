@@ -21,10 +21,10 @@ namespace DAL.Models
         // Nueva propiedad para almacenar la clave de autenticación de dos factores
         public string? TwoFactorAuthKey { get; set; }
 
-        //// Relación con Medico (opcional)
-        //[PersonalData]
-        //public int? MedicoId { get; set; }
-        //[ForeignKey("MedicoId")]
-        //public Medicos? Medico { get; set; }
+        // Relación con Medico (opcional)
+        [PersonalData]
+        public long? MedicoId { get; set; }
+        [ForeignKey("MedicoId")]
+        public Medicos? Medico { get; set; }
     }
 }

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ConsultaMedicaService {
-  private apiUrl = 'https://localhost/historiaclinica/api/HistoriasClinicas';
+  private apiUrl = 'https://localhost:5005/api/HistoriasClinicas';
 
   constructor(
     private http: HttpClient
@@ -22,8 +22,13 @@ export class ConsultaMedicaService {
     return this.http.post<any>(url, consultaMedica);
   }
 
-  obtenerConsultaMedica(id: number): Observable<any> {
-    const url = `${this.apiUrl}/${id}`;
+  crearConsultaSinDatos(consultaMedicaId: number): Observable<any> {
+    const url = `${this.apiUrl}/${consultaMedicaId}`;
+    return this.http.post<any>(url, {});
+  }
+
+  obtenerConsultaMedica(id: number, idCitaMedica: number): Observable<any> {
+    const url = `${this.apiUrl}/${id}/${idCitaMedica}`;
     return this.http.get<any>(url);
   }
 
@@ -32,9 +37,8 @@ export class ConsultaMedicaService {
     return this.http.put<any>(url, consultaMedica);
   }
 
-  guardarConsultaMedica(consultaMedicaId: number): Observable<any> {
-    console.log(consultaMedicaId);
-    const url = `${this.apiUrl}/${consultaMedicaId}/guardarConsulta`;
+  guardarConsultaMedica(consultaMedicaId: number, citaMedicaId: number): Observable<any> {
+    const url = `${this.apiUrl}/${consultaMedicaId}/${citaMedicaId}/guardarConsulta`;
     return this.http.put<any>(url, {});
   }
 
@@ -59,9 +63,9 @@ export class ConsultaMedicaService {
     return this.http.delete<any>(url);
   }
 
-  agregarEstudio(consultaMedicaId: number, estudio: any): Observable<any> {
+  agregarEstudio(consultaMedicaId: number, citaMedicaId: number,estudio: any): Observable<any> {
     console.log(estudio);
-    const url = `${this.apiUrl}/${consultaMedicaId}/estudio`;
+    const url = `${this.apiUrl}/${consultaMedicaId}/${citaMedicaId}/estudio`;
     return this.http.post<any>(url, estudio);
   }
 
@@ -89,8 +93,11 @@ export class ConsultaMedicaService {
       params = params.set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
     }
 
+    console.log(especialidades);
     // Convertimos el array de especialidades a JSON y lo agregamos a los parámetros
     params = params.set('especialidades', JSON.stringify(especialidades));
+
+    console.log(params);
 
     return this.http.get<any>(url, { params });
   }
