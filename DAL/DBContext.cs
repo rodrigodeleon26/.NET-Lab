@@ -83,6 +83,6 @@ namespace DAL
         public DbSet<Copagos> Copagos { get; set; }
         public DbSet<Precios> Precios { get; set; }
         public DbSet<EspecialidadesMedicos> EspecialidadesMedicos { get; set; }
-        public DbSet<PagosPayPal> PagosPayPal { get; set; }
+
     }
 }
