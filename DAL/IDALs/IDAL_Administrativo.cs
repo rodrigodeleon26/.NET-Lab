@@ -16,7 +16,7 @@ namespace DAL.IDALs
 		public Paciente GetPacienteById(long id);
 		public Paciente GetPacienteByDNI(string dni);
         public void AddPaciente(Paciente paciente);
-		public void UpdatePaciente(Paciente paciente);
+		public Paciente UpdatePaciente(Paciente paciente);
 		public void DeletePaciente(long id);
 		public bool nuevaCedulaOcupada(string nuevaCi, long pacienteId);
 

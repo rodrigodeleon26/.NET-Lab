@@ -10,6 +10,16 @@ export class PacienteService {
 
   constructor(private http: HttpClient) {}
 
+  obtenerMisDatos(cedula: string): Observable<any> {
+    const url = `${this.apiUrl}/${cedula}/misDatos`;
+    return this.http.get<any>(url);
+  }
+
+  actualizarMisDatos(cedula: string, paciente: any): Observable<any> {  
+    const url = `${this.apiUrl}/${cedula}/actulizarDatos`;
+    return this.http.put<any>(url, paciente);
+  }
+
   obtenerMiHistoriaClinica(documento: string, pageNumber: number, pageSize: number,
     orden: string, fechaInicio: string, fechaFin: string, especialidades: any[]
   ): Observable<any> {

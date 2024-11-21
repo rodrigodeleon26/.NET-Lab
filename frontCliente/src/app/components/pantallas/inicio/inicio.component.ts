@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-inicio',
@@ -9,7 +10,6 @@ import { Router } from '@angular/router';
 })
 export class InicioComponent implements OnInit {
   cedula: string = '';
-
   loading: boolean = false;
 
   constructor(
@@ -20,11 +20,20 @@ export class InicioComponent implements OnInit {
   ngOnInit(): void {
     const claims = this.authService.getClaims();
     this.cedula = claims ? claims.cedula : null;
-    console.log(this.cedula);
   }
 
   verHistoriaClinica(): void {
-    //redirigir al componente de historia clinica
-    this.router.navigateByUrl(`/historia-clinica?cedula=${this.cedula}`);
+    const navigationExtras: NavigationExtras = {
+      state: { cedula: this.cedula }
+    };
+    this.router.navigateByUrl('/historia-clinica', navigationExtras);
   }
+
+  verMisDatos(): void {
+    const navigationExtras: NavigationExtras = {
+      state: { cedula: this.cedula }
+    };
+    this.router.navigateByUrl('/mis-datos', navigationExtras);
+  }
+
 }

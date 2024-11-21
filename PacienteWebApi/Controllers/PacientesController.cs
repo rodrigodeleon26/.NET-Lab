@@ -28,6 +28,38 @@ namespace PacienteWebApi.Controllers
             return Ok(_blPacientes.getPacientes());
         }
 
+        // GET: api/<PacientesController>/53219872/misDatos
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(Paciente), 200)]
+        [HttpGet("{dni}/misDatos")]
+        public IActionResult Get(string dni)
+        {
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
+            {
+                return Forbid("No puedes ver la informacion de otro usuario");
+            }
+
+            return Ok(_blPacientes.getMisDatos(dni));
+        }
+
+        // PUT: api/<PacientesController>/53219872/actualizarDatos
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(Paciente), 200)]
+        [HttpPut("{dni}/actulizarDatos")]
+        public IActionResult Put(string dni, Paciente paciente)
+        {
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
+            {
+                return Forbid("No puedes ver la informacion de otro usuario");
+            }
+
+            return Ok(_blPacientes.actualizarDatos(paciente));
+        }
+
         //GET: api/<PacientesController>/54321987/miHistoriaClinica
         [Authorize(Roles = "Paciente")]
         [ProducesResponseType(typeof(ConsultaMedicaCompletaDTO), 200)]

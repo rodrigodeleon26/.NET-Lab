@@ -32,11 +32,7 @@ export class NavComponent implements OnInit, OnDestroy {
     }
   }
 
-  verHistoriasClinicas(): void {
-    window.open(`/medico/historia-clinica`, '_blank');
-  }
-
-  verElegirEspecialidad(): void {
-    this.router.navigate(['/elegir-especialidad']);
+  irInicio(): void {
+    this.router.navigate(['inicio']);
   }
 }

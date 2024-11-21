@@ -156,7 +156,7 @@ namespace DAL.DALs
             }
         }
 
-        public void UpdatePaciente(Paciente paciente)
+        public Paciente UpdatePaciente(Paciente paciente)
         {
             using (var _dbContext = new DBContext())
             {
@@ -176,6 +176,15 @@ namespace DAL.DALs
                     existingPaciente.Direccion = paciente.Direccion;
                     existingPaciente.Telefono = paciente.Telefono;
                     existingPaciente.Email = paciente.Email;
+
+                    var user = _dbContext.Users.FirstOrDefault(u => u.PacienteId == paciente.Id);
+                    if (user != null)
+                    {
+                        user.UserName = paciente.Email;
+                        user.Email = paciente.Email;
+                        user.NormalizedEmail = paciente.Email.ToUpper();
+                        user.NormalizedUserName = paciente.Email.ToUpper();
+                    }
                     // Update Contrato
                     if (paciente.Contrato != null)
                     {
@@ -206,7 +215,11 @@ namespace DAL.DALs
                     }
 
                     _dbContext.SaveChanges();
+
+                    Paciente paciente1 = GetPacienteById(paciente.Id);
+                    return paciente1;
                 }
+                return null;
             }
         }
 

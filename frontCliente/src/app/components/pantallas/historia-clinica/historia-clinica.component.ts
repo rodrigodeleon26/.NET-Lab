@@ -50,13 +50,13 @@ export class HistoriaClinicaComponent implements OnInit {
     private consultaMedicaService: ConsultaMedicaService,
     private pacienteService: PacienteService,
     private router: Router
-  ) { }
+  ) { 
+    const navigation = this.router.getCurrentNavigation();
+    this.cedula = navigation?.extras.state?.['cedula'] || '';
+  }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params: Params) => {
-      this.cedula = params['cedula'];
-    });
-    console.log(this.cedula);
+    this.loading = true;  
     if (!this.cedula) {
       window.location.href = '/cliente/inicio';
     } else {
@@ -73,7 +73,7 @@ export class HistoriaClinicaComponent implements OnInit {
   }
 
   obtenerHistoriaClinica(): void {
-    console.log(this.especialidades);
+    this.loading = true; 
     this.pacienteService.obtenerMiHistoriaClinica(this.cedula, this.pageNumber, this.pageSize, this.orden, this.fechaInicio, this.fechaFin, this.especialidades)
       .subscribe(
         response => {
@@ -82,6 +82,7 @@ export class HistoriaClinicaComponent implements OnInit {
           this.historiaClinica = response.consultasMedicasConCitas;
           this.totalPages = Math.ceil(response.totalItems / this.pageSize);  
           this.hayDatos = true;
+          this.loading = false;
           this.updatePages();
         },
         error => {

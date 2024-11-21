@@ -19,7 +19,8 @@ import { ResendEmailConfirmationComponent } from './components/user/resend-email
 import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-factor-auth.component';
 import { NavComponent } from '../app/components/web/nav/nav.component';
 import { InicioComponent } from './components/pantallas/inicio/inicio.component';
-import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component'; 
+import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component';
+import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.component'; 
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { HistoriaClinicaComponent } from './components/pantallas/historia-clinic
     TwoFactorAuthComponent,
     NavComponent,
     InicioComponent,
-    HistoriaClinicaComponent
+    HistoriaClinicaComponent,
+    MisDatosComponent
   ],
   imports: [
     BrowserModule,

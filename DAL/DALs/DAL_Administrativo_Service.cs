@@ -104,9 +104,42 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public void UpdatePaciente(Paciente paciente)
+        public Paciente UpdatePaciente(Paciente paciente)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                string url = $"https://administrativowebapi:8081/api/Pacientes/{paciente.Id}";
+
+                var content = new StringContent(JsonSerializer.Serialize(paciente), Encoding.UTF8, "application/json");
+
+                var response = _httpClient.PutAsync(url, content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    paciente = JsonSerializer.Deserialize<Paciente>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    return paciente;
+                }
+                else
+                {
+                    Console.WriteLine($"Error al obtener paciente: {response.StatusCode} - {response.ReasonPhrase}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener paciente: {ex.Message}");
+                return null;
+            }
         }
 
         public void DeletePaciente(long id)
