@@ -36,4 +36,11 @@ export class InicioComponent implements OnInit {
     this.router.navigateByUrl('/mis-datos', navigationExtras);
   }
 
+  verNotificaciones(): void {
+    const navigationExtras: NavigationExtras = {
+      state: { cedula: this.cedula }
+    };
+    this.router.navigateByUrl('/notificaciones', navigationExtras);
+  }
+
 }

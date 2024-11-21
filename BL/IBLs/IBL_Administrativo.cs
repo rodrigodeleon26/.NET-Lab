@@ -17,9 +17,11 @@ namespace BL.IBLs
 		void updatePaciente(Paciente paciente);
 		void deletePaciente(long id);
 		void ContratarSeguroMedico(long idPaciente, long idSeguroMedico);
+        List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize);
+		int CountNotificaciones(long id);
 
-		// Seguros Medicos
-		List<SeguroMedico> getSegurosMedicos();
+        // Seguros Medicos
+        List<SeguroMedico> getSegurosMedicos();
 		SeguroMedico getSeguroMedicoById(long id);
 		void addSeguroMedico(SeguroMedico seguroMedico);
 		void updateSeguroMedico(SeguroMedico seguroMedico);

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PacienteService } from '../../../services/paciente.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-mis-datos',
@@ -21,7 +22,8 @@ export class MisDatosComponent implements OnInit {
   constructor(
     private router: Router,
     private pacienteService: PacienteService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService,
   ) {
     const navigation = this.router.getCurrentNavigation();
     this.cedula = navigation?.extras.state?.['cedula'] || '';
@@ -67,13 +69,8 @@ export class MisDatosComponent implements OnInit {
       return;
     }
 
-    console.log(this.pacienteForm.getRawValue());
-
     if (!this.pacienteForm.valid) {
-      //imprimir en consola el error del formulario
-      this.imprimirErroresFormulario();
-
-      this.errorMessage = 'Por favor, completa todos los campos.';
+      this.toastr.error('Por favor, completa los campos requeridos.');
       setTimeout(() => {
         this.errorMessage = '';
       }, 3000);
@@ -84,24 +81,12 @@ export class MisDatosComponent implements OnInit {
       (response) => {
         this.pacienteForm.patchValue(response);
         this.loading = false;
+        this.toastr.success('Datos actualizados correctamente.');
       },
       (error) => {
         this.loading = false;
-        this.errorMessage = 'Ocurrió un error al actualizar los datos.';
-        setTimeout(() => {
-          this.errorMessage = '';
-        }, 3000);
+        this.toastr.error('Ocurrió un error al actualizar los datos.');
       }
     );
-  }
-  imprimirErroresFormulario(): void {
-    Object.keys(this.pacienteForm.controls).forEach(key => {
-      const controlErrors = this.pacienteForm.get(key)?.errors;
-      if (controlErrors) {
-        Object.keys(controlErrors).forEach(errorKey => {
-          console.error(`Error en el campo ${key}: ${errorKey} - ${controlErrors[errorKey]}`);
-        });
-      }
-    });
   }
 }

@@ -19,6 +19,8 @@ namespace DAL.IDALs
 		public Paciente UpdatePaciente(Paciente paciente);
 		public void DeletePaciente(long id);
 		public bool nuevaCedulaOcupada(string nuevaCi, long pacienteId);
+        public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize);
+		public int CountNotificaciones(long id);
 
         // Seguros Medicos
         public List<SeguroMedico> GetSegurosMedicos();

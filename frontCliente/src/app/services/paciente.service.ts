@@ -42,4 +42,19 @@ export class PacienteService {
 
     return this.http.get<any>(url, { params });
   }
+
+  obtenerNotificaciones(documento: string, pageNumber: number, pageSize: number): Observable<any> {
+    const url = `${this.apiUrl}/${documento}/notificaciones`;
+    let params = new HttpParams()
+        .set('pageNumber', pageNumber.toString())
+        .set('pageSize', pageSize.toString());
+
+    return this.http.get<any>(url, { params });
+  }
+
+  verNotificacion(id: number): Observable<any> {
+    console.log('Ver notificación:', id);
+    const url = `${this.apiUrl}/${id}/notificaciones`;
+    return this.http.put<any>(url, null);
+  }
 }

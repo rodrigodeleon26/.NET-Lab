@@ -1,4 +1,5 @@
-﻿using BL.IBLs;
+﻿using BL.BLs;
+using BL.IBLs;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -101,5 +102,29 @@ namespace AdministrativoWebApi.Controllers
 			_blAdministrativo.deletePaciente(id);
 			return NoContent();
 		}
-	}
+
+        // GET api/<PacienteController>/12345678/notificaciones
+        [ProducesResponseType(typeof(List<Notificacion>), 200)]
+        [HttpGet("{id}/notificaciones")]
+        public IActionResult Get(long id, int pageNumber, int pageSize)
+        {
+			if (pageNumber < 1 || pageSize < 1 || id == null)
+			{
+				return BadRequest();
+			}
+			return Ok(_blAdministrativo.getNotificaciones(id, pageNumber, pageSize));	
+        }
+
+		// GET api/<PacienteController>/5/notificaciones/count
+		[ProducesResponseType(typeof(int), 200)]
+		[HttpGet("{id}/notificaciones/count")]
+		public IActionResult GetCount(long id)
+		{
+			if (id == null)
+			{
+				return BadRequest();
+			}
+			return Ok(_blAdministrativo.CountNotificaciones(id));
+		}
+    }
 }

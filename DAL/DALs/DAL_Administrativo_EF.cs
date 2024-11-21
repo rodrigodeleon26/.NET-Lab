@@ -231,6 +231,45 @@ namespace DAL.DALs
             }
         }
 
+        public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var paciente = _dbContext.Pacientes.Find(id);
+                return _dbContext.Notificaciones
+                    .Where(n => n.PacienteId == id)
+                    .OrderByDescending(n => n.FechaEnvio)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(n => new Notificacion
+                    {
+                        Id = n.Id,
+                        Mensaje = n.Mensaje,
+                        FechaEnvio = n.FechaEnvio,
+                        Visto = n.Visto,
+                        Paciente = new Paciente
+                        {
+                            Id = paciente.Id,
+                            Nombres = paciente.Nombres,
+                            Apellidos = paciente.Apellidos,
+                            Documento = paciente.Documento,
+                            FechaDeNacimiento = paciente.FechaDeNacimiento,
+                            Direccion = paciente.Direccion,
+                            Telefono = paciente.Telefono,
+                            Email = paciente.Email
+                        }
+                    })
+                    .ToList();
+            }
+        }
+
+        public int CountNotificaciones(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Notificaciones.Count(n => n.PacienteId == id);
+            }
+        }   
         #endregion
 
 

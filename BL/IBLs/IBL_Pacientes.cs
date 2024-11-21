@@ -22,5 +22,9 @@ namespace BL.IBLs
         public Paciente GetPaciente(long id);
 
         object GetHistoriaClinica(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
+
+        object getNotificaciones(string dni, int pageNumber, int pageSize);
+
+        bool notificacionVista(long idNotificacion);
     }
 }

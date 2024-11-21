@@ -11,5 +11,7 @@ namespace DAL.IDALs
         public Paciente getXDocumento(string documento);
 
         public Paciente GetPaciente(long id);
+
+        public bool notificacionVista(long idNotificacion);
     }
 }

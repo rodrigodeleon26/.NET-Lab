@@ -1,6 +1,9 @@
-﻿using DAL.IDALs;
+﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using DAL.IDALs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.X500;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -39,10 +42,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    var paciente = JsonSerializer.Deserialize<Paciente>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);
                     return paciente;
                 }
                 else
@@ -75,10 +75,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    var paciente = JsonSerializer.Deserialize<Paciente>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);   
                     return paciente;
                 }
                 else
@@ -116,17 +113,14 @@ namespace DAL.DALs
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/{paciente.Id}";
 
-                var content = new StringContent(JsonSerializer.Serialize(paciente), Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(paciente), Encoding.UTF8, "application/json");
 
                 var response = _httpClient.PutAsync(url, content).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    paciente = JsonSerializer.Deserialize<Paciente>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    paciente = JsonConvert.DeserializeObject<Paciente>(json);
                     return paciente;
                 }
                 else
@@ -150,6 +144,77 @@ namespace DAL.DALs
         public bool nuevaCedulaOcupada(string nuevaCi, long pacienteId)
         {
             throw new NotImplementedException();
+        }
+
+        public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones";
+
+                var queryParams = new List<string>
+                {
+                    $"pageNumber={pageNumber}",
+                    $"pageSize={pageSize}"
+                };
+
+                var queryString = string.Join("&", queryParams);
+                var fullUrl = $"{url}?{queryString}";
+
+                var response = _httpClient.GetAsync(fullUrl).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<List<Notificacion>>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las notificaciones");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las notificaciones: {ex.Message}");
+                return null;
+            }
+        }
+
+        public int CountNotificaciones(long id)
+        {
+            try 
+            { 
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones/count";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<int>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las notificaciones");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las notificaciones: {ex.Message}");
+                return 0;
+            }
         }
 
         public List<SeguroMedico> GetSegurosMedicos()

@@ -20,7 +20,8 @@ import { TwoFactorAuthComponent } from './components/user/two-factor-auth/two-fa
 import { NavComponent } from '../app/components/web/nav/nav.component';
 import { InicioComponent } from './components/pantallas/inicio/inicio.component';
 import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component';
-import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.component'; 
+import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.component';
+import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component'; 
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.co
     NavComponent,
     InicioComponent,
     HistoriaClinicaComponent,
-    MisDatosComponent
+    MisDatosComponent,
+    NotificacionesComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,7 @@
 ﻿using BL.IBLs;
 using DAL.DALs;
 using DAL.IDALs;
+using DAL.Models;
 using Shared;
 
 namespace BL.BLs
@@ -103,6 +104,41 @@ namespace BL.BLs
                 PageSize = pageSize,
                 TotalPages = (int)Math.Ceiling((double)totalCitas / pageSize)
             };
+        }
+
+        public object getNotificaciones(string dni, int pageNumber, int pageSize)
+        {
+            Paciente paciente = dalAdministrativo.GetPacienteByDNI(dni);
+            if (paciente == null)
+            {
+                return null;
+            }
+            if (pageSize == 0) {
+                pageSize = 5;
+            }
+
+            int totalNotificaciones = dalAdministrativo.CountNotificaciones(paciente.Id);
+
+            List<Notificacion> notificaciones = dalAdministrativo.getNotificaciones(paciente.Id, pageNumber, pageSize);
+
+            return new
+            {
+                notificaciones = notificaciones,
+                totalItems = totalNotificaciones,
+                pageNumber = pageNumber,
+                pageSize = pageSize,
+                totalPages = (int)Math.Ceiling((double)totalNotificaciones / pageSize)
+            };
+        }
+
+        public bool notificacionVista(long idNotificacion)
+        {
+            Console.WriteLine($"Notificacion vista PBL: {idNotificacion}");
+            if (idNotificacion == 0 || idNotificacion == null)
+            {
+                return false;
+            }
+            return dal.notificacionVista(idNotificacion);
         }
     }
 }

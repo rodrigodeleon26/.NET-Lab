@@ -56,12 +56,22 @@ namespace BL.BLs
 			dal.UpdatePaciente(paciente);
 		}
 
-		#endregion
+        public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize)
+		{
+			return dal.getNotificaciones(id, pageNumber, pageSize);
+		}
 
-		//Seguros Medicos
-		#region SEGUROS MEDICOS
+		public int CountNotificaciones(long id)
+		{
+			return dal.CountNotificaciones(id);
+		}
 
-		public void addSeguroMedico(SeguroMedico seguroMedico)
+        #endregion
+
+        //Seguros Medicos
+        #region SEGUROS MEDICOS
+
+        public void addSeguroMedico(SeguroMedico seguroMedico)
 		{
 			dal.AddSeguroMedico(seguroMedico);
 		}

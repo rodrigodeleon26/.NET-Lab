@@ -92,5 +92,37 @@ namespace PacienteWebApi.Controllers
             return Ok(resultado);
         }
 
+        // GET api/<PacienteController>/12345678/notificaciones
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(List<Notificacion>), 200)]
+        [ProducesResponseType(404)]
+        [HttpGet("{dni}/notificaciones")]
+        public IActionResult Get(string dni, int pageNumber, int pageSize)
+        {
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
+            {
+                return Forbid("No puedes acceder a las notificaciones de otro paciente.");
+            }
+
+            return Ok(_blPacientes.getNotificaciones(dni, pageNumber, pageSize));
+        }
+
+        // PUT api/<PacienteController>/5/notificaciones
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(404)]
+        [HttpPut("{id}/notificaciones")]
+        public IActionResult Put(long id)
+        {
+            Console.WriteLine($"Notificacion vista PController: {id}");
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_blPacientes.notificacionVista(id));
+        }
+
     }
 }
