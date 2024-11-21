@@ -731,5 +731,24 @@ namespace BL.BLs
         }
 
 		#endregion
+
+		//Pago PayPal
+		#region PAGO PAYPAL
+		public List<PagoPayPal> GetPaypalPagos()
+		{
+			return dal.GetPaypalPagos();
+        }
+
+        public PagoPayPal GetPaypalPagoById(long id)
+        {
+            return dal.GetPaypalPagoById(id);
+        }
+
+        public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            dal.AddPaypalPago(nuevoPago);
+        }
+
+		#endregion
 	}
 }

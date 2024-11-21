@@ -26,5 +26,10 @@ namespace DAL.Models
 
         [ForeignKey(nameof(PacienteId))]
         public virtual Pacientes Paciente { get; set; }
+
+        public long? PagoPayPalId { get; set; }
+
+        [ForeignKey(nameof(PagoPayPalId))]
+        public virtual PagosPayPal PagoPayPal { get; set; }
     }
 }
