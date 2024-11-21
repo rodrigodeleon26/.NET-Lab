@@ -46,7 +46,6 @@ namespace PacienteWebApi.Controllers
 
         // PUT: api/<PacientesController>/53219872/actualizarDatos
         [Authorize(Roles = "Paciente")]
-        [ProducesResponseType(typeof(Paciente), 200)]
         [HttpPut("{dni}/actulizarDatos")]
         public IActionResult Put(string dni, Paciente paciente)
         {
@@ -57,7 +56,9 @@ namespace PacienteWebApi.Controllers
                 return Forbid("No puedes ver la informacion de otro usuario");
             }
 
-            return Ok(_blPacientes.actualizarDatos(paciente));
+            _blPacientes.actualizarDatos(paciente);
+
+            return Ok();
         }
 
         //GET: api/<PacientesController>/54321987/miHistoriaClinica

@@ -364,7 +364,7 @@ namespace BL.BLs
 						Visto = false
 					};
 
-					await dal_service.AddNotificacionService(notificacion, paciente.Id);
+					//await dal_service.AddNotificacionService(notificacion, paciente.Id);
                 }
 				else
                 {
@@ -666,8 +666,9 @@ namespace BL.BLs
                         FechaEnvio = DateTime.Now,
                         Visto = false
                     };
-                    long id = (long)cita.PacienteId;
-                    notificacion.Paciente.Id = id;
+                    string id = (string)cita.PacienteId;
+                    string IdDesencriptada = AES.Decrypt(id);
+                    notificacion.Paciente.Id = long.Parse(IdDesencriptada);
                     //dal_Paciente.AddNotificacion(notificacion, id);
 
 

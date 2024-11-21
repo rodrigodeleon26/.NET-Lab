@@ -21,10 +21,24 @@ namespace AuthWebApi.Extensions
         public static IServiceCollection InjectDALandBL(this IServiceCollection services)
         {
             //  DALs
-            services.AddTransient<IDAL_Administrativo, DAL_Administrativo_EF>();
+            services.AddScoped<IDAL_Administrativo, DAL_Administrativo_EF>();
+            services.AddScoped<IDAL_Pacientes, DAL_Paciente_Service>();
+            services.AddHttpClient<IDAL_Pacientes, DAL_Paciente_Service>();
+            services.AddTransient<IDAL_HistoriasClinicas, DAL_HistoriasClinicas_Service>();
+            services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_Service>();
+            services.AddHttpClient<DAL_CitasMedicas_Service>();
+            services.AddHttpClient<DAL_HistoriasClinicas_Service>();
+            services.AddHttpContextAccessor();
+
+
 
             //  BLs
             services.AddTransient<IBL_Administrativo, BL_Administrativo>();
+
+            // Services
+            services.AddHostedService<FacturacionAutomaticaService>();
+            services.AddScoped<PayPalService>();
+
 
             return services;
         }

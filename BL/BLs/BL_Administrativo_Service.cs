@@ -1,6 +1,7 @@
 ﻿using BL.IBLs;
 using DAL.IDALs;
 using iTextSharp.text;
+using Newtonsoft.Json;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -430,6 +431,82 @@ namespace BL.BLs
         }
 
         public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/%7Bid%7D/notificaciones";
+
+                var queryParams = new List<string>
+            {
+            $"pageNumber={pageNumber}",
+            $"pageSize={pageSize}"
+            };
+
+                var queryString = string.Join("&", queryParams);
+                var fullUrl = $"{url}?{queryString}";
+
+                var response = _httpClient.GetAsync(fullUrl).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<List<Notificacion>>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las notificaciones");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las notificaciones: {ex.Message}");
+                return null;
+            }
+        }
+
+        public int CountNotificaciones(long id)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/%7Bid%7D/notificaciones/count";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<int>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las notificaciones");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las notificaciones: {ex.Message}");
+                return 0;
+            }
+        }
+
+        public Medico getMedicoByDocumento(string ci)
         {
             throw new NotImplementedException();
         }

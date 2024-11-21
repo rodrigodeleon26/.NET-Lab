@@ -101,7 +101,7 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public Paciente UpdatePaciente(Paciente paciente)
+        public void UpdatePaciente(Paciente paciente)
         {
             try
             {
@@ -121,18 +121,18 @@ namespace DAL.DALs
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
                     paciente = JsonConvert.DeserializeObject<Paciente>(json);
-                    return paciente;
+                    //return paciente;
                 }
                 else
                 {
                     Console.WriteLine($"Error al obtener paciente: {response.StatusCode} - {response.ReasonPhrase}");
-                    return null;
+                    //return null;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener paciente: {ex.Message}");
-                return null;
+                //return null;
             }
         }
 
@@ -508,6 +508,76 @@ namespace DAL.DALs
         }
 
         public List<Articulo> GetArticulosFiltrados(string filtro)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool cedulaDuplicada(string cedula)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool emailDuplicado(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Precio GetPrecioBySeguro(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ExisteFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Contrato> GetContratosActivos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PagoPayPal> GetPaypalPagos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagoPayPal GetPaypalPagoById(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPaypalPago(PagoPayPal nuevoPago)
         {
             throw new NotImplementedException();
         }

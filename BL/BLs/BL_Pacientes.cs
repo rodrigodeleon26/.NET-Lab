@@ -62,15 +62,15 @@ namespace BL.BLs
             return dalAdministrativo.GetPacienteByDNI(dni);
         }
 
-        public Paciente actualizarDatos(Paciente paciente)
+        public void actualizarDatos(Paciente paciente)
         {
            
             if (paciente == null)
             {
-                return null;
+                //return null;
             }
 
-            return dalAdministrativo.UpdatePaciente(paciente);
+            dalAdministrativo.UpdatePaciente(paciente);
         }
 
         public object GetHistoriaClinica(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)

@@ -81,7 +81,6 @@ namespace AuthWebApi.Controllers
     {
         public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapPost("api/auth/register", RegisterUser);
             app.MapPost("api/auth/login", LoginUser);
             app.MapPost("api/auth/refreshToken", RefreshToken);
             app.MapPost("api/auth/resendConfirmationEmail", ResendConfirmationEmail);
@@ -93,77 +92,6 @@ namespace AuthWebApi.Controllers
             app.MapPost("api/auth/enableTwoFactorAuth", EnableTwoFactorAuth); 
             app.MapPost("api/auth/disableTwoFactorAuth", DisableTwoFactorAuth); 
             return app;
-        }
-
-        [AllowAnonymous]
-        private static async Task<IResult> RegisterUser(
-        UserManager<AppUsers> userManager,
-        IBL_Pacientes blPacientes,
-        IBL_Administrativo bL_Administrativo,
-        DBContext db,
-        [FromBody] UserRegistrationModel userRegistrationModel)
-        {
-            //Medico medico = blAdministrativo.getMedicoByDocumento(userRegistrationModel.Documento);
-
-            //if (medico == null)
-            //{
-            //    medico = new Medico
-            //    {
-            //        Nombres = userRegistrationModel.Nombres.ToUpper(),
-            //        Apellidos = userRegistrationModel.Apellidos.ToUpper(),
-            //        Documento = userRegistrationModel.Documento,
-            //        Email = userRegistrationModel.Email,
-            //    };
-            //    blAdministrativo.addMedico(medico);
-            //}
-            if (paciente == null)
-            {
-                paciente = new Paciente
-                {
-                    Nombres = userRegistrationModel.Nombres.ToUpper(),
-                    Apellidos = userRegistrationModel.Apellidos.ToUpper(),
-                    Documento = userRegistrationModel.Documento,
-                    Email = userRegistrationModel.Email
-                };
-                blPacientes.addPaciente(paciente);
-
-                //// Asegúrate de que el paciente se ha guardado correctamente y tiene un Id asignado
-                //paciente = blPacientes.getXDocumento(userRegistrationModel.Documento);
-                //if (paciente == null)
-                //{
-                //    return Results.BadRequest(new { message = "Error al guardar el paciente." });
-                //}
-            }
-            else
-            {
-                AppUsers userAux = userManager.Users.FirstOrDefault(x => x.PacienteId == paciente.Id);
-                if (userAux != null)
-                {
-                    return Results.BadRequest(new
-                    {
-                        code = "DuplicateDocumento",
-                        description = $"El paciente con documento {userRegistrationModel.Documento} ya tiene un usuario asociado, el mismo es {userAux.UserName}"
-                    });
-                }
-            }
-            //Medico medico = bL_Administrativo.getMedicoByDocumento(userRegistrationModel.Documento);
-
-            AppUsers user = new AppUsers
-            {
-                Email = userRegistrationModel.Email,
-                UserName = userRegistrationModel.Email,
-                FullName = $"{userRegistrationModel.Nombres.ToUpper()} {userRegistrationModel.Apellidos.ToUpper()}",
-            };
-
-            user.Paciente = db.Pacientes.Find(paciente.Id);
-            //user.Medico = db.Medicos.Find(medico.Id);
-            var result = await userManager.CreateAsync(user, userRegistrationModel.Password);
-
-            await userManager.AddToRoleAsync(user, "ADMIN");
-            if (result.Succeeded)
-                return Results.Ok(result);
-            else
-                return Results.BadRequest(result.Errors);
         }
 
         [AllowAnonymous]

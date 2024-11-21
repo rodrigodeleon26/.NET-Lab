@@ -59,5 +59,10 @@ namespace DAL.DALs
         {
             throw new NotImplementedException();
         }
+
+        public bool notificacionVista(long idNotificacion)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

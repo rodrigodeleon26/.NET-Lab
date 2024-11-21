@@ -21,9 +21,7 @@ namespace BL.IBLs
         
         public Paciente getMisDatos(string dni);
 
-        public Paciente actualizarDatos(Paciente paciente);
-
-        public Paciente GetPaciente(long id);
+        public void actualizarDatos(Paciente paciente);
 
         object GetHistoriaClinica(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
 
