@@ -174,7 +174,13 @@ export class GenerarMedicoComponent implements OnInit {
       }
     });
 
-    this.calendariosService.getCalendariosByMedicoId(id).subscribe({
+    let filtrosActuales = [
+      'PorDefecto', //especialidad
+      'PorDefecto', //dia
+      'PorDefecto' //hora
+    ]
+    //this.calendariosService.getCalendariosByMedicoId(id).subscribe({
+    this.calendariosService.getCalendariosFiltrados(id, filtrosActuales).subscribe({
       next: (data) => {
         this.calendariosDelMedico = data;
         this.calendariosShow = data;
@@ -438,7 +444,13 @@ export class GenerarMedicoComponent implements OnInit {
                 this.showSuccessMessage('Calendario editado exitosamente');
                 this.closeEditarModal();
                 if (this.medicoId) {
-                  this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
+                  let filtrosActuales = [
+                    'PorDefecto', //especialidad
+                    'PorDefecto', //dia
+                    'PorDefecto' //hora
+                  ]
+                  //this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
+                  this.calendariosService.getCalendariosFiltrados(this.medicoId, filtrosActuales).subscribe({
                     next: (data) => {
                       this.calendariosDelMedico = data;
                       this.calendariosShow = data;
@@ -471,7 +483,14 @@ export class GenerarMedicoComponent implements OnInit {
                 }
                 this.DatosCalendarioForm.reset();
                 if (this.medicoId) {
-                  this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
+
+                  let filtrosActuales = [
+                    'PorDefecto', //especialidad
+                    'PorDefecto', //dia
+                    'PorDefecto' //hora
+                  ]
+                  //this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
+                  this.calendariosService.getCalendariosFiltrados(this.medicoId, filtrosActuales).subscribe({
                     next: (data) => {
                       this.calendariosDelMedico = data;
                       this.calendariosShow = data;

@@ -46,4 +46,10 @@ export class CalendariosService {
   BorrarCalendariosIncompatibles(medicoId: string, especialidades: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/borrarCalendariosIncompatibles/${medicoId}`, especialidades);
   }
+
+  getCalendariosFiltrados(medicoId: string, filtros: string[]): Observable<any> {
+    console.log('Obteniendo calendarios filtrados');
+    console.log(filtros);
+    return this.http.post<any>(`${this.apiUrl}/filtrarCalendarios/${medicoId}`, filtros);
+  }
 }

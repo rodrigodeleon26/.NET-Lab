@@ -2,6 +2,7 @@
 using BL.IBLs;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System.Globalization;
 
@@ -151,6 +152,25 @@ namespace AdministrativoWebApi.Controllers
 		{
 			await _blAdministrativo.borrarCalendariosIncompatiblesAsync(medicoId, especialidades);
             return NoContent();
+        }
+
+        //    return this.http.post<any>(`${this.apiUrl}/filtrarCalendarios/${medicoId}`, filtros);
+
+        // POST api/<CalendariosController>/filtrarCalendarios/5
+        [HttpPost("filtrarCalendarios/{medicoId}")]
+        [ProducesResponseType(typeof(List<Calendario>), 200)]
+        public IActionResult filtrarCalendarios(long medicoId, [FromBody] String[] filtros)
+		{
+			string filtroEspecialidad = filtros[0];
+            string filtroDia = filtros[1];
+            string filtroHoraInicio = filtros[2];
+
+			if ( filtroEspecialidad == null || filtroDia == null || filtroHoraInicio == null)
+			{
+				return BadRequest();
+            }
+
+			return Ok(_blAdministrativo.getCalendariosFiltrados(medicoId, filtroEspecialidad, filtroDia, filtroHoraInicio));
         }
     }
 }

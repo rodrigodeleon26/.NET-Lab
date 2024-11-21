@@ -1392,15 +1392,94 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
+        public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                // Obtener la consulta base para los calendarios del médico
+                var query = _dbContext.Calendarios
+                    .Where(c => c.MedicoId == medicoId && c.Activo)
+                    .AsQueryable();
+
+                // Filtrar por especialidad
+                if (!string.IsNullOrEmpty(filtroEspecialidad) && filtroEspecialidad != "PorDefecto")
+                {
+                    if (filtroEspecialidad == "Agrupar")
+                    {
+                        // Agrupar por especialidad
+                        query = query.OrderBy(c => c.Especialidad.Nombre);
+                    }
+                    else
+                    {
+                        // Filtrar por nombre de especialidad
+                        query = query.Where(c => c.Especialidad.Nombre == filtroEspecialidad);
+                    }
+                }
+
+                // Filtrar por día
+                if (!string.IsNullOrEmpty(filtroDia) && filtroDia != "PorDefecto")
+                {
+                    query = query.Where(c => c.DiasSemana.Contains(filtroDia));
+                }
+
+                // Ordenar por hora de inicio
+                if (!string.IsNullOrEmpty(filtroHoraInicio) && filtroHoraInicio != "PorDefecto")
+                {
+                    query = filtroHoraInicio.Equals("Ascendente", StringComparison.OrdinalIgnoreCase)
+                        ? query.OrderBy(c => c.HoraInicio)
+                        : query.OrderByDescending(c => c.HoraInicio);
+                }
+
+                // Seleccionar los calendarios con las relaciones necesarias
+                return query.Select(c => new Calendario
+                {
+                    Id = c.Id,
+                    HoraInicio = c.HoraInicio,
+                    HoraFin = c.HoraFin,
+                    TiempoCita = c.TiempoCita,
+                    CantidadCitas = c.CantidadCitas,
+                    DiasSemana = c.DiasSemana,
+                    Consultorio = new Consultorio
+                    {
+                        Id = c.Consultorio.Id,
+                        Numero = c.Consultorio.Numero,
+                        Piso = c.Consultorio.Piso
+                    },
+                    Medico = new Medico
+                    {
+                        Id = c.Medico.Id,
+                        Nombres = c.Medico.Nombres,
+                        Apellidos = c.Medico.Apellidos,
+                        Documento = c.Medico.Documento,
+                        Email = c.Medico.Email,
+                        Telefono = c.Medico.Telefono
+                    },
+                    Especialidad = new Especialidad
+                    {
+                        Id = c.Especialidad.Id,
+                        Nombre = c.Especialidad.Nombre,
+                        Descripcion = c.Especialidad.Descripcion
+                    },
+                    CitasMedicas = c.CitasMedicas.Select(cm => new CitaMedica
+                    {
+                        Id = cm.Id,
+                        Fecha = cm.Fecha,
+                        Estado = cm.Estado
+                    }).ToList()
+                }).ToList();
+            }
+        }
 
 
-		/**********************************************************/
-		/**                 Consultorios                         **/
-		/**********************************************************/
-		#region FUNCTIONES CONSULTORIOS
+        #endregion
 
-		public List<Consultorio> GetConsultorios()
+
+        /**********************************************************/
+        /**                 Consultorios                         **/
+        /**********************************************************/
+        #region FUNCTIONES CONSULTORIOS
+
+        public List<Consultorio> GetConsultorios()
 		{
 			using (var _dbContext = new DBContext())
 			{

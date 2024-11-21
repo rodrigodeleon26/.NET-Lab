@@ -537,55 +537,17 @@ namespace BL.BLs
 			{
 				if (!especialidades.Any(e => e.Id == calendario.Especialidad.Id))
 				{
-                    //borrar el calendario y cancelar las citas asociadas
-     //               var citas = getCitasMedicas()
-					//	.Where(c => c.Calendario.Id == calendario.Id)
-					//	.Where(c => c.Estado == "Agendada")
-     //                   .ToList();
-
-     //               foreach(var cita in citas)
-     //               {
-     //                   cita.Estado = "Cancelada";
-     //                   updateCitaMedica(cita);
-
-     //                   //Creo la notificacion para el paciente
-					//	if(cita.PacienteId != null)
-					//	{
-					//		var notificacion = new Notificacion()
-					//		{
-					//			Mensaje = $"Su Cita medica para la fecha {cita.Fecha} ha tenido que ser cancelada, por favor agende nuevamente",
-					//			FechaEnvio = DateTime.Now,
-					//			Visto = false
-					//		};
-					//		long id = (long)cita.PacienteId;
-					//		notificacion.Paciente.Id = id;
-     //                       //dal_Paciente.AddNotificacion(notificacion, id);
-
-
-     //                       //uso la coneccion a rabbimq para enviar la notificacion a la cola
-     //                       try
-     //                       {
-					//			var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notificacion));
-
-					//			//envio la notificacion por rabbit
-     //                           await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "Notificaciones", body: body);
-     //                       }
-     //                       catch (Exception ex)
-     //                       {
-     //                           _logger.LogError($"Error al enviar notificación: {ex.Message}");
-     //                           throw;
-     //                       }
-
-     //                   }
-     //               }
-
-					//_logger.LogInformation("Se eliminaron las ciras");
-
                     //se desactiva el calendario
                     deleteCalendario(calendario.Id);
                 }
 			}
 		}
+
+		public List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio)
+		{
+			return dal.GetCalendariosFiltrados(medicoId, filtroEspecialidad, filtroDia, filtroHoraInicio);
+
+        }
 
         #endregion
 

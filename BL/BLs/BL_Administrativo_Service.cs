@@ -193,6 +193,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio)
+        {
+            throw new NotImplementedException();
+        }
+
         public CitaMedica getCitaMedicaById(long id)
         {
             throw new NotImplementedException();
