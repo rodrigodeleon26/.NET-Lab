@@ -263,6 +263,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
+        {
+            throw new NotImplementedException();
+        }
+
         public Paciente getPacienteByDNI(string dni)
         {
             return dal.GetPacienteByDNI(dni);

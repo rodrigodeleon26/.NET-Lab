@@ -525,6 +525,41 @@ namespace DAL.DALs
 			}
 		}
 
+        public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var query = _dbContext.Contratos
+                    .Include(c => c.Paciente)
+                    .Include(c => c.SeguroMedico)
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(filtro))
+                {
+                    query = query.Where(c => c.Paciente.Documento.Contains(filtro));
+                }
+
+                return query
+                    .Skip((numPagina - 1) * 5)
+                    .Take(5)
+                    .Select(c => new Contrato
+                    {
+                        Id = c.Id,
+                        FechaInicio = c.FechaInicio,
+                        Activo = c.Activo,
+                        Paciente = new Paciente
+                        {
+                            Documento = c.Paciente.Documento
+                        },
+                        SeguroMedico = new SeguroMedico
+                        {
+                            Nombre = c.SeguroMedico.Nombre
+                        }
+                    }).ToList();
+            }
+        }
+
+
         #endregion
 
 

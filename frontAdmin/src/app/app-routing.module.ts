@@ -8,6 +8,7 @@ import { ConsultoriosComponent } from './components/consultorios/consultorios.co
 import { CopagosComponent } from './components/copagos/copagos.component';
 import { ArticulosComponent } from './components/articulos/articulos.component';
 import { PacientesComponent } from './components/pacientes/pacientes.component';
+import { ContratosComponent } from './components/contratos/contratos.component';
   
 const routes: Routes = [
   { path: 'login', component: LoginComponent},
@@ -19,7 +20,8 @@ const routes: Routes = [
   { path: 'consultorios', component: ConsultoriosComponent },
   { path: 'copagos', component: CopagosComponent },
   { path: 'articulos', component: ArticulosComponent },//temporal quizas
-  { path: 'pacientes', component: PacientesComponent}
+  { path: 'pacientes', component: PacientesComponent},
+  { path: 'contratos', component: ContratosComponent}
 ];
 
 @NgModule({

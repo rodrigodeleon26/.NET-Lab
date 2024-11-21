@@ -19,6 +19,7 @@ import { CopagosComponent } from './components/copagos/copagos.component';
 import { ArticulosComponent } from './components/articulos/articulos.component';
 import { SeguroMedicoSelectComponent } from './components/seguro-medico-select/seguro-medico-select.component';
 import { PacientesComponent } from './components/pacientes/pacientes.component';
+import { ContratosComponent } from './components/contratos/contratos.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { PacientesComponent } from './components/pacientes/pacientes.component';
     ArticulosComponent,
     SeguroMedicoSelectComponent,
     PacientesComponent,
+    ContratosComponent,
   ],
   imports: [
     BrowserModule,

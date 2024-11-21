@@ -36,9 +36,10 @@ namespace DAL.IDALs
 		public void AddContrato(Contrato contrato);
 		public void UpdateContrato(Contrato contrato);
 		public void DeleteContrato(long id);
+		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro);
 
-		// Precios
-		public List<Precio> GetPrecios();
+        // Precios
+        public List<Precio> GetPrecios();
 		public Precio GetPrecioById(long id);
 		public void AddPrecio(Precio precio);
 		public void UpdatePrecio(Precio precio);

@@ -126,5 +126,18 @@ namespace AdministrativoWebApi.Controllers
             _blAdministrativo.activarContrato(idContrato);
             return NoContent();
         }
-	}
+
+        [ProducesResponseType(typeof(List<Contrato>), 200)]
+        [ProducesResponseType(204)]
+        [HttpGet("filtradosPaginados")]
+        public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
+        {
+            var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
+            if (contratos == null || contratos.Count == 0)
+            {
+                return NoContent();
+            }
+            return Ok(contratos);
+        }
+    }
 }

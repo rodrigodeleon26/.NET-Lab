@@ -171,13 +171,18 @@ namespace BL.BLs
 			}
 		}
 
-		#endregion
+		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
+        {
+            return dal.GetContratosFiltradosPaginados(numPagina, filtro);
+        }
 
-		//Precios
-		#region PRECIOS
+        #endregion
+
+        //Precios
+        #region PRECIOS
 
 
-		public List<Precio> getPrecios()
+        public List<Precio> getPrecios()
 		{
 			return dal.GetPrecios();
 		}
