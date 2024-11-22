@@ -1,39 +1,39 @@
 services:
-  pacientewebapi:
-    environment:
-      - aspnetcore_environment=development
-      - aspnetcore_http_ports=8080
-      - aspnetcore_https_ports=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
-      - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
+  # pacientewebapi:
+  #   environment:
+  #     - aspnetcore_environment=development
+  #     - aspnetcore_http_ports=8080
+  #     - aspnetcore_https_ports=8081
+  #   ports:
+  #     - "8080"
+  #     - "8081"
+  #   volumes:
+  #     - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+  #     - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
 
-  citasmedicaswebapi:
-    environment:
-      - aspnetcore_environment=development
-      - aspnetcore_http_ports=8080
-      - aspnetcore_https_ports=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
-      - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
+  # citasmedicaswebapi:
+  #   environment:
+  #     - aspnetcore_environment=development
+  #     - aspnetcore_http_ports=8080
+  #     - aspnetcore_https_ports=8081
+  #   ports:
+  #     - "8080"
+  #     - "8081"
+  #   volumes:
+  #     - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+  #     - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
 
-  historiaclinicawebapi:
-    environment:
-      - aspnetcore_environment=development
-      - aspnetcore_http_ports=8080
-      - aspnetcore_https_ports=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
-      - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
+  # historiaclinicawebapi:
+  #   environment:
+  #     - aspnetcore_environment=development
+  #     - aspnetcore_http_ports=8080
+  #     - aspnetcore_https_ports=8081
+  #   ports:
+  #     - "8080"
+  #     - "8081"
+  #   volumes:
+  #     - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+  #     - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
 
   authwebapi:
     environment:

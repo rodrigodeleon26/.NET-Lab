@@ -30,6 +30,7 @@ namespace AuthWebApi.Controllers
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public string Role { get; set; } // Nuevo campo para el rol
     }
 
     public class RefreshTokenModel
@@ -96,12 +97,18 @@ namespace AuthWebApi.Controllers
 
         [AllowAnonymous]
         private static async Task<IResult> LoginUser(
-            UserManager<AppUsers> userManager,
-            [FromBody] UserLoginModel userLoginModel)
+        UserManager<AppUsers> userManager,
+        [FromBody] UserLoginModel userLoginModel)
         {
             var user = await userManager.FindByEmailAsync(userLoginModel.Email);
             if (user != null && await userManager.CheckPasswordAsync(user, userLoginModel.Password))
             {
+                var roles = await userManager.GetRolesAsync(user);
+                if (!roles.Contains(userLoginModel.Role))
+                {
+                    return Results.StatusCode(403); // Forbidden
+                }
+
                 var tokens = await GenerateTokens(user, userManager);
                 return Results.Ok(tokens);
             }

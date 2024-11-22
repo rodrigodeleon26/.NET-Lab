@@ -312,14 +312,6 @@ namespace AdministrativoWebApi.Controllers
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private string FormatearDocumento(string documento)
-        {
-            if (documento.Length == 8)
-            {
-                return $"{documento.Substring(0, 1)}.{documento.Substring(1, 3)}.{documento.Substring(4, 3)}-{documento.Substring(7, 1)}";
-            }
-            return documento;
-        }
         private void ValidarPacienteRequest(PacienteRequest request)
         {
             if (request == null ||

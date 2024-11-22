@@ -10,12 +10,8 @@ export class AuthService {
   private twoFactorAuthenticated: boolean = false;
 
   constructor(private http:HttpClient) { }
-
-  registerUser(formData:any){
-    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/register', formData);
-  }
-  
-  loginUser(formData:any){
+  loginUser(email: string, password: string, role: string) {
+    const formData = { email, password, role };
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/login', formData);
   }
   
