@@ -7,7 +7,7 @@
         <div class="bg-blue-oscuro p-6 text-white">
             <h1 class="text-3xl font-bold text-center">Notifiaciones</h1>
         </div>
-        <div class="flex md:justify-between h-full">
+        <div *ngIf="notificaciones.length > 0" class="flex md:justify-between h-full">
             <div 
                 [ngClass]="{
                     'block': !hayNotificacionAbierta,
@@ -90,6 +90,13 @@
                         <h1 class="text-base font-bold">Mensaje:</h1>
                         <p>{{ notificacion.mensaje }}</p>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="notificaciones.length === 0" class="bg-gray-claro flex justify-center h-full">
+            <div class="w-full md:w-1/3 flex flex-col md:block">
+                <div class="border-b border-b-gray-300 p-5">
+                    <p class="text-center font-semibold text-lg">No tienes notificaciones</p>
                 </div>
             </div>
         </div>
