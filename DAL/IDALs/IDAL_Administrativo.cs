@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using DAL.DALs;
 using DAL.Models;
 using Shared;
 using System;
@@ -68,6 +69,10 @@ namespace DAL.IDALs
 		public void DeleteFactura(long id);
         IEnumerable<Contrato> GetContratosActivos();
         Task SaveChangesAsync();
+		public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año);
+		public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin);
+		public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId);
+
 
         // Medicos
         public List<Medico> GetMedicos();
@@ -118,7 +123,16 @@ namespace DAL.IDALs
 		// Pago PayPal
 		public List<PagoPayPal> GetPaypalPagos();
         public PagoPayPal GetPaypalPagoById(long id);
+        public PagoPayPal GetPaypalPagoByOrdenId(string id);
         public void AddPaypalPago(PagoPayPal nuevoPago);
+		public Task<PayPalOrderResponse> GetOrderDetailsAsync(string orderId);
+		public Task<PayPalCaptureResponse> CaptureOrderAsync(string orderId);
+		public Task<PayPalOrderResponse> CreateOrderAsync(
+		List<PayPalPurchaseUnit> purchaseUnits,
+		string currency,
+		string returnUrl,
+		string cancelUrl);
+		public Task<string> GetAccessTokenAsync();
 
     }
 }

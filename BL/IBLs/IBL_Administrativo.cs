@@ -124,6 +124,7 @@ namespace BL.IBLs
 		// Pago PayPal
 		List<PagoPayPal> GetPaypalPagos();
         PagoPayPal GetPaypalPagoById(long id);
+        PagoPayPal GetPaypalPagoByOrdenId(string id);
         void AddPaypalPago(PagoPayPal nuevoPago);
     }
 }

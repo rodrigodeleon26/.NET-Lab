@@ -52,6 +52,25 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [HttpGet("pagos/pororden/{id}")]
+    public IActionResult GetPaypalPagoByOrdenId(string id)
+    {
+        try
+        {
+            var pago = _blAdministrativo.GetPaypalPagoByOrdenId(id);
+            if (pago == null)
+            {
+                return NotFound("No se encontró el pago con el ID especificado.");
+            }
+
+            return Ok(pago);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
     [HttpPost("pagos/add")]
     public IActionResult AddPaypalPago([FromBody] PagoPayPal nuevoPago)
     {
@@ -87,7 +106,23 @@ public class PaymentsController : ControllerBase
 
             var orderID = order.id;
 
-            return Ok(new { redirectUrl = approvalUrl });
+            PagoPayPal nuevoPago = new PagoPayPal
+            {
+                linkPago = approvalUrl,
+                pagoId = orderID
+            };
+
+            try
+            {
+                _blAdministrativo.AddPaypalPago(nuevoPago);
+                var pagoCreado = _blAdministrativo.GetPaypalPagoByOrdenId(orderID);
+                return Ok(pagoCreado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+
         }
         catch (Exception ex)
         {
@@ -95,12 +130,12 @@ public class PaymentsController : ControllerBase
         }
     }
 
-    [HttpPost("capture")]
-    public async Task<IActionResult> CaptureOrder([FromBody] CaptureRequest request)
+    [HttpPost("capture/{orderId}")]
+    public async Task<IActionResult> CaptureOrder(string orderId)
     {
         try
         {
-            var capture = await _payPalService.CaptureOrderAsync(request.OrderId);
+            var capture = await _payPalService.CaptureOrderAsync(orderId);
             return Ok(capture);
         }
         catch (Exception ex)

@@ -13,7 +13,7 @@ public class FacturacionAutomaticaService : BackgroundService
     {
         _scopeFactory = scopeFactory;
     }
-
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
