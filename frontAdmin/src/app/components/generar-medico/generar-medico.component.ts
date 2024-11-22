@@ -485,56 +485,6 @@ export class GenerarMedicoComponent implements OnInit {
         return;
       }
     });
-
-    // if(this.calendarioEditId !== null){
-    //   //en caso de editar, solo chequear los dias nuevos en caso de tener
-    //   const calendarioComparacion = this.calendariosDelMedico.find((calendario) => calendario.id === this.calendarioEditId);
-    //   if (calendarioComparacion) {
-    //     const diasNuevos = dias.filter((dia: string) => !calendarioComparacion.diasSemana.includes(dia));
-
-    //     conflictos = this.calendariosDelMedico.filter((calendario: any) => {
-    //       if (diasNuevos.some((dia: string) => calendario.diasSemana.includes(dia))) {
-    //         console.log('conflicto con calendario en los dias ' + calendario.diasSemana.join(', ') + ' para los dias ' + dias.join(', '));
-    //         const horaInicioCalendario = new Date(`1970-01-01T${calendario.horaInicio}`).getTime();
-    //         const horaFinCalendario = new Date(`1970-01-01T${calendario.horaFin}`).getTime();
-    //         const horaInicioComparar = new Date(`1970-01-01T${horaInicio}`).getTime();
-    //         const horaFinComparar = new Date(`1970-01-01T${horaFin}`).getTime();
-        
-    //         if ((horaInicioComparar > horaInicioCalendario && horaInicioComparar < horaFinCalendario) ||
-    //             (horaFinComparar > horaInicioCalendario && horaFinComparar < horaFinCalendario) ||
-    //             (horaInicioComparar <= horaInicioCalendario && horaFinComparar >= horaFinCalendario) ||
-    //             (horaInicioComparar >= horaInicioCalendario && horaFinComparar <= horaFinCalendario)) {
-    //           console.log('conflicto con calendario en las horas ' + calendario.horaInicio + ' - ' + calendario.horaFin + ' para la hora de inicio ' + horaInicio + ' y hora de fin ' + horaFin);
-    //           return true;
-    //         }
-    //       }
-        
-    //       return false;
-    //     });
-    //   }
-    // }
-    // else{
-    //   conflictos = this.calendariosDelMedico.filter((calendario: any) => {
-    //     //el calendario es nuevo asi que chequear todos los dias
-    //     if (calendario.diasSemana.some((dia: string) => dias.includes(dia))) {
-    //       console.log('conflicto con calendario en los dias ' + calendario.diasSemana.join(', ') + ' para los dias ' + dias.join(', '));
-    //       const horaInicioCalendario = new Date(`1970-01-01T${calendario.horaInicio}`).getTime();
-    //       const horaFinCalendario = new Date(`1970-01-01T${calendario.horaFin}`).getTime();
-    //       const horaInicioComparar = new Date(`1970-01-01T${horaInicio}`).getTime();
-    //       const horaFinComparar = new Date(`1970-01-01T${horaFin}`).getTime();
-      
-    //       if ((horaInicioComparar > horaInicioCalendario && horaInicioComparar < horaFinCalendario) ||
-    //           (horaFinComparar > horaInicioCalendario && horaFinComparar < horaFinCalendario) ||
-    //           (horaInicioComparar <= horaInicioCalendario && horaFinComparar >= horaFinCalendario) ||
-    //           (horaInicioComparar >= horaInicioCalendario && horaFinComparar <= horaFinCalendario)) {
-    //         console.log('conflicto con calendario en las horas ' + calendario.horaInicio + ' - ' + calendario.horaFin + ' para la hora de inicio ' + horaInicio + ' y hora de fin ' + horaFin);
-    //         return true;
-    //       }
-    //     }
-      
-    //     return false;
-    //   });
-    // }
     console.log(Calendario);
   }
 
