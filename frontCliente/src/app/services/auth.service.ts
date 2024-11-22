@@ -37,7 +37,7 @@ export class AuthService {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/resendConfirmationEmail', { email });
   }
 
-  generateQrCode(email: string)  {
+  sendQrCodeByEmail(email: string)  {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/generateQrCode', { email });
   }
 

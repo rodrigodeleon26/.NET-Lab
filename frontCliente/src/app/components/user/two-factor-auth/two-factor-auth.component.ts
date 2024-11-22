@@ -13,7 +13,7 @@ export class TwoFactorAuthComponent implements OnInit {
   qrCodeImage: string = '';
   authCode: string = '';
   isLoading: boolean = false;
-  isImageLoading: boolean = true; // Variable para controlar el estado de carga de la imagen
+  isSendingQrCode: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -22,21 +22,22 @@ export class TwoFactorAuthComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.generateQrCode();
-    console.log(this.authService.getClaims());
-    console.log(this.authService.getTwoFactorEnabledStatus());
+    // this.generateQrCode();
+    // console.log(this.authService.getClaims());
+    // console.log(this.authService.getTwoFactorEnabledStatus());
   }
 
-  generateQrCode(): void {
+  sendQrCodeByEmail(): void {
     const email = this.authService.getEmail();
-    this.authService.generateQrCode(email).subscribe({
+    this.isSendingQrCode = true;
+    this.authService.sendQrCodeByEmail(email).subscribe({
       next: (response: any) => {
-        this.qrCodeImage = response.qrCodeImageUrl;
-        this.isImageLoading = false; 
-        console.log(response);
+        this.toastr.success('Código QR enviado por email', 'Éxito');
+        this.isSendingQrCode = false;
       },
       error: (error: any) => {
-        this.toastr.error('Error al generar el código QR', 'Error');
+        this.toastr.error('Error al enviar el código QR', 'Error');
+        this.isSendingQrCode = false;
       }
     });
   }
