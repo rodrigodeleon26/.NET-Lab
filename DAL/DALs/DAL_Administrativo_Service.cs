@@ -2,7 +2,7 @@
 using DAL.IDALs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 using Org.BouncyCastle.Asn1.X500;
 using Shared;
 using System;
@@ -12,16 +12,28 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Net.Http;
+using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace DAL.DALs
 {
     public class DAL_Administrativo_Service : IDAL_Administrativo
     {
+        private readonly string _clientId;
+        private readonly string _clientSecret;
         private readonly HttpClient _httpClient;
 
-        public DAL_Administrativo_Service(HttpClient httpClient)
+        public DAL_Administrativo_Service(IConfiguration configuration, HttpClient httpClient)
         {
+            var payPalConfig = configuration.GetSection("PayPal");
+            _clientId = payPalConfig["ClientId"];
+            _clientSecret = payPalConfig["ClientSecret"];
             _httpClient = httpClient;
         }
 
@@ -42,7 +54,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);
+                    var paciente = JsonSerializer.Deserialize<Paciente>(json);
                     return paciente;
                 }
                 else
@@ -75,7 +87,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);   
+                    var paciente = JsonSerializer.Deserialize<Paciente>(json);
                     return paciente;
                 }
                 else
@@ -113,14 +125,14 @@ namespace DAL.DALs
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/{paciente.Id}";
 
-                var content = new StringContent(JsonConvert.SerializeObject(paciente), Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonSerializer.Serialize(paciente), Encoding.UTF8, "application/json");
 
                 var response = _httpClient.PutAsync(url, content).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    paciente = JsonConvert.DeserializeObject<Paciente>(json);
+                    paciente = JsonSerializer.Deserialize<Paciente>(json);
                     //return paciente;
                 }
                 else
@@ -172,7 +184,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = response.Content.ReadAsStringAsync().Result;
-                    return JsonConvert.DeserializeObject<List<Notificacion>>(responseData);
+                    return JsonSerializer.Deserialize<List<Notificacion>>(responseData);
                 }
                 else
                 {
@@ -188,8 +200,8 @@ namespace DAL.DALs
 
         public int CountNotificaciones(long id)
         {
-            try 
-            { 
+            try
+            {
                 var handler = new HttpClientHandler
                 {
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
@@ -203,7 +215,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = response.Content.ReadAsStringAsync().Result;
-                    return JsonConvert.DeserializeObject<int>(responseData);
+                    return JsonSerializer.Deserialize<int>(responseData);
                 }
                 else
                 {
@@ -578,6 +590,46 @@ namespace DAL.DALs
         }
 
         public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagoPayPal GetPaypalPagoByOrdenId(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PayPalOrderResponse> GetOrderDetailsAsync(string orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PayPalCaptureResponse> CaptureOrderAsync(string orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PayPalOrderResponse> CreateOrderAsync(List<PayPalPurchaseUnit> purchaseUnits, string currency, string returnUrl, string cancelUrl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetAccessTokenAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
         {
             throw new NotImplementedException();
         }

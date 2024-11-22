@@ -510,5 +510,10 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+
+        public PagoPayPal GetPaypalPagoByOrdenId(string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -17,6 +17,7 @@ using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Globalization;
+using PayPal.Api;
 
 namespace BL.BLs
 {
@@ -326,15 +327,15 @@ namespace BL.BLs
             {
                 Paciente paciente = dal.GetPacienteById(contrato.Paciente.Id);
 
-
                 // Verifica si ya existe una factura para el paciente en el mes actual
                 bool facturaExistente = dal.ExisteFacturaParaPacienteEnMes(paciente.Id, DateTime.Now.Month, DateTime.Now.Year);
 
-                if (facturaExistente)
+                if (!facturaExistente)
                 {
-					// Verifica si ya existen dos facturas sin pagar entre las tres últimas facturas
-					var ultimasFacturas = dal.ObtenerUltimasFacturasDelContrato(contrato.Id, 3);
-					int facturasNoPagadas = ultimasFacturas.Count(f => !f.Pago);
+                    // Verifica si ya existen dos facturas sin pagar entre las tres últimas facturas
+                    var ultimasFacturas = dal.ObtenerUltimasFacturasDelContrato(contrato.Id, 3);
+                    int facturasNoPagadas = ultimasFacturas.Count(f => !f.Pago);
+
                     if (facturasNoPagadas >= 2)
                     {
                         Console.WriteLine($"El contrato {contrato.Id} tiene dos facturas sin pagar. Generando la tercera factura y desactivando el contrato.");
@@ -345,35 +346,120 @@ namespace BL.BLs
 
                     // Crea una nueva factura para cada contrato
                     var factura = new Factura
-					{
-						Fecha = DateTime.Now,
-						Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
-						Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
-						FechaPago = null,
-						Pago = false,
-						Paciente = paciente
-					};
+                    {
+                        Fecha = DateTime.Now,
+                        Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
+                        Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
+                        FechaPago = null,
+                        Pago = false,
+                        Paciente = paciente
+                    };
 
-					// Guarda la factura en la base de datos
-					dal.AddFactura(factura);
+                    // Buscar facturas anteriores al mes actual
+                    var facturasPendientes = new List<Factura>();
+                    var facturaMesAnterior = dal.ObtenerFacturaParaPacienteEnMes(paciente.Id, DateTime.Now.AddMonths(-1).Month, DateTime.Now.Year);
 
-					var notificacion = new Notificacion
-					{
-						Mensaje = $"Tiene una nueva factura para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}",
-						FechaEnvio = DateTime.UtcNow,
-						Visto = false
-					};
+                    if (facturaMesAnterior != null)
+                    {
+                        // Si hay una factura del mes anterior, busca facturas entre ambas fechas
+                        facturasPendientes = dal.ObtenerFacturasEnRangoFechas(paciente.Id, facturaMesAnterior.Fecha, factura.Fecha)
+                            .Where(f => !f.Pago).ToList();
+                    }
+                    else
+                    {
+                        // Si no hay factura del mes anterior, busca todas las facturas pendientes
+                        facturasPendientes = dal.ObtenerFacturasNoPagadasParaPaciente(paciente.Id);
+                    }
 
-					//await dal_service.AddNotificacionService(notificacion, paciente.Id);
+                    // Guarda la factura en la base de datos
+                    //dal.AddFactura(factura);
+
+                    try
+                    {
+                        // Crear orden de PayPal
+                        // Crear unidades de compra (PayPalPurchaseUnit) para todas las facturas pendientes y la factura actual
+                        var purchaseUnits = facturasPendientes
+                            .Select(f => new PayPalPurchaseUnit
+                            {
+                                reference_id = f.Id.ToString(),
+                                amount = new PayPalAmount
+                                {
+                                    currency_code = "USD",
+                                    value = f.Monto.ToString("F2", CultureInfo.InvariantCulture)
+                                },
+                                description = f.Descripcion
+                            })
+                            .ToList();
+
+                        // Añadir la factura actual como una unidad de compra
+                        purchaseUnits.Add(new PayPalPurchaseUnit
+                        {
+                            reference_id = factura.Id.ToString(),
+                            amount = new PayPalAmount
+                            {
+                                currency_code = "USD",
+                                value = factura.Monto.ToString("F2", CultureInfo.InvariantCulture)
+                            },
+                            description = factura.Descripcion
+                        });
+
+                        var orderResponse = await dal.CreateOrderAsync(purchaseUnits,
+							"USD",
+                            "https://localhost:4200/cliente/payment/success",
+                            "https://localhost:4200/cliente/payment/cancel");
+
+                        // Guarda la orden de PayPal en la base de datos
+                        var nuevoPago = new PagoPayPal
+                        {
+                            linkPago = orderResponse.links.FirstOrDefault(link => link.rel == "approve")?.href,
+                            pagoId = orderResponse.id
+                        };
+
+                        dal.AddPaypalPago(nuevoPago);
+                        var pagoCreado = dal.GetPaypalPagoByOrdenId(orderResponse.id);
+
+                        var factura2 = new Factura
+                        {
+                            Fecha = DateTime.Now,
+                            Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
+                            Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
+                            FechaPago = null,
+                            Pago = false,
+                            Paciente = paciente,
+							PagoPayPal = pagoCreado
+                        };
+                        dal.AddFactura(factura2);
+
+                        foreach (var facturaPendiente in facturasPendientes)
+                        {
+                            facturaPendiente.PagoPayPal = pagoCreado;
+                            dal.UpdateFactura(facturaPendiente);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al crear la orden de PayPal para la factura {factura.Id}: {ex.Message}");
+                    }
+
+                    var notificacion = new Notificacion
+                    {
+                        Mensaje = $"Tiene una nueva factura pendiente de pago para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}.",
+                        FechaEnvio = DateTime.UtcNow,
+                        Visto = false
+                    };
+
+                    // Puedes agregar la notificación en el sistema del paciente aquí
+                    // dal_Paciente.AddNotificacion(notificacion, paciente.Id);
                 }
-				else
+                else
                 {
                     Console.WriteLine($"La factura para el contrato {contrato.Id} ya fue emitida este mes.");
                 }
+            }
 
-                await dal.SaveChangesAsync();
-			}
+            await dal.SaveChangesAsync();
         }
+
 
         private float ObtenerMontoFactura(Contrato contrato)
         {
@@ -915,6 +1001,11 @@ namespace BL.BLs
             return dal.GetPaypalPagoById(id);
         }
 
+        public PagoPayPal GetPaypalPagoByOrdenId(string id)
+        {
+            return dal.GetPaypalPagoByOrdenId(id);
+        }
+
         public void AddPaypalPago(PagoPayPal nuevoPago)
         {
             dal.AddPaypalPago(nuevoPago);
@@ -922,4 +1013,20 @@ namespace BL.BLs
 
 		#endregion
 	}
+
+    public class PaymentRequest
+    {
+        public List<PayPalPurchaseUnit> PurchaseUnits { get; set; }
+    }
+
+    public class ExecutePaymentRequest
+    {
+        public string PaymentId { get; set; }
+        public string PayerId { get; set; }
+    }
+
+    public class CaptureRequest
+    {
+        public string OrderId { get; set; }
+    }
 }

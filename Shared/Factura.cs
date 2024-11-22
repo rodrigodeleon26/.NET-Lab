@@ -15,5 +15,7 @@
         public DateTime? FechaPago { get; set; }
 
         public Paciente Paciente { get; set; } = new Paciente();
+
+        public PagoPayPal PagoPayPal { get; set; } = new PagoPayPal();
     }
 }
