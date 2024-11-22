@@ -1758,8 +1758,9 @@ namespace DAL.DALs
                 // Filtrar por día
                 if (!string.IsNullOrEmpty(filtroDia) && filtroDia != "PorDefecto")
                 {
-                    query = query.Where(c => c.DiasSemana.Contains(filtroDia));
+                    query = query.Where(c => EF.Functions.Like(c.DiasSemanaString, $"%{filtroDia}%"));
                 }
+
 
                 // Ordenar por hora de inicio
                 if (!string.IsNullOrEmpty(filtroHoraInicio) && filtroHoraInicio != "PorDefecto")

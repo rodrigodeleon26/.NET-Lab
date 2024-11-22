@@ -137,8 +137,21 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(ocupado);
 		}
 
-		// POST api/<CalendariosController>/validarEspecialidadesParaBorrar/5
-		[HttpPost("validarEspecialidadesParaBorrar/{medicoId}")]
+		// POST api/<CalendariosController>/validarCalendariosPropios/3/5
+		[HttpPost("validarCalendariosPropios/{medicoId}/{calendarioEditId}")]
+        public IActionResult validarCalendariosPropios(long medicoId, long calendarioEditId, [FromBody] Calendario calendario)
+		{
+			if (calendario == null || medicoId == 0)
+			{
+				return BadRequest();
+            }
+
+			bool valido = _blAdministrativo.validarCalendariosPropios(medicoId, calendarioEditId, calendario);
+			return Ok(valido);
+        }
+
+        // POST api/<CalendariosController>/validarEspecialidadesParaBorrar/5
+        [HttpPost("validarEspecialidadesParaBorrar/{medicoId}")]
 		public IActionResult validarEspecialidadesParaBorrar(long medicoId, [FromBody] List<Especialidad> especialidades)
 		{
 			bool valido = _blAdministrativo.validarEspecialidadesParaBorrar(medicoId, especialidades);

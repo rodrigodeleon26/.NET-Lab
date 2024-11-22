@@ -52,4 +52,13 @@ export class CalendariosService {
     console.log(filtros);
     return this.http.post<any>(`${this.apiUrl}/filtrarCalendarios/${medicoId}`, filtros);
   }
+
+  validarCalendariosPropios(medicoId: string, calendarioEditId: number | null, calendario: any): Observable<any> {
+    console.log('Validando calendarios propios');
+    console.log(calendario);
+    if (calendarioEditId === null) {
+      return this.http.post<any>(`${this.apiUrl}/validarCalendariosPropios/${medicoId}/0`, calendario);
+    }
+    return this.http.post<any>(`${this.apiUrl}/validarCalendariosPropios/${medicoId}/${calendarioEditId}`, calendario);
+  }
 }

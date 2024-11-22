@@ -15,7 +15,7 @@ namespace DAL.Migrations
                 table: "Medicos",
                 type: "bit",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: true);
         }
 
         /// <inheritdoc />

@@ -9,6 +9,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using HistoriaClinicaWebApi.Extensions;
+using Shared;
 
 try 
 {

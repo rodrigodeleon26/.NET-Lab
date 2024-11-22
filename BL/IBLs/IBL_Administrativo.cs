@@ -94,7 +94,8 @@ namespace BL.IBLs
 		void deleteCalendario(long id);
 		void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias);
 		bool checkOcupacionConsultorio(Calendario calendario);
-		bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades);
+		bool validarCalendariosPropios(long medicoId, long calendarioEditId, Calendario calendario);
+        bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades);
         Task borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades);
         List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
 

@@ -145,13 +145,13 @@
                                         </button>
                                         <div *ngIf="mostrarDiaSelect" class="z-20 absolute bg-gray-50 flex flex-col rounded py-2 border shadow-md">
                                             <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('PorDefecto')">Por defecto</button>
-                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('LUNES')">Lunes</button>
-                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('MARTES')">Martes</button>
-                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('MIERCOLES')">Miércoles</button>
-                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('JUEVES')">Jueves</button>
-                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('VIERNES')">Viernes</button>
-                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('SABADO')">Sábado</button>
-                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('DOMINGO')">Domingo</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('Lunes')">Lunes</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('Martes')">Martes</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('Miércoles')">Miércoles</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('Jueves')">Jueves</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('Viernes')">Viernes</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('Sábado')">Sábado</button>
+                                            <button class="hover:bg-gray-200 px-2" (click)="ordenarCalendariosPorDia('Domingo')">Domingo</button>
                                         </div>
                                     </th>
                                     <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">
@@ -182,13 +182,13 @@
                                         <!-- <td class="border border-gray-oscuro p-2">{{calendario.diasSemana}}</td> -->
                                         <td class="py-2 text-center w-1/12 border-b border-gray-300">
                                             <div class="flex w-full justify-between">
-                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('LUNES')}" class="w-full h-full border border-gray-500 text-center rounded-s-xl pl-1">L</div>
-                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('MARTES')}" class="w-full h-full border border-gray-500 text-center">M</div>
-                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('MIERCOLES')}" class="w-full h-full border border-gray-500 text-center">X</div>
-                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('JUEVES')}" class="w-full h-full border border-gray-500 text-center">J</div>
-                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('VIERNES')}" class="w-full h-full border border-gray-500 text-center">V</div>
-                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('SABADO')}" class="w-full h-full border border-gray-500 text-center">S</div>
-                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('DOMINGO')}" class="w-full h-full border border-gray-500 text-center rounded-e-xl pr-1">D</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('Lunes')}" class="w-full h-full border border-gray-500 text-center rounded-s-xl pl-1">L</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('Martes')}" class="w-full h-full border border-gray-500 text-center">M</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('Miércoles')}" class="w-full h-full border border-gray-500 text-center">X</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('Jueves')}" class="w-full h-full border border-gray-500 text-center">J</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('Viernes')}" class="w-full h-full border border-gray-500 text-center">V</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('Sábado')}" class="w-full h-full border border-gray-500 text-center">S</div>
+                                                <div [ngClass]="{'bg-green-intermedio': calendario.diasSemana.includes('Domingo')}" class="w-full h-full border border-gray-500 text-center rounded-e-xl pr-1">D</div>
                                             </div>
                                         </td>
                                         <td class="py-2 text-center w-1/12 border-b border-gray-300">{{calendario.especialidad.nombre}}</td>
@@ -234,31 +234,31 @@
 					<label for="diasSemana" class="text-sm font-medium">Dias de la Semana</label>
 					<div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4 place-items-center">
 						<div class="flex">
-							<input type="checkbox" id="lunes" value="LUNES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('LUNES')">
+							<input type="checkbox" id="lunes" value="Lunes" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('Lunes')">
 							<label for="lunes" class="text-sm font-medium">Lunes</label>
 						</div>
 						<div class="flex">
-							<input type="checkbox" id="martes" value="MARTES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('MARTES')">
+							<input type="checkbox" id="martes" value="Martes" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('Martes')">
 							<label for="martes" class="text-sm font-medium">Martes</label>
 						</div>
 						<div class="flex">
-							<input type="checkbox" id="miercoles" value="MIERCOLES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('MIERCOLES')">
-							<label for="miercoles" class="text-sm font-medium">Miercoles</label>
+							<input type="checkbox" id="Miércoles" value="Miércoles" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('Miércoles')">
+							<label for="Miércoles" class="text-sm font-medium">Miércoles</label>
 						</div>
 						<div class="flex">
-							<input type="checkbox" id="jueves" value="JUEVES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('JUEVES')">
+							<input type="checkbox" id="jueves" value="Jueves" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('Jueves')">
 							<label for="jueves" class="text-sm font-medium">Jueves</label>
 						</div>
 						<div class="flex">
-							<input type="checkbox" id="viernes" value="VIERNES" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('VIERNES')">
+							<input type="checkbox" id="viernes" value="Viernes" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('Viernes')">
 							<label for="viernes" class="text-sm font-medium">Viernes</label>
 						</div>
 						<div class="flex">
-							<input type="checkbox" id="sabado" value="SABADO" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('SABADO')">
-							<label for="sabado" class="text-sm font-medium">Sabado</label>
+							<input type="checkbox" id="Sábado" value="Sábado" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('Sábado')">
+							<label for="Sábado" class="text-sm font-medium">Sábado</label>
 						</div>
 						<div class="flex">
-							<input type="checkbox" id="domingo" value="DOMINGO" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('DOMINGO')">
+							<input type="checkbox" id="domingo" value="Domingo" (change)="onCheckboxDiasChange($event)" [checked]="DatosCalendarioForm.value.dias.includes('Domingo')">
 							<label for="domingo" class="text-sm font-medium">Domingo</label>
 						</div>
 					</div>

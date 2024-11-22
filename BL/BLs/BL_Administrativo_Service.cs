@@ -510,5 +510,10 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+
+        public bool validarCalendariosPropios(long medicoId, long calendarioEditId, Calendario calendario)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
