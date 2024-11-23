@@ -191,6 +191,9 @@ namespace DAL.Migrations
                     b.Property<long?>("ConsultoriosId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("CopagoId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -208,6 +211,8 @@ namespace DAL.Migrations
                     b.HasIndex("ConsultaMedicaId");
 
                     b.HasIndex("ConsultoriosId");
+
+                    b.HasIndex("CopagoId");
 
                     b.ToTable("CitasMedicas");
                 });
@@ -864,9 +869,17 @@ namespace DAL.Migrations
                         .WithMany("CitasMedicas")
                         .HasForeignKey("ConsultoriosId");
 
+                    b.HasOne("DAL.Models.Copagos", "Copago")
+                        .WithMany()
+                        .HasForeignKey("CopagoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Calendario");
 
                     b.Navigation("ConsultaMedica");
+
+                    b.Navigation("Copago");
                 });
 
             modelBuilder.Entity("DAL.Models.Contratos", b =>

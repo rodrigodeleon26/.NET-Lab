@@ -135,7 +135,10 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var paciente = _dbContext.Pacientes.Find(id);
+
+                Console.WriteLine("id del paciente en dal: " + id);
+
+                var paciente = _dbContext.Pacientes.Find(id);
 				if (paciente != null)
 				{
 					var contrato = _dbContext.Contratos
@@ -174,7 +177,7 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var paciente = _dbContext.Pacientes
+                var paciente = _dbContext.Pacientes
 					.Include(p => p.Contrato)
 					.ThenInclude(c => c.SeguroMedico)
 					.FirstOrDefault(p => p.Documento == dni);
@@ -1137,6 +1140,7 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
+				Console.WriteLine("en el dal");
 				var nuevaFactura = new Facturas
 				{
 					Fecha = factura.Fecha,
@@ -1145,9 +1149,12 @@ namespace DAL.DALs
 					FechaPago = factura.FechaPago,
                     Descripcion = factura.Descripcion,
                     PacienteId = factura.Paciente.Id,
-                    PagoPayPalId = factura.PagoPayPal.Id,
                 };
-				_dbContext.Facturas.Add(nuevaFactura);
+				if(factura.PagoPayPal != null)
+                {
+                    nuevaFactura.PagoPayPalId = factura.PagoPayPal.Id;
+                }
+                _dbContext.Facturas.Add(nuevaFactura);
 				_dbContext.SaveChanges();
 			}
 		}

@@ -178,7 +178,8 @@ namespace DAL.DALs
                                 Numero = p.Calendario.Consultorio.Numero,
                                 Piso = p.Calendario.Consultorio.Piso
                             }
-                        }
+                        },
+                        CopagoId = p.CopagoId
                     })
                     .FirstOrDefault(); // Obtener la primera cita que coincida con el ID
             }

@@ -149,7 +149,7 @@ VALUES
 ('13:00:00', '17:00:00', 30, 8, 'Lunes,Martes,Miércoles,Jueves,Viernes', 2, 1, 2, 1), -- Dr. Hibbert, Pediatría, Consultorio ID 2
 ('09:00:00', '12:00:00', 20, 9, 'Lunes,Miércoles,Viernes', 1, 3, 3, 1), -- Dr. Martinez, Medicina General, Consultorio ID 3
 ('14:00:00', '18:00:00', 15, 16, 'Lunes,Martes,Miércoles,Jueves', 3, 4, 4, 1), -- Dr. Gomez, Cardiología, Consultorio ID 4
-('08:00:00', '11:00:00', 20, 9, 'Martes,Jueves,Sábado', 6, 5, 5, 1), -- Dr. Fernandez, Oftalmología, Consultorio ID 5
+('08:00:00', '11:00:00', 20, 9, 'Martes,Jueves,Sábado', 5, 5, 5, 1), -- Dr. Fernandez, Oftalmología, Consultorio ID 5
 ('12:00:00', '16:00:00', 25, 9, 'Lunes,Miércoles,Viernes', 7, 9, 6, 1); -- Dr. Ramirez, Psiquiatría, Consultorio ID 6
 
 -- Pacientes
@@ -170,13 +170,13 @@ INSERT INTO [HCE].[dbo].[ConsultasMedicas] ([Descripcion], [Diagnostico]) VALUES
 
 -- Citas Médicas
 INSERT INTO [HCE].[dbo].[CitasMedicas] 
-([Fecha], [Estado], [CalendarioId], [PacienteId], [ConsultoriosId], [ConsultaMedicaId]) 
+([Fecha], [Estado], [CalendarioId], [PacienteId], [ConsultoriosId], [ConsultaMedicaId], [CopagoId]) 
 VALUES
-('2024-11-02', 'Agendada', 1, '/10cIUdzDO3tytL3Yho9ag==', 1, NULL), -- Bart con Dr. Hibbert
-('2024-11-03', 'Agendada', 2, 'Go7VHi3N4zKeiat5JVD3iA==', 2, NULL), -- Lisa con Dr. Hibbert
+('2024-11-25', 'Agendada', 1, '/10cIUdzDO3tytL3Yho9ag==', 1, NULL, 1), -- Bart con Dr. Hibbert
+('2024-11-25', 'Agendada', 2, 'Go7VHi3N4zKeiat5JVD3iA==', 2, NULL, 3), -- Lisa con Dr. Hibbert
 ('2024-11-04', 'Completada', 3, 'aQULuBr6EuROmP+nxxFh3g==', 3, 1), -- Homer con Dr. Martinez
-('2024-11-05', 'NoAsistida', 4, 'XdyhuZxt25cNLk4Qd3c+6Q==', 4, NULL), -- Marge con Dr. Gomez
-('2024-11-06', 'Cancelada', 5, '/10cIUdzDO3tytL3Yho9ag==', 5, NULL); -- Bart con Dr. Fernandez
+('2024-11-05', 'NoAsistida', 5, 'XdyhuZxt25cNLk4Qd3c+6Q==', 4, NULL, 6), -- Marge con Dr. Gomez
+('2024-11-26', 'Cancelada', 1, '/10cIUdzDO3tytL3Yho9ag==', 5, NULL, 1); -- Bart con Dr. Fernandez
 
 -- Contratos
 INSERT INTO [HCE].[dbo].[Contratos] 

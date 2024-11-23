@@ -16,6 +16,6 @@
 
         public Paciente Paciente { get; set; } = new Paciente();
 
-        public PagoPayPal PagoPayPal { get; set; } = new PagoPayPal();
+        public PagoPayPal? PagoPayPal { get; set; } = new PagoPayPal();
     }
 }
