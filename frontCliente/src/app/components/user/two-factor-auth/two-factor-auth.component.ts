@@ -22,9 +22,11 @@ export class TwoFactorAuthComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    
     // this.generateQrCode();
-    // console.log(this.authService.getClaims());
-    // console.log(this.authService.getTwoFactorEnabledStatus());
+    console.log(this.authService.getClaims());
+    console.log(this.authService.isTwoFactorAuthenticated());
+    console.log(this.authService.getTwoFactorEnabledStatus());
   }
 
   sendQrCodeByEmail(): void {
@@ -50,7 +52,7 @@ export class TwoFactorAuthComponent implements OnInit {
         this.isLoading = false;
         this.authService.setTwoFactorAuthenticated(true); // Actualizar el estado de autenticación 2FA
         this.toastr.success(response.message, 'Éxito');
-        this.router.navigateByUrl('/dashboard');
+        this.router.navigateByUrl('/inicio');
         console.log(this.authService.getTwoFactorEnabledStatus());
       },
       error: (error: any) => {

@@ -66,15 +66,16 @@
                 <div>
                     <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
                     <input
-                        type="text"
-                        id="telefono"
-                        pattern="^[1-9]\d*$"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                        formControlName="telefono"
-                        class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                      type="text"
+                      id="telefono"
+                      pattern="^\d{8,9}$"
+                      formControlName="telefono"
+                      class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                     />
-                    
-                </div>
+                    <p class="text-sm text-red-500 mt-1" *ngIf="pacienteForm.get('telefono')?.hasError('pattern') && pacienteForm.get('telefono')?.touched">
+                      El teléfono debe tener entre 8 y 9 dígitos.
+                    </p>
+                  </div>
                 <div>
                     <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
                     <input
@@ -93,6 +94,21 @@
                         max="{{ maxDate }}"
                         class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                     />
+                </div>
+
+                <div class="mt-1">
+                  <div class="flex items-center">
+                    <label for="dobleFactor" class="text-sm font-medium text-gray-700">Doble Factor de Autenticación</label>
+                    <input
+                      type="checkbox"
+                      id="dobleFactor"
+                      formControlName="dobleFactor"
+                      class="ml-2"
+                    />
+                </div>
+                  <p class="text-sm text-gray-600 mt-1 ml-2">
+                    Habilitar el doble factor de autenticación añade una capa adicional de seguridad a tu cuenta (Google Authenticator).
+                  </p>
                 </div>
             </div>
             <div class="mt-8 flex justify-end gap-4">
