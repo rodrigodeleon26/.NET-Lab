@@ -1,5 +1,6 @@
 ﻿using BL.BLs;
 using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using System.Text;
@@ -19,6 +20,7 @@ public class PaymentsController : ControllerBase
         _blAdministrativo = blAdministrativo;
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("pagos")]
     public IActionResult GetPaypalPagos()
     {
@@ -33,6 +35,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("pagos/{id}")]
     public IActionResult GetPaypalPagoById(long id)
     {
@@ -52,6 +55,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpPost("pagos/add")]
     public IActionResult AddPaypalPago([FromBody] PagoPayPal nuevoPago)
     {
@@ -66,6 +70,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpPost("create")]
     public async Task<IActionResult> CreateOrder([FromBody] PaymentRequest request)
     {
@@ -95,6 +100,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpPost("capture")]
     public async Task<IActionResult> CaptureOrder([FromBody] CaptureRequest request)
     {
@@ -109,6 +115,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("details/{orderId}")]
     public async Task<IActionResult> GetOrderDetails(string orderId)
     {

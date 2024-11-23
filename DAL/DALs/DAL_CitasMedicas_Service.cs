@@ -1,6 +1,7 @@
 ﻿using DAL.IDALs;
 using DAL.Models;
 using iTextSharp.text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shared;
@@ -16,6 +17,16 @@ namespace DAL.DALs
 {
     public class DAL_CitasMedicas_Service : IDAL_CitasMedicas
     {
+        private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public DAL_CitasMedicas_Service(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        {
+            _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
+
+        }
+
         public CitaMedica getCitaMedicaById(long id)
         {
             try
@@ -25,6 +36,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{id}";
 
@@ -57,6 +78,16 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
                 var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{citaActualizada.Id}";
 
                 var citaMedicaJson = JsonConvert.SerializeObject(citaActualizada);
@@ -84,6 +115,17 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
 
                 // Construcción de la URL con parámetros de la cadena de consulta (query string)
                 var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/paciente/{pacienteId}";
@@ -149,6 +191,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return 0;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 // Construcción de la URL con parámetros de la cadena de consulta (query string)
                 var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/cant/{pacienteId}";
@@ -238,6 +290,16 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
                 // Construcción de la URL con parámetros de la cadena de consulta (query string)
                 var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/paciente/{id}/misCitas";
 
@@ -269,6 +331,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return false;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{id}/paciente/{dni}";
 

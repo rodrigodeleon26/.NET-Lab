@@ -1,6 +1,6 @@
 ﻿using Shared;
 
-namespace PacienteWebApi.Extensions
+namespace CitaMedicaWebApi.Extensions
 {
     public static class AppConfigExtensions
     {

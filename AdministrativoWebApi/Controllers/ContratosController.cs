@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,16 +22,18 @@ namespace AdministrativoWebApi.Controllers
 			_logger = logger;
 		}
 
-		// GET: api/<ContratosController>
-		[ProducesResponseType(typeof(List<Contrato>), 200)]
+        // GET: api/<ContratosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Contrato>), 200)]
 		[HttpGet]
 		public IActionResult Get()
 		{
 			return Ok(_blAdministrativo.getContratos());
 		}
 
-		// GET api/<ContratosController>/5
-		[ProducesResponseType(typeof(Contrato), 200)]
+        // GET api/<ContratosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Contrato), 200)]
 		[HttpGet("{id}")]
 		public IActionResult Get(long id)
 		{
@@ -42,8 +45,9 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(contrato);
 		}
 
-		// POST api/<ContratosController>
-		[ProducesResponseType(typeof(Contrato), 201)]
+        // POST api/<ContratosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Contrato), 201)]
 		[HttpPost]
 		public IActionResult Post([FromBody] Contrato contrato)
 		{
@@ -56,8 +60,9 @@ namespace AdministrativoWebApi.Controllers
 			return CreatedAtAction(nameof(Get), new { id = contrato.Id }, contrato);
 		}
 
-		// PUT api/<ContratosController>/5
-		[HttpPut("{id}")]
+        // PUT api/<ContratosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPut("{id}")]
 		public IActionResult Put(long id, [FromBody] Contrato contrato)
 		{
 			if (contrato == null || contrato.Id != id)
@@ -75,8 +80,9 @@ namespace AdministrativoWebApi.Controllers
 			return NoContent();
 		}
 
-		// DELETE api/<ContratosController>/5
-		[HttpDelete("{id}")]
+        // DELETE api/<ContratosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpDelete("{id}")]
 		public IActionResult Delete(long id)
 		{
 			var contrato = _blAdministrativo.getContratoById(id);
@@ -91,6 +97,7 @@ namespace AdministrativoWebApi.Controllers
 
 
         // POST api/<ContratosController>/contratar-seguro
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPost("/contratar-seguro")]
 		public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
 		{
@@ -113,6 +120,7 @@ namespace AdministrativoWebApi.Controllers
 		}
 
         // POST api/<ContratosController>/activar-contrato
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPost("/activar-contrato")]
 		public IActionResult ActivarContrato([FromBody] long idContrato)
         {
@@ -127,6 +135,7 @@ namespace AdministrativoWebApi.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Contrato>), 200)]
         [ProducesResponseType(204)]
         [HttpGet("filtradosPaginados")]

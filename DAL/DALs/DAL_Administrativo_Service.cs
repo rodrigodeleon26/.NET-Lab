@@ -21,10 +21,13 @@ namespace DAL.DALs
     public class DAL_Administrativo_Service : IDAL_Administrativo
     {
         private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DAL_Administrativo_Service(HttpClient httpClient)
+        public DAL_Administrativo_Service(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
+
         }
 
         public Paciente GetPacienteById(long id)
@@ -36,6 +39,17 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/{id}";
 
@@ -69,6 +83,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/dni/{dni}";
 
@@ -112,6 +136,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/{paciente.Id}";
 
@@ -158,6 +192,16 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
                 var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones";
 
                 var queryParams = new List<string>
@@ -197,6 +241,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return 0;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones/count";
 
@@ -564,6 +618,16 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
                 var url = $"https://administrativowebapi:8081/api/Pacientes/{pacienteId}/historialFacturacion";
 
                 var queryParams = new List<string>
@@ -603,6 +667,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return 0;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/historialFacturacion/count";
 

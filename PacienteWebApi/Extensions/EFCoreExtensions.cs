@@ -6,7 +6,7 @@ using BL.BLs;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
-namespace AuthWebApi.Extensions
+namespace PacienteWebApi.Extensions
 {
     public static class EFCoreExtensions
     {

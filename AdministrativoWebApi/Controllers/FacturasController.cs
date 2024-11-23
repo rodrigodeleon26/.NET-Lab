@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -18,6 +19,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<FacturasController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Factura>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -26,6 +28,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<FacturasController>/pagina/1
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Factura>), 200)]
         [HttpGet("pagina/{pag}")]
         public IActionResult GetFacturasPaginadas(
@@ -39,6 +42,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<FacturasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Factura), 200)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -52,6 +56,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<FacturasController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Factura), 201)]
         [HttpPost]
         public IActionResult Post([FromBody] Factura factura)
@@ -66,6 +71,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<FacturasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] Factura factura)
         {
@@ -85,6 +91,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // DELETE api/<FacturasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
@@ -98,6 +105,7 @@ namespace AdministrativoWebApi.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Medico")]
         [HttpGet("pdf/{id}")]
         public IActionResult GetFacturaPdf(long id)
         {
@@ -119,6 +127,7 @@ namespace AdministrativoWebApi.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPost("pdf/lista")]
         public IActionResult GetMultipleFacturasPdf([FromBody] List<long> ids)
         {

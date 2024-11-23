@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Shared;
@@ -21,6 +22,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<PreciosController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Precio>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -29,6 +31,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<PreciosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Precio), 200)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -42,6 +45,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<PreciosController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Precio), 201)]
         [HttpPost]
         public IActionResult Post([FromBody] Precio precio)
@@ -58,6 +62,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<PreciosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] Precio precio)
         {
@@ -77,6 +82,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // DELETE api/<PreciosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {

@@ -1,6 +1,7 @@
 ﻿using BL.BLs;
 using BL.IBLs;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
@@ -24,16 +25,18 @@ namespace AdministrativoWebApi.Controllers
 			_logger = logger;
 		}
 
-		// GET: api/<CalendariosController>
-		[ProducesResponseType(typeof(List<Calendario>), 200)]
+        // GET: api/<CalendariosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Calendario>), 200)]
 		[HttpGet]
 		public IActionResult Get()
 		{
 			return Ok(_blAdministrativo.getCalendarios());
 		}
 
-		// GET api/<CalendariosController>/5
-		[ProducesResponseType(typeof(Calendario), 200)]
+        // GET api/<CalendariosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Calendario), 200)]
 		[HttpGet("{id}")]
 		public IActionResult Get(long id)
 		{
@@ -45,8 +48,9 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(calendario);
 		}
 
-		// POST api/<CalendariosController>
-		[ProducesResponseType(typeof(Calendario), 201)]
+        // POST api/<CalendariosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Calendario), 201)]
 		[HttpPost]
 		public IActionResult Post([FromBody] Calendario calendario)
 		{
@@ -60,8 +64,9 @@ namespace AdministrativoWebApi.Controllers
 			return CreatedAtAction(nameof(Get), new { id = calendario.Id }, calendario);
 		}
 
-		// PUT api/<CalendariosController>/5
-		[HttpPut("{id}")]
+        // PUT api/<CalendariosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPut("{id}")]
 		public IActionResult Put(long id, [FromBody] Calendario calendario)
 		{
 			if (calendario == null || calendario.Id != id)
@@ -79,8 +84,9 @@ namespace AdministrativoWebApi.Controllers
 			return NoContent();
 		}
 
-		// DELETE api/<CalendariosController>/5
-		[HttpDelete("{id}")]
+        // DELETE api/<CalendariosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpDelete("{id}")]
 		public IActionResult Delete(long id)
 		{
 			var calendario = _blAdministrativo.getCalendarioById(id);
@@ -93,8 +99,9 @@ namespace AdministrativoWebApi.Controllers
 			return NoContent();
 		}
 
-		// POST api/<CalendariosController>/crearCalendario
-		[HttpPost("crearCalendario")]
+        // POST api/<CalendariosController>/crearCalendario
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPost("crearCalendario")]
 		public IActionResult crearCalendario([FromBody] Request_CrearCalendario request)
 		{
 			long medId = request.MedicoId;
@@ -116,15 +123,17 @@ namespace AdministrativoWebApi.Controllers
 			return NoContent();
 		}
 
-		// GET api/<CalendariosController>/medico/5
-		[HttpGet("medico/{id}")]
+        // GET api/<CalendariosController>/medico/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpGet("medico/{id}")]
 		public IActionResult GetCalendariosMedico(long id)
 		{
 			return Ok(_blAdministrativo.getCalendarios().Where(c => c.Medico.Id == id));
 		}
 
-		// POST api/<CalendariosController>/checkOcupacionConsultorio
-		[HttpPost("checkOcupacionConsultorio")]
+        // POST api/<CalendariosController>/checkOcupacionConsultorio
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPost("checkOcupacionConsultorio")]
 		public IActionResult checkOcupacionConsultorio([FromBody] Calendario calendario)
 		{
 			if (calendario == null)
@@ -137,8 +146,9 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(ocupado);
 		}
 
-		// POST api/<CalendariosController>/validarEspecialidadesParaBorrar/5
-		[HttpPost("validarEspecialidadesParaBorrar/{medicoId}")]
+        // POST api/<CalendariosController>/validarEspecialidadesParaBorrar/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPost("validarEspecialidadesParaBorrar/{medicoId}")]
 		public IActionResult validarEspecialidadesParaBorrar(long medicoId, [FromBody] List<Especialidad> especialidades)
 		{
 			bool valido = _blAdministrativo.validarEspecialidadesParaBorrar(medicoId, especialidades);
@@ -147,6 +157,7 @@ namespace AdministrativoWebApi.Controllers
 		}
 
         // POST api/<CalendariosController>/borrarCalendariosIncompatibles/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPost("borrarCalendariosIncompatibles/{medicoId}")]
 		public async Task<IActionResult> borrarCalendariosIncompatiblesAsync(long medicoId, [FromBody] List<Especialidad> especialidades)
 		{
@@ -157,6 +168,7 @@ namespace AdministrativoWebApi.Controllers
         //    return this.http.post<any>(`${this.apiUrl}/filtrarCalendarios/${medicoId}`, filtros);
 
         // POST api/<CalendariosController>/filtrarCalendarios/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPost("filtrarCalendarios/{medicoId}")]
         [ProducesResponseType(typeof(List<Calendario>), 200)]
         public IActionResult filtrarCalendarios(long medicoId, [FromBody] String[] filtros)

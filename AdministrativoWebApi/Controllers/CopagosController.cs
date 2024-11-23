@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -17,16 +18,18 @@ namespace AdministrativoWebApi.Controllers
 			_blAdministrativo = blAdministrativo;
 		}
 
-		// GET: api/<CopagosController>
-		[ProducesResponseType(typeof(List<Copago>), 200)]
+        // GET: api/<CopagosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Copago>), 200)]
 		[HttpGet]
 		public IActionResult Get()
 		{
 			return Ok(_blAdministrativo.getCopagos());
 		}
 
-		// GET api/<CopagosController>/5
-		[ProducesResponseType(typeof(Copago), 200)]
+        // GET api/<CopagosController>/5	
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Copago), 200)]
 		[HttpGet("{id}")]
 		public IActionResult Get(long id)
 		{
@@ -38,8 +41,9 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(copago);
 		}
 
-		// POST api/<CopagosController>
-		[ProducesResponseType(typeof(Copago), 201)]
+        // POST api/<CopagosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Copago), 201)]
 		[HttpPost]
 		public IActionResult Post([FromBody] Copago copago)
 		{
@@ -52,8 +56,9 @@ namespace AdministrativoWebApi.Controllers
 			return CreatedAtAction(nameof(Get), new { id = copago.Id }, copago);
 		}
 
-		// PUT api/<CopagosController>/5
-		[HttpPut("{id}")]
+        // PUT api/<CopagosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPut("{id}")]
 		public IActionResult Put(long id, [FromBody] Copago copago)
         {
             if (copago == null || copago.Id != id)
@@ -71,8 +76,9 @@ namespace AdministrativoWebApi.Controllers
             return Ok(copago);
         }
 
-		// DELETE api/<CopagosController>/5
-		[HttpDelete("{id}")]
+        // DELETE api/<CopagosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpDelete("{id}")]
 		public IActionResult Delete(long id)
         {
             var precio = _blAdministrativo.getCopagoById(id);
