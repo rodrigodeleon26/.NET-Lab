@@ -183,6 +183,11 @@ namespace BL.BLs
 			}
 		}
 
+		public bool puedeRenovarContrato(long id)
+		{
+			return dal.puedeRenovarContrato(id);
+		}
+
 		//public void activarContrato(long id)
 		//{
 		//	dal.activarContrato

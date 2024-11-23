@@ -196,7 +196,7 @@ namespace AdministrativoWebApi.Controllers
                     Fecha = DateTime.UtcNow,
                     Monto = precio.PrecioBase,
                     Pago = false,
-                    Descripcion = "Pago de seguro médico, cuota inicial",
+                    Descripcion = "Cuota inicial: Pago de seguro medico",
                     Paciente = nuevoPaciente
                 };
                 _blAdministrativo.addFactura(factura);

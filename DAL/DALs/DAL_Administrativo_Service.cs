@@ -537,6 +537,11 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public bool puedeRenovarContrato(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
         {
             throw new NotImplementedException();

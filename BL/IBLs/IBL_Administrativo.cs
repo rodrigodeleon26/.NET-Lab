@@ -41,6 +41,7 @@ namespace BL.IBLs
 		void deleteContrato(long id);
 		//void activarContrato(long id);
 		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro);
+		public bool puedeRenovarContrato(long id);
 
         // Precios
         List<Precio> getPrecios();

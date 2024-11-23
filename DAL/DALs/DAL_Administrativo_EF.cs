@@ -599,6 +599,27 @@ namespace DAL.DALs
             }
         }
 
+        public bool puedeRenovarContrato(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var facturas = _dbContext.Facturas
+                    .Where(f => f.Paciente.Contrato.Id == id &&
+                                f.Descripcion != null &&
+                                f.Descripcion.StartsWith("Mensualidad de seguro médico"))
+                    .ToList();
+
+                foreach (var factura in facturas)
+                {
+                    if (!factura.Pago)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
         #endregion
 
 

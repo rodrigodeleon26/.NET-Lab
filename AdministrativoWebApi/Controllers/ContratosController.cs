@@ -141,6 +141,11 @@ namespace AdministrativoWebApi.Controllers
                 return BadRequest("El contrato ya está activo");
             }
 
+			if (_blAdministrativo.puedeRenovarContrato(id) == false)
+			{
+				return BadRequest("El contrato no puede ser activado, hay pagos pendientes");
+			}
+
             contrato.Activo = true;
             contrato.FechaInicio = DateTime.Now;
             _blAdministrativo.updateContrato(contrato);
@@ -161,7 +166,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
 
-		[HttpPost("cambiar-contrato")]
+		[HttpPost("cambiarContrato")]
 		public IActionResult CambiarContrato([FromBody] Request_CambiarContrato request)
 		{
 			// Validar la existencia del contrato actual
