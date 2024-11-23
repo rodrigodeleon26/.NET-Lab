@@ -93,6 +93,16 @@ namespace BL.BLs
 			return dal.CountNotificaciones(id);
 		}
 
+		public List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize)
+		{
+			return dal.getHistorialFacturacion(id, pageNumber, pageSize);
+		}
+
+		public int countFacturas(long id)
+		{
+			return dal.countFacturas(id);
+		}
+
         #endregion
 
         //Seguros Medicos

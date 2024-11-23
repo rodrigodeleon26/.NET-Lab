@@ -2,6 +2,7 @@
 using DAL.IDALs;
 using Shared;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace BL.BLs
 {
@@ -122,6 +123,15 @@ namespace BL.BLs
         public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
             return dal.CountCitasMedicasByPacienteId(pacienteId, fechaInicio, fechaFin, orden, especialidadesIds);
+        }
+
+        public List<CitaMedica> GetCitasMedicasAgendadas(long id)
+        {
+            return dal.GetCitasMedicasAgendadasDelPaciente(id);
+        }
+        public bool CancelarCita(string dni, long id)
+        {
+            return dal.CancelarCita(dni, id);
         }
     }
 }

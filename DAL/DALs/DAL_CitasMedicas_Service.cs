@@ -1,4 +1,5 @@
 ﻿using DAL.IDALs;
+using DAL.Models;
 using iTextSharp.text;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -225,6 +226,67 @@ namespace DAL.DALs
         public void deleteCitaMedica(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public List<CitaMedica> GetCitasMedicasAgendadasDelPaciente(long id)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                // Construcción de la URL con parámetros de la cadena de consulta (query string)
+                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/paciente/{id}/misCitas";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<List<CitaMedica>>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las citas médicas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener paciente: {ex.Message}");
+                return null;
+            }
+        }
+
+        public bool CancelarCita(string dni, long id)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{id}/paciente/{dni}";
+
+                var response = _httpClient.DeleteAsync(url).Result;
+                if (response.IsSuccessStatusCode) {
+                    Console.WriteLine("Cita cancelada con éxito");
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("Error al cancelar la cita médica");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cancelar la cita médica: {ex.Message}");
+                return false;
+            }
         }
     }
 }

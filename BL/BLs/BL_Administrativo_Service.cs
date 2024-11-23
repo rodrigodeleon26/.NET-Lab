@@ -510,5 +510,15 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+
+        public List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int countFacturas(long id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

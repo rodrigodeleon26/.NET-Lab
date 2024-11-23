@@ -84,8 +84,17 @@ export class MisDatosComponent implements OnInit {
         this.toastr.success('Datos actualizados correctamente.');
       },
       (error) => {
-        this.loading = false;
-        this.toastr.error('Ocurrió un error al actualizar los datos.');
+        if (
+          error.error?.includes("No puedes actualizar la informacion de otro paciente") ||
+          error.message?.includes("No puedes actualizar la informacion de otro paciente")
+        ) {
+          // Redirige a la ruta de inicio.
+          this.toastr.error('No puedes actualizar la informacion de otro paciente', 'Error');
+          this.router.navigate(['/inicio']);
+        } else {
+          this.loading = false;
+          this.toastr.error('Ocurrió un error al actualizar los datos.');
+        }
       }
     );
   }

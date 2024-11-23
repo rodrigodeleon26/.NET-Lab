@@ -304,6 +304,36 @@ namespace DAL.DALs
 			}
 		}
 
+		public List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Facturas
+					.Where(f => f.PacienteId == id && f.Pago == true)
+					.OrderByDescending(f => f.Fecha)
+					.Skip((pageNumber - 1) * pageSize)
+					.Take(pageSize)
+					.Select(f => new Factura
+					{
+						Id = f.Id,
+						Fecha = f.Fecha,
+						FechaPago = f.FechaPago,
+						Monto = f.Monto,
+						Pago = f.Pago,
+						Descripcion = f.Descripcion,
+					})
+					.ToList();
+			}
+		}
+
+		public int countFacturas(long id)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Facturas.Count(f => f.PacienteId == id);
+			}
+		}
+
             #endregion
 
 

@@ -57,4 +57,23 @@ export class PacienteService {
     const url = `${this.apiUrl}/${id}/notificaciones`;
     return this.http.put<any>(url, null);
   }
+
+  obtenerCitas(cedula: string): Observable<any> {
+    const url = `${this.apiUrl}/${cedula}/misCitas`;
+    return this.http.get<any>(url);
+  }
+  cancelarCita(cedula: string, citaId: number): Observable<any> {
+    const url = `${this.apiUrl}/${cedula}/citas/${citaId}/cancelarCita`;
+    console.log('Cancelar cita:', url);
+    return this.http.delete<any>(url);
+  }
+
+  obtenerHistorialFacturas(documento: string, pageNumber: number, pageSize: number): Observable<any> {
+    const url = `${this.apiUrl}/${documento}/historialFacturacion`;
+    let params = new HttpParams()
+        .set('pageNumber', pageNumber.toString())
+        .set('pageSize', pageSize.toString());
+
+    return this.http.get<any>(url, { params });
+  }
 }

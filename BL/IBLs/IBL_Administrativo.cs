@@ -25,6 +25,8 @@ namespace BL.IBLs
 		public bool cedulaDuplicada(string cedula);
         List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize);
 		int CountNotificaciones(long id);
+		List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize);
+		int countFacturas(long id);
 
         // Seguros Medicos
         List<SeguroMedico> getSegurosMedicos();

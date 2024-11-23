@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,5 +29,11 @@ namespace BL.IBLs
         object getNotificaciones(string dni, int pageNumber, int pageSize);
 
         bool notificacionVista(long idNotificacion);
+
+        List<CitaMedica> getMisCitas(string documento);
+
+        bool CancelarCita(string dni, long id);
+
+        object getHistorialFacturacion(string dni, int pageNumber, int pageSize);
     }
 }

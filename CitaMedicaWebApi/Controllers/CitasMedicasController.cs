@@ -161,5 +161,34 @@ namespace PacienteWebApi.Controllers
             return Ok(_blCitasMedicas.CountCitasMedicasByPacienteId(idPaciente, fechaInicio, fechaFin, orden, especialidadesList));
         }
 
+        //OBTENER CITAS AGENDADAS DEL PACIENTE 
+        //GET api/<CitasMedicasController>/paciente/[id]
+        [ProducesResponseType(typeof(List<CitaMedica>), 200)]
+        [HttpGet("paciente/{id}/misCitas")]
+        public IActionResult GetCitasMedicasAgendadas(long id)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_blCitasMedicas.GetCitasMedicasAgendadas(id));
+        }
+
+        //Cancelar cita
+        //DELETE api/<CitasMedicasController>/[idCita]/paciente[documento]
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(404)]
+        [HttpDelete("{id}/paciente/{documento}")]
+        public IActionResult CancelarCita(string documento, long id)
+        {
+            var citaExistente = _blCitasMedicas.getCitaMedicaById(id);
+            if (citaExistente == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_blCitasMedicas.CancelarCita(documento, id));
+        }
+
     }
 }

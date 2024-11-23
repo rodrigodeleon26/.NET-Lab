@@ -1,0 +1,109 @@
+<div class="container mx-auto px-2 md:px-4 mt-4 md:mt-12">
+    <!-- Loader -->
+    <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white text-lg">Cargando...</p>
+    </div>
+    <div class="bg-gray-claro rounded-lg shadow-md max-w-6xl mx-auto overflow-hidden">
+        <div class="bg-blue-oscuro p-6 text-white">
+            <h1 class="text-3xl font-bold text-center">Historial de facturación</h1>
+        </div>
+        <div *ngIf="facturas && facturas.length > 0" class="hidden md:block p-2 md:p-5">
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="py-2 text-center font-semibold w-1/5 border-b border-gray-300">Fecha</th>
+                            <th class="py-2 text-center font-semibold w-1/5 border-b border-gray-300">Fecha de pago</th>
+                            <th class="py-2 text-center font-semibold w-1/5 border-b border-gray-300">Monto</th>
+                            <th class="py-2 text-center font-semibold w-2/5 border-b border-gray-300">Descripcion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let factura of facturas" class="text-center">
+                            <td class="py-2 border-b border-gray-300 w-1/5">{{ factura.fecha | date: 'dd/MM/yyyy' }}</td>
+                            <td class="py-2 border-b border-gray-300 w-1/5">{{ factura.fechaPago | date: 'dd/MM/yyyy' }}</td>
+                            <td class="py-2 border-b border-gray-300 w-1/5">{{ factura.monto }}</td>
+                            <td class="py-2 border-b border-gray-300 w-2/5">{{ factura.descripcion }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div *ngIf="totalPages > 1" class="text-center space-x-5 mt-5">
+                    <!-- Botón de Inicio -->
+                    <button 
+                        (click)="changePage(1)" 
+                        [disabled]="pageNumber === 1"
+                        [ngClass]="{
+                            'text-gray-400 cursor-not-allowed': pageNumber === 1,
+                            'text-black': pageNumber !== 1
+                        }"
+                    >
+                        <strong><<</strong>
+                    </button>
+                    
+                    <!-- Botón de Anterior -->
+                    <button 
+                        (click)="changePage(pageNumber - 1)" 
+                        [disabled]="pageNumber === 1"
+                        [ngClass]="{
+                            'text-gray-400 cursor-not-allowed': pageNumber === 1,
+                            'text-black': pageNumber !== 1
+                        }"
+                    >
+                        <strong><</strong>
+                    </button>
+                    
+                    <!-- Información de la página actual -->
+                    <span *ngFor="let page of pages" (click)="changePage(page)">
+                        <button 
+                        [disabled]="page === pageNumber" 
+                        [ngClass]="{
+                            'font-bold underline': page === pageNumber,
+                            'text-black': page !== pageNumber
+                        }"
+                        >
+                        {{ page }}
+                        </button>
+                    </span>
+                    
+                    <!-- Botón de Siguiente -->
+                    <button 
+                        (click)="changePage(pageNumber + 1)" 
+                        [disabled]="pageNumber === totalPages"
+                        [ngClass]="{
+                        'text-gray-500 cursor-not-allowed': pageNumber === totalPages,
+                        'text-black': pageNumber !== totalPages
+                        }"
+                    >
+                        <strong>></strong>
+                    </button>
+                    
+                    <!-- Botón de Fin -->
+                    <button 
+                        (click)="changePage(totalPages)" 
+                        [disabled]="pageNumber === totalPages"
+                        [ngClass]="{
+                            'text-gray-500 cursor-not-allowed': pageNumber === totalPages,
+                            'text-black': pageNumber !== totalPages
+                        }"
+                    >
+                        <strong>>></strong>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="facturas && facturas.length > 0" class="block md:hidden p-2">
+            <div *ngFor="let factura of facturas" class="bg-white rounded-md shadow-md mb-4 p-4 relative">
+                <p class="font-semibold text-gray-700">Fecha: <span class="font-normal">{{ factura.fecha | date: 'dd/MM/yyyy' }}</span></p>
+                <p class="font-semibold text-gray-700">Fecha de pago: <span class="font-normal">{{ factura.fechaPago | date: 'dd/MM/yyyy' }}</span></p>
+                <p class="font-semibold text-gray-700">Monto: <span class="font-normal">{{ factura.monto }}</span></p>
+                <p class="font-semibold text-gray-700">Descripción:  <span class="font-normal">{{ factura.descripcion }}</span></p>
+            </div>
+        </div>
+        <div *ngIf="facturas && facturas.length === 0" class="p-5">
+            <p class="text-center text-lg font-semibold">
+                No tienes citas agendadas.
+            </p>
+        </div>
+    </div>
+</div>

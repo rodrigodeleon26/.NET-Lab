@@ -32,5 +32,7 @@ namespace BL.IBLs
 
         List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
         int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
+        List<CitaMedica> GetCitasMedicasAgendadas(long id);
+        bool CancelarCita(string documento, long id);
     }
 }

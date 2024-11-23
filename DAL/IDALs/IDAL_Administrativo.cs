@@ -24,6 +24,8 @@ namespace DAL.IDALs
 		public int CountNotificaciones(long id);
         public bool cedulaDuplicada(string cedula);
         public bool emailDuplicado(string email);
+		List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize);
+		public int countFacturas(long id);
 
         // Seguros Medicos
         public List<SeguroMedico> GetSegurosMedicos();

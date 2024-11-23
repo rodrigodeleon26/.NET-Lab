@@ -2,7 +2,9 @@
 using DAL.DALs;
 using DAL.IDALs;
 using DAL.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Shared;
+using System.Net;
 
 namespace BL.BLs
 {
@@ -75,18 +77,17 @@ namespace BL.BLs
 
         public object GetHistoriaClinica(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
+            if (string.IsNullOrEmpty(dni))
+            {
+                return null;
+            }
             var paciente = dalAdministrativo.GetPacienteByDNI(dni);
             if (paciente == null)
             {
                 return null;
             }
 
-            Console.WriteLine($"Paciente encontrado: {paciente.Nombres} {paciente.Apellidos}");
-            Console.WriteLine($"Especialidades: {string.Join(", ", especialidadesIds)}");
-
             var citasMedicas = dalCitasMedicas.GetCitasMedicasByPacienteId(paciente.Id, pageNumber, pageSize, fechaInicio, fechaFin, orden, especialidadesIds);
-
-            Console.WriteLine($"Número de citas encontradas: {citasMedicas.Count}");
 
             List<ConsultaMedicaConCitaDTO> consultasMedicasConCitas = new List<ConsultaMedicaConCitaDTO>();
             foreach (var cita in citasMedicas)
@@ -99,7 +100,7 @@ namespace BL.BLs
                     CitaMedica = cita
                 });
             }
-            // Para obtener el total de citas, útil para calcular el número total de páginas
+
             int totalCitas = dalCitasMedicas.CountCitasMedicasByPacienteId(paciente.Id, fechaInicio, fechaFin, orden, especialidadesIds);
 
             return new
@@ -140,12 +141,54 @@ namespace BL.BLs
 
         public bool notificacionVista(long idNotificacion)
         {
-            Console.WriteLine($"Notificacion vista PBL: {idNotificacion}");
             if (idNotificacion == 0 || idNotificacion == null)
             {
                 return false;
             }
             return dal.notificacionVista(idNotificacion);
+        }
+
+        public List<CitaMedica> getMisCitas(string documento)
+        {
+            if (string.IsNullOrEmpty(documento))
+            {
+                return null;
+            }
+
+            Paciente paciente = dalAdministrativo.GetPacienteByDNI(documento);
+
+            return dalCitasMedicas.GetCitasMedicasAgendadasDelPaciente(paciente.Id);
+        }
+
+        public bool CancelarCita(string dni, long id)
+        {
+            return dalCitasMedicas.CancelarCita(dni, id);
+        }
+
+        public object getHistorialFacturacion(string dni, int pageNumber, int pageSize)
+        {
+            if (string.IsNullOrEmpty(dni))
+            {
+                return null;
+            }
+            Paciente paciente = dalAdministrativo.GetPacienteByDNI(dni);
+            if (paciente == null)
+            {
+                return null;
+            }
+
+            List<Factura> facturas = dalAdministrativo.getHistorialFacturacion(paciente.Id, pageNumber, pageSize);
+
+            int totalFacturas = dalAdministrativo.countFacturas(paciente.Id);
+
+            return new
+            {
+                facturas = facturas,
+                totalItems = totalFacturas,
+                pageNumber = pageNumber,
+                pageSize = pageSize,
+                totalPages = (int)Math.Ceiling((double)totalFacturas / pageSize)
+            };
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using DAL.IDALs;
+using DAL.Models;
+using iTextSharp.text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -550,6 +552,77 @@ namespace DAL.DALs
         public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
         {
             throw new NotImplementedException();
+        }
+
+        public List<Factura> getHistorialFacturacion(long pacienteId, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{pacienteId}/historialFacturacion";
+
+                var queryParams = new List<string>
+                {
+                    $"pageNumber={pageNumber}",
+                    $"pageSize={pageSize}"
+                };
+
+                var queryString = string.Join("&", queryParams);
+                var fullUrl = $"{url}?{queryString}";
+
+                var response = _httpClient.GetAsync(fullUrl).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<List<Factura>>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las facturas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las facturas: {ex.Message}");
+                return null;
+            }
+        }
+
+        public int countFacturas(long id)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/historialFacturacion/count";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<int>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las facturas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las facturas: {ex.Message}");
+                return 0;
+            }
         }
 
         public IEnumerable<Contrato> GetContratosActivos()

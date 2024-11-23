@@ -3,6 +3,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { ConsultaMedicaService } from '../../../services/consulta-medica.service';
 import { PacienteService } from '../../../services/paciente.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-historia-clinica',
@@ -49,7 +50,8 @@ export class HistoriaClinicaComponent implements OnInit {
     private route: ActivatedRoute,
     private consultaMedicaService: ConsultaMedicaService,
     private pacienteService: PacienteService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) { 
     const navigation = this.router.getCurrentNavigation();
     this.cedula = navigation?.extras.state?.['cedula'] || '';
@@ -68,7 +70,7 @@ export class HistoriaClinicaComponent implements OnInit {
     this.getEspecialidades().then(() => {
       this.obtenerHistoriaClinica();
     }).catch(error => {
-      console.error('Error al obtener especialidades', error);
+      this.toastr.error('Error al obtener la historia clinica', 'Error');
     });
   }
 
@@ -77,7 +79,6 @@ export class HistoriaClinicaComponent implements OnInit {
     this.pacienteService.obtenerMiHistoriaClinica(this.cedula, this.pageNumber, this.pageSize, this.orden, this.fechaInicio, this.fechaFin, this.especialidades)
       .subscribe(
         response => {
-          console.log(response);
           this.paciente = response.paciente;
           this.historiaClinica = response.consultasMedicasConCitas;
           this.totalPages = Math.ceil(response.totalItems / this.pageSize);  
@@ -91,10 +92,11 @@ export class HistoriaClinicaComponent implements OnInit {
             error.message?.includes("No puedes acceder a la historia clínica de otro paciente.")
           ) {
             // Redirige a la ruta de inicio.
+            this.toastr.error('No puedes acceder a la historia clínica de otro paciente.', 'Error');
             this.router.navigate(['/inicio']);
-          } else {
-            // Manejo de otros errores (opcional).
-            console.error("Ocurrió un error inesperado:", error);
+          } else {          
+            this.loading = false;
+            this.toastr.error(error.message, 'Error al cancelar la cita');
           }
         }
       );

@@ -27,5 +27,7 @@ namespace DAL.IDALs
 
         List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
         int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
+        List<CitaMedica> GetCitasMedicasAgendadasDelPaciente(long id);
+        bool CancelarCita(string dni, long id);
     }
 }

@@ -53,7 +53,7 @@ namespace PacienteWebApi.Controllers
 
             if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
             {
-                return Forbid("No puedes ver la informacion de otro usuario");
+                return Forbid("No puedes actualizar la informacion de otro paciente");
             }
 
             _blPacientes.actualizarDatos(paciente);
@@ -69,7 +69,14 @@ namespace PacienteWebApi.Controllers
         [HttpGet("{dni}/miHistoriaClinica")]
         public IActionResult Get(string dni, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, string especialidades)
         {
-            // Extraer el dni del token del usuario autenticado
+            if (dni == null)
+            {
+                return BadRequest();
+            }
+            if (pageNumber < 1 || pageSize < 1 || pageNumber == null || pageSize == null)
+            {
+                return BadRequest();
+            }
             var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
 
             if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
@@ -100,6 +107,15 @@ namespace PacienteWebApi.Controllers
         [HttpGet("{dni}/notificaciones")]
         public IActionResult Get(string dni, int pageNumber, int pageSize)
         {
+            if (dni == null)
+            {
+                return BadRequest();
+            }
+            if (pageNumber < 1 || pageSize < 1 || pageNumber == null || pageSize == null)
+            {
+                return BadRequest();
+            }
+
             var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
 
             if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
@@ -117,7 +133,6 @@ namespace PacienteWebApi.Controllers
         [HttpPut("{id}/notificaciones")]
         public IActionResult Put(long id)
         {
-            Console.WriteLine($"Notificacion vista PController: {id}");
             if (id == null)
             {
                 return BadRequest();
@@ -125,5 +140,75 @@ namespace PacienteWebApi.Controllers
             return Ok(_blPacientes.notificacionVista(id));
         }
 
+        //GET: api/<PacientesController>/54321987/misCitas
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(List<CitaMedica>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(403)]
+        [HttpGet("{dni}/misCitas")]
+        public IActionResult GetCitas(string dni)
+        {
+            if (dni == null)
+            {
+                return BadRequest();
+            }
+            // Extraer el dni del token del usuario autenticado
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
+            {
+                return Forbid("No puedes acceder a las citas de otro paciente.");
+            }
+
+           return Ok(_blPacientes.getMisCitas(dni));
+        }
+
+        //DELETE: api/<PacientesController>/1234567/citas/5/cancelar
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(403)]
+        [HttpDelete("{dni}/citas/{id}/cancelarCita")]
+        public IActionResult CancelarCita(string dni, long id)
+        {
+            if (dni == null || id == null)
+            {
+                return BadRequest();
+            }
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
+            {
+                return Forbid("No puedes cancelar cita de otro paciente.");
+            }
+
+            return Ok(_blPacientes.CancelarCita(dni, id));
+        }
+
+        //GET: api/<PacientesController>/54321987/historialFacturacion
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(403)]
+        [HttpGet("{dni}/historialFacturacion")]
+        public IActionResult GetFacturas(string dni, int pageNumber, int pageSize)
+        {
+            if (dni == null)
+            {
+                return BadRequest();
+            }
+            if (pageNumber < 1 || pageSize < 1 || pageNumber == null || pageSize == null)
+            {
+                return BadRequest();
+            }
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != dni)
+            {
+                return Forbid("No puedes acceder al historial de facturación de otro paciente.");
+            }
+
+            return Ok(_blPacientes.getHistorialFacturacion(dni, pageNumber, pageSize));
+        }
     }
 }

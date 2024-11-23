@@ -360,5 +360,84 @@ namespace DAL.DALs
                 return query.Count();
             }
         }
+
+        public List<CitaMedica> GetCitasMedicasAgendadasDelPaciente(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                Pacientes paciente = _dbContext.Pacientes.FirstOrDefault(p => p.Id == id);
+
+                if (paciente == null)
+                {
+                    return new List<CitaMedica>();
+                }
+                else
+                {
+                    string idEncriptada = AES.Encrypt(paciente.Id.ToString());
+                    var citas = _dbContext.CitasMedicas
+                        .Where(c => c.PacienteId == idEncriptada && c.Estado == "Agendada" && c.Fecha >= DateTime.Today)
+                        .OrderBy(c => c.Fecha);
+
+                    return citas.Select(c => new CitaMedica
+                    {
+                        Id = c.Id,
+                        Fecha = c.Fecha,
+                        Estado = c.Estado,
+                        Calendario = new Calendario
+                        {
+                            Medico = new Medico
+                            {
+                                Id = c.Calendario.Medico.Id,
+                                Nombres = c.Calendario.Medico.Nombres,
+                                Apellidos = c.Calendario.Medico.Apellidos,
+                                Documento = c.Calendario.Medico.Documento,
+                                Email = c.Calendario.Medico.Email,
+                                Telefono = c.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Calendario.Especialidad.Id,
+                                Nombre = c.Calendario.Especialidad.Nombre,
+                                Descripcion = c.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = c.Calendario.Consultorio.Id,
+                                Numero = c.Calendario.Consultorio.Numero,
+                                Piso = c.Calendario.Consultorio.Piso
+                            }
+                        }
+                    }).ToList();
+                }
+
+            }
+        }
+
+        public bool CancelarCita(string documento, long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                Pacientes paciente = _dbContext.Pacientes.FirstOrDefault(p => p.Documento == documento);
+
+                if (paciente == null)
+                {
+                    throw new Exception("No se encontró el paciente.");
+                }
+
+                string idEncriptada = AES.Encrypt(paciente.Id.ToString());
+
+                var cita = _dbContext.CitasMedicas.FirstOrDefault(c => c.Id == id && c.PacienteId == idEncriptada);
+
+                if (cita == null)
+                {
+                    throw new Exception("No se encontró la cita médica.");
+                }
+
+                _dbContext.CitasMedicas.Remove(cita);
+                _dbContext.SaveChanges();
+
+                return true;
+            }
+        }
     }
 }

@@ -397,5 +397,33 @@ namespace AdministrativoWebApi.Controllers
 			}
 			return Ok(_blAdministrativo.CountNotificaciones(id));
 		}
+
+        //GET api/<PacienteController>/5/historialFacturacion
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("{id}/historialFacturacion")]
+        public IActionResult GetHistorialFacturacion(long id, int pageNumber, int pageSize)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            if (pageNumber < 1 || pageSize < 1 || id == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_blAdministrativo.getHistorialFacturacion(id, pageNumber, pageSize));
+        }
+
+        //GET api/<PacienteController>/5/historialFacturacion/count
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("{id}/historialFacturacion/count")]
+        public IActionResult GetCantFacturas(long id)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_blAdministrativo.countFacturas(id));
+        }
     }
 }
