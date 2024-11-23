@@ -20,14 +20,27 @@ export const authGuard: CanActivateFn = (route, state) => {
       return false;
     }
     return true;
-  }
-
-  if (authService.getTwoFactorEnabledStatus() && !authService.isTwoFactorAuthenticated()) {
-    if (state.url !== '/twoFactorAuth') {
-      router.navigate(['/twoFactorAuth']);
+  } else {
+    if (state.url === '/resendEmailConfirmation') {
+      router.navigate(['/inicio']);
       return false;
     }
-    return true;
+  }
+
+  if (authService.getTwoFactorEnabledStatus()) {
+    if (authService.isTwoFactorAuthenticated()) {
+      if (state.url === '/twoFactorAuth') {
+        router.navigate(['/inicio']);
+        return false;
+      }
+      return true;
+    } else {
+      if (state.url !== '/twoFactorAuth') {
+        router.navigate(['/twoFactorAuth']);
+        return false;
+      }
+      return true;
+    }
   }
 
   return true;
