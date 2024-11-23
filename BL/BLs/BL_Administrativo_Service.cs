@@ -20,10 +20,10 @@ namespace BL.BLs
             this.dal = dal;
         }
 
-        public void activarContrato(long id)
-        {
-            throw new NotImplementedException();
-        }
+        //public void activarContrato(long id)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public void addArticulo(Articulo articulo)
         {
@@ -321,6 +321,11 @@ namespace BL.BLs
         }
 
         public Precio getPrecioById(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Precio GetPrecioBySeguro(long id)
         {
             throw new NotImplementedException();
         }

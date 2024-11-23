@@ -599,16 +599,15 @@ namespace DAL.DALs
             }
         }
 
-
         #endregion
 
 
-		/**********************************************************/
-		/**                    Precios                           **/
-		/**********************************************************/
-		#region FUNCTIONES PRECIOS
+        /**********************************************************/
+        /**                    Precios                           **/
+        /**********************************************************/
+        #region FUNCTIONES PRECIOS
 
-		public List<Precio> GetPrecios()
+        public List<Precio> GetPrecios()
 		{
 			using (var _dbContext = new DBContext())
 			{

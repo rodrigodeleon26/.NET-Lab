@@ -117,15 +117,10 @@
                                         <span *ngIf="!contrato.activo">✖</span>
                                     </div>
                                 </td>
-                                <td
-                                    class="border border-gray-oscuro p-2 flex flex-row justify-center items-center">
-                                    <!-- <button (click)="abrirModalVer(contrato.id)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="11" cy="11" r="8"></circle>
-                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                        </svg>
-                                    </button> -->
-                                    <button (click)="abrirModalActualizar(contrato)">
+                                <td class="border border-gray-oscuro p-2 flex flex-row justify-center items-center"
+                                    *ngIf="contrato.activo">
+                                    <button (click)="abrirModalActualizar(contrato)"
+                                        class="mx-1 text-blue-500 hover:text-blue-700">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round">
@@ -134,19 +129,28 @@
                                             <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
                                         </svg>
                                     </button>
-                                    <button (click)="abrirModalConfirmarBorrado(contrato)">
+                                    <button (click)="abrirModalConfirmarBorrado(contrato)"
+                                        class="mx-1 text-red-500 hover:text-red-700">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path
-                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                            </path>
-                                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                                            <polyline points="8 12 12 16 16 12"></polyline>
+                                        </svg>
+                                    </button>
+                                <td class="border border-gray-oscuro p-2 flex flex-row justify-center items-center"
+                                    *ngIf="!contrato.activo">
+                                    <button (click)="activarContrato(contrato)"
+                                        class="mx-1 text-green-500 hover:text-green-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="16" x2="12" y2="8"></line>
+                                            <polyline points="8 12 12 8 16 12"></polyline>
                                         </svg>
                                     </button>
                                 </td>
+                                <td class="border border-gray-oscuro p-2" *ngIf="!contrato.activo"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -234,13 +238,16 @@
 </div>
 
 <!-- Modal para confirmar borrado -->
-<div *ngIf="isModalVisibleConfirmarBorrado" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out overflow-y-auto">
-    <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 transform transition-transform duration-300 ease-in-out my-8">
+<div *ngIf="isModalVisibleConfirmarBorrado"
+    class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out overflow-y-auto">
+    <div
+        class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 transform transition-transform duration-300 ease-in-out my-8">
         <!-- Header -->
         <div class="flex justify-between items-center bg-red-500 text-white p-4 rounded-t-lg border-b border-gray-300">
             <h2 class="text-xl">Dar de baja</h2>
             <button (click)="isModalVisibleConfirmarBorrado = false" class="text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -248,16 +255,23 @@
         </div>
         <!-- Body -->
         <div class="p-4">
-            <p>¿Estás seguro de que deseas dar de baja el contrato del paciente con cédula <strong>{{ contratoParaBorrar?.paciente?.documento }}</strong> y seguro médico <strong> {{ contratoParaBorrar?.seguroMedico?.nombre }}</strong>?</p>
+            <p>¿Estás seguro de que deseas dar de baja el contrato del paciente con cédula <strong>{{
+                    contratoParaBorrar?.paciente?.documento }}</strong> y seguro médico <strong> {{
+                    contratoParaBorrar?.seguroMedico?.nombre }}</strong>?</p>
         </div>
         <!-- Footer -->
         <div class="border-t border-gray-300 p-4 flex justify-end space-x-4">
-            <button type="button" (click)="isModalVisibleConfirmarBorrado = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
-            <button type="button" (click)="confirmarBorrado()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
+            <button type="button" (click)="isModalVisibleConfirmarBorrado = false"
+                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
+            <button type="button" (click)="confirmarBorrado()"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
                 <span *ngIf="!loadingModal">Borrar</span>
-                <svg *ngIf="loadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg *ngIf="loadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
                 </svg>
             </button>
         </div>

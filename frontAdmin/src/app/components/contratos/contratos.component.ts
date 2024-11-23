@@ -23,6 +23,7 @@ export class ContratosComponent implements OnInit {
   loadingModal: boolean = false;
   isViewMode: boolean = false;
   contratoParaBorrar: any = null;
+  contratoParaActualizar: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -128,6 +129,7 @@ export class ContratosComponent implements OnInit {
   abrirModalActualizar(contrato: any): void {
     this.contratosService.getContratoPorId(contrato.id).subscribe({
       next: (contrato) => {
+        this.contratoParaActualizar = contrato;
         this.isModalVisibleActualizar = true;
         this.modalTitle = 'Actualizar Contrato';
         this.isViewMode = false;
@@ -141,26 +143,36 @@ export class ContratosComponent implements OnInit {
 
   cerrarModal(): void {
     this.isModalVisibleActualizar = false;
-    // this.isModalVisibleVer = false;
   }
 
   onSubmit(): void {
     if (this.contratoForm.invalid) {
       return;
     }
-
+  
     this.loadingModal = true;
     const contrato = this.contratoForm.value;
-
+  
     if (this.isModalVisibleActualizar) {
-      // Lógica para actualizar contrato
-      this.contratosService.actualizarContrato(contrato).subscribe({
-        next: () => {
-          this.getContratos();
+      const request = {
+        IdContratoActual: this.contratoParaActualizar.id,
+        IdNuevoSeguroMedico: contrato.seguroMedicoId
+      };
+  
+      this.contratosService.cambiarContrato(request).subscribe({
+        next: (response: any) => {
+          this.getContratos();         
           this.cerrarModal();
+          this.toastr.success(response.message, 'Actualización de contrato');
         },
         error: (error) => {
-          console.error('Error al actualizar el contrato', error);
+          this.loadingModal = false;
+          console.error('Error al cambiar el contrato', error);
+          if (error.status === 400) {
+            this.toastr.error(error.error, 'Error de validación');
+          } else {
+            this.toastr.error('Error al cambiar el contrato');
+          }
         },
         complete: () => {
           this.loadingModal = false;
@@ -182,7 +194,7 @@ export class ContratosComponent implements OnInit {
           this.getContratos();
           this.isModalVisibleConfirmarBorrado = false;
           this.contratoParaBorrar = null;
-          this.toastr.success('Contrato eliminado exitosamente');
+          this.toastr.success('Contrato dado de baja exitosamente', 'Baja de contrato');
           this.loadingModal = false;
         },
         error: (error) => {
@@ -196,5 +208,25 @@ export class ContratosComponent implements OnInit {
         }
       });
     }
+  }
+
+  activarContrato(contrato: any): void {
+    this.loadingModal = true;
+    this.contratosService.activarContrato(contrato.id).subscribe({
+      next: (response: any) => {
+        this.getContratos();
+        this.toastr.success(response.message, 'Activación de contrato');
+        this.loadingModal = false;
+      },
+      error: (error) => {
+        this.loadingModal = false;
+        console.error(error);
+        if (error.error && error.error.description) {
+          this.toastr.error(error.error.description, error.error.code);
+        } else {
+          this.toastr.error('Error al activar el contrato');
+        }
+      }
+    });
   }
 }

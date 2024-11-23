@@ -183,15 +183,10 @@ namespace BL.BLs
 			}
 		}
 
-		public void activarContrato(long id)
-		{
-			var contrato = getContratoById(id);
-			if (contrato != null)
-			{
-				contrato.Activo = true;
-				updateContrato(contrato);
-			}
-		}
+		//public void activarContrato(long id)
+		//{
+		//	dal.activarContrato
+		//}
 
 		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
         {
@@ -214,7 +209,12 @@ namespace BL.BLs
 			return dal.GetPrecioById(id);
 		}
 
-		public void addPrecio(Precio precio)
+		public Precio GetPrecioBySeguro(long id)
+        {
+            return dal.GetPrecioBySeguro(id);
+        }
+
+        public void addPrecio(Precio precio)
 		{
 			dal.AddPrecio(precio);
 		}

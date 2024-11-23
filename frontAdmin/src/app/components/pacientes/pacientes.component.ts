@@ -29,6 +29,7 @@ export class PacientesComponent implements OnInit {
   pacienteParaBorrar: any | null = null;
   loadingModal: boolean = false;
   pacienteId: number | null = null; // Propiedad para almacenar el ID del paciente seleccionado
+  today = new Date() // Fecha actual;
 
   constructor(
     private pacienteService: PacientesService,
@@ -238,6 +239,11 @@ export class PacientesComponent implements OnInit {
 
   editarPaciente(): void {
     console.log(this.pacienteForm.value);
+    if (this.pacienteForm.pristine) {
+      this.toastr.info('No se realizaron cambios');
+      return;
+    }
+    
     const pacienteActualizado = this.pacienteForm.value;
     if (this.pacienteId !== null && pacienteActualizado) {
       this.pacienteService.updatePaciente(this.pacienteId, pacienteActualizado).subscribe({

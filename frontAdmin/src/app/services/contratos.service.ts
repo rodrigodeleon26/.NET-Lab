@@ -20,13 +20,18 @@ export class ContratosService {
     return this.http.get<any>(url);
   }
 
-  actualizarContrato(contrato: any): Observable<any> {
-    const url = `${this.apiUrl}/${contrato.id}`;
-    return this.http.put<any>(url, contrato);
-  }
-
   borrarContrato(id: number): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.delete<any>(url);
+  }
+
+  cambiarContrato(request: { IdContratoActual: number, IdNuevoSeguroMedico: number }): Observable<any> {
+    const url = `${this.apiUrl}/cambiar-contrato`;
+    return this.http.post<any>(url, request);
+  }
+
+  activarContrato(idContrato: number): Observable<any> {
+    const url = `${this.apiUrl}/activarContrato/${idContrato}`;
+    return this.http.post<any>(url, {});
   }
 }

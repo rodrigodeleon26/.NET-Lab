@@ -277,6 +277,11 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public Precio GetPrecioBySeguro(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         public void AddPrecio(Precio precio)
         {
             throw new NotImplementedException();
@@ -528,11 +533,6 @@ namespace DAL.DALs
         }
 
         public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Precio GetPrecioBySeguro(long id)
         {
             throw new NotImplementedException();
         }

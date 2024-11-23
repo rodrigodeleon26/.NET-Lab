@@ -39,13 +39,15 @@ namespace BL.IBLs
 		void addContrato(Contrato contrato);
 		void updateContrato(Contrato contrato);
 		void deleteContrato(long id);
-		void activarContrato(long id);
+		//void activarContrato(long id);
 		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro);
 
         // Precios
         List<Precio> getPrecios();
 		Precio getPrecioById(long id);
-		void addPrecio(Precio precio);
+		Precio GetPrecioBySeguro(long id);
+
+        void addPrecio(Precio precio);
 		void updatePrecio(Precio precio);
 		void deletePrecio(long id);
 

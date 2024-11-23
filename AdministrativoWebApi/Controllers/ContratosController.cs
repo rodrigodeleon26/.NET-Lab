@@ -3,14 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using DAL.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AdministrativoWebApi.Controllers
 {
+    public class Request_CambiarContrato
+    {
+        public long IdContratoActual { get; set; }
+        public long IdNuevoSeguroMedico { get; set; }
+    }
+
 	[Route("api/[controller]")]
 	[ApiController]
-	public class ContratosController : ControllerBase
+    public class ContratosController : ControllerBase
 	{
 		private readonly IBL_Administrativo _blAdministrativo;
 		private readonly ILogger<ContratosController> _logger;
@@ -85,46 +92,59 @@ namespace AdministrativoWebApi.Controllers
 				return NotFound();
 			}
 
-			_blAdministrativo.deleteContrato(id);
-			return NoContent();
-		}
+			if(contrato.Activo == false)
+            {
+                return BadRequest("El contrato ya está dado de baja");
+            }
+
+            contrato.Activo = false;
+            _blAdministrativo.updateContrato(contrato);
+            return Ok(new { message = "El contrato ha sido dado de baja" });
+        }
 
 
-        // POST api/<ContratosController>/contratar-seguro
-        [HttpPost("/contratar-seguro")]
-		public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
-		{
-			_logger.LogInformation("Entro a la funcion");
+        //      // POST api/<ContratosController>/contratar-seguro
+        //      [HttpPost("/contratar-seguro")]
+        //public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
+        //{
+        //	_logger.LogInformation("Entro a la funcion");
 
-			var paciente = _blAdministrativo.getPacienteById(request.IdPaciente);
-			var seguro = _blAdministrativo.getSeguroMedicoById(request.IdSeguroMedico);
+        //	var paciente = _blAdministrativo.getPacienteById(request.IdPaciente);
+        //	var seguro = _blAdministrativo.getSeguroMedicoById(request.IdSeguroMedico);
 
-			if (paciente == null)
-			{
-				return BadRequest("El paciente no existe");
-			}
-			if (seguro == null)
-			{
-				return BadRequest("El seguro no existe");
-			}
+        //	if (paciente == null)
+        //	{
+        //		return BadRequest("El paciente no existe");
+        //	}
+        //	if (seguro == null)
+        //	{
+        //		return BadRequest("El seguro no existe");
+        //	}
 
-			_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
-			return NoContent();
-		}
+        //	_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
+        //	return NoContent();
+        //}
 
         // POST api/<ContratosController>/activar-contrato
-        [HttpPost("/activar-contrato")]
-		public IActionResult ActivarContrato([FromBody] long idContrato)
+        [HttpPost("activarContrato/{id}")]
+        public IActionResult ActivarContrato(long id)
         {
-            var contrato = _blAdministrativo.getContratoById(idContrato);
+            var contrato = _blAdministrativo.getContratoById(id);
 
             if (contrato == null)
             {
                 return BadRequest("El contrato no existe");
             }
 
-            _blAdministrativo.activarContrato(idContrato);
-            return NoContent();
+			if (contrato.Activo == true)
+			{
+                return BadRequest("El contrato ya está activo");
+            }
+
+            contrato.Activo = true;
+            contrato.FechaInicio = DateTime.Now;
+            _blAdministrativo.updateContrato(contrato);
+            return Ok(new { message = "El contrato ha sido activado exitosamente" });
         }
 
         [ProducesResponseType(typeof(List<Contrato>), 200)]
@@ -138,6 +158,37 @@ namespace AdministrativoWebApi.Controllers
                 return NoContent();
             }
             return Ok(contratos);
+        }
+
+
+		[HttpPost("cambiar-contrato")]
+		public IActionResult CambiarContrato([FromBody] Request_CambiarContrato request)
+		{
+			// Validar la existencia del contrato actual
+			var contratoActual = _blAdministrativo.getContratoById(request.IdContratoActual);
+			if (contratoActual == null)
+			{
+				return BadRequest("El contrato actual no existe");
+			}
+
+			// Validar la existencia del nuevo seguro médico
+			var nuevoSeguroMedico = _blAdministrativo.getSeguroMedicoById(request.IdNuevoSeguroMedico);
+			if (nuevoSeguroMedico == null)
+			{
+				return BadRequest("El nuevo seguro médico no existe");
+			}
+
+			if (nuevoSeguroMedico.Id == contratoActual.SeguroMedico.Id)
+			{
+				return BadRequest("El nuevo seguro médico es el mismo que el actual");
+			}
+
+			contratoActual.SeguroMedico = nuevoSeguroMedico;
+			contratoActual.Activo = true;
+			contratoActual.FechaInicio = DateTime.Now;
+            _blAdministrativo.updateContrato(contratoActual);
+
+            return Ok(new { message = "El contrato ha sido actualizado exitosamente" });
         }
     }
 }
