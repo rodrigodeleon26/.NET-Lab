@@ -4,6 +4,7 @@ import { ConsultaMedicaService } from '../../../services/consulta-medica.service
 import { PacienteService } from '../../../services/paciente.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-historia-clinica',
@@ -79,6 +80,7 @@ export class HistoriaClinicaComponent implements OnInit {
     this.pacienteService.obtenerMiHistoriaClinica(this.cedula, this.pageNumber, this.pageSize, this.orden, this.fechaInicio, this.fechaFin, this.especialidades)
       .subscribe(
         response => {
+          console.log(response);
           this.paciente = response.paciente;
           this.historiaClinica = response.consultasMedicasConCitas;
           this.totalPages = Math.ceil(response.totalItems / this.pageSize);  
@@ -193,7 +195,7 @@ export class HistoriaClinicaComponent implements OnInit {
   descargarPdf(url: string): void {
     const link = document.createElement('a');
     link.href = url;
-    link.download = url.split('/').pop() || 'download';
+    link.download = 'historia-clinica.pdf';
     link.target = '_blank';
     link.click();
   }

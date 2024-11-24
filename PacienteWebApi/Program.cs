@@ -8,10 +8,14 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using PacienteWebApi.Extensions;
+using DotNetEnv;
 
-try 
+try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    // Environment Variables
+    Env.Load();
 
     builder.Services.AddCors(options =>
     {

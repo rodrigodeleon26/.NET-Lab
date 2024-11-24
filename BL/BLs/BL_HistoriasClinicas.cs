@@ -37,7 +37,7 @@ namespace BL.BLs
             {
                 foreach (var estudio in consulta.Estudios)
                 {
-                    estudio.ImagenUrl = EncryptionHelper.TryDecrypt(estudio.ImagenUrl);
+                    estudio.ImagenUrl = AES.TryDecrypt(estudio.ImagenUrl);
                 }
             }
 
@@ -183,7 +183,7 @@ namespace BL.BLs
             string pdfFileName = $"{idConsultaMedica}_{DateTime.UtcNow.Ticks}.pdf";
             string pdfUrl = await s3Service.UploadFileAsync(pdfStream, pdfFileName, "application/pdf");
 
-            string encryptedPdf = EncryptionHelper.Encrypt(pdfUrl);
+            string encryptedPdf = AES.Encrypt(pdfUrl);
 
             estudio.ImagenUrl = encryptedPdf;
             estudio.FechaResultado = fechaResultado;

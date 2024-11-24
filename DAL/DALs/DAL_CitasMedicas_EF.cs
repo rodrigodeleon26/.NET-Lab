@@ -284,6 +284,7 @@ namespace DAL.DALs
                 Console.WriteLine("PacienteId: " + pacienteId);
                 Console.WriteLine("====================================");
                 string IdEncriptada = AES.Encrypt(pacienteId.ToString());
+                Console.WriteLine("IdEncriptada: " + IdEncriptada);
 
                 var query = _dbContext.CitasMedicas
                     .Where(c => c.Estado == "Completada" && c.PacienteId == IdEncriptada);
