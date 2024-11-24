@@ -174,7 +174,7 @@ INSERT INTO [HCE].[dbo].[CitasMedicas]
 VALUES
 ('2024-11-25', 'Agendada', 1, '/10cIUdzDO3tytL3Yho9ag==', 1, NULL, 1), -- Bart con Dr. Hibbert
 ('2024-11-25', 'Agendada', 2, 'Go7VHi3N4zKeiat5JVD3iA==', 2, NULL, 3), -- Lisa con Dr. Hibbert
-('2024-11-04', 'Completada', 3, 'aQULuBr6EuROmP+nxxFh3g==', 3, 1), -- Homer con Dr. Martinez
+('2024-11-04', 'Completada', 3, 'aQULuBr6EuROmP+nxxFh3g==', 3, null, 1), -- Homer con Dr. Martinez
 ('2024-11-05', 'NoAsistida', 5, 'XdyhuZxt25cNLk4Qd3c+6Q==', 4, NULL, 6), -- Marge con Dr. Gomez
 ('2024-11-26', 'Cancelada', 1, '/10cIUdzDO3tytL3Yho9ag==', 5, NULL, 1); -- Bart con Dr. Fernandez
 
@@ -226,13 +226,13 @@ VALUES
     'drCarlosM@gmail.com', 'DRCARLOSM@GMAIL.COM', 0, 
     'AQAAAAIAAYagAAAAEIcFD5R2sndQ0y2AWDcU3/2bjcKucr5DB+p4AGmmrVFbBuYaGjWR0OijvGZx22DYSw==', 
     'Q4SYV7ACHQVGPBOS5XJZIOZLNZPYQZK5', '862b245c-ea41-48c0-b683-51457c17a751', 
-    NULL, 0, 0, NULL, 1, 0, 'drCarlosM@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
+    NULL, 0, 0, NULL, 1, 0, 'drCarlosM@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, 3),
     
     ('4af45a2e-d2f6-43ad-8cf8-78b55fc008ed', 'bart.simpson@gmail.com', 'BART.SIMPSON@GMAIL.COM', 
     'bart.simpson@gmail.com', 'BART.SIMPSON@GMAIL.COM', 0, 
     'AQAAAAIAAYagAAAAEDoH9Fb+YK2GV3yEah14xKWsmZUsZbgAfrn2gdAnZbeY71UXrm51r4fNor1rDpt/Cg==', 
     'XMO3DQ3QG3L2PMW7QOYPRDQMWV5XZIEX', 'db04858e-cfed-4512-838d-3ff199ecc0cc', 
-    NULL, 0, 0, NULL, 1, 0, 'bart.simpson@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
+    NULL, 0, 0, NULL, 1, 0, 'bart.simpson@gmail.com', 1, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
     
     ('69225179-d778-4be3-ba42-0115fd48e356', 'admin@gmail.com', 'ADMIN@GMAIL.COM', 
     'admin@gmail.com', 'ADMIN@GMAIL.COM', 0, 
@@ -244,13 +244,13 @@ VALUES
     'homer.simpson@gmail.com', 'HOMER.SIMPSON@GMAIL.COM', 0, 
     'AQAAAAIAAYagAAAAEPfTV5QbT76+EvGslgzGbh5D4Usdp5i0aHRD1ZPYwvGYEswa5+N8d26eaQKCS5raEg==', 
     'O3DAJMQMUAXG3JGOBUFICH3Z3CAYMVXL', '65c272cd-3250-4491-85b8-a6732d7ecb4c', 
-    NULL, 0, 0, NULL, 1, 0, 'homer.simpson@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
+    NULL, 0, 0, NULL, 1, 0, 'homer.simpson@gmail.com', 2, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
     
     ('f4b2c112-a394-4f31-911b-87a6ea9d6772', 'drJulius@gmail.com', 'DRJULIUS@GMAIL.COM', 
     'drJulius@gmail.com', 'DRJULIUS@GMAIL.COM', 0, 
     'AQAAAAIAAYagAAAAEJa59M6y5a9loDhN0a+nN6xDSAjhWrYsVOuehCYg8TGp2WPWJ0XkTfGiYj8whq6m5Q==', 
     'OACNCEA357TNRQSSKJXY6YZUNYLBSBTQ', 'da50465c-7e62-4d6e-b41d-c8453b02bc68', 
-    NULL, 0, 0, NULL, 1, 0, 'drJulius@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL);
+    NULL, 0, 0, NULL, 1, 0, 'drJulius@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, 1);
 
 -- Roles
     INSERT INTO [HCE].[dbo].[AspNetUserRoles] ([UserId], [RoleId]) 

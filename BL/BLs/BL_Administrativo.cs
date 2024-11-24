@@ -926,13 +926,26 @@ namespace BL.BLs
 
 		}
 
-		#endregion
+		public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+		{
+            //segun la fecha conseguir el dia
+            DateTime fechaDate = DateTime.Parse(fecha);
+            string dia = fechaDate.ToString("dddd", new CultureInfo("es-UY"));
+            //poner la primera letra en mayuscula 
+            dia = char.ToUpper(dia[0]) + dia.Substring(1);
 
-		//Consultorios
-		#region CONSULTORIOS
+            Console.WriteLine("Dia: " + dia);
+
+            return dal.GetCalendariosByEspecialidadYFecha(especialidadId, fechaDate, dia);
+        }
+
+        #endregion
+
+        //Consultorios
+        #region CONSULTORIOS
 
 
-		public List<Consultorio> getConsultorios()
+        public List<Consultorio> getConsultorios()
 		{
 			return dal.GetConsultorios();
 		}

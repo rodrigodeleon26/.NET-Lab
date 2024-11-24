@@ -680,5 +680,10 @@ namespace DAL.DALs
         {
             throw new NotImplementedException();
         }
+
+        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -520,5 +520,10 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+
+        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

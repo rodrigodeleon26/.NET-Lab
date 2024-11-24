@@ -98,6 +98,7 @@ namespace BL.IBLs
         bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades);
         Task borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades);
         List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
+        List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha);
 
         // Consultorios
         List<Consultorio> getConsultorios();

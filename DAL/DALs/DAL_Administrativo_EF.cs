@@ -1929,6 +1929,55 @@ namespace DAL.DALs
             }
         }
 
+		public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Calendarios
+					.Where(c => c.Activo)
+					.Where(c => c.EspecialidadId == especialidadId && c.DiasSemanaString.Contains(dia))
+                    .Select(c => new Calendario
+                    {
+                        Id = c.Id,
+                        HoraInicio = c.HoraInicio,
+                        HoraFin = c.HoraFin,
+                        TiempoCita = c.TiempoCita,
+                        CantidadCitas = c.CantidadCitas,
+                        DiasSemana = c.DiasSemana,
+                        Consultorio = new Consultorio
+                        {
+                            Id = c.Consultorio.Id,
+                            Numero = c.Consultorio.Numero,
+                            Piso = c.Consultorio.Piso
+                        },
+                        Medico = new Medico
+                        {
+                            Id = c.Medico.Id,
+                            Nombres = c.Medico.Nombres,
+                            Apellidos = c.Medico.Apellidos,
+                            Documento = c.Medico.Documento,
+                            Email = c.Medico.Email,
+                            Telefono = c.Medico.Telefono
+                        },
+                        Especialidad = new Especialidad
+                        {
+                            Id = c.Especialidad.Id,
+                            Nombre = c.Especialidad.Nombre,
+                            Descripcion = c.Especialidad.Descripcion
+                        },
+                        CitasMedicas = c.CitasMedicas
+						.Where(cm => cm.Fecha.Date == fecha.Date)
+						.Select(cm => new CitaMedica
+						{
+							Id = cm.Id,
+							Fecha = cm.Fecha,
+							Estado = cm.Estado
+						}).ToList(),
+                    }).ToList();
+
+            }
+
+        }
 
         #endregion
 

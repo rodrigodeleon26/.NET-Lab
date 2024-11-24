@@ -167,8 +167,6 @@ namespace AdministrativoWebApi.Controllers
             return NoContent();
         }
 
-        //    return this.http.post<any>(`${this.apiUrl}/filtrarCalendarios/${medicoId}`, filtros);
-
         // POST api/<CalendariosController>/filtrarCalendarios/5
         [HttpPost("filtrarCalendarios/{medicoId}")]
         [ProducesResponseType(typeof(List<Calendario>), 200)]
@@ -184,6 +182,19 @@ namespace AdministrativoWebApi.Controllers
             }
 
 			return Ok(_blAdministrativo.getCalendariosFiltrados(medicoId, filtroEspecialidad, filtroDia, filtroHoraInicio));
+        }
+
+        //get calendarios por especialidad para una fecha
+        // GET api/<CalendariosController>/especialidad/5/fecha/2024-11-24
+        [HttpGet("especialidad/{especialidadId}/fecha/{fecha}")]
+        public IActionResult GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+        {
+            if (fecha == null || especialidadId == 0)
+            {
+                return BadRequest();
+            }
+
+            return Ok(_blAdministrativo.GetCalendariosByEspecialidadYFecha(especialidadId, fecha));
         }
     }
 }

@@ -97,9 +97,10 @@ namespace DAL.IDALs
 		public void UpdateCalendario(Calendario calendario);
 		public void DeleteCalendario(long id);
         public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
+		public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia);
 
-		// Consultorios
-		public List<Consultorio> GetConsultorios();
+        // Consultorios
+        public List<Consultorio> GetConsultorios();
 		public Consultorio GetConsultorioById(long id);
 		public void AddConsultorio(Consultorio consultorio);
 		public void UpdateConsultorio(Consultorio consultorio);
