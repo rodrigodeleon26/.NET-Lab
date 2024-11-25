@@ -30,10 +30,10 @@
                 <i class="material-icons text-white text-sm">receipt</i>
                 <span>Obtener factura</span>
               </button>
-              <div class="relative group">
+              <div class="relative">
                 <button
                   [disabled]="!puedeRealizarPago(facturasAgrupadas, key)"
-                  class="mt-2 mb-2 mr-2 ml-2 text-white px-3 py-1 rounded-full focus:outline-none flex items-center space-x-2 shadow-md"
+                  class="mt-2 mb-2 mr-2 ml-2 text-white px-3 py-1 rounded-full focus:outline-none flex items-center space-x-2 shadow-md peer"
                   [class.bg-teal-500]="puedeRealizarPago(facturasAgrupadas, key)"
                   [class.hover:bg-teal-600]="puedeRealizarPago(facturasAgrupadas, key)"
                   [class.bg-gray-400]="!puedeRealizarPago(facturasAgrupadas, key)"
@@ -48,11 +48,12 @@
                 <!-- Tooltip -->
                 <div
                   *ngIf="!puedeRealizarPago(facturasAgrupadas, key)"
-                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-4 py-2 bg-gray-700 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-4 py-2 bg-gray-700 text-white text-xs rounded shadow-lg opacity-0 pointer-events-none peer-hover:opacity-100 peer-hover:pointer-events-auto transition-opacity"
                 >
                   Debes pagar los meses anteriores primero.
                 </div>
               </div>
+                          
             </td>
           </tr>
         </tbody>
