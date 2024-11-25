@@ -9,6 +9,7 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using PacienteWebApi.Extensions;
 using DotNetEnv;
+using Shared;
 
 try
 {

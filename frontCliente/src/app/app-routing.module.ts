@@ -15,6 +15,7 @@ import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.co
 import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component';
 import { CitasComponent } from './components/pantallas/citas/citas.component';
 import { HistorialFacturacionComponent } from './components/pantallas/historial-facturacion/historial-facturacion.component';
+import { AgendarseComponent } from './components/pantallas/agendarse/agendarse.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/inicio', pathMatch: 'full' },
@@ -34,7 +35,8 @@ const routes: Routes = [
   { path : 'mis-datos', component: MisDatosComponent, canActivate: [authGuard] },
   { path : 'notificaciones', component: NotificacionesComponent, canActivate: [authGuard] },
   { path : 'citas', component: CitasComponent, canActivate: [authGuard] },
-  { path : 'historial-facturacion', component: HistorialFacturacionComponent, canActivate: [authGuard] }
+  { path : 'historial-facturacion', component: HistorialFacturacionComponent, canActivate: [authGuard] },
+  { path : 'agendarse', component: AgendarseComponent, canActivate: [authGuard] }
 ];
 
 @NgModule({

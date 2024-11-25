@@ -1,8 +1,10 @@
 ﻿using BL.IBLs;
 using DAL.IDALs;
+using DAL.Models;
 using Shared;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace BL.BLs
 {
@@ -99,7 +101,7 @@ namespace BL.BLs
 
         // Crear una nueva cita médica
         public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
-        {
+        { 
             return dal.createCitaMedica(nuevaCita, calendarioId, pacienteId);
         }
 
@@ -107,6 +109,52 @@ namespace BL.BLs
         public void updateCitaMedica(CitaMedicaDTO citaActualizada)
         {
             dal.updateCitaMedica(citaActualizada);
+
+            //obtener la cita medica actualizada
+            CitaMedica cita = dal.getCitaMedicaById(citaActualizada.Id);
+
+            //en caso de que el estado sea completa o noAsistida se crea la factura para la cita
+            if (cita.Estado == "Completada" || cita.Estado == "NoAsistida")
+            {
+                Console.WriteLine("voy a crear la factura");
+                //obtener el paciente
+                string pacienteDesId = AES.Decrypt(cita.PacienteId);
+                long pacienteId = long.Parse(pacienteDesId);
+                Paciente paciente = dalAdmin.GetPacienteById(pacienteId);
+
+                Copago copago = dalAdmin.GetCopagoById(cita.CopagoId);
+                //obtener el precio cuya FechaInicio corresponda con el dia actual
+
+                DateTime hoy = DateTime.Today;
+                Precio precio = copago.Precios
+                    .Where(p => p.FechaInicio <= hoy)
+                    .OrderByDescending(p => p.FechaInicio)
+                    .FirstOrDefault();
+
+                Articulo articulo = copago.Articulo;
+
+                float precioBase = precio.PrecioBase;
+                Console.WriteLine("precio base: " + precioBase);
+
+                Factura factura = new Factura
+                {
+                    Monto = precioBase, //tengo que hacer lo del copago aun lpm
+                    Pago = false,
+                    Fecha = DateTime.Today,
+                    FechaPago = null,
+                    Descripcion = $"Pago por consulta medica de tipo: {articulo.Nombre}, a la fecha {cita.Fecha.ToString("dd/MM/yyyy HH:mm:ss")}",
+                    Paciente = paciente,
+                    PagoPayPal = null,
+                };
+
+                Console.WriteLine("voy a crear la factura");
+                //muestro la factura en json
+                var facturaJson = JsonSerializer.Serialize(factura);
+                Console.WriteLine(facturaJson);
+
+                //crear la factura
+                dalAdmin.AddFactura(factura);
+            }
         }
 
         // Eliminar una cita médica por ID
@@ -132,6 +180,20 @@ namespace BL.BLs
         public bool CancelarCita(string dni, long id)
         {
             return dal.CancelarCita(dni, id);
+        }
+        public Paciente getPacienteByCedula(string cedula)
+        {
+            return dalAdmin.GetPacienteByDNI(cedula);
+        }
+
+        public Calendario getCalendarioById(long id)
+        {
+            return dalAdmin.GetCalendarioById(id);
+        }
+
+        public long getCopagoBySeguroEspecialidadArticulo(Copago copago)
+        {
+            return dalAdmin.getIdByFilds(copago);
         }
     }
 }

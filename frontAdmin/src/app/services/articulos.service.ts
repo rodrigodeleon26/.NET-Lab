@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ArticulosService {
 
-  private apiUrl = 'https://localhost/gestion/api/Articulos'; // URL del microservicio
+  private apiUrl = 'https://localhost:5009/api/Articulos'; // URL del microservicio
 
   constructor(private http: HttpClient) { }
 

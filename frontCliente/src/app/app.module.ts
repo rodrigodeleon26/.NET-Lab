@@ -24,6 +24,7 @@ import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.co
 import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component';
 import { CitasComponent } from './components/pantallas/citas/citas.component';
 import { HistorialFacturacionComponent } from './components/pantallas/historial-facturacion/historial-facturacion.component'; 
+import { AgendarseComponent } from './components/pantallas/agendarse/agendarse.component'; 
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { HistorialFacturacionComponent } from './components/pantallas/historial-
     NotificacionesComponent,
     CitasComponent,
     HistorialFacturacionComponent
+    AgendarseComponent
   ],
   imports: [
     BrowserModule,

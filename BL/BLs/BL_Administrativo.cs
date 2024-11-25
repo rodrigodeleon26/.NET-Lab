@@ -17,28 +17,29 @@ using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Globalization;
+using PayPal.Api;
 
 namespace BL.BLs
 {
 	public class BL_Administrativo : IBL_Administrativo
 	{
 		private readonly IDAL_Administrativo dal;
-        private readonly IDAL_Pacientes dal_Paciente;
-        private readonly ILogger<BL_Administrativo> _logger;
+		private readonly IDAL_Pacientes dal_Paciente;
+		private readonly ILogger<BL_Administrativo> _logger;
 		private readonly IChannel channel;
 
-        public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger, IDAL_Pacientes dal_Paciente, IChannel channel)
+		public BL_Administrativo(IDAL_Administrativo dal, ILogger<BL_Administrativo> logger, IDAL_Pacientes dal_Paciente, IChannel channel)
 		{
-            _logger = logger;
+			_logger = logger;
 			this.dal = dal;
-            this.dal_Paciente = dal_Paciente;
-            this.channel = channel;
-        }
+			this.dal_Paciente = dal_Paciente;
+			this.channel = channel;
+		}
 
-        //Pacientes 
-        #region PACIENTES
+		//Pacientes 
+		#region PACIENTES
 
-        public void addPaciente(Paciente paciente)
+		public void addPaciente(Paciente paciente)
 		{
 			dal.AddPaciente(paciente);
 		}
@@ -54,9 +55,9 @@ namespace BL.BLs
 		}
 
 		public Paciente getPacienteByDNI(string dni)
-        {
-            return dal.GetPacienteByDNI(dni);
-        }
+		{
+			return dal.GetPacienteByDNI(dni);
+		}
 
 		public List<Paciente> getPacientes()
 		{
@@ -69,21 +70,21 @@ namespace BL.BLs
 		}
 
 		public List<Paciente> GetPacientesFiltradosPaginados(int numPagina, string filtro)
-        {
-            return dal.GetPacientesFiltradosPaginados(numPagina, filtro);
-        }
+		{
+			return dal.GetPacientesFiltradosPaginados(numPagina, filtro);
+		}
 
 		public bool emailDuplicado(string email)
-        {
-            return dal.emailDuplicado(email);
-        }
+		{
+			return dal.emailDuplicado(email);
+		}
 
-        public bool cedulaDuplicada(string cedula)
-        {
-            return dal.cedulaDuplicada(cedula);
-        }
+		public bool cedulaDuplicada(string cedula)
+		{
+			return dal.cedulaDuplicada(cedula);
+		}
 
-        public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize)
+		public List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize)
 		{
 			return dal.getNotificaciones(id, pageNumber, pageSize);
 		}
@@ -105,10 +106,10 @@ namespace BL.BLs
 
         #endregion
 
-        //Seguros Medicos
-        #region SEGUROS MEDICOS
+		//Seguros Medicos
+		#region SEGUROS MEDICOS
 
-        public void addSeguroMedico(SeguroMedico seguroMedico)
+		public void addSeguroMedico(SeguroMedico seguroMedico)
 		{
 			dal.AddSeguroMedico(seguroMedico);
 		}
@@ -204,17 +205,17 @@ namespace BL.BLs
 		}
 
 		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
-        {
-            return dal.GetContratosFiltradosPaginados(numPagina, filtro);
-        }
+		{
+			return dal.GetContratosFiltradosPaginados(numPagina, filtro);
+		}
 
-        #endregion
+		#endregion
 
-        //Precios
-        #region PRECIOS
+		//Precios
+		#region PRECIOS
 
 
-        public List<Precio> getPrecios()
+		public List<Precio> getPrecios()
 		{
 			return dal.GetPrecios();
 		}
@@ -260,37 +261,42 @@ namespace BL.BLs
 
 			//si el copago incluye un precio, se agrega a la lista de precios
 			if (copago.Precios != null && copago.Precios.Count > 0)
-            {
+			{
 				var copagoId = dal.getIdByFilds(copago);
-                _logger.LogInformation("CopagoId: " + copagoId);
-                foreach (var precio in copago.Precios)
-                {
+				_logger.LogInformation("CopagoId: " + copagoId);
+				foreach (var precio in copago.Precios)
+				{
 					precio.Copago.Id = copagoId;
 					dal.AddPrecio(precio);
-                }
-            }
+				}
+			}
 		}
 
-		public void updateCopago(Copago copago)
+		public long getIdByFilds(Copago copago)
+        {
+           return dal.getIdByFilds(copago);
+        }
+
+        public void updateCopago(Copago copago)
 		{
 			dal.UpdateCopago(copago);
 		}
 
-        public void deleteCopago(long id)
-        {
-            //borrar precios asociados al copago
-            var precios = getPrecios();
-            var preciosAEliminar = precios.Where(p => p.Copago != null && p.Copago.Id == id).ToList();
+		public void deleteCopago(long id)
+		{
+			//borrar precios asociados al copago
+			var precios = getPrecios();
+			var preciosAEliminar = precios.Where(p => p.Copago != null && p.Copago.Id == id).ToList();
 
-            _logger.LogInformation("Precios a borrar: " + preciosAEliminar.Count);
-            foreach (var precio in preciosAEliminar)
-            {
-                deletePrecio(precio.Id);
-            }
-            _logger.LogInformation("Precios borrados");
+			_logger.LogInformation("Precios a borrar: " + preciosAEliminar.Count);
+			foreach (var precio in preciosAEliminar)
+			{
+				deletePrecio(precio.Id);
+			}
+			_logger.LogInformation("Precios borrados");
 
-            dal.DeleteCopago(id);
-        }
+			dal.DeleteCopago(id);
+		}
 
 		#endregion
 
@@ -327,24 +333,24 @@ namespace BL.BLs
 			dal.DeleteFactura(id);
 		}
 
-        public async Task GenerarFacturasAutomaticas()
-        {
-            // Obtén todos los contratos activos
-            var contratosActivos = dal.GetContratosActivos();
+		public async Task GenerarFacturasAutomaticas()
+		{
+			// Obtén todos los contratos activos
+			var contratosActivos = dal.GetContratosActivos();
 
-            foreach (var contrato in contratosActivos)
-            {
-                Paciente paciente = dal.GetPacienteById(contrato.Paciente.Id);
-
+			foreach (var contrato in contratosActivos)
+			{
+				Paciente paciente = dal.GetPacienteById(contrato.Paciente.Id);
 
                 // Verifica si ya existe una factura para el paciente en el mes actual
                 bool facturaExistente = dal.ExisteFacturaParaPacienteEnMes(paciente.Id, DateTime.Now.Month, DateTime.Now.Year);
 
-                if (facturaExistente)
+                if (!facturaExistente)
                 {
-					// Verifica si ya existen dos facturas sin pagar entre las tres últimas facturas
-					var ultimasFacturas = dal.ObtenerUltimasFacturasDelContrato(contrato.Id, 3);
-					int facturasNoPagadas = ultimasFacturas.Count(f => !f.Pago);
+                    // Verifica si ya existen dos facturas sin pagar entre las tres últimas facturas
+                    var ultimasFacturas = dal.ObtenerUltimasFacturasDelContrato(contrato.Id, 3);
+                    int facturasNoPagadas = ultimasFacturas.Count(f => !f.Pago);
+
                     if (facturasNoPagadas >= 2)
                     {
                         Console.WriteLine($"El contrato {contrato.Id} tiene dos facturas sin pagar. Generando la tercera factura y desactivando el contrato.");
@@ -355,196 +361,281 @@ namespace BL.BLs
 
                     // Crea una nueva factura para cada contrato
                     var factura = new Factura
-					{
-						Fecha = DateTime.Now,
-						Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
-						Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
-						FechaPago = null,
-						Pago = false,
-						Paciente = paciente
-					};
+                    {
+                        Fecha = DateTime.Now,
+                        Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
+                        Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
+                        FechaPago = null,
+                        Pago = false,
+                        Paciente = paciente
+                    };
 
-					// Guarda la factura en la base de datos
-					dal.AddFactura(factura);
+                    // Buscar facturas anteriores al mes actual
+                    var facturasPendientes = new List<Factura>();
+                    var facturaMesAnterior = dal.ObtenerFacturaParaPacienteEnMes(paciente.Id, DateTime.Now.AddMonths(-1).Month, DateTime.Now.Year);
 
-					var notificacion = new Notificacion
-					{
-						Mensaje = $"Tiene una nueva factura para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}",
-						FechaEnvio = DateTime.UtcNow,
-						Visto = false
-					};
+                    if (facturaMesAnterior != null)
+                    {
+                        // Si hay una factura del mes anterior, busca facturas entre ambas fechas
+                        facturasPendientes = dal.ObtenerFacturasEnRangoFechas(paciente.Id, facturaMesAnterior.Fecha, factura.Fecha)
+                            .Where(f => !f.Pago).ToList();
+                    }
+                    else
+                    {
+                        // Si no hay factura del mes anterior, busca todas las facturas pendientes
+                        facturasPendientes = dal.ObtenerFacturasNoPagadasParaPaciente(paciente.Id);
+                    }
 
-					//await dal_service.AddNotificacionService(notificacion, paciente.Id);
+                    // Guarda la factura en la base de datos
+                    //dal.AddFactura(factura);
+
+                    try
+                    {
+                        // Crear orden de PayPal
+                        // Crear unidades de compra (PayPalPurchaseUnit) para todas las facturas pendientes y la factura actual
+                        var purchaseUnits = facturasPendientes
+                            .Select(f => new PayPalPurchaseUnit
+                            {
+                                reference_id = f.Id.ToString(),
+                                amount = new PayPalAmount
+                                {
+                                    currency_code = "USD",
+                                    value = f.Monto.ToString("F2", CultureInfo.InvariantCulture)
+                                },
+                                description = f.Descripcion
+                            })
+                            .ToList();
+
+                        // Añadir la factura actual como una unidad de compra
+                        purchaseUnits.Add(new PayPalPurchaseUnit
+                        {
+                            reference_id = factura.Id.ToString(),
+                            amount = new PayPalAmount
+                            {
+                                currency_code = "USD",
+                                value = factura.Monto.ToString("F2", CultureInfo.InvariantCulture)
+                            },
+                            description = factura.Descripcion
+                        });
+
+                        var orderResponse = await dal.CreateOrderAsync(purchaseUnits,
+							"USD",
+                            "https://localhost:4200/cliente/payment/success",
+                            "https://localhost:4200/cliente/payment/cancel");
+
+                        // Guarda la orden de PayPal en la base de datos
+                        var nuevoPago = new PagoPayPal
+                        {
+                            linkPago = orderResponse.links.FirstOrDefault(link => link.rel == "approve")?.href,
+                            pagoId = orderResponse.id
+                        };
+
+                        dal.AddPaypalPago(nuevoPago);
+                        var pagoCreado = dal.GetPaypalPagoByOrdenId(orderResponse.id);
+
+                        var factura2 = new Factura
+                        {
+                            Fecha = DateTime.Now,
+                            Monto = ObtenerMontoFactura(contrato), // Puedes definir este método para obtener el monto del seguro
+                            Descripcion = $"Mensualidad de seguro médico: {contrato.SeguroMedico.Nombre}",
+                            FechaPago = null,
+                            Pago = false,
+                            Paciente = paciente,
+							PagoPayPal = pagoCreado
+                        };
+                        dal.AddFactura(factura2);
+
+                        foreach (var facturaPendiente in facturasPendientes)
+                        {
+                            facturaPendiente.PagoPayPal = pagoCreado;
+                            dal.UpdateFactura(facturaPendiente);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al crear la orden de PayPal para la factura {factura.Id}: {ex.Message}");
+                    }
+
+                    var notificacion = new Notificacion
+                    {
+                        Mensaje = $"Tiene una nueva factura pendiente de pago para la mensualidad de su seguro médico: {contrato.SeguroMedico.Nombre}.",
+                        FechaEnvio = DateTime.UtcNow,
+                        Visto = false
+                    };
+
+                    // Puedes agregar la notificación en el sistema del paciente aquí
+                    // dal_Paciente.AddNotificacion(notificacion, paciente.Id);
                 }
-				else
+                else
                 {
                     Console.WriteLine($"La factura para el contrato {contrato.Id} ya fue emitida este mes.");
                 }
+            }
 
-                await dal.SaveChangesAsync();
-			}
+            await dal.SaveChangesAsync();
         }
+
 
         private float ObtenerMontoFactura(Contrato contrato)
         {
 			// Aquí puedes definir la lógica para calcular el monto de la factura basado en el contrato
 			Precio preciobtenido = dal.GetPrecioBySeguro(contrato.SeguroMedico.Id);
 			float numero = preciobtenido.PrecioBase;
-            return numero;
-        }
+			return numero;
+		}
 
-        public MemoryStream GenerarFactura(long id)
-        {
-            Factura factura = dal.GetFacturaById((int)id);
+		public MemoryStream GenerarFactura(long id)
+		{
+			Factura factura = dal.GetFacturaById((int)id);
 
-            var memoryStream = new MemoryStream();
-            Document document = new Document(PageSize.A4, 25, 25, 30, 30);
-            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
-            writer.CloseStream = false;
+			var memoryStream = new MemoryStream();
+			Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+			PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+			writer.CloseStream = false;
 
-            document.Open();
+			document.Open();
 
-            // Encabezado de la factura
-            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
-            var regularFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
-            var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+			// Encabezado de la factura
+			var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+			var regularFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+			var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
 
-            document.Add(new Paragraph("FACTURA", titleFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("\n"));
+			document.Add(new Paragraph("FACTURA", titleFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("\n"));
 
-            // Información del cliente
-            document.Add(new Paragraph("Información del Cliente", boldFont));
-            document.Add(new Paragraph($"Nombre: {factura.Paciente.Nombres} {factura.Paciente.Apellidos}", regularFont));
-            document.Add(new Paragraph($"Documento: {factura.Paciente.Documento}", regularFont));
-            document.Add(new Paragraph("\n"));
+			// Información del cliente
+			document.Add(new Paragraph("Información del Cliente", boldFont));
+			document.Add(new Paragraph($"Nombre: {factura.Paciente.Nombres} {factura.Paciente.Apellidos}", regularFont));
+			document.Add(new Paragraph($"Documento: {factura.Paciente.Documento}", regularFont));
+			document.Add(new Paragraph("\n"));
 
-            // Información de la factura
-            document.Add(new Paragraph("Detalles de la Factura", boldFont));
-            document.Add(new Paragraph($"Fecha de Emisión: {factura.Fecha:dd/MM/yyyy}", regularFont));
-            document.Add(new Paragraph("\n"));
+			// Información de la factura
+			document.Add(new Paragraph("Detalles de la Factura", boldFont));
+			document.Add(new Paragraph($"Fecha de Emisión: {factura.Fecha:dd/MM/yyyy}", regularFont));
+			document.Add(new Paragraph("\n"));
 
-            // Tabla de detalles (solo ejemplo con un concepto y el monto)
-            PdfPTable table = new PdfPTable(2);
-            table.WidthPercentage = 100;
-            table.SetWidths(new float[] { 3, 1 }); // Ancho de columnas: Descripción, Monto
+			// Tabla de detalles (solo ejemplo con un concepto y el monto)
+			PdfPTable table = new PdfPTable(2);
+			table.WidthPercentage = 100;
+			table.SetWidths(new float[] { 3, 1 }); // Ancho de columnas: Descripción, Monto
 
-            // Encabezado de la tabla
-            PdfPCell cell = new PdfPCell(new Phrase("Descripción", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-            cell.BackgroundColor = new BaseColor(230, 230, 230);
-            table.AddCell(cell);
+			// Encabezado de la tabla
+			PdfPCell cell = new PdfPCell(new Phrase("Descripción", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_CENTER;
+			cell.BackgroundColor = new BaseColor(230, 230, 230);
+			table.AddCell(cell);
 
-            cell = new PdfPCell(new Phrase("Monto", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-            cell.BackgroundColor = new BaseColor(230, 230, 230);
-            table.AddCell(cell);
+			cell = new PdfPCell(new Phrase("Monto", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_CENTER;
+			cell.BackgroundColor = new BaseColor(230, 230, 230);
+			table.AddCell(cell);
 
-            // Detalle de la factura
-            table.AddCell(new PdfPCell(new Phrase($"{factura.Descripcion}", regularFont)));
-            table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+			// Detalle de la factura
+			table.AddCell(new PdfPCell(new Phrase($"{factura.Descripcion}", regularFont)));
+			table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
 
-            // Total
-            cell = new PdfPCell(new Phrase("Total", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-            cell.Colspan = 1;
-            cell.Border = Rectangle.TOP_BORDER;
-            table.AddCell(cell);
+			// Total
+			cell = new PdfPCell(new Phrase("Total", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+			cell.Colspan = 1;
+			cell.Border = Rectangle.TOP_BORDER;
+			table.AddCell(cell);
 
-            cell = new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-            cell.Border = Rectangle.TOP_BORDER;
-            table.AddCell(cell);
+			cell = new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+			cell.Border = Rectangle.TOP_BORDER;
+			table.AddCell(cell);
 
-            document.Add(table);
+			document.Add(table);
 
-            document.Close();
-            memoryStream.Position = 0;
+			document.Close();
+			memoryStream.Position = 0;
 
-            return memoryStream;
-        }
+			return memoryStream;
+		}
 
-        public MemoryStream GenerarFacturaListada(List<long> ids)
-        {
-            var memoryStream = new MemoryStream();
-            Document document = new Document(PageSize.A4, 25, 25, 30, 30);
-            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
-            writer.CloseStream = false;
+		public MemoryStream GenerarFacturaListada(List<long> ids)
+		{
+			var memoryStream = new MemoryStream();
+			Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+			PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+			writer.CloseStream = false;
 
-            document.Open();
+			document.Open();
 
-            // Estilos de fuente
-            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
-            var regularFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
-            var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+			// Estilos de fuente
+			var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+			var regularFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+			var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
 
-            // Encabezado del documento
-            document.Add(new Paragraph("FACTURAS", titleFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
-            document.Add(new Paragraph("\n"));
+			// Encabezado del documento
+			document.Add(new Paragraph("FACTURAS", titleFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("\n"));
 
-            // Inicializar tabla
-            PdfPTable table = new PdfPTable(2);
-            table.WidthPercentage = 100;
-            table.SetWidths(new float[] { 3, 1 }); // Ancho de columnas: Descripción, Monto
+			// Inicializar tabla
+			PdfPTable table = new PdfPTable(2);
+			table.WidthPercentage = 100;
+			table.SetWidths(new float[] { 3, 1 }); // Ancho de columnas: Descripción, Monto
 
-            // Encabezado de la tabla
-            PdfPCell cell = new PdfPCell(new Phrase("Descripción", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-            cell.BackgroundColor = new BaseColor(230, 230, 230);
-            table.AddCell(cell);
+			// Encabezado de la tabla
+			PdfPCell cell = new PdfPCell(new Phrase("Descripción", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_CENTER;
+			cell.BackgroundColor = new BaseColor(230, 230, 230);
+			table.AddCell(cell);
 
-            cell = new PdfPCell(new Phrase("Monto", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-            cell.BackgroundColor = new BaseColor(230, 230, 230);
-            table.AddCell(cell);
+			cell = new PdfPCell(new Phrase("Monto", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_CENTER;
+			cell.BackgroundColor = new BaseColor(230, 230, 230);
+			table.AddCell(cell);
 
-            // Acumular monto total
-            decimal montoTotal = 0;
+			// Acumular monto total
+			decimal montoTotal = 0;
 
-            // Recorrer los IDs y agregar cada factura
-            foreach (var id in ids)
-            {
-                Factura factura = dal.GetFacturaById((int)id);
+			// Recorrer los IDs y agregar cada factura
+			foreach (var id in ids)
+			{
+				Factura factura = dal.GetFacturaById((int)id);
 
-                if (factura != null)
-                {
-                    table.AddCell(new PdfPCell(new Phrase($"{factura.Descripcion}", regularFont)));
-                    table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
+				if (factura != null)
+				{
+					table.AddCell(new PdfPCell(new Phrase($"{factura.Descripcion}", regularFont)));
+					table.AddCell(new PdfPCell(new Phrase($"{factura.Monto.ToString("C", new CultureInfo("en-US"))}", regularFont)) { HorizontalAlignment = Element.ALIGN_RIGHT });
 
-                    montoTotal += (decimal)factura.Monto;
-                }
-            }
+					montoTotal += (decimal)factura.Monto;
+				}
+			}
 
-            // Total de las facturas
-            cell = new PdfPCell(new Phrase("Total", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-            cell.Border = Rectangle.TOP_BORDER;
-            table.AddCell(cell);
+			// Total de las facturas
+			cell = new PdfPCell(new Phrase("Total", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+			cell.Border = Rectangle.TOP_BORDER;
+			table.AddCell(cell);
 
-            cell = new PdfPCell(new Phrase($"{montoTotal.ToString("C", new CultureInfo("en-US"))}", boldFont));
-            cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-            cell.Border = Rectangle.TOP_BORDER;
-            table.AddCell(cell);
+			cell = new PdfPCell(new Phrase($"{montoTotal.ToString("C", new CultureInfo("en-US"))}", boldFont));
+			cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+			cell.Border = Rectangle.TOP_BORDER;
+			table.AddCell(cell);
 
-            document.Add(table);
+			document.Add(table);
 
-            document.Close();
-            memoryStream.Position = 0;
+			document.Close();
+			memoryStream.Position = 0;
 
-            return memoryStream;
-        }
+			return memoryStream;
+		}
 
-        #endregion
+		#endregion
 
-        //Medicos
-        #region MEDICOS
+		//Medicos
+		#region MEDICOS
 
-        public List<Medico> getMedicos()
+		public List<Medico> getMedicos()
 		{
 			return dal.GetMedicos();
 		}
@@ -555,9 +646,9 @@ namespace BL.BLs
 		}
 
 		public Medico getMedicoByDocumento(string documento)
-        {
-            return dal.GetMedicoByDocumento(documento);
-        }
+		{
+			return dal.GetMedicoByDocumento(documento);
+		}
 
 		public void addMedico(Medico medico)
 		{
@@ -571,14 +662,14 @@ namespace BL.BLs
 
 		public void deleteMedico(long id)
 		{
-            //desactivar los calendarios del medico
-            var calendarios = getCalendarios().Where(c => c.Medico.Id == id).ToList();
-            foreach (var calendario in calendarios)
-            {
-                deleteCalendario(calendario.Id);
-            }
+			//desactivar los calendarios del medico
+			var calendarios = getCalendarios().Where(c => c.Medico.Id == id).ToList();
+			foreach (var calendario in calendarios)
+			{
+				deleteCalendario(calendario.Id);
+			}
 
-            dal.DeleteMedico(id);
+			dal.DeleteMedico(id);
 		}
 
 		public void asignarEspecialidad(long medId, long espId)
@@ -656,54 +747,54 @@ namespace BL.BLs
 
 		public async void deleteCalendario(long calendarioId)
 		{
-            //borrar el calendario y cancelar las citas asociadas
-            var citas = getCitasMedicas()
-                .Where(c => c.Calendario.Id == calendarioId)
-                .Where(c => c.Estado == "Agendada")
-                .ToList();
+			//borrar el calendario y cancelar las citas asociadas
+			var citas = getCitasMedicas()
+				.Where(c => c.Calendario.Id == calendarioId)
+				.Where(c => c.Estado == "Agendada")
+				.ToList();
 			Console.WriteLine("cantidad de citas a borrar" + citas.Count);
-            foreach (var cita in citas)
-            {
-                cita.Estado = "Cancelada";
-                updateCitaMedica(cita);
+			foreach (var cita in citas)
+			{
+				cita.Estado = "Cancelada";
+				updateCitaMedica(cita);
 
-                //Creo la notificacion para el paciente
-                if (cita.PacienteId != null)
-                {
-                    var notificacion = new Notificacion()
-                    {
-                        Mensaje = $"Su Cita medica para la fecha {cita.Fecha} ha tenido que ser cancelada, por favor agende nuevamente",
-                        FechaEnvio = DateTime.Now,
-                        Visto = false
-                    };
-                    string id = (string)cita.PacienteId;
-                    string IdDesencriptada = AES.Decrypt(id);
-                    notificacion.Paciente.Id = long.Parse(IdDesencriptada);
-                    //dal_Paciente.AddNotificacion(notificacion, id);
+				//Creo la notificacion para el paciente
+				if (cita.PacienteId != null)
+				{
+					var notificacion = new Notificacion()
+					{
+						Mensaje = $"Su Cita medica para la fecha {cita.Fecha} ha tenido que ser cancelada, por favor agende nuevamente",
+						FechaEnvio = DateTime.Now,
+						Visto = false
+					};
+					string id = (string)cita.PacienteId;
+					string IdDesencriptada = AES.Decrypt(id);
+					notificacion.Paciente.Id = long.Parse(IdDesencriptada);
+					//dal_Paciente.AddNotificacion(notificacion, id);
 
 
-                    //uso la coneccion a rabbimq para enviar la notificacion a la cola
-                    try
-                    {
-                        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notificacion));
+					//uso la coneccion a rabbimq para enviar la notificacion a la cola
+					try
+					{
+						var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notificacion));
 
-                        //envio la notificacion por rabbit
-                        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "Notificaciones", body: body);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Error al enviar notificación: {ex.Message}");
-                        throw;
-                    }
+						//envio la notificacion por rabbit
+						await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "Notificaciones", body: body);
+					}
+					catch (Exception ex)
+					{
+						_logger.LogError($"Error al enviar notificación: {ex.Message}");
+						throw;
+					}
 
-                }
-            }
+				}
+			}
 
-            _logger.LogInformation("Se eliminaron las ciras");
+			_logger.LogInformation("Se eliminaron las ciras");
 
-            //se desactiva el calendario
-            dal.DeleteCalendario(calendarioId);
-        }
+			//se desactiva el calendario
+			dal.DeleteCalendario(calendarioId);
+		}
 
 		public void crearCalendario(long medId, long espId, long conId, TimeSpan horaInicio, TimeSpan horaFin, int tiempo, int cant, string[] dias)
 		{
@@ -739,25 +830,25 @@ namespace BL.BLs
 			}
 		}
 
-        public bool checkOcupacionConsultorio(Calendario calendario)
+		public bool checkOcupacionConsultorio(Calendario calendario)
 		{
 			var calendarios = getCalendarios();
 			if(calendarios == null || calendarios.Count == 0)
 			{
-                return false;
+				return false;
 			}
 
-            //verificar que no haya otro calendario que se cruce con el nuevo
-            foreach (var c in calendarios)
-            {
+			//verificar que no haya otro calendario que se cruce con el nuevo
+			foreach (var c in calendarios)
+			{
 				if(c.Id == calendario.Id)
 				{
 					continue;
 				}
-                if (c.Consultorio.Id == calendario.Consultorio.Id)
-                {
-                    if (c.DiasSemana.Intersect(calendario.DiasSemana).Any())
-                    {
+				if (c.Consultorio.Id == calendario.Consultorio.Id)
+				{
+					if (c.DiasSemana.Intersect(calendario.DiasSemana).Any())
+					{
 						_logger.LogInformation("conflicto con calendario en los dias " + string.Join(",", c.DiasSemana) + " para los dias " + string.Join(",", calendario.DiasSemana));
 						if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
 							(c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
@@ -767,12 +858,47 @@ namespace BL.BLs
 							_logger.LogInformation("conflicto con calendario en las horas " + c.HoraInicio + " - " + c.HoraFin + " para la hora de inicio " + calendario.HoraInicio + " y hora de fin " + calendario.HoraFin);
 							return true;
 						}
+					}
+				}
+			}
+			_logger.LogInformation("saliendo sin conflictos");
+			return false;
+		}
+
+		public bool validarCalendariosPropios(long medicoId, long calendarioEditId, Calendario calendario)
+		{
+			//chequear que ningun calendario del medico se cruce en horario con el nuevo calendario
+			var calendarios = getCalendarios().Where(c => c.Medico.Id == medicoId).ToList();
+			if (calendarios.Count == 0 || calendarios == null)
+			{
+				return true;
+			}
+
+			foreach (var c in calendarios)
+			{
+				if (calendarioEditId != 0 && c.Id == calendarioEditId)
+				{
+                    //si es el calendario que se esta editando, se saltea para evitar conflictos consigo mismo
+                    continue;
+                }
+                //chequeo por cualquier dia del calendario c que este en el calendario nuevo
+                if (c.DiasSemana.Intersect(calendario.DiasSemana).Any())
+                {
+					Console.WriteLine("Dia nuevo: " + string.Join(",", c.DiasSemana.Intersect(calendario.DiasSemana)));
+                    if ((c.HoraInicio < calendario.HoraInicio && c.HoraFin > calendario.HoraInicio) ||
+                        (c.HoraInicio < calendario.HoraFin && c.HoraFin > calendario.HoraFin) ||
+                        (c.HoraInicio >= calendario.HoraInicio && c.HoraFin <= calendario.HoraFin) ||
+                        (c.HoraInicio <= calendario.HoraInicio && c.HoraFin >= calendario.HoraFin))
+                    {
+                        Console.WriteLine(c.HoraInicio + " - " + c.HoraFin + " - " + calendario.HoraInicio + " - " + calendario.HoraFin);
+                        return false;
                     }
                 }
             }
-			_logger.LogInformation("saliendo sin conflictos");
-            return false;
-        }
+
+			//salio sin conflictos
+			return true;
+		}
 
 		public bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades)
 		{
@@ -780,19 +906,19 @@ namespace BL.BLs
 			var calendarios = getCalendarios().Where(c => c.Medico.Id == medicoId).ToList();
 			if (calendarios.Count == 0 || calendarios == null)
 			{
-                return true;
-            }
+				return true;
+			}
 
-            foreach (var calendario in calendarios)
+			foreach (var calendario in calendarios)
 			{
 				if(!especialidades.Any(e => e.Id == calendario.Especialidad.Id)){
 					_logger.LogInformation("Especialidad no encontrada en la lista de especialidades a borrar");
 					return false;
 				}
 
-            }
+			}
 
-            return true;
+			return true;
 		}
 
 		public async Task borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades)
@@ -803,9 +929,9 @@ namespace BL.BLs
 			{
 				if (!especialidades.Any(e => e.Id == calendario.Especialidad.Id))
 				{
-                    //se desactiva el calendario
-                    deleteCalendario(calendario.Id);
-                }
+					//se desactiva el calendario
+					deleteCalendario(calendario.Id);
+				}
 			}
 		}
 
@@ -813,6 +939,40 @@ namespace BL.BLs
 		{
 			return dal.GetCalendariosFiltrados(medicoId, filtroEspecialidad, filtroDia, filtroHoraInicio);
 
+		}
+
+		public List<Calendario> getCalendariosByArticuloFecha(string cedula, long articuloId, string fecha)
+		{
+            //segun la fecha conseguir el dia
+            DateTime fechaDate = DateTime.Parse(fecha);
+            string dia = fechaDate.ToString("dddd", new CultureInfo("es-UY"));
+            //poner la primera letra en mayuscula 
+            dia = char.ToUpper(dia[0]) + dia.Substring(1);
+
+            Paciente paciente = getPacienteByDNI(cedula);
+            if (paciente == null)
+            {
+                return null;
+            }
+
+            SeguroMedico seguro = paciente.Contrato.SeguroMedico;
+            if (seguro == null)
+            {
+                return null;
+            }
+
+			List<Especialidad> especialidadesParaElArticulo = dal.GetEspecialidadesByArticuloSeguro(articuloId, seguro.Id);
+
+			List<Calendario> calendariosParaELArticulo = new List<Calendario>();
+
+			foreach(var especialidad in especialidadesParaElArticulo)
+			{
+				//ir agregando los calendarios a la lista
+                var calendarios = dal.GetCalendariosByEspecialidadFecha(especialidad.Id, fechaDate, dia);
+                calendariosParaELArticulo.AddRange(calendarios);
+			}
+
+			return calendariosParaELArticulo;
         }
 
         #endregion
@@ -907,22 +1067,50 @@ namespace BL.BLs
 		}
 
 		public List<Articulo> getArticulosFiltrados(string filtro)
-        {
-            return dal.GetArticulosFiltrados(filtro);
-        }
+		{
+			return dal.GetArticulosFiltrados(filtro);
+		}
 
-		#endregion
+        public List<Articulo> getArticulosHabilitados(string cedula)
+		{
+			Paciente paciente = getPacienteByDNI(cedula);
+            if (paciente == null)
+			{
+				return null;
+			}
 
-		//Pago PayPal
-		#region PAGO PAYPAL
-		public List<PagoPayPal> GetPaypalPagos()
+			Contrato contrato = paciente.Contrato;
+			if(contrato == null || !contrato.Activo)
+            {
+                return null;
+            }
+
+            SeguroMedico seguro = contrato.SeguroMedico;
+            if (seguro == null)
+			{
+				return null;
+			}
+
+            return dal.GetArticulosBySeguro(seguro);
+		}
+
+        #endregion
+
+        //Pago PayPal
+        #region PAGO PAYPAL
+        public List<PagoPayPal> GetPaypalPagos()
 		{
 			return dal.GetPaypalPagos();
-        }
+		}
 
-        public PagoPayPal GetPaypalPagoById(long id)
+		public PagoPayPal GetPaypalPagoById(long id)
+		{
+			return dal.GetPaypalPagoById(id);
+		}
+
+        public PagoPayPal GetPaypalPagoByOrdenId(string id)
         {
-            return dal.GetPaypalPagoById(id);
+            return dal.GetPaypalPagoByOrdenId(id);
         }
 
         public void AddPaypalPago(PagoPayPal nuevoPago)
@@ -932,4 +1120,20 @@ namespace BL.BLs
 
 		#endregion
 	}
+
+    public class PaymentRequest
+    {
+        public List<PayPalPurchaseUnit> PurchaseUnits { get; set; }
+    }
+
+    public class ExecutePaymentRequest
+    {
+        public string PaymentId { get; set; }
+        public string PayerId { get; set; }
+    }
+
+    public class CaptureRequest
+    {
+        public string OrderId { get; set; }
+    }
 }

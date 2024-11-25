@@ -516,7 +516,37 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public bool validarCalendariosPropios(long medicoId, long calendarioEditId, Calendario calendario)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public PagoPayPal GetPaypalPagoByOrdenId(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public int countFacturas(long id)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public List<Calendario> GetCalendariosByArticuloYFecha(string cedula, long especialidadId, string fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Articulo> getArticulosHabilitados(string cedula)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Calendario> getCalendariosByArticuloFecha(string cedula, long articuloId, string fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long getIdByFilds(Copago copago)
         {
             throw new NotImplementedException();
         }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared;
 using System.Collections.Generic;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -201,6 +202,70 @@ namespace PacienteWebApi.Controllers
             }
 
             return Ok(_blCitasMedicas.CancelarCita(documento, id));
+        }
+
+        //POST api/<CitasMedicasController>/agendar
+        [HttpPost("agendar")]
+        [ProducesResponseType(typeof(CitaMedica), 201)]
+        [ProducesResponseType(400)]
+        public IActionResult AgendarCita([FromBody] Request_DatosAgendarCita datosCita)
+        {
+            if (datosCita == null)
+            {
+                return BadRequest();
+            }
+
+            string cedula = datosCita.Cedula;
+            long calendarioId = datosCita.CalendarioId;
+            string fecha = datosCita.fecha;
+            string hora = datosCita.hora;
+            long articuloId = datosCita.ArticuloId;
+
+            if (cedula == null || calendarioId == 0 || fecha == null || hora == null || articuloId == 0)
+            {
+                return BadRequest();
+            }
+
+            //chquear que sea el mismo usuario
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != cedula)
+            {
+                return Forbid("No agendarte por otro usuario");
+            }
+
+            // dados los datos en formato fecha:"2024-11-26" hora:"08:00:00" darles formato para que quede DateTime
+            var fechaHora = fecha + " " + hora;
+            var fechaHoraDateTime = DateTime.Parse(fechaHora);
+
+            Paciente paciente = _blCitasMedicas.getPacienteByCedula(cedula);
+            if (paciente.Contrato == null || !paciente.Contrato.Activo)
+            {
+                return BadRequest("El paciente no tiene un contrato activo");
+            }
+
+            SeguroMedico seguro = paciente.Contrato.SeguroMedico;
+            Calendario calendario = _blCitasMedicas.getCalendarioById(calendarioId);
+
+            Copago copagoSearch = new Copago()
+            {
+                SeguroMedico = new SeguroMedico() { Id = seguro.Id },
+                Especialidad = new Especialidad() { Id = calendario.Especialidad.Id },
+                Articulo = new Articulo() { Id = articuloId },
+            };
+
+            long copagoId = _blCitasMedicas.getCopagoBySeguroEspecialidadArticulo(copagoSearch);
+
+            CitaMedica nuevaCita = new CitaMedica
+            {
+                Fecha = fechaHoraDateTime,
+                Estado = "Agendada",
+                CalendarioId = calendarioId,
+                CopagoId = copagoId,
+            };
+
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, paciente.Id);
+            return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
         }
     }
 }

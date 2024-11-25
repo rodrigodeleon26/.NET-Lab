@@ -5,25 +5,25 @@
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class MedicoActivoCol : Migration
+    public partial class colCopagoACita : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "Activo",
-                table: "Medicos",
-                type: "bit",
+            migrationBuilder.AddColumn<long>(
+                name: "CopagoId",
+                table: "CitasMedicas",
+                type: "bigint",
                 nullable: false,
-                defaultValue: true);
+                defaultValue: 0L);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Activo",
-                table: "Medicos");
+                name: "CopagoId",
+                table: "CitasMedicas");
         }
     }
 }

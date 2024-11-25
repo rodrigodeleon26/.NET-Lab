@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class FacturasService {
 
-  private apiUrl = 'https://localhost/gestion/api/Facturas';
+  private apiUrl = 'https://localhost:5009/api/Facturas';
 
   constructor(private http: HttpClient) { }
 

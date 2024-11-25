@@ -63,9 +63,10 @@ namespace AdministrativoWebApi.Controllers
         {
             if (factura == null)
             {
+                Console.WriteLine("Factura es null");
                 return BadRequest();
             }
-
+            Console.WriteLine("En el controlador");
             _blAdministrativo.addFactura(factura);
             return CreatedAtAction(nameof(Get), new { id = factura.Id }, factura);
         }

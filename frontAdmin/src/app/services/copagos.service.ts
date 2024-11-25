@@ -8,7 +8,7 @@ import { SegurosMedicosService } from './seguros-medicos.service';
 })
 export class CopagosService {
 
-  private apiUrl = 'https://localhost/gestion/api/Copagos'; // URL del microservicio
+  private apiUrl = 'https://localhost:5009/api/Copagos'; // URL del microservicio
 
   private selectedArticuloSource = new BehaviorSubject<any>(null);
   selectedArticulo$ = this.selectedArticuloSource.asObservable();

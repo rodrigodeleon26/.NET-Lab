@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using DAL.DALs;
 using DAL.Models;
 using Shared;
 using System;
@@ -70,6 +71,10 @@ namespace DAL.IDALs
 		public void DeleteFactura(long id);
         IEnumerable<Contrato> GetContratosActivos();
         Task SaveChangesAsync();
+		public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año);
+		public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin);
+		public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId);
+
 
         // Medicos
         public List<Medico> GetMedicos();
@@ -94,9 +99,10 @@ namespace DAL.IDALs
 		public void UpdateCalendario(Calendario calendario);
 		public void DeleteCalendario(long id);
         public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
+		public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia);
 
-		// Consultorios
-		public List<Consultorio> GetConsultorios();
+        // Consultorios
+        public List<Consultorio> GetConsultorios();
 		public Consultorio GetConsultorioById(long id);
 		public void AddConsultorio(Consultorio consultorio);
 		public void UpdateConsultorio(Consultorio consultorio);
@@ -108,19 +114,30 @@ namespace DAL.IDALs
 		public void AddEspecialidad(Especialidad especialidad);
 		public void UpdateEspecialidad(Especialidad especialidad);
 		public void DeleteEspecialidad(long id);
+		public List<Especialidad> GetEspecialidadesByArticuloSeguro(long articuloId, long seguroId);
 
-		// Articulo
-		public List<Articulo> GetArticulos();
+        // Articulo
+        public List<Articulo> GetArticulos();
 		public Articulo GetArticuloById(long id);
 		public void AddArticulo(Articulo articulo);
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
 		public List<Articulo> GetArticulosFiltrados(string filtro);
+		public List<Articulo> GetArticulosBySeguro(SeguroMedico seguro);
 
-		// Pago PayPal
-		public List<PagoPayPal> GetPaypalPagos();
+        // Pago PayPal
+        public List<PagoPayPal> GetPaypalPagos();
         public PagoPayPal GetPaypalPagoById(long id);
+        public PagoPayPal GetPaypalPagoByOrdenId(string id);
         public void AddPaypalPago(PagoPayPal nuevoPago);
+		public Task<PayPalOrderResponse> GetOrderDetailsAsync(string orderId);
+		public Task<PayPalCaptureResponse> CaptureOrderAsync(string orderId);
+		public Task<PayPalOrderResponse> CreateOrderAsync(
+		List<PayPalPurchaseUnit> purchaseUnits,
+		string currency,
+		string returnUrl,
+		string cancelUrl);
+		public Task<string> GetAccessTokenAsync();
 
     }
 }

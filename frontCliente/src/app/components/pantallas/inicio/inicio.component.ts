@@ -56,4 +56,11 @@ export class InicioComponent implements OnInit {
     };
     this.router.navigateByUrl('/historial-facturacion', navigationExtras);
   }
+  agendarme(): void {
+    const navigationExtras: NavigationExtras = {
+      state: { cedula: this.cedula }
+    };
+    this.router.navigateByUrl('/agendarse', navigationExtras);
+  }
+
 }

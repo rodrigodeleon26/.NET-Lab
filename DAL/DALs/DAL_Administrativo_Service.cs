@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.X500;
+using PayPal.Api;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,7 @@ namespace DAL.DALs
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
                     var paciente = JsonConvert.DeserializeObject<Paciente>(json);
+                    Console.WriteLine("nombre:" + paciente.Nombres);
                     return paciente;
                 }
                 else
@@ -101,7 +103,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);   
+                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);
                     return paciente;
                 }
                 else
@@ -234,8 +236,8 @@ namespace DAL.DALs
 
         public int CountNotificaciones(long id)
         {
-            try 
-            { 
+            try
+            {
                 var handler = new HttpClientHandler
                 {
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
@@ -355,7 +357,33 @@ namespace DAL.DALs
 
         public Copago GetCopagoById(long id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Copagos/{id}";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<Copago>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las notificaciones");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las notificaciones: {ex.Message}");
+                return null;
+            }
         }
 
         public void AddCopago(Copago copago)
@@ -375,7 +403,34 @@ namespace DAL.DALs
 
         public long getIdByFilds(Copago copago)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Console.WriteLine("En el service");
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Copagos/getIdByFilds/{copago.SeguroMedico.Id}/{copago.Especialidad.Id}/{copago.Articulo.Id}";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<long>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener la id");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener la id: {ex.Message}");
+                return 0;
+            }
         }
 
         public List<Factura> GetFacturas()
@@ -390,7 +445,36 @@ namespace DAL.DALs
 
         public void AddFactura(Factura factura)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                string url = $"https://administrativowebapi:8081/api/Facturas/";
+
+                var json = System.Text.Json.JsonSerializer.Serialize(factura);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                Console.WriteLine("voy a crear la factura" + content);
+                // Enviar la solicitud POST al endpoint
+                var response =  _httpClient.PostAsync(url, content);
+
+                if (response != null)
+                {
+                    Console.WriteLine("Respuesta" + response.Result.Content.ReadAsStringAsync().Result);
+                }
+                else
+                {
+                    Console.WriteLine("Respuesta null");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al Crear la Factura: {ex.Message}");
+                //return null;
+            }
         }
 
         public void UpdateFactura(Factura factura)
@@ -470,7 +554,33 @@ namespace DAL.DALs
 
         public Calendario GetCalendarioById(long id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Calendarios/{id}";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<Calendario>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener el calendario");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener el calendario: {ex.Message}");
+                return null;
+            }
         }
 
         public void AddCalendario(Calendario calendario)
@@ -725,6 +835,61 @@ namespace DAL.DALs
         }
 
         public void AddPaypalPago(PagoPayPal nuevoPago)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagoPayPal GetPaypalPagoByOrdenId(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PayPalOrderResponse> GetOrderDetailsAsync(string orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PayPalCaptureResponse> CaptureOrderAsync(string orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PayPalOrderResponse> CreateOrderAsync(List<PayPalPurchaseUnit> purchaseUnits, string currency, string returnUrl, string cancelUrl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetAccessTokenAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Articulo> GetArticulosBySeguro(SeguroMedico seguro)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Especialidad> GetEspecialidadesByArticuloSeguro(long articuloId, long seguroId)
         {
             throw new NotImplementedException();
         }

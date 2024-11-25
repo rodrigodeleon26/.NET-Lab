@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System.Globalization;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -146,6 +147,20 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(ocupado);
 		}
 
+
+		// POST api/<CalendariosController>/validarCalendariosPropios/3/5
+		[HttpPost("validarCalendariosPropios/{medicoId}/{calendarioEditId}")]
+        public IActionResult validarCalendariosPropios(long medicoId, long calendarioEditId, [FromBody] Calendario calendario)
+		{
+			if (calendario == null || medicoId == 0)
+			{
+				return BadRequest();
+            }
+
+			bool valido = _blAdministrativo.validarCalendariosPropios(medicoId, calendarioEditId, calendario);
+			return Ok(valido);
+        }
+
         // POST api/<CalendariosController>/validarEspecialidadesParaBorrar/5
         [Authorize(Roles = "Admin, Medico")]
         [HttpPost("validarEspecialidadesParaBorrar/{medicoId}")]
@@ -165,8 +180,6 @@ namespace AdministrativoWebApi.Controllers
             return NoContent();
         }
 
-        //    return this.http.post<any>(`${this.apiUrl}/filtrarCalendarios/${medicoId}`, filtros);
-
         // POST api/<CalendariosController>/filtrarCalendarios/5
         [Authorize(Roles = "Admin, Medico")]
         [HttpPost("filtrarCalendarios/{medicoId}")]
@@ -183,6 +196,26 @@ namespace AdministrativoWebApi.Controllers
             }
 
 			return Ok(_blAdministrativo.getCalendariosFiltrados(medicoId, filtroEspecialidad, filtroDia, filtroHoraInicio));
+        }
+
+        //get calendarios por articulo para una fecha
+        // GET api/<CalendariosController>/articulo/5/fecha/2024-11-24
+        [HttpGet("{cedula}/articulo/{articuloId}/fecha/{fecha}")]
+        public IActionResult getCalendariosByArticuloFecha(string cedula, long articuloId, string fecha)
+        {
+            if (fecha == null || articuloId == 0 || cedula == null)
+            {
+                return BadRequest();
+            }
+
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != cedula)
+            {
+                return Forbid("No puedes ver la informacion de otro usuario");
+            }
+
+            return Ok(_blAdministrativo.getCalendariosByArticuloFecha(cedula, articuloId, fecha));
         }
     }
 }
