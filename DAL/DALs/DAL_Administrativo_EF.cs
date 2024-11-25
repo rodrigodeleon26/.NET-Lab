@@ -1061,11 +1061,15 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
-                var query = _dbContext.Facturas.AsQueryable();
+                var query = _dbContext.Facturas
+                    .Include(f => f.PagoPayPal) // Incluir la relación con PagoPayPal
+                    .AsQueryable();
 
                 if (!string.IsNullOrEmpty(pacienteString))
                 {
-                    query = query.Where(f => f.Paciente.Nombres.Contains(pacienteString) || f.Paciente.Apellidos.Contains(pacienteString) || f.Paciente.Documento.Contains(pacienteString));
+                    query = query.Where(f => f.Paciente.Nombres.Contains(pacienteString) ||
+                                             f.Paciente.Apellidos.Contains(pacienteString) ||
+                                             f.Paciente.Documento.Contains(pacienteString));
                 }
 
                 if (estaPago.HasValue)
@@ -1086,6 +1090,12 @@ namespace DAL.DALs
                         Pago = f.Pago,
                         FechaPago = f.FechaPago,
                         Descripcion = f.Descripcion,
+                        PagoPayPal = f.PagoPayPal == null ? null : new PagoPayPal
+                        {
+                            Id = f.PagoPayPal.Id,
+                            linkPago = f.PagoPayPal.linkPago,
+                            pagoId = f.PagoPayPal.pagoId
+                        },
                         Paciente = new Paciente
                         {
                             Id = f.Paciente.Id,

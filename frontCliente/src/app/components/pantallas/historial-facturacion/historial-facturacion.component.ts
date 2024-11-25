@@ -1,0 +1,163 @@
+import { Component, OnInit } from '@angular/core';
+import { FacturaService } from '../../../services/factura.service';
+import { PaypalService } from '../../../services/paypal.service';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-historial-facturacion',
+  templateUrl: './historial-facturacion.component.html',
+  styleUrls: ['./historial-facturacion.component.css']
+})
+export class HistorialFacturacionComponent implements OnInit {
+  facturasAgrupadas: any = {}; // Agrupación de facturas por PagoPayPalId
+  loading: boolean = false;
+  errorMessage: string = '';
+  numPagina: number = 1; // Página actual
+  fechaAsc: boolean = false; // Orden de fecha
+  estaPago: boolean = false;
+  showPagoDropdown: boolean = false;
+  cedula: string = ''; // Cédula fija
+
+  constructor(
+    private facturasService: FacturaService,
+    private paypalService: PaypalService,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+    const navigation = history.state;
+    this.cedula = navigation?.['cedula'] || '';
+    this.cargarFacturas();
+  }
+
+  puedeRealizarPago(facturasAgrupadas: any, keyActual: string): boolean {
+    // Obtener todas las claves del objeto agrupado
+    const keys = Object.keys(facturasAgrupadas);
+  
+    // Encontrar la agrupación con la factura más antigua
+    let keyMasAntigua: string | null = null;
+    let fechaMasAntigua: Date | null = null;
+  
+    keys.forEach((key) => {
+      const fechaPrimeraFactura = new Date(facturasAgrupadas[key].facturas[0]?.fecha);
+      if (!fechaMasAntigua || fechaPrimeraFactura < fechaMasAntigua) {
+        fechaMasAntigua = fechaPrimeraFactura;
+        keyMasAntigua = key;
+      }
+    });
+  
+    // Permitir la selección solo si la clave actual coincide con la agrupación más antigua
+    return keyActual === keyMasAntigua;
+  }
+
+  cargarFacturas(): void {
+    this.loading = true;
+    this.facturasService.getFacturasPaginadas(this.numPagina, this.fechaAsc, this.estaPago, this.cedula).subscribe(
+      (data) => {
+        this.agruparFacturas(data);
+        this.loading = false;
+      },
+      (error) => {
+        this.errorMessage = 'Error al cargar las facturas';
+        console.error('Error al cargar facturas:', error);
+        this.loading = false;
+      }
+    );
+  }
+
+  getKeys(obj: any): string[] {
+    return Object.keys(obj);
+  }
+
+  agruparFacturas(facturas: any[]): void {
+    this.facturasAgrupadas = {};
+  
+    facturas.forEach((factura) => {
+      const key = factura.pagoPayPal?.id || 'sinPago';
+  
+      // Inicializar el grupo si no existe
+      if (!this.facturasAgrupadas[key]) {
+        this.facturasAgrupadas[key] = { facturas: [], montoTotal: 0 };
+      }
+  
+      // Agregar la factura al grupo
+      this.facturasAgrupadas[key].facturas.push(factura);
+  
+      // Sumar el monto de la factura al monto total del grupo
+      this.facturasAgrupadas[key].montoTotal += factura.monto;
+    });
+  
+    // Log de los montos totales agrupados
+    console.log(this.facturasAgrupadas);
+  }
+
+  realizarPago(id: string, link: string): void {
+    console.log('Order ID:', id);
+    console.log('Payment Link:', link);
+  
+    // Abre la ventana de PayPal
+    const paymentWindow = window.open(link, '_blank', 'width=800,height=600');
+  
+    // Verifica si la ventana fue bloqueada
+    if (!paymentWindow) {
+      console.error('La ventana emergente fue bloqueada por el navegador.');
+      alert('Por favor, habilita las ventanas emergentes para realizar el pago.');
+      return;
+    }
+  
+    // Realiza un seguimiento del estado de la ventana
+    const interval = setInterval(() => {
+      if (paymentWindow.closed) {
+        clearInterval(interval);
+        console.log('La ventana de PayPal se ha cerrado.');
+  
+        // Llama al endpoint para capturar el pago
+        this.paypalService.capturePayment(id).subscribe(
+          (response) => {
+            console.log('Pago capturado con éxito:', response);
+            alert('Pago realizado con éxito.');
+            // Aquí puedes recargar datos o realizar otras acciones
+          },
+          (error) => {
+            console.error('Error al capturar el pago:', error);
+            alert('Error al capturar el pago. Por favor, verifica el estado de tu transacción.');
+          }
+        );
+      }
+    }, 1000); // Revisa cada segundo si la ventana se ha cerrado
+  }
+
+  obtenerFactura(facturasAgrupadas: any): void {
+    // Extraer las IDs de las facturas agrupadas
+    const facturaIds = facturasAgrupadas.facturas.map((factura: any) => factura.id);
+  
+    if (facturaIds.length === 0) {
+      alert('No hay facturas disponibles para mostrar.');
+      return;
+    }
+  
+    this.facturasService.downloadFacturasPdf(facturaIds).subscribe(
+      (response) => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank'); // Abre el PDF en una nueva pestaña/ventana
+      },
+      (error) => {
+        console.error('Error al mostrar las facturas:', error);
+      }
+    );
+  }
+
+  cambiarPagina(incremento: number): void {
+    this.numPagina += incremento;
+    if (this.numPagina < 1) {
+      this.numPagina = 1;
+    }
+    this.cargarFacturas();
+  }
+
+  cambiarOrdenFecha(): void {
+    this.fechaAsc = !this.fechaAsc;
+    this.cargarFacturas();
+  }
+}

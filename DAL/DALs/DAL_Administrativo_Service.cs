@@ -1,8 +1,10 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using DAL.IDALs;
+using DAL.Models;
+using iTextSharp.text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.X500;
 using Shared;
 using System;
@@ -12,28 +14,16 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net.Http;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 
 namespace DAL.DALs
 {
     public class DAL_Administrativo_Service : IDAL_Administrativo
     {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
         private readonly HttpClient _httpClient;
 
-        public DAL_Administrativo_Service(IConfiguration configuration, HttpClient httpClient)
+        public DAL_Administrativo_Service(HttpClient httpClient)
         {
-            var payPalConfig = configuration.GetSection("PayPal");
-            _clientId = payPalConfig["ClientId"];
-            _clientSecret = payPalConfig["ClientSecret"];
             _httpClient = httpClient;
         }
 
@@ -54,7 +44,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    var paciente = JsonSerializer.Deserialize<Paciente>(json);
+                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);
                     return paciente;
                 }
                 else
@@ -87,7 +77,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    var paciente = JsonSerializer.Deserialize<Paciente>(json);
+                    var paciente = JsonConvert.DeserializeObject<Paciente>(json);
                     return paciente;
                 }
                 else
@@ -125,14 +115,14 @@ namespace DAL.DALs
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/{paciente.Id}";
 
-                var content = new StringContent(JsonSerializer.Serialize(paciente), Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(paciente), Encoding.UTF8, "application/json");
 
                 var response = _httpClient.PutAsync(url, content).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
-                    paciente = JsonSerializer.Deserialize<Paciente>(json);
+                    paciente = JsonConvert.DeserializeObject<Paciente>(json);
                     //return paciente;
                 }
                 else
@@ -184,7 +174,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = response.Content.ReadAsStringAsync().Result;
-                    return JsonSerializer.Deserialize<List<Notificacion>>(responseData);
+                    return JsonConvert.DeserializeObject<List<Notificacion>>(responseData);
                 }
                 else
                 {
@@ -215,7 +205,7 @@ namespace DAL.DALs
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = response.Content.ReadAsStringAsync().Result;
-                    return JsonSerializer.Deserialize<int>(responseData);
+                    return JsonConvert.DeserializeObject<int>(responseData);
                 }
                 else
                 {
@@ -564,6 +554,77 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public List<Factura> getHistorialFacturacion(long pacienteId, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{pacienteId}/historialFacturacion";
+
+                var queryParams = new List<string>
+                {
+                    $"pageNumber={pageNumber}",
+                    $"pageSize={pageSize}"
+                };
+
+                var queryString = string.Join("&", queryParams);
+                var fullUrl = $"{url}?{queryString}";
+
+                var response = _httpClient.GetAsync(fullUrl).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<List<Factura>>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las facturas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las facturas: {ex.Message}");
+                return null;
+            }
+        }
+
+        public int countFacturas(long id)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/historialFacturacion/count";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<int>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las facturas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las facturas: {ex.Message}");
+                return 0;
+            }
+        }
+
         public IEnumerable<Contrato> GetContratosActivos()
         {
             throw new NotImplementedException();
@@ -594,6 +655,21 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
+        {
+            throw new NotImplementedException();
+        }
+
         public PagoPayPal GetPaypalPagoByOrdenId(string id)
         {
             throw new NotImplementedException();
@@ -619,17 +695,7 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
+        public List<Factura> GetFacturasPorCedula(string cedula, int numPagina, bool fechaAsc, bool? estaPago)
         {
             throw new NotImplementedException();
         }

@@ -23,7 +23,7 @@ public class FacturacionAutomaticaService : BackgroundService
                 DateTime now = DateTime.Now;
 
                 // Verifica si es el primer día del mes
-                if (now.Day == 1)
+                if (now.Day == 23)
                 {
                     // Crear un alcance para obtener el servicio con ciclo de vida Scoped
                     using (var scope = _scopeFactory.CreateScope())

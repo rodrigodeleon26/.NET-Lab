@@ -21,7 +21,9 @@ import { NavComponent } from '../app/components/web/nav/nav.component';
 import { InicioComponent } from './components/pantallas/inicio/inicio.component';
 import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component';
 import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.component';
-import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component'; 
+import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component';
+import { HistorialFacturacionComponent } from './components/pantallas/historial-facturacion/historial-facturacion.component';
+import { PaymentSuccessComponent } from './components/pantallas/payment-success/payment-success.component'; 
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { NotificacionesComponent } from './components/pantallas/notificaciones/n
     InicioComponent,
     HistoriaClinicaComponent,
     MisDatosComponent,
-    NotificacionesComponent
+    NotificacionesComponent,
+    HistorialFacturacionComponent,
+    PaymentSuccessComponent
   ],
   imports: [
     BrowserModule,

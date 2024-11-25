@@ -13,6 +13,8 @@ import { InicioComponent } from './components/pantallas/inicio/inicio.component'
 import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component';
 import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.component';
 import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component';
+import { HistorialFacturacionComponent } from './components/pantallas/historial-facturacion/historial-facturacion.component';
+import { PaymentSuccessComponent } from './components/pantallas/payment-success/payment-success.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/inicio', pathMatch: 'full' },
@@ -26,6 +28,8 @@ const routes: Routes = [
       { path: 'twoFactorAuth', component: TwoFactorAuthComponent, canActivate: [authGuard] }
     ]
   },
+  { path : 'realizar-pago', component: HistorialFacturacionComponent, canActivate: [authGuard] },
+  { path : 'payment/success', component: PaymentSuccessComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path : 'inicio', component: InicioComponent, canActivate: [authGuard] },
   { path : 'historia-clinica', component: HistoriaClinicaComponent, canActivate: [authGuard] },

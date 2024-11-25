@@ -46,6 +46,7 @@ export class MisDatosComponent implements OnInit {
     this.loading = true;
     this.pacienteService.obtenerMisDatos(this.cedula).subscribe(
       (response) => {
+        console.log(response);
         this.pacienteForm.patchValue(response);
         this.loading = false;
       },
