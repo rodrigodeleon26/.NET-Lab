@@ -521,7 +521,22 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
-        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+        public List<Calendario> GetCalendariosByArticuloYFecha(string cedula, long especialidadId, string fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Articulo> getArticulosHabilitados(string cedula)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Calendario> getCalendariosByArticuloFecha(string cedula, long articuloId, string fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long getIdByFilds(Copago copago)
         {
             throw new NotImplementedException();
         }

@@ -8,18 +8,18 @@
             <div *ngIf="!loading" class="bg-blue-oscuro p-6 text-white">
                 <h1 class="text-3xl font-bold text-center">Agendarse</h1>
                 <p class="text-center text-sm mt-2">
-                    Selecciones una especialidad y fecha para agendarse.
+                    Selecciones un articulo y fecha para agendarse.
                 </p>
             </div>
             <div class="py-4 space-y-4">
 
-                <!-- seleccion de especialidad y fecha -->
+                <!-- seleccion de articulo y fecha -->
                 <div>
                     <form [formGroup]="buscarAgendaForm" (ngSubmit)="BuscarAgenda()" class="flex justify-center space-x-8">
 
-                        <select name="especialidades" id="especialidadesSelect" formControlName="especialidadId" class="p-2 rounded border border-gray-200 shadow">
-                            <option selected disabled value="0">Seleccione una especialidad</option>
-                            <option *ngFor="let especialidad of especialidades" [value]="especialidad.id">{{especialidad.nombre}}</option>
+                        <select name="articulos" id="articulosSelect" formControlName="articuloId" class="p-2 rounded border border-gray-200 shadow">
+                            <option selected disabled value="0">Seleccione un Articulo</option>
+                            <option *ngFor="let articulo of articulos" [value]="articulo.id">{{articulo.nombre}}</option>
                         </select>
         
                         <input type="date" id="fecha" name="fecha" formControlName="fecha" [min]="today" class="rounded p-2 shadow border border-gray-200">
@@ -48,6 +48,7 @@
                         <div class="p-4 flex justify-between items-center">
                             <div>
                                 <h2 class="text-xl font-bold">Medico: {{calendario.medico.nombres}} {{calendario.medico.apellidos}}</h2>
+                                <p class="text-sm">Especialidad: {{calendario.especialidad.nombre}}</p>
                                 <p class="text-sm">{{calendario.fecha | date: 'dd/MM/yyyy'}}</p>
                                 <p class="text-sm">Horario: {{calendario.horaInicio}} - {{calendario.horaFin}}</p>
                                 <p class="text-sm">Duracion: {{calendario.tiempoCita}} minutos</p>

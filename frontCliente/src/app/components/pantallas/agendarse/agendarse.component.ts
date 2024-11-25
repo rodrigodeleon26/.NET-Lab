@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { EspecialidadesService } from '../../../services/especialidades.service';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CalendariosService } from '../../../services/calendarios.service';
+import { ArticulosService } from '../../../services/articulos.service';
+import { CitaMedicaService } from '../../../services/cita-medica.service';
 
 interface CitaMedica {
   id: number;
@@ -30,8 +31,8 @@ export class AgendarseComponent implements OnInit{
   
   buscarAgendaForm: FormGroup;
   
-  especialidades: any[] = [];
   calendarios: any[] = [];
+  articulos: any[] = [];
 
   calendarioSeleccionado: any;
   citaSeleccionada: any;
@@ -42,10 +43,11 @@ export class AgendarseComponent implements OnInit{
 
   constructor(
     private router: Router,
-    private especialidadesService: EspecialidadesService,
     private calendariosService: CalendariosService,
     private toastr: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private articulosService: ArticulosService,
+    private citaMedicaService: CitaMedicaService
   ) { 
     const navigation = this.router.getCurrentNavigation();
     this.cedula = navigation?.extras.state?.['cedula'] || '';
@@ -55,30 +57,28 @@ export class AgendarseComponent implements OnInit{
     //hora en uruguay
     this.horaActual = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-    this.horaActual = '10:30:00';
+    //this.horaActual = '10:30:00';
 
     this.buscarAgendaForm = this.fb.group({
-      especialidadId: [0, [ Validators.required, Validators.min(1)]],
+      articuloId: [0, [ Validators.required, Validators.min(1)]],
       fecha: ['', [ Validators.required]],
     });
   }
 
   ngOnInit(): void {
     this.loading = true;
-    this.especialidadesService.getEspecialidades().subscribe({
-      next: (especialidades) => {
-        this.especialidades = especialidades;
+
+    this.articulosService.getArticulosDelSeguro(this.cedula).subscribe({
+      next: (articulos) => {
+        console.log(articulos);
+        this.articulos = articulos;
         this.loading = false;
       },
       error: (error) => {
         console.error(error);
-        this.loading = false;
       }
     });
 
-    this.calendarios.forEach(calendario => {
-      this.generarCitasParaLineaDeTiempo(calendario);
-    });
   }
 
   BuscarAgenda(): void {
@@ -91,7 +91,7 @@ export class AgendarseComponent implements OnInit{
     } 
 
     this.loading = true;
-    this.calendariosService.getCalendariosByEspecialidadFecha(this.buscarAgendaForm.value.especialidadId, this.buscarAgendaForm.value.fecha).subscribe({
+    this.calendariosService.getCalendariosByArticuloFecha(this.cedula ,this.buscarAgendaForm.value.articuloId, this.buscarAgendaForm.value.fecha).subscribe({
       next: (calendariosRes) => {
         this.calendarios = [];
         calendariosRes.forEach(calendario => {
@@ -194,5 +194,30 @@ export class AgendarseComponent implements OnInit{
     console.log('Agendando cita');
     console.log(this.calendarioSeleccionado);
     console.log(this.citaSeleccionada);
+    this.loading = true;
+    this.citaMedicaService.AgendarCita(this.cedula, this.calendarioSeleccionado, this.diaBuscado, this.citaSeleccionada.horaInicio, this.buscarAgendaForm.value.articuloId).subscribe({
+      next: (cita) => {
+        console.log(cita);
+        this.toastr.success('Cita agendada correctamente.');
+        this.isModalVisible = false;
+        this.calendarioSeleccionado = null;
+        this.citaSeleccionada = null;
+        this.loading = false;
+        //redireccionar al inicio
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        console.error(error);
+        const exceptionMessage = this.extractExceptionMessage(error.error);
+        this.toastr.error('Ocurrió un error al agendar la cita.');
+        this.toastr.error(exceptionMessage);
+        this.loading = false;
+      }
+    });
+  }
+
+  extractExceptionMessage(error: string): string {
+    const match = error.match(/System\.Exception: (.*?)(?:\r?\n| at )/);
+    return match ? match[1] : 'Error desconocido';
   }
 }

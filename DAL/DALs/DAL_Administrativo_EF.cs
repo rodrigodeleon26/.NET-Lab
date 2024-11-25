@@ -1929,7 +1929,23 @@ namespace DAL.DALs
             }
         }
 
-		public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia)
+        public List<Especialidad> GetEspecialidadesByArticuloSeguro(long articuloId, long seguroId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Copagos
+                    .Where(c => c.ArticuloId == articuloId && c.SeguroMedicoId == seguroId)
+                    .Select(c => new Especialidad
+                    {
+                        Id = c.Especialidad.Id,
+                        Nombre = c.Especialidad.Nombre,
+                        Descripcion = c.Especialidad.Descripcion
+                    })
+                    .ToList();
+            }
+        }
+
+        public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia)
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -2326,6 +2342,42 @@ namespace DAL.DALs
 			}
 		}
 
+        public List<Articulo> GetArticulosBySeguro(SeguroMedico seguro)
+		{
+			using (var _dbContext = new DBContext())
+			{
+                return _dbContext.Articulos.Include(a => a.Copagos)
+                    .Where(a => a.Copagos.Any(c => c.SeguroMedicoId == seguro.Id))
+                    .Select(a => new Articulo
+                    {
+                        Id = a.Id,
+                        Nombre = a.Nombre,
+                        Copagos = a.Copagos.Select(c => new Copago
+                        {
+                            Id = c.Id,
+                            SeguroMedico = new SeguroMedico
+                            {
+                                Id = c.SeguroMedico.Id,
+                                Nombre = c.SeguroMedico.Nombre,
+                                Descripcion = c.SeguroMedico.Descripcion
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Especialidad.Id,
+                                Nombre = c.Especialidad.Nombre,
+                                Descripcion = c.Especialidad.Descripcion
+                            },
+                            Precios = c.Precios.Select(p => new Precio
+                            {
+                                Id = p.Id,
+                                PrecioBase = p.PrecioBase,
+                                FechaInicio = p.FechaInicio
+                            }).ToList()
+                        }).ToList()
+                    }).ToList();
+            }
+		}
+
         #endregion
 
         /**********************************************************/
@@ -2333,7 +2385,7 @@ namespace DAL.DALs
         /**********************************************************/
         #region FUNCTIONES PAYPALPAGO
 
-		public List<PagoPayPal> GetPaypalPagos()
+        public List<PagoPayPal> GetPaypalPagos()
 		{
             using (var _dbContext = new DBContext())
 			{

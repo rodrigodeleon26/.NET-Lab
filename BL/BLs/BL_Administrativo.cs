@@ -262,7 +262,12 @@ namespace BL.BLs
 			}
 		}
 
-		public void updateCopago(Copago copago)
+		public long getIdByFilds(Copago copago)
+        {
+           return dal.getIdByFilds(copago);
+        }
+
+        public void updateCopago(Copago copago)
 		{
 			dal.UpdateCopago(copago);
 		}
@@ -926,7 +931,7 @@ namespace BL.BLs
 
 		}
 
-		public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+		public List<Calendario> getCalendariosByArticuloFecha(string cedula, long articuloId, string fecha)
 		{
             //segun la fecha conseguir el dia
             DateTime fechaDate = DateTime.Parse(fecha);
@@ -934,9 +939,30 @@ namespace BL.BLs
             //poner la primera letra en mayuscula 
             dia = char.ToUpper(dia[0]) + dia.Substring(1);
 
-            Console.WriteLine("Dia: " + dia);
+            Paciente paciente = getPacienteByDNI(cedula);
+            if (paciente == null)
+            {
+                return null;
+            }
 
-            return dal.GetCalendariosByEspecialidadYFecha(especialidadId, fechaDate, dia);
+            SeguroMedico seguro = paciente.Contrato.SeguroMedico;
+            if (seguro == null)
+            {
+                return null;
+            }
+
+			List<Especialidad> especialidadesParaElArticulo = dal.GetEspecialidadesByArticuloSeguro(articuloId, seguro.Id);
+
+			List<Calendario> calendariosParaELArticulo = new List<Calendario>();
+
+			foreach(var especialidad in especialidadesParaElArticulo)
+			{
+				//ir agregando los calendarios a la lista
+                var calendarios = dal.GetCalendariosByEspecialidadFecha(especialidad.Id, fechaDate, dia);
+                calendariosParaELArticulo.AddRange(calendarios);
+			}
+
+			return calendariosParaELArticulo;
         }
 
         #endregion
@@ -1035,11 +1061,34 @@ namespace BL.BLs
 			return dal.GetArticulosFiltrados(filtro);
 		}
 
-		#endregion
+        public List<Articulo> getArticulosHabilitados(string cedula)
+		{
+			Paciente paciente = getPacienteByDNI(cedula);
+            if (paciente == null)
+			{
+				return null;
+			}
 
-		//Pago PayPal
-		#region PAGO PAYPAL
-		public List<PagoPayPal> GetPaypalPagos()
+			Contrato contrato = paciente.Contrato;
+			if(contrato == null || !contrato.Activo)
+            {
+                return null;
+            }
+
+            SeguroMedico seguro = contrato.SeguroMedico;
+            if (seguro == null)
+			{
+				return null;
+			}
+
+            return dal.GetArticulosBySeguro(seguro);
+		}
+
+        #endregion
+
+        //Pago PayPal
+        #region PAGO PAYPAL
+        public List<PagoPayPal> GetPaypalPagos()
 		{
 			return dal.GetPaypalPagos();
 		}

@@ -84,5 +84,30 @@ namespace AdministrativoWebApi.Controllers
             _blAdministrativo.deleteCopago(id);
             return NoContent();
         }
-	}
+
+        // GET api/<CopagosController>/getIdByFilds/[seguroMedicoId]/[especialidadId]/[articuloId]
+        [ProducesResponseType(typeof(long), 200)]
+        [ProducesResponseType(404)]
+        [HttpGet("getIdByFilds/{seguroMedicoId}/{especialidadId}/{articuloId}")]
+        public IActionResult GetIdByFilds(long seguroMedicoId, long especialidadId, long articuloId)
+        {
+			Console.WriteLine("en el controlador");
+			Console.WriteLine("seguroMedicoId: " + seguroMedicoId);
+            Console.WriteLine("especialidadId: " + especialidadId);
+            Console.WriteLine("articuloId: " + articuloId);
+
+            Copago copagoSearch = new Copago()
+			{
+				SeguroMedico = new SeguroMedico() { Id = seguroMedicoId },
+				Especialidad = new Especialidad() { Id = especialidadId },
+				Articulo = new Articulo() { Id = articuloId },
+			};
+            long copagoId = _blAdministrativo.getIdByFilds(copagoSearch);
+            if (copagoId == 0)
+            {
+                return NotFound();
+            }
+            return Ok(copagoId);
+        }
+    }
 }

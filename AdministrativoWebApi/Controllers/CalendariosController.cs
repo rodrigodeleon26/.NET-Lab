@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System.Globalization;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -184,17 +185,24 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(_blAdministrativo.getCalendariosFiltrados(medicoId, filtroEspecialidad, filtroDia, filtroHoraInicio));
         }
 
-        //get calendarios por especialidad para una fecha
-        // GET api/<CalendariosController>/especialidad/5/fecha/2024-11-24
-        [HttpGet("especialidad/{especialidadId}/fecha/{fecha}")]
-        public IActionResult GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+        //get calendarios por articulo para una fecha
+        // GET api/<CalendariosController>/articulo/5/fecha/2024-11-24
+        [HttpGet("{cedula}/articulo/{articuloId}/fecha/{fecha}")]
+        public IActionResult getCalendariosByArticuloFecha(string cedula, long articuloId, string fecha)
         {
-            if (fecha == null || especialidadId == 0)
+            if (fecha == null || articuloId == 0 || cedula == null)
             {
                 return BadRequest();
             }
 
-            return Ok(_blAdministrativo.GetCalendariosByEspecialidadYFecha(especialidadId, fecha));
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != cedula)
+            {
+                return Forbid("No puedes ver la informacion de otro usuario");
+            }
+
+            return Ok(_blAdministrativo.getCalendariosByArticuloFecha(cedula, articuloId, fecha));
         }
     }
 }

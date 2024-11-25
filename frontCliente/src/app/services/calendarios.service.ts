@@ -10,8 +10,8 @@ export class CalendariosService {
 
   constructor(private http: HttpClient) { }
 
-  getCalendariosByEspecialidadFecha(especialidadId: string, fecha: string): Observable<any[]> {
+  getCalendariosByArticuloFecha(cedula: string, articuloId: string, fecha: string): Observable<any[]> {
     console.log('Obteniendo especialidades');
-    return this.http.get<any[]>(`${this.apiUrl}/especialidad/${especialidadId}/fecha/${fecha}`);
+    return this.http.get<any[]>(`${this.apiUrl}/${cedula}/articulo/${articuloId}/fecha/${fecha}`);
   }
 }

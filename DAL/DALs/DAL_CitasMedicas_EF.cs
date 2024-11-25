@@ -209,11 +209,12 @@ namespace DAL.DALs
                     throw new Exception("Ya existe una cita agendada en esa hora para ese dia.");
                 }
 
-                // Verificar si el mismo paciente ya tiene una cita en el mismo calendario y día
+                // Verificar si el mismo paciente ya tiene una cita en el mismo calendario y día con estado Completada, NoAsistida o Agendada
                 // ((Luego tengo que cambiarlo para que solo revise la ESPECIALIDAD, ya que como está permite registrarse dos veces para por ejemplo
                 // el odontologo si son medicos distintos y eso no está bien))
                 var citaPacienteExistente = _dbContext.CitasMedicas
                     .Where(c => c.CalendarioId == calendarioId && c.Fecha.Date == nuevaCita.Fecha.Date)
+                    .Where(c => c.Estado == "Completada" || c.Estado == "NoAsistida" || c.Estado == "Agendada")
                     .AsEnumerable() // Trae los datos a memoria
                     .FirstOrDefault(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
 
@@ -229,7 +230,8 @@ namespace DAL.DALs
                     Fecha = nuevaCita.Fecha,
                     Estado = nuevaCita.Estado ?? "Agendada",
                     PacienteId = pacienteIdEncriptado,
-                    CalendarioId = calendarioId
+                    CalendarioId = calendarioId,
+                    CopagoId = nuevaCita.CopagoId
                 };
 
                 _dbContext.CitasMedicas.Add(citaEntity);

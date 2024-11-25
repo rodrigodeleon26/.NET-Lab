@@ -55,9 +55,10 @@ namespace BL.IBLs
 		void addCopago(Copago copago);
 		void updateCopago(Copago copago);
 		void deleteCopago(long id);
+		long getIdByFilds(Copago copago);
 
-		// Facturas
-		List<Factura> getFacturas();
+        // Facturas
+        List<Factura> getFacturas();
 
 		List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);
 		Factura getFacturaById(long id);
@@ -98,7 +99,7 @@ namespace BL.IBLs
         bool validarEspecialidadesParaBorrar(long medicoId, List<Especialidad> especialidades);
         Task borrarCalendariosIncompatiblesAsync(long medicoId, List<Especialidad> especialidades);
         List<Calendario> getCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
-        List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha);
+        List<Calendario> getCalendariosByArticuloFecha(string cedula, long articuloId, string fecha);
 
         // Consultorios
         List<Consultorio> getConsultorios();
@@ -121,9 +122,10 @@ namespace BL.IBLs
 		void updateArticulo(Articulo articulo);
 		void deleteArticulo(long id);
 		List<Articulo> getArticulosFiltrados(string filtro);
+		List<Articulo> getArticulosHabilitados(string cedula);
 
-		// Pago PayPal
-		List<PagoPayPal> GetPaypalPagos();
+        // Pago PayPal
+        List<PagoPayPal> GetPaypalPagos();
         PagoPayPal GetPaypalPagoById(long id);
         PagoPayPal GetPaypalPagoByOrdenId(string id);
         void AddPaypalPago(PagoPayPal nuevoPago);

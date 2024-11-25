@@ -97,7 +97,7 @@ namespace DAL.IDALs
 		public void UpdateCalendario(Calendario calendario);
 		public void DeleteCalendario(long id);
         public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
-		public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia);
+		public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia);
 
         // Consultorios
         public List<Consultorio> GetConsultorios();
@@ -112,17 +112,19 @@ namespace DAL.IDALs
 		public void AddEspecialidad(Especialidad especialidad);
 		public void UpdateEspecialidad(Especialidad especialidad);
 		public void DeleteEspecialidad(long id);
+		public List<Especialidad> GetEspecialidadesByArticuloSeguro(long articuloId, long seguroId);
 
-		// Articulo
-		public List<Articulo> GetArticulos();
+        // Articulo
+        public List<Articulo> GetArticulos();
 		public Articulo GetArticuloById(long id);
 		public void AddArticulo(Articulo articulo);
 		public void UpdateArticulo(Articulo articulo);
 		public void DeleteArticulo(long id);
 		public List<Articulo> GetArticulosFiltrados(string filtro);
+		public List<Articulo> GetArticulosBySeguro(SeguroMedico seguro);
 
-		// Pago PayPal
-		public List<PagoPayPal> GetPaypalPagos();
+        // Pago PayPal
+        public List<PagoPayPal> GetPaypalPagos();
         public PagoPayPal GetPaypalPagoById(long id);
         public PagoPayPal GetPaypalPagoByOrdenId(string id);
         public void AddPaypalPago(PagoPayPal nuevoPago);

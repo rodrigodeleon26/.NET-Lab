@@ -100,7 +100,7 @@ namespace BL.BLs
 
         // Crear una nueva cita médica
         public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
-        {
+        { 
             return dal.createCitaMedica(nuevaCita, calendarioId, pacienteId);
         }
 
@@ -170,6 +170,21 @@ namespace BL.BLs
         public int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds)
         {
             return dal.CountCitasMedicasByPacienteId(pacienteId, fechaInicio, fechaFin, orden, especialidadesIds);
+        }
+
+        public Paciente getPacienteByCedula(string cedula)
+        {
+            return dalAdmin.GetPacienteByDNI(cedula);
+        }
+
+        public Calendario getCalendarioById(long id)
+        {
+            return dalAdmin.GetCalendarioById(id);
+        }
+
+        public long getCopagoBySeguroEspecialidadArticulo(Copago copago)
+        {
+            return dalAdmin.getIdByFilds(copago);
         }
     }
 }

@@ -349,7 +349,34 @@ namespace DAL.DALs
 
         public long getIdByFilds(Copago copago)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Console.WriteLine("En el service");
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Copagos/getIdByFilds/{copago.SeguroMedico.Id}/{copago.Especialidad.Id}/{copago.Articulo.Id}";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<long>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener la id");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener la id: {ex.Message}");
+                return 0;
+            }
         }
 
         public List<Factura> GetFacturas()
@@ -473,7 +500,33 @@ namespace DAL.DALs
 
         public Calendario GetCalendarioById(long id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var url = $"https://administrativowebapi:8081/api/Calendarios/{id}";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<Calendario>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener el calendario");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener el calendario: {ex.Message}");
+                return null;
+            }
         }
 
         public void AddCalendario(Calendario calendario)
@@ -681,7 +734,17 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia)
+        public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Articulo> GetArticulosBySeguro(SeguroMedico seguro)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Especialidad> GetEspecialidadesByArticuloSeguro(long articuloId, long seguroId)
         {
             throw new NotImplementedException();
         }

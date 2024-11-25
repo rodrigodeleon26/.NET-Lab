@@ -1,6 +1,7 @@
 ﻿using BL.IBLs;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -93,5 +94,23 @@ namespace AdministrativoWebApi.Controllers
             return Ok(_blAdministrativo.getArticulosFiltrados(filtro));
         }
 
-	}
+        // GET api/<ArticulosController>/articulosHabilidatos/{cedula}
+        [ProducesResponseType(typeof(List<Articulo>), 200)]
+        [HttpGet("articulosHabilitados/{cedula}")]
+        public IActionResult GetArticulosHabilitados(string cedula)
+        {
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != cedula)
+            {
+                return Forbid("No puedes ver la informacion de otro usuario");
+            }
+
+            if (cedula == null)
+			{
+				return BadRequest();
+            }
+            return Ok(_blAdministrativo.getArticulosHabilitados(cedula));
+        }
+    }
 }

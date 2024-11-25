@@ -3,6 +3,7 @@ using BL.IBLs;
 using DAL;
 using DAL.DALs;
 using DAL.IDALs;
+using AuthWebApi.Extensions;
 
 try
 {
@@ -29,6 +30,9 @@ try
     /** Add Dependencies                                     **/
     /**********************************************************/
     #region Inyeccion de dependencias
+
+    builder.Services.ConfigureIdentityOptions()
+                    .AddIdentityAuth();
 
     // DALs
     builder.Services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_EF>();
