@@ -94,8 +94,8 @@ public class PaymentsController : ControllerBase
             PayPalOrderResponse order = await _payPalService.CreateOrderAsync(
                 request.PurchaseUnits, // Lista de purchase_units
                 "USD", // Moneda
-                "https://localhost:4200/cliente/payment/success", // URL éxito
-                "https://localhost:4200/cliente/payment/cancel"   // URL cancelación
+                "http://localhost:4200/cliente/payment/success", // URL éxito
+                "http://localhost:4200/cliente/payment/cancel"   // URL cancelación
             );
 
             var approvalUrl = order.links.FirstOrDefault(link => link.rel == "approve")?.href;

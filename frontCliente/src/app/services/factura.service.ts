@@ -16,6 +16,11 @@ export class FacturaService {
     return this.http.post(url, ids, { responseType: 'blob' });
   }
 
+  getFacturasByPaypal(paypalOrderId: string): Observable<any[]> {
+    const url = `${this.apiUrl}/paypal/${paypalOrderId}`;
+    return this.http.get<any[]>(url);
+  }
+
   getFacturasPaginadas(
     numPagina: number,
     fechaAsc: boolean = true,
@@ -39,5 +44,10 @@ export class FacturaService {
   
     const url = `${this.apiUrl}/pagina/${numPagina}`;
     return this.http.get<any[]>(url, { params });
+  }
+
+  updateFactura(id: number, factura: any): Observable<any> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<any>(url, factura);
   }
 }

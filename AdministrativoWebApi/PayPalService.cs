@@ -89,8 +89,9 @@ public class PayPalService
             intent = "CAPTURE",
             application_context = new PayPalApplicationContext
             {
-                ReturnUrl = returnUrl,
-                CancelUrl = cancelUrl
+                user_action = "PAY_NOW",
+                return_url = returnUrl,
+                cancel_url = cancelUrl
             }
         };
 
@@ -206,8 +207,9 @@ public class PayPalTransaction
 
 public class PayPalRedirectUrls
 {
-    public string ReturnUrl { get; set; }
-    public string CancelUrl { get; set; }
+    public string user_action { get; set; }
+    public string return_url { get; set; }
+    public string cancel_url { get; set; }
 }
 
 public class PayPalPaymentRequest
@@ -252,8 +254,9 @@ public class PayPalOrderResponse
 
 public class PayPalApplicationContext
 {
-    public string ReturnUrl { get; set; }
-    public string CancelUrl { get; set; }
+    public string user_action { get; set; }
+    public string return_url { get; set; }
+    public string cancel_url { get; set; }
 }
 
 public class PayPalCaptureResponse

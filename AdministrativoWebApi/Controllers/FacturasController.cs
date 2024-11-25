@@ -25,6 +25,19 @@ namespace AdministrativoWebApi.Controllers
             return Ok(_blAdministrativo.getFacturas());
         }
 
+        [HttpGet("paypal/{paypalOrderId}")]
+        public IActionResult GetFacturasByPaypal(string paypalOrderId)
+        {
+            var facturas = _blAdministrativo.GetFacturasByPaypal(paypalOrderId);
+
+            if (facturas == null || !facturas.Any())
+            {
+                return NotFound("No se encontraron facturas para el ID de PayPal proporcionado.");
+            }
+
+            return Ok(facturas);
+        }
+
         // GET: api/<FacturasController>/pagina/1
         [ProducesResponseType(typeof(List<Factura>), 200)]
         [HttpGet("pagina/{pag}")]

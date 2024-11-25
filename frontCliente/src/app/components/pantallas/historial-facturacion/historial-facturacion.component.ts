@@ -92,39 +92,8 @@ export class HistorialFacturacionComponent implements OnInit {
   }
 
   realizarPago(id: string, link: string): void {
-    console.log('Order ID:', id);
-    console.log('Payment Link:', link);
-  
-    // Abre la ventana de PayPal
-    const paymentWindow = window.open(link, '_blank', 'width=800,height=600');
-  
-    // Verifica si la ventana fue bloqueada
-    if (!paymentWindow) {
-      console.error('La ventana emergente fue bloqueada por el navegador.');
-      alert('Por favor, habilita las ventanas emergentes para realizar el pago.');
-      return;
-    }
-  
-    // Realiza un seguimiento del estado de la ventana
-    const interval = setInterval(() => {
-      if (paymentWindow.closed) {
-        clearInterval(interval);
-        console.log('La ventana de PayPal se ha cerrado.');
-  
-        // Llama al endpoint para capturar el pago
-        this.paypalService.capturePayment(id).subscribe(
-          (response) => {
-            console.log('Pago capturado con éxito:', response);
-            alert('Pago realizado con éxito.');
-            // Aquí puedes recargar datos o realizar otras acciones
-          },
-          (error) => {
-            console.error('Error al capturar el pago:', error);
-            alert('Error al capturar el pago. Por favor, verifica el estado de tu transacción.');
-          }
-        );
-      }
-    }, 1000); // Revisa cada segundo si la ventana se ha cerrado
+    // Redirige al usuario al enlace de PayPal
+    window.location.href = link;
   }
 
   obtenerFactura(facturasAgrupadas: any): void {

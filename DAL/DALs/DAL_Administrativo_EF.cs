@@ -1009,6 +1009,41 @@ namespace DAL.DALs
 			}
 		}
 
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Where(f => f.PagoPayPal.pagoId == paypalOrderId) // Filtrar por PagoPayPalId
+                    .Select(f => new Factura
+                    {
+                        Id = f.Id,
+                        Fecha = f.Fecha,
+                        Monto = f.Monto,
+                        Pago = f.Pago,
+                        FechaPago = f.FechaPago,
+                        Descripcion = f.Descripcion,
+						PagoPayPal = new PagoPayPal
+                        {
+                            Id = f.PagoPayPal.Id,
+                            linkPago = f.PagoPayPal.linkPago,
+                            pagoId = f.PagoPayPal.pagoId
+                        },
+                        Paciente = new Paciente
+                        {
+                            Id = f.Paciente.Id,
+                            Nombres = f.Paciente.Nombres,
+                            Apellidos = f.Paciente.Apellidos,
+                            Documento = f.Paciente.Documento,
+                            FechaDeNacimiento = f.Paciente.FechaDeNacimiento,
+                            Direccion = f.Paciente.Direccion,
+                            Telefono = f.Paciente.Telefono,
+                            Email = f.Paciente.Email
+                        }
+                    }).ToList();
+            }
+        }
+
         public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
         {
             using (var _dbContext = new DBContext())

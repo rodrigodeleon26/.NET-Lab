@@ -293,7 +293,13 @@ namespace BL.BLs
 			return dal.GetFacturas();
 		}
 
-		public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
+        {
+            return dal.GetFacturasByPaypal(paypalOrderId);
+        }
+
+
+        public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
 		{
 			return dal.GetFacturasPaginadas(numPagina, pacienteString, fechaAsc, estaPago);
 		}

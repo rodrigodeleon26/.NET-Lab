@@ -699,5 +699,10 @@ namespace DAL.DALs
         {
             throw new NotImplementedException();
         }
+
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
