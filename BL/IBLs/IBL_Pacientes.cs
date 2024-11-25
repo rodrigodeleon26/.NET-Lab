@@ -35,5 +35,7 @@ namespace BL.IBLs
         bool CancelarCita(string dni, long id);
 
         object getHistorialFacturacion(string dni, int pageNumber, int pageSize);
+
+        Task<string> GetAccessToken(string pacienteId, string code);
     }
 }

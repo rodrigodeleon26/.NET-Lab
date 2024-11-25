@@ -15,5 +15,6 @@ namespace DAL.IDALs
         public void AddNotificacion(Notificacion notificacion, long idPaciente);
         
         public bool notificacionVista(long idNotificacion);
+        Task<string> GetAccessToken(string pacienteId, string code);
     }
 }

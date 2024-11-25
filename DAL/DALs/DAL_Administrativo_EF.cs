@@ -81,7 +81,8 @@ namespace DAL.DALs
 						FechaDeNacimiento = p.FechaDeNacimiento,
 						Direccion = p.Direccion,
 						Telefono = p.Telefono,
-						Email = p.Email
+						Email = p.Email,
+						GoogleToken = p.GoogleToken,
 					}).ToList();
 			}
 		}
@@ -141,6 +142,7 @@ namespace DAL.DALs
 						Direccion = paciente.Direccion,
 						Telefono = paciente.Telefono,
 						Email = paciente.Email,
+						GoogleToken = paciente.GoogleToken,
 						Contrato = contrato != null ? new Contrato
 						{
 							Id = contrato.Id,
@@ -180,6 +182,7 @@ namespace DAL.DALs
 						Direccion = paciente.Direccion,
 						Telefono = paciente.Telefono,
 						Email = paciente.Email,
+						GoogleToken = paciente.GoogleToken,
 						Contrato = paciente.Contrato != null ? new Contrato
 						{
 							Id = paciente.Contrato.Id,

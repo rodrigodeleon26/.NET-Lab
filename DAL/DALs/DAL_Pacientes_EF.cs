@@ -140,5 +140,27 @@ namespace DAL.DALs
                 }
             }
         }
+
+        public async Task<string> GetAccessToken(string pacienteId, string code)
+        {
+            var token = await Meet.GetAccessToken(code);
+            Console.WriteLine("Token: " + token);
+            Console.WriteLine("PacienteId: " + pacienteId);
+            long pacienteIdLong = long.Parse(pacienteId);
+            Console.WriteLine("PacienteIdLong: " + pacienteIdLong);
+            using (var _dbContext = new DBContext())
+            {
+                Console.WriteLine("Entre");
+                var paciente = _dbContext.Pacientes.Find(pacienteIdLong);
+                if (paciente == null)
+                {
+                    throw new Exception("Paciente no encontrado");
+                }
+                Console.WriteLine("Paciente: " + paciente);
+                paciente.GoogleToken = token;
+                _dbContext.SaveChanges();
+                return paciente.Documento;
+            }
+        }
     }
 }

@@ -202,6 +202,5 @@ namespace PacienteWebApi.Controllers
 
             return Ok(_blCitasMedicas.CancelarCita(documento, id));
         }
-
     }
 }

@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="3.7.405" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
+    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.68.0.3592" />
   </ItemGroup>
 
   <ItemGroup>

@@ -210,5 +210,29 @@ namespace PacienteWebApi.Controllers
 
             return Ok(_blPacientes.getHistorialFacturacion(dni, pageNumber, pageSize));
         }
+
+        [HttpGet("oauth2callback")]
+        public async Task<IActionResult> OAuth2Callback(string code, string state)
+        {
+            if (string.IsNullOrEmpty(code))
+            {
+                return BadRequest("El código de autorización es requerido.");
+            }
+
+            try
+            {
+                // `state` contiene el identificador del paciente enviado desde el frontend
+                var patientId = state;
+                var cedula = await _blPacientes.GetAccessToken(patientId, code);
+
+                var frontendUrl = $"http://localhost:4200/cliente/mis-datos?cedula={cedula}";
+                return Redirect(frontendUrl);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al procesar el código de autorización: {ex.Message}");
+            }
+        }
+
     }
 }

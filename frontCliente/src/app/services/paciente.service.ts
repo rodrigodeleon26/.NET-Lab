@@ -11,7 +11,9 @@ export class PacienteService {
   constructor(private http: HttpClient) {}
 
   obtenerMisDatos(cedula: string): Observable<any> {
+    console.log('Obtener mis datos:', cedula);
     const url = `${this.apiUrl}/${cedula}/misDatos`;
+    console.log('URL:', url);
     return this.http.get<any>(url);
   }
 

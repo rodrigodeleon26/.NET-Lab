@@ -190,5 +190,10 @@ namespace BL.BLs
                 totalPages = (int)Math.Ceiling((double)totalFacturas / pageSize)
             };
         }
+
+        public async Task<string> GetAccessToken(string pacienteId, string code)
+        {
+            return await dal.GetAccessToken(pacienteId, code);
+        }
     }
 }
