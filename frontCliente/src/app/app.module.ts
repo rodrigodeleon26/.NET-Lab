@@ -24,7 +24,9 @@ import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.co
 import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component';
 import { CitasComponent } from './components/pantallas/citas/citas.component';
 import { HistorialFacturacionComponent } from './components/pantallas/historial-facturacion/historial-facturacion.component'; 
-import { AgendarseComponent } from './components/pantallas/agendarse/agendarse.component'; 
+import { AgendarseComponent } from './components/pantallas/agendarse/agendarse.component';
+import { PagoComponent } from './components/pantallas/pago/pago.component'; 
+import { PaymentSuccessComponent } from './components/pantallas/payment-success/payment-success.component'; 
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { AgendarseComponent } from './components/pantallas/agendarse/agendarse.c
     NotificacionesComponent,
     CitasComponent,
     HistorialFacturacionComponent,
-    AgendarseComponent
+    AgendarseComponent,
+    PagoComponent,
+    PaymentSuccessComponent
   ],
   imports: [
     BrowserModule,

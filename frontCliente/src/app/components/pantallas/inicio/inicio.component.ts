@@ -29,6 +29,13 @@ export class InicioComponent implements OnInit {
     this.router.navigateByUrl('/historia-clinica', navigationExtras);
   }
 
+  verHistoriaFactura(): void {
+    const navigationExtras: NavigationExtras = {
+      state: { cedula: this.cedula }
+    };
+    this.router.navigateByUrl('/realizar-pago', navigationExtras);
+  }
+
   verMisDatos(): void {
     const navigationExtras: NavigationExtras = {
       queryParams: { cedula: this.cedula }

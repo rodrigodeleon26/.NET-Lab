@@ -51,6 +51,7 @@ export class MisDatosComponent implements OnInit {
     console.log('entre');
     this.pacienteService.obtenerMisDatos(this.cedula).subscribe(
       (response) => {
+        console.log(response);
         this.pacienteForm.patchValue(response);
         if (response.googleToken !== null) {
           this.vinculadoConGoogle = true;

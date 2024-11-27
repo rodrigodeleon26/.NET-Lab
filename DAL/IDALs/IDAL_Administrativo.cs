@@ -61,7 +61,8 @@ namespace DAL.IDALs
 
         // Facturas
         public List<Factura> GetFacturas();
-		public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad);
+		public List<Factura> GetFacturasByPaypal(string paypalOrderId);
+        public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad);
 
         public bool ExisteFacturaParaPacienteEnMes(long pacienteId, int mes, int año);
         public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);

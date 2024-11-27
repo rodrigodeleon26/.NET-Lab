@@ -60,7 +60,6 @@ namespace DAL.DALs
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
                     var paciente = JsonConvert.DeserializeObject<Paciente>(json);
-                    Console.WriteLine("nombre:" + paciente.Nombres);
                     return paciente;
                 }
                 else
@@ -839,6 +838,21 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
+        {
+            throw new NotImplementedException();
+        }
+
         public PagoPayPal GetPaypalPagoByOrdenId(string id)
         {
             throw new NotImplementedException();
@@ -864,17 +878,12 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        public List<Factura> GetFacturasPorCedula(string cedula, int numPagina, bool fechaAsc, bool? estaPago)
         {
             throw new NotImplementedException();
         }
 
-        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
         {
             throw new NotImplementedException();
         }
