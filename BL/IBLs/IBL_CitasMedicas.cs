@@ -21,7 +21,7 @@ namespace BL.IBLs
         CitaMedicaDTO getCitaMedicaById(long id);
 
         // Método para crear una nueva cita médica
-        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
+        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline);
 
         // Método para actualizar una cita médica existente
         void updateCitaMedica(CitaMedicaDTO citaActualizada);

@@ -3,6 +3,7 @@ using DAL.DALs;
 using DAL.IDALs;
 using DAL.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Shared;
 using System.Net;
 
@@ -194,6 +195,11 @@ namespace BL.BLs
         public async Task<string> GetAccessToken(string pacienteId, string code)
         {
             return await dal.GetAccessToken(pacienteId, code);
+        }
+
+        public bool DesvincularGoogle(long id)
+        {
+           return dal.DesvincularGoogle(id);
         }
     }
 }

@@ -270,7 +270,7 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline)
         {
             throw new NotImplementedException();
         }

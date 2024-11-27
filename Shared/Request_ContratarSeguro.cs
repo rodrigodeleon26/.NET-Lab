@@ -21,5 +21,6 @@ namespace Shared
         public string fecha { get; set; }
         public string hora { get; set; }
         public long ArticuloId { get; set; }
+        public bool CitaOnline { get; set; }
     }
 }

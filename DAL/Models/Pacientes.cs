@@ -37,6 +37,8 @@ namespace DAL.Models
 
         public string? GoogleToken {  get; set; } = null;
 
+        public string? GoogleRefreshToken { get; set; } = null;
+
         public virtual ICollection<Facturas>? Facturas { get; set; } = new List<Facturas>(); // Usar virtual si necesitas Lazy Loading
 
         public virtual ICollection<Notificaciones>? Notificaciones { get; set; } = new List<Notificaciones>(); // Usar virtual si necesitas Lazy Loading

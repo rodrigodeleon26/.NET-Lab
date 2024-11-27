@@ -43,7 +43,7 @@ import { AgendarseComponent } from './components/pantallas/agendarse/agendarse.c
     MisDatosComponent,
     NotificacionesComponent,
     CitasComponent,
-    HistorialFacturacionComponent
+    HistorialFacturacionComponent,
     AgendarseComponent
   ],
   imports: [

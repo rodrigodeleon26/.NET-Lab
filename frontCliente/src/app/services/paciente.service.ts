@@ -78,4 +78,9 @@ export class PacienteService {
 
     return this.http.get<any>(url, { params });
   }
+
+  desvincularConGoogle(id: number): Observable<any> {
+    const url = `${this.apiUrl}/${id}/desvincularGoogle`;
+    return this.http.put<any>(url, null);
+  }
 }

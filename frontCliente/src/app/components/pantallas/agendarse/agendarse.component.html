@@ -90,8 +90,31 @@
             <div>
                 <p><strong>Medico:</strong> {{calendarioSeleccionado.medico.nombres}} {{calendarioSeleccionado.medico.apellidos}}</p>
                 <p><strong>Fecha:</strong> {{this.diaBuscado| date: 'dd/MM/yyyy'}}</p>
-                <p><strong>Hora:</strong> {{this.citaSeleccionada.horaInicio}} - {{this.citaSeleccionada.horaFin}}</p>
+                <p><strong>Hora:</strong> {{this.citaSeleccionada.horaInicio}} - {{this.citaSeleccionada.horaFin}}</p>     
             </div>
+            <div class="space-x-2 flex">
+                <label for="tipo" class="block"><strong>Tipo:</strong></label>
+                <label class="flex items-center space-x-2">
+                    <input 
+                        type="checkbox" 
+                        [(ngModel)]="isPresencial" 
+                        (change)="toggleCheckbox('presencial')" 
+                        [disabled]="!vinculado"
+                        [checked]="isPresencial" 
+                        class="form-checkbox text-blue-oscuro" />
+                    <span>Presencial</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input 
+                        type="checkbox" 
+                        [(ngModel)]="isOnline" 
+                        [disabled]="!vinculado"
+                        (change)="toggleCheckbox('online')" 
+                        class="form-checkbox text-blue-oscuro" />
+                    <span>Online</span>
+                </label>
+            </div>
+            <p *ngIf="!vinculado" class="text-red-500 text-sm">Debe vincularse con google para cita online<br>En la pantalla mis datos tiene la opción</p>
         </div>
 		<div class="flex justify-end space-x-4">
 			<button class="bg-blue-oscuro text-white rounded-lg shadow-md hover:bg-blue-intermedio transition-colors font-bold py-2 px-4" (click)="confirmarAgenda()">Confirmar</button>

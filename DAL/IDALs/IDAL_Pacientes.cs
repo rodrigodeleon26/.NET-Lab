@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 namespace DAL.IDALs
 {
@@ -16,5 +17,6 @@ namespace DAL.IDALs
         
         public bool notificacionVista(long idNotificacion);
         Task<string> GetAccessToken(string pacienteId, string code);
+        bool DesvincularGoogle(long id);
     }
 }

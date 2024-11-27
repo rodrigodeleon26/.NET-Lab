@@ -45,6 +45,11 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public bool DesvincularGoogle(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<string> GetAccessToken(string pacienteId, string code)
         {
             throw new NotImplementedException();

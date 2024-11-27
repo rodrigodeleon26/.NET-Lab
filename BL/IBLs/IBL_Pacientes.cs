@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using Microsoft.AspNetCore.Mvc;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,5 +38,7 @@ namespace BL.IBLs
         object getHistorialFacturacion(string dni, int pageNumber, int pageSize);
 
         Task<string> GetAccessToken(string pacienteId, string code);
+
+        bool DesvincularGoogle(long id);
     }
 }

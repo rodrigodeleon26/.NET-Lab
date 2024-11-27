@@ -234,5 +234,21 @@ namespace PacienteWebApi.Controllers
             }
         }
 
+        //PUT: api/<PacientesController>/5/desvincularGoogle
+        [Authorize(Roles = "Paciente")]
+        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(403)]
+        [HttpPut("{id}/desvincularGoogle")]
+        public bool DesvincularGoogle(long id)
+        {
+            if (id == null)
+            {
+                return false;
+            }
+            _blPacientes.DesvincularGoogle(id);
+            return true;
+        }
+
     }
 }

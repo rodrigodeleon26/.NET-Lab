@@ -100,9 +100,9 @@ namespace BL.BLs
         }
 
         // Crear una nueva cita médica
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline)
         { 
-            return dal.createCitaMedica(nuevaCita, calendarioId, pacienteId);
+            return dal.createCitaMedica(nuevaCita, calendarioId, pacienteId, citaOnline);
         }
 
         // Actualizar una cita médica existente

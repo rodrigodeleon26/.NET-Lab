@@ -185,7 +185,7 @@ namespace DAL.DALs
             }
         }
 
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline)
         {
             using (var _dbContext = new DBContext())
             {
@@ -223,6 +223,26 @@ namespace DAL.DALs
                     throw new Exception("El paciente ya tiene una cita en el mismo calendario y día.");
                 }
 
+                GoogleMeetEventResult datos = new GoogleMeetEventResult
+                {
+                    HangoutLink = null,
+                    NewAccessToken = null
+                };
+                if (citaOnline == true)
+                {
+                    var token = _dbContext.Pacientes.FirstOrDefault(p => p.Id == pacienteId).GoogleToken;
+                    var refreshToken = _dbContext.Pacientes.FirstOrDefault(p => p.Id == pacienteId).GoogleRefreshToken;
+                    var fechaFin = nuevaCita.Fecha.AddMinutes(calendarioExistente.TiempoCita);
+                    datos = Meet.CreateGoogleMeetEvent(token, nuevaCita.Fecha, fechaFin, refreshToken).GetAwaiter().GetResult();
+                    if (datos.NewAccessToken != null)
+                    {
+                        _dbContext.Pacientes.FirstOrDefault(p => p.Id == pacienteId).GoogleToken = datos.NewAccessToken;
+                        _dbContext.SaveChanges();
+                    }
+                }
+                Console.WriteLine(datos.HangoutLink);
+                Console.WriteLine(datos.NewAccessToken);
+
                 string pacienteIdEncriptado = AES.Encrypt(pacienteId.ToString());
 
                 var citaEntity = new CitasMedicas
@@ -231,7 +251,8 @@ namespace DAL.DALs
                     Estado = nuevaCita.Estado ?? "Agendada",
                     PacienteId = pacienteIdEncriptado,
                     CalendarioId = calendarioId,
-                    CopagoId = nuevaCita.CopagoId
+                    CopagoId = nuevaCita.CopagoId,
+                    MeetLink = datos.HangoutLink
                 };
 
                 _dbContext.CitasMedicas.Add(citaEntity);

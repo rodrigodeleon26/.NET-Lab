@@ -114,10 +114,29 @@ export class MisDatosComponent implements OnInit {
   
     if (isChecked) {
       // El checkbox estaba marcado
-      const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=48134233839-ikthbqdo5edbjju2s0k0c90aab40n7f1.apps.googleusercontent.com&redirect_uri=https://localhost:5001/api/Pacientes/oauth2callback&response_type=code&scope=https://www.googleapis.com/auth/calendar.events&state=${patientId}`;
+      const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                            "scope=https://www.googleapis.com/auth/calendar.events&" +
+                            "access_type=offline&" +
+                            "include_granted_scopes=true&" +
+                            "response_type=code&" +
+                            "client_id=48134233839-ikthbqdo5edbjju2s0k0c90aab40n7f1.apps.googleusercontent.com&" +
+                            "redirect_uri=https://localhost:5001/api/Pacientes/oauth2callback&" +
+                            "state=" + patientId;
+      console.log(googleAuthUrl);
       window.location.href = googleAuthUrl;
     } else {
-      
+      this.loading = true;
+      this.pacienteService.desvincularConGoogle(patientId).subscribe(
+        (response) => {
+          this.vinculadoConGoogle = false;
+          this.loading = false;
+          this.toastr.success('Desvinculación exitosa.');
+        },
+        (error) => {
+          this.loading = false;
+          this.toastr.error('Ocurrió un error al desvincular con Google.');
+        }
+      );
     }
   }
 }

@@ -80,7 +80,8 @@ namespace PacienteWebApi.Controllers
             {
                 return BadRequest();
             }
-            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, pacienteId);
+            bool citaOnline = false;
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, pacienteId, citaOnline);
             return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
         }
 
@@ -220,6 +221,7 @@ namespace PacienteWebApi.Controllers
             string fecha = datosCita.fecha;
             string hora = datosCita.hora;
             long articuloId = datosCita.ArticuloId;
+            bool citaOnline = datosCita.CitaOnline;
 
             if (cedula == null || calendarioId == 0 || fecha == null || hora == null || articuloId == 0)
             {
@@ -264,7 +266,7 @@ namespace PacienteWebApi.Controllers
                 CopagoId = copagoId,
             };
 
-            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, paciente.Id);
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, paciente.Id, citaOnline);
             return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
         }
     }
