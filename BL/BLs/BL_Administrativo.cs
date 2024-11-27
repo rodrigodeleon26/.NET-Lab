@@ -153,7 +153,7 @@ namespace BL.BLs
 			dal.DeleteContrato(id);
 		}
 
-        void cambiarContrato(Contrato contrato, SeguroMedico seguroMedico)
+        public void cambiarContrato(Contrato contrato, SeguroMedico seguroMedico)
 		{
 			contrato.SeguroMedico = seguroMedico;
 			contrato.FechaInicio = DateTime.UtcNow;
