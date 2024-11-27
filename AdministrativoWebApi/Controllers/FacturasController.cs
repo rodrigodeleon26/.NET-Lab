@@ -41,7 +41,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<FacturasController>/pagina/1
-        [Authorize(Roles = "Admin, Medico")]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(List<Factura>), 200)]
         [HttpGet("pagina/{pag}")]
         public IActionResult GetFacturasPaginadas(
