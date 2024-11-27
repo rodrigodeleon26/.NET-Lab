@@ -17,7 +17,7 @@ namespace AdministrativoWebApi.Controllers
 
 	[Route("api/[controller]")]
 	[ApiController]
-    public class ContratosController : ControllerBase
+	public class ContratosController : ControllerBase
 	{
 		private readonly IBL_Administrativo _blAdministrativo;
 		private readonly ILogger<ContratosController> _logger;
@@ -79,7 +79,7 @@ namespace AdministrativoWebApi.Controllers
 			}
 
 			_blAdministrativo.updateContrato(contrato);
-			return NoContent();
+			return Ok(new { message = "El contrato ha sido actualizado exitosamente" });
 		}
 
 		// DELETE api/<ContratosController>/5
@@ -92,78 +92,74 @@ namespace AdministrativoWebApi.Controllers
 				return NotFound();
 			}
 
-			if(contrato.Activo == false)
-            {
-                return BadRequest("El contrato ya está dado de baja");
-            }
-
-            contrato.Activo = false;
-            _blAdministrativo.updateContrato(contrato);
-            return Ok(new { message = "El contrato ha sido dado de baja" });
-        }
-
-
-        //      // POST api/<ContratosController>/contratar-seguro
-        //      [HttpPost("/contratar-seguro")]
-        //public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
-        //{
-        //	_logger.LogInformation("Entro a la funcion");
-
-        //	var paciente = _blAdministrativo.getPacienteById(request.IdPaciente);
-        //	var seguro = _blAdministrativo.getSeguroMedicoById(request.IdSeguroMedico);
-
-        //	if (paciente == null)
-        //	{
-        //		return BadRequest("El paciente no existe");
-        //	}
-        //	if (seguro == null)
-        //	{
-        //		return BadRequest("El seguro no existe");
-        //	}
-
-        //	_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
-        //	return NoContent();
-        //}
-
-        // POST api/<ContratosController>/activar-contrato
-        [HttpPost("activarContrato/{id}")]
-        public IActionResult ActivarContrato(long id)
-        {
-            var contrato = _blAdministrativo.getContratoById(id);
-
-            if (contrato == null)
-            {
-                return BadRequest("El contrato no existe");
-            }
-
-			if (contrato.Activo == true)
+			if (contrato.Activo == false)
 			{
-                return BadRequest("El contrato ya está activo");
-            }
-
-			if (_blAdministrativo.puedeRenovarContrato(id) == false)
-			{
-				return BadRequest("El contrato no puede ser activado, hay pagos pendientes");
+				return BadRequest("El contrato ya está dado de baja");
 			}
 
-            contrato.Activo = true;
-            contrato.FechaInicio = DateTime.Now;
-            _blAdministrativo.updateContrato(contrato);
-            return Ok(new { message = "El contrato ha sido activado exitosamente" });
-        }
+			contrato.Activo = false;
+			_blAdministrativo.updateContrato(contrato);
+			return Ok(new { message = "El contrato ha sido dado de baja" });
+		}
 
-        [ProducesResponseType(typeof(List<Contrato>), 200)]
-        [ProducesResponseType(204)]
-        [HttpGet("filtradosPaginados")]
-        public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
-        {
-            var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
-            if (contratos == null || contratos.Count == 0)
-            {
-                return NoContent();
-            }
-            return Ok(contratos);
-        }
+
+		//      // POST api/<ContratosController>/contratar-seguro
+		//      [HttpPost("/contratar-seguro")]
+		//public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
+		//{
+		//	_logger.LogInformation("Entro a la funcion");
+
+		//	var paciente = _blAdministrativo.getPacienteById(request.IdPaciente);
+		//	var seguro = _blAdministrativo.getSeguroMedicoById(request.IdSeguroMedico);
+
+		//	if (paciente == null)
+		//	{
+		//		return BadRequest("El paciente no existe");
+		//	}
+		//	if (seguro == null)
+		//	{
+		//		return BadRequest("El seguro no existe");
+		//	}
+
+		//	_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
+		//	return NoContent();
+		//}
+
+		// POST api/<ContratosController>/activar-contrato
+		//[HttpPost("activarContrato/{id}")]
+		//public IActionResult ActivarContrato(long id)
+		//{
+		//	var contrato = _blAdministrativo.getContratoById(id);
+
+		//	if (contrato == null)
+		//	{
+		//		return BadRequest("El contrato no existe");
+		//	}
+
+		//	if (contrato.Activo == true)
+		//	{
+		//		return BadRequest("El contrato ya está activo");
+		//	}
+
+		//	if (_blAdministrativo.puedeRenovarContrato(id) == false)
+		//	{
+		//		return BadRequest("El contrato no puede ser activado, hay pagos pendientes");
+		//	}
+
+		//	contrato.Activo = true;
+		//	contrato.FechaInicio = DateTime.Now;
+		//	_blAdministrativo.updateContrato(contrato);
+		//	return Ok(new { message = "El contrato ha sido activado exitosamente" });
+		//}
+
+		[ProducesResponseType(typeof(List<Contrato>), 200)]
+		[ProducesResponseType(204)]
+		[HttpGet("filtradosPaginados")]
+		public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
+		{
+			var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
+			return Ok(contratos);
+		}
 
 
 		[HttpPost("cambiarContrato")]
@@ -176,8 +172,8 @@ namespace AdministrativoWebApi.Controllers
 				return BadRequest("El contrato actual no existe");
 			}
 
-			// Validar la existencia del nuevo seguro médico
-			var nuevoSeguroMedico = _blAdministrativo.getSeguroMedicoById(request.IdNuevoSeguroMedico);
+            // Validar la existencia del nuevo seguro médico
+            var nuevoSeguroMedico = _blAdministrativo.getSeguroMedicoById(request.IdNuevoSeguroMedico);
 			if (nuevoSeguroMedico == null)
 			{
 				return BadRequest("El nuevo seguro médico no existe");
@@ -188,12 +184,60 @@ namespace AdministrativoWebApi.Controllers
 				return BadRequest("El nuevo seguro médico es el mismo que el actual");
 			}
 
-			contratoActual.SeguroMedico = nuevoSeguroMedico;
-			contratoActual.Activo = true;
-			contratoActual.FechaInicio = DateTime.Now;
-            _blAdministrativo.updateContrato(contratoActual);
+			if (_blAdministrativo.puedeRenovarContrato(contratoActual.Id) == false)
+			{
+				return BadRequest("El contrato no puede ser cambiado, hay pagos pendientes");
+			}
+
+			_blAdministrativo.cambiarContrato(contratoActual, nuevoSeguroMedico);
 
             return Ok(new { message = "El contrato ha sido actualizado exitosamente" });
+		}
+
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("{id}/getUltimasFacturas")]
+        public IActionResult GetUltimasFacturas(long id)
+        {
+			var ultimasfacturas = _blAdministrativo.ObtenerUltimasFacturasDelContrato(id, 3);
+            var deuda = _blAdministrativo.ObtenerDeudaDeContrato(id);
+            return Ok(new { ultimasfacturas, deuda });
+        }
+
+        [HttpPost("{id}/reactivarContrato")]
+        public IActionResult ReactivarContrato(long id, int cuotas, int interes)
+        {
+            // Validar el contrato
+            var contrato = _blAdministrativo.getContratoById(id);
+            if (contrato == null)
+            {
+                return BadRequest("El contrato no existe");
+            }
+
+            // Validar que el contrato no esté activo
+            if (contrato.Activo)
+            {
+                return BadRequest("El contrato ya está activo");
+            }
+
+            // Validar la cantidad de cuotas
+            if (cuotas != 6 && cuotas != 12)
+            {
+                return BadRequest("La cantidad de cuotas debe ser 6 o 12");
+            }
+
+            // Validar el interés
+            if (interes < 1 || interes > 100)
+            {
+                return BadRequest("El interés debe estar entre 1 y 100");
+            }
+
+			if (_blAdministrativo.contratoEnRefinanciacion(id))
+            {
+                return BadRequest("El contrato ya está en refinanciación");
+            }
+
+            _blAdministrativo.reactivarContrato(id, cuotas, interes);
+            return Ok(new { message = "El contrato ha sido reactivado exitosamente" });
         }
     }
 }

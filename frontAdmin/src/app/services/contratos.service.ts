@@ -26,12 +26,17 @@ export class ContratosService {
   }
 
   cambiarContrato(request: { IdContratoActual: number, IdNuevoSeguroMedico: number }): Observable<any> {
-    const url = `${this.apiUrl}/cambiar-contrato`;
+    const url = `${this.apiUrl}/cambiarContrato`;
     return this.http.post<any>(url, request);
   }
 
   activarContrato(idContrato: number): Observable<any> {
     const url = `${this.apiUrl}/activarContrato/${idContrato}`;
     return this.http.post<any>(url, {});
+  }
+
+  getUltimasFacturas(idContrato: number): Observable<any[]> {
+    const url = `${this.apiUrl}/${idContrato}/getUltimasFacturas`;
+    return this.http.get<any[]>(url);
   }
 }

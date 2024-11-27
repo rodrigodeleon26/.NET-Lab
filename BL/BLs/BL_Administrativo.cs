@@ -153,7 +153,14 @@ namespace BL.BLs
 			dal.DeleteContrato(id);
 		}
 
-		public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
+        void cambiarContrato(Contrato contrato, SeguroMedico seguroMedico)
+		{
+			contrato.SeguroMedico = seguroMedico;
+			contrato.FechaInicio = DateTime.UtcNow;
+			updateContrato(contrato);
+        }
+
+        public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
 		{
 			var paciente = getPacienteById(idPaciente);
 			var seguroMedico = getSeguroMedicoById(idSeguroMedico);
@@ -183,7 +190,12 @@ namespace BL.BLs
 			}
 		}
 
-		public bool puedeRenovarContrato(long id)
+        public bool contratoEnRefinanciacion(long contratoId)
+		{
+			return dal.contratoEnRefinanciacion(contratoId);
+        }
+
+        public bool puedeRenovarContrato(long id)
 		{
 			return dal.puedeRenovarContrato(id);
 		}
@@ -198,13 +210,52 @@ namespace BL.BLs
             return dal.GetContratosFiltradosPaginados(numPagina, filtro);
         }
 
-        #endregion
+		public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
+		{
+			return dal.ObtenerUltimasFacturasDelContrato(contratoId, cantidad);
+		}
 
-        //Precios
-        #region PRECIOS
+        public float ObtenerDeudaDeContrato(long contratoId)
+		{
+			return dal.ObtenerDeudaDeContrato(contratoId);
+        }
+
+		public void reactivarContrato(long contratoId, int cantidadCuotas, int interes)
+		{
+			var contrato = getContratoById(contratoId);
+			var deuda = ObtenerDeudaDeContrato(contratoId);
+			if (deuda > 0)
+			{
+				var cuota = (deuda * interes) / cantidadCuotas;
+
+				// Crear las facturas
+				for (int i = 0; i < cantidadCuotas; i++)
+				{
+					var factura = new Factura
+					{
+						Fecha = DateTime.Now.AddMonths(i + 1),
+						Monto = cuota,
+						Pago = false,
+						Descripcion = $"Cuota {i + 1} de {cantidadCuotas} de la deuda del contrato",
+						Paciente = contrato.Paciente,
+						FechaPago = null
+					};
+					addFactura(factura);
+				}
+
+			}
+			contrato.Activo = true;
+			contrato.FechaInicio = DateTime.UtcNow;
+			updateContrato(contrato);
+        }
+
+            #endregion
+
+            //Precios
+            #region PRECIOS
 
 
-        public List<Precio> getPrecios()
+            public List<Precio> getPrecios()
 		{
 			return dal.GetPrecios();
 		}

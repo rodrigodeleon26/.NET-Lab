@@ -16,6 +16,7 @@ export class ContratosComponent implements OnInit {
   busqueda: string = '';
   paginaActual: number = 1;
   contratoForm!: FormGroup;
+  reactivarForm!: FormGroup;
   isModalVisibleActualizar: boolean = false;
   isModalVisibleVer: boolean = false;
   isModalVisibleConfirmarBorrado: boolean = false;
@@ -24,6 +25,11 @@ export class ContratosComponent implements OnInit {
   isViewMode: boolean = false;
   contratoParaBorrar: any = null;
   contratoParaActualizar: any = null;
+  isModalVisibleFacturas: boolean = false;
+  facturas: any[] = [];
+  deuda: number = 0;
+  interes: number = 1;
+  cantidadCuotas: number = 6;
 
   constructor(
     private fb: FormBuilder,
@@ -35,6 +41,11 @@ export class ContratosComponent implements OnInit {
   ngOnInit(): void {
     this.contratoForm = this.fb.group({
       seguroMedicoId: ['', Validators.required]
+    });
+
+    this.reactivarForm = this.fb.group({
+      cantidadCuotas: [this.cantidadCuotas, [Validators.required]],
+      interes: [this.interes, [Validators.required, Validators.min(1), Validators.max(100)]]
     });
 
     this.getContratos();
@@ -143,6 +154,7 @@ export class ContratosComponent implements OnInit {
 
   cerrarModal(): void {
     this.isModalVisibleActualizar = false;
+    this.isModalVisibleFacturas = false;
   }
 
   onSubmit(): void {
@@ -167,9 +179,9 @@ export class ContratosComponent implements OnInit {
         },
         error: (error) => {
           this.loadingModal = false;
-          console.error('Error al cambiar el contrato', error);
+          // console.error('Error al activar el contrato', error);
           if (error.status === 400) {
-            this.toastr.error(error.error, 'Error de validación');
+            this.toastr.error(error.error, 'Pagos pendientes');
           } else {
             this.toastr.error('Error al cambiar el contrato');
           }
@@ -210,23 +222,62 @@ export class ContratosComponent implements OnInit {
     }
   }
 
+  get precioTotalFinanciado(): number {
+    if (this.reactivarForm.valid) {
+      return this.deuda * (1 + this.reactivarForm.get('interes')?.value / 100);
+    }
+    return 0;
+  }
+
+  get cuota(): number {
+    if (this.reactivarForm.valid) {
+      return this.precioTotalFinanciado / this.reactivarForm.get('cantidadCuotas')?.value;
+    }
+    return 0;
+  }
+
   activarContrato(contrato: any): void {
     this.loadingModal = true;
-    this.contratosService.activarContrato(contrato.id).subscribe({
+    console.log(contrato);
+    this.contratosService.getUltimasFacturas(contrato.id).subscribe({
       next: (response: any) => {
-        this.getContratos();
-        this.toastr.success(response.message, 'Activación de contrato');
+        this.facturas = response.ultimasfacturas;
+        this.deuda = response.deuda;
         this.loadingModal = false;
+        console.log(response);
+        this.isModalVisibleFacturas = true;
       },
       error: (error) => {
         this.loadingModal = false;
         console.error(error);
-        if (error.error && error.error.description) {
-          this.toastr.error(error.error.description, error.error.code);
-        } else {
-          this.toastr.error('Error al activar el contrato');
-        }
       }
     });
+    // this.loadingModal = true;
+    // this.contratosService.activarContrato(contrato.id).subscribe({
+    //   next: (response: any) => {
+    //     this.getContratos();
+    //     this.toastr.success(response.message, 'Activación de contrato');
+    //     this.loadingModal = false;
+    //   },
+    //   error: (error) => {
+    //     this.loadingModal = false;
+    //     // console.error('Error al activar el contrato', error);
+    //     if (error.status === 400) {
+    //       this.toastr.error(error.error, 'Pagos pendientes');
+    //     } else {
+    //       this.toastr.error('Error al activar el contrato');
+    //     }
+    //   }
+    // });
+  }
+
+  reactivarContrato() {
+    if (this.reactivarForm.valid) {
+      const { cantidadCuotas, interes } = this.reactivarForm.value;
+      // Lógica para reactivar el contrato con los valores de cantidadCuotas e interes
+      console.log('reactivando contrato con:', cantidadCuotas, interes);
+    } else {
+      console.log('Formulario inválido');
+    }
   }
 }

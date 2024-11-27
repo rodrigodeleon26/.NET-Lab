@@ -596,28 +596,53 @@ namespace DAL.DALs
                             Nombre = c.SeguroMedico.Nombre
                         }
                     }).ToList();
-            }
-        }
+			}
+		}
 
-        public bool puedeRenovarContrato(long id)
+		public bool puedeRenovarContrato(long id)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var facturas = _dbContext.Facturas
+					.Where(f => f.Paciente.Contrato.Id == id &&
+								f.Descripcion != null &&
+								f.Descripcion.StartsWith("Mensualidad de seguro médico"))
+					.ToList();
+
+				foreach (var factura in facturas)
+				{
+					if (!factura.Pago)
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+
+        public float ObtenerDeudaDeContrato(long contratoId)
         {
             using (var _dbContext = new DBContext())
             {
-                var facturas = _dbContext.Facturas
-                    .Where(f => f.Paciente.Contrato.Id == id &&
-                                f.Descripcion != null &&
-                                f.Descripcion.StartsWith("Mensualidad de seguro médico"))
-                    .ToList();
+                return _dbContext.Facturas
+                    .Where(f => f.Paciente.Contrato.Id == contratoId
+                                && !f.Pago
+                                && f.Descripcion != null
+                                && f.Descripcion.StartsWith("Mensualidad de seguro médico"))
+                    .Sum(f => f.Monto);
+            }
+        }
 
-                foreach (var factura in facturas)
-                {
-                    if (!factura.Pago)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+        public bool contratoEnRefinanciacion(long contratoId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Any(f => f.Paciente.Contrato.Id == contratoId
+                              && !f.Pago
+                              && f.Descripcion != null
+                              && f.Descripcion.StartsWith("Cuota"));
             }
         }
         #endregion
@@ -1023,7 +1048,9 @@ namespace DAL.DALs
             using (var _dbContext = new DBContext())
             {
                 return _dbContext.Facturas
-                    .Where(f => f.Paciente.Contrato.Id == contratoId)
+                    .Where(f => f.Paciente.Contrato.Id == contratoId
+                                && f.Descripcion != null
+                                && f.Descripcion.StartsWith("Mensualidad de seguro médico"))
                     .OrderByDescending(f => f.Fecha)
                     .Take(cantidad)
                     .Select(f => new Factura

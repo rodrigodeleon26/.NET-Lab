@@ -547,6 +547,16 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public float ObtenerDeudaDeContrato(long contratoId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool contratoEnRefinanciacion(long contratoId)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool ExisteFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
         {
             throw new NotImplementedException();

@@ -309,10 +309,6 @@ namespace AdministrativoWebApi.Controllers
         public IActionResult GetFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
         {
             var pacientes = _blAdministrativo.GetPacientesFiltradosPaginados(pag, filtro);
-            if (pacientes == null || pacientes.Count == 0)
-            {
-                return NoContent();
-            }
             return Ok(pacientes);
         }
 
