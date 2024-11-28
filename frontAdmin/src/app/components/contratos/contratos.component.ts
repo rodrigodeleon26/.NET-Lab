@@ -30,6 +30,7 @@ export class ContratosComponent implements OnInit {
   deuda: number = 0;
   interes: number = 1;
   cantidadCuotas: number = 6;
+  selectedContratoId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -246,38 +247,39 @@ export class ContratosComponent implements OnInit {
         this.loadingModal = false;
         console.log(response);
         this.isModalVisibleFacturas = true;
+        this.selectedContratoId = contrato.id;
       },
       error: (error) => {
         this.loadingModal = false;
         console.error(error);
       }
     });
-    // this.loadingModal = true;
-    // this.contratosService.activarContrato(contrato.id).subscribe({
-    //   next: (response: any) => {
-    //     this.getContratos();
-    //     this.toastr.success(response.message, 'Activación de contrato');
-    //     this.loadingModal = false;
-    //   },
-    //   error: (error) => {
-    //     this.loadingModal = false;
-    //     // console.error('Error al activar el contrato', error);
-    //     if (error.status === 400) {
-    //       this.toastr.error(error.error, 'Pagos pendientes');
-    //     } else {
-    //       this.toastr.error('Error al activar el contrato');
-    //     }
-    //   }
-    // });
   }
 
-  reactivarContrato() {
-    if (this.reactivarForm.valid) {
-      const { cantidadCuotas, interes } = this.reactivarForm.value;
-      // Lógica para reactivar el contrato con los valores de cantidadCuotas e interes
-      console.log('reactivando contrato con:', cantidadCuotas, interes);
-    } else {
-      console.log('Formulario inválido');
+        reactivarContrato() {
+      console.log('Reactivar contrato', this.reactivarForm.value, this.selectedContratoId);
+      if (this.reactivarForm.valid && this.selectedContratoId !== null) {
+        const { cantidadCuotas, interes } = this.reactivarForm.value;
+        this.loadingModal = true;
+    
+        this.contratosService.reactivarContrato(this.selectedContratoId, cantidadCuotas, interes).subscribe(
+          (response: any) => {
+            console.log('Contrato reactivado exitosamente', response);
+            this.getContratos();
+            this.isModalVisibleFacturas = false;
+            this.selectedContratoId = null;
+            this.reactivarForm.reset
+            this.toastr.success(response.message, 'Reactivación de contrato');
+            this.loadingModal = false;
+          },
+          (error: any) => {
+            console.error('Error al reactivar el contrato', error);
+            this.toastr.error(error.error, 'Error al reactivar el contrato');
+            this.loadingModal = false;
+          }
+        );
+      } else {
+        this.toastr.error('Formulario inválido o contrato no seleccionado');
+      }
     }
-  }
 }

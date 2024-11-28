@@ -39,4 +39,8 @@ export class ContratosService {
     const url = `${this.apiUrl}/${idContrato}/getUltimasFacturas`;
     return this.http.get<any[]>(url);
   }
+
+  reactivarContrato(id: number, cantidadCuotas: number, interes: number) {
+    return this.http.post(`${this.apiUrl}/${id}/reactivarContrato`, { cuotas: cantidadCuotas, interes });
+  }
 }

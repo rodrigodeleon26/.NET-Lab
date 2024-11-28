@@ -15,7 +15,13 @@ namespace AdministrativoWebApi.Controllers
         public long IdNuevoSeguroMedico { get; set; }
     }
 
-	[Route("api/[controller]")]
+    public class ReactivarContratoRequest
+    {
+        public int Cuotas { get; set; }
+        public int Interes { get; set; }
+    }
+
+    [Route("api/[controller]")]
 	[ApiController]
 	public class ContratosController : ControllerBase
 	{
@@ -204,8 +210,13 @@ namespace AdministrativoWebApi.Controllers
         }
 
         [HttpPost("{id}/reactivarContrato")]
-        public IActionResult ReactivarContrato(long id, int cuotas, int interes)
+        public IActionResult ReactivarContrato(long id, [FromBody] ReactivarContratoRequest request)
         {
+            Console.WriteLine("Entro a reactivar contrato");
+            Console.WriteLine("id: " + id);
+            Console.WriteLine("cuotas: " + request.Cuotas);
+            Console.WriteLine("interes: " + request.Interes);
+
             // Validar el contrato
             var contrato = _blAdministrativo.getContratoById(id);
             if (contrato == null)
@@ -220,24 +231,25 @@ namespace AdministrativoWebApi.Controllers
             }
 
             // Validar la cantidad de cuotas
-            if (cuotas != 6 && cuotas != 12)
+            if (request.Cuotas != 6 && request.Cuotas != 12)
             {
                 return BadRequest("La cantidad de cuotas debe ser 6 o 12");
             }
 
             // Validar el interés
-            if (interes < 1 || interes > 100)
+            if (request.Interes < 1 || request.Interes > 100)
             {
                 return BadRequest("El interés debe estar entre 1 y 100");
             }
 
-			if (_blAdministrativo.contratoEnRefinanciacion(id))
+            if (_blAdministrativo.contratoEnRefinanciacion(id))
             {
                 return BadRequest("El contrato ya está en refinanciación");
             }
 
-            _blAdministrativo.reactivarContrato(id, cuotas, interes);
+            _blAdministrativo.reactivarContrato(id, request.Cuotas, request.Interes);
             return Ok(new { message = "El contrato ha sido reactivado exitosamente" });
         }
+
     }
 }
