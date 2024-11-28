@@ -1134,6 +1134,7 @@ namespace DAL.DALs
             {
                 var query = _dbContext.Facturas
                     .Include(f => f.PagoPayPal) // Incluir la relación con PagoPayPal
+                    .Where(f => f.PagoPayPal != null) // Excluir las facturas sin PagoPayPal
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(pacienteString))
