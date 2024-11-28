@@ -8,7 +8,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
-    DBContext.UpdateDatabase();
+    //DBContext.UpdateDatabase();
 
     builder.Services.AddControllers();
 
@@ -24,7 +24,7 @@ try
     app.ConfigureSwaggerExplorer()
        .ConfigureCORS()
        .AddIdentityAuthMiddlewares()
-       .UseHttpsRedirection();
+       //.UseHttpsRedirection();
 
     app.MapControllers();
     // Endpoints nativos de Identity

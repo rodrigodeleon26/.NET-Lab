@@ -1,13 +1,40 @@
 version: '3.8'
 
 services:
-  pacientewebapi:
-    image: ${DOCKER_REGISTRY-}pacientewebapi
+  nginx:
+    image: mangas330/nginx
     ports:
-      - 5000:8080
-      - 5001:8081
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+    volumes:
+      - ./ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./ssl/server.key:/etc/nginx/certs/server.key
+      - ./nginx.conf:/etc/nginx/nginx.conf
     deploy:
-      replicas: 2
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - app-network
+
+  pacientewebapi:
+    image: mangas330/pacientewebapi
+    ports:
+    - target: 8080
+      published: 4999
+      protocol: tcp
+      mode: ingress
+    - target: 8081
+      published: 5001
+      protocol: tcp
+      mode: ingress
+    deploy:
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -17,12 +44,18 @@ services:
       - app-network
 
   citasmedicaswebapi:
-    image: ${DOCKER_REGISTRY-}citasmedicaswebapi
+    image: mangas330/citasmedicaswebapi
     ports:
-      - 5002:8080
-      - 5003:8081
+    - target: 8080
+      published: 5002
+      protocol: tcp
+      mode: ingress
+    - target: 8081
+      published: 5003
+      protocol: tcp
+      mode: ingress
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -32,12 +65,18 @@ services:
       - app-network
 
   historiaclinicawebapi:
-    image: ${DOCKER_REGISTRY-}historiaclinicawebapi
+    image: mangas330/historiaclinicawebapi
     ports:
-      - 5004:8080
-      - 5005:8081
+    - target: 8080
+      published: 5004
+      protocol: tcp
+      mode: ingress
+    - target: 8081
+      published: 5005
+      protocol: tcp
+      mode: ingress
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -47,12 +86,18 @@ services:
       - app-network
 
   authwebapi:
-    image: ${DOCKER_REGISTRY-}authwebapi
+    image: mangas330/authwebapi
     ports:
-      - 5006:8080
-      - 5007:8081
+    - target: 8080
+      published: 5006
+      protocol: tcp
+      mode: ingress
+    - target: 8081
+      published: 5007
+      protocol: tcp
+      mode: ingress
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -62,12 +107,18 @@ services:
       - app-network
 
   administrativowebapi:
-    image: ${DOCKER_REGISTRY-}administrativowebapi
+    image: mangas330/administrativowebapi
     ports:
-      - 5008:8080
-      - 5009:8081
+    - target: 8080
+      published: 5008
+      protocol: tcp
+      mode: ingress
+    - target: 8081
+      published: 5009
+      protocol: tcp
+      mode: ingress
     deploy:
-      replicas: 3
+      replicas: 2
       restart_policy:
         condition: on-failure
       placement:
@@ -79,7 +130,10 @@ services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     ports:
-      - "1433:1433"
+    - target: 1433
+      published: 1433
+      protocol: tcp
+      mode: ingress
     environment:
       - SA_PASSWORD=Abc*123!
       - ACCEPT_EULA=Y
@@ -87,6 +141,10 @@ services:
       - sqlserver-data:/var/opt/mssql
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
       placement:
         constraints:
           - node.role == manager
@@ -94,18 +152,16 @@ services:
       - app-network
 
   frontenda:
-    image: ${DOCKER_REGISTRY-}frontenda
+    image: mangas330/frontenda
     ports:
-      - "5010:446"
+    - target: 446
+      published: 5010
+      protocol: tcp
+      mode: ingress
     volumes:
       - ./frontAdmin/ssl/server.crt:/etc/nginx/certs/server.crt
       - ./frontAdmin/ssl/server.key:/etc/nginx/certs/server.key
       - ./frontAdmin/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - pacientewebapi
-      - citasmedicaswebapi
-      - historiaclinicawebapi
-      - administrativowebapi
     deploy:
       replicas: 1
       restart_policy:
@@ -117,18 +173,16 @@ services:
       - app-network
 
   frontendm:
-    image: ${DOCKER_REGISTRY-}frontendm
+    image: mangas330/frontendm
     ports:
-      - "5011:444"
+    - target: 444
+      published: 5011
+      protocol: tcp
+      mode: ingress
     volumes:
       - ./frontMedico/ssl/server.crt:/etc/nginx/certs/server.crt
       - ./frontMedico/ssl/server.key:/etc/nginx/certs/server.key
       - ./frontMedico/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - pacientewebapi
-      - citasmedicaswebapi
-      - historiaclinicawebapi
-      - administrativowebapi
     deploy:
       replicas: 1
       restart_policy:
@@ -140,18 +194,16 @@ services:
       - app-network
 
   frontendc:
-    image: ${DOCKER_REGISTRY-}frontendc
+    image: mangas330/frontendc
     ports:
-      - "5012:445"
+    - target: 445
+      published: 5012
+      protocol: tcp
+      mode: ingress
     volumes:
       - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
       - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
       - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - pacientewebapi
-      - citasmedicaswebapi
-      - historiaclinicawebapi
-      - administrativowebapi
     deploy:
       replicas: 1
       restart_policy:
@@ -165,8 +217,14 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
-      - 5672:5672
-      - 15672:15672
+    - target: 5672
+      published: 5672
+      protocol: tcp
+      mode: ingress
+    - target: 15672
+      published: 15672
+      protocol: tcp
+      mode: ingress
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
