@@ -42,12 +42,20 @@ namespace BL.IBLs
 		void updateContrato(Contrato contrato);
 		void deleteContrato(long id);
 		void activarContrato(long id);
-		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro);
+		List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro);
+		void cambiarContrato(Contrato contrato, SeguroMedico seguroMedico);
+        bool puedeRenovarContrato(long id);
+		List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad);
+        float ObtenerDeudaDeContrato(long contratoId);
+		void reactivarContrato(long contratoId, int cantidadCuotas, int interes);
+		bool contratoEnRefinanciacion(long contratoId);
 
         // Precios
         List<Precio> getPrecios();
 		Precio getPrecioById(long id);
-		void addPrecio(Precio precio);
+		Precio GetPrecioBySeguro(long id);
+
+        void addPrecio(Precio precio);
 		void updatePrecio(Precio precio);
 		void deletePrecio(long id);
 

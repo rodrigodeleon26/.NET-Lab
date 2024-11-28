@@ -9,7 +9,8 @@ import { environment, REFRESH_TOKEN_KEY, TOKEN_KEY } from '../shared/constants';
 export class AuthService {
 
   constructor(private http:HttpClient) { }
-  loginUser(formData:any){
+  loginUser(email: string, password: string, role: string) {
+    const formData = { email, password, role };
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/login', formData);
   }
 

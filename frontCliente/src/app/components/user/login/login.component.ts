@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   forgotPasswordForm!: FormGroup;
   showModal: boolean = false;
   isLoading: boolean = false;
+  isLoadingLogin: boolean = false;
 
   constructor(
     public formBuilder: FormBuilder, 
@@ -33,7 +34,8 @@ export class LoginComponent implements OnInit {
   
       this.form = this.formBuilder.group({
         email: ['', Validators.required],
-        password: ['', Validators.required]
+        password: ['', Validators.required],
+        role: ['Paciente', [Validators.required]] 
       });
 
       this.forgotPasswordForm = this.formBuilder.group({
@@ -43,8 +45,9 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
-      console.log(this.form.value);
-      this.authService.loginUser(this.form.value)
+      this.isLoadingLogin = true;
+      const { email, password, role } = this.form.value;
+      this.authService.loginUser(email, password, role)
       .subscribe({
         next: (res:any) => {
           this.authService.saveToken(res.token, res.refreshToken);
@@ -53,14 +56,17 @@ export class LoginComponent implements OnInit {
           } else {
             this.router.navigateByUrl('/resendEmailConfirmation');
           }
-          this.isLoading = false;
+          this.isLoadingLogin = false;
         },
         error: (err:any) => {
+          this.isLoadingLogin = false
           if (err.status === 400) {
             this.toastr.error(err.error.message, 'Login fallido');
+          } else if (err.status === 403) {
+            this.toastr.error('No tienes permiso para acceder con este rol', 'Error de autenticación');
+          } else {
+            console.log('Error durante el login:\n', err);
           }
-          else
-            console.log('error during login:\n', err);
         }
       });
 

@@ -16,6 +16,7 @@ export class ContratosComponent implements OnInit {
   busqueda: string = '';
   paginaActual: number = 1;
   contratoForm!: FormGroup;
+  reactivarForm!: FormGroup;
   isModalVisibleActualizar: boolean = false;
   isModalVisibleVer: boolean = false;
   isModalVisibleConfirmarBorrado: boolean = false;
@@ -23,6 +24,13 @@ export class ContratosComponent implements OnInit {
   loadingModal: boolean = false;
   isViewMode: boolean = false;
   contratoParaBorrar: any = null;
+  contratoParaActualizar: any = null;
+  isModalVisibleFacturas: boolean = false;
+  facturas: any[] = [];
+  deuda: number = 0;
+  interes: number = 1;
+  cantidadCuotas: number = 6;
+  selectedContratoId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -34,6 +42,11 @@ export class ContratosComponent implements OnInit {
   ngOnInit(): void {
     this.contratoForm = this.fb.group({
       seguroMedicoId: ['', Validators.required]
+    });
+
+    this.reactivarForm = this.fb.group({
+      cantidadCuotas: [this.cantidadCuotas, [Validators.required]],
+      interes: [this.interes, [Validators.required, Validators.min(1), Validators.max(100)]]
     });
 
     this.getContratos();
@@ -128,6 +141,7 @@ export class ContratosComponent implements OnInit {
   abrirModalActualizar(contrato: any): void {
     this.contratosService.getContratoPorId(contrato.id).subscribe({
       next: (contrato) => {
+        this.contratoParaActualizar = contrato;
         this.isModalVisibleActualizar = true;
         this.modalTitle = 'Actualizar Contrato';
         this.isViewMode = false;
@@ -141,26 +155,37 @@ export class ContratosComponent implements OnInit {
 
   cerrarModal(): void {
     this.isModalVisibleActualizar = false;
-    // this.isModalVisibleVer = false;
+    this.isModalVisibleFacturas = false;
   }
 
   onSubmit(): void {
     if (this.contratoForm.invalid) {
       return;
     }
-
+  
     this.loadingModal = true;
     const contrato = this.contratoForm.value;
-
+  
     if (this.isModalVisibleActualizar) {
-      // Lógica para actualizar contrato
-      this.contratosService.actualizarContrato(contrato).subscribe({
-        next: () => {
-          this.getContratos();
+      const request = {
+        IdContratoActual: this.contratoParaActualizar.id,
+        IdNuevoSeguroMedico: contrato.seguroMedicoId
+      };
+  
+      this.contratosService.cambiarContrato(request).subscribe({
+        next: (response: any) => {
+          this.getContratos();         
           this.cerrarModal();
+          this.toastr.success(response.message, 'Actualización de contrato');
         },
         error: (error) => {
-          console.error('Error al actualizar el contrato', error);
+          this.loadingModal = false;
+          // console.error('Error al activar el contrato', error);
+          if (error.status === 400) {
+            this.toastr.error(error.error, 'Pagos pendientes');
+          } else {
+            this.toastr.error('Error al cambiar el contrato');
+          }
         },
         complete: () => {
           this.loadingModal = false;
@@ -182,7 +207,7 @@ export class ContratosComponent implements OnInit {
           this.getContratos();
           this.isModalVisibleConfirmarBorrado = false;
           this.contratoParaBorrar = null;
-          this.toastr.success('Contrato eliminado exitosamente');
+          this.toastr.success('Contrato dado de baja exitosamente', 'Baja de contrato');
           this.loadingModal = false;
         },
         error: (error) => {
@@ -197,4 +222,64 @@ export class ContratosComponent implements OnInit {
       });
     }
   }
+
+  get precioTotalFinanciado(): number {
+    if (this.reactivarForm.valid) {
+      return this.deuda * (1 + this.reactivarForm.get('interes')?.value / 100);
+    }
+    return 0;
+  }
+
+  get cuota(): number {
+    if (this.reactivarForm.valid) {
+      return this.precioTotalFinanciado / this.reactivarForm.get('cantidadCuotas')?.value;
+    }
+    return 0;
+  }
+
+  activarContrato(contrato: any): void {
+    this.loadingModal = true;
+    console.log(contrato);
+    this.contratosService.getUltimasFacturas(contrato.id).subscribe({
+      next: (response: any) => {
+        this.facturas = response.ultimasfacturas;
+        this.deuda = response.deuda;
+        this.loadingModal = false;
+        console.log(response);
+        this.isModalVisibleFacturas = true;
+        this.selectedContratoId = contrato.id;
+      },
+      error: (error) => {
+        this.loadingModal = false;
+        console.error(error);
+      }
+    });
+  }
+
+        reactivarContrato() {
+      console.log('Reactivar contrato', this.reactivarForm.value, this.selectedContratoId);
+      if (this.reactivarForm.valid && this.selectedContratoId !== null) {
+        const { cantidadCuotas, interes } = this.reactivarForm.value;
+        this.loadingModal = true;
+    
+        this.contratosService.reactivarContrato(this.selectedContratoId, cantidadCuotas, interes).subscribe(
+          (response: any) => {
+            console.log('Contrato reactivado exitosamente', response);
+            this.getContratos();
+            this.isModalVisibleFacturas = false;
+            this.selectedContratoId = null;
+            this.reactivarForm.reset
+            this.toastr.success(response.message, 'Reactivación de contrato');
+            this.loadingModal = false;
+          },
+          (error: any) => {
+            console.error('Error al reactivar el contrato', error);
+            this.toastr.error(error.error, 'Error al reactivar el contrato');
+            this.loadingModal = false;
+          }
+        );
+      } else {
+        this.toastr.error('Formulario inválido o contrato no seleccionado');
+      }
+    }
 }

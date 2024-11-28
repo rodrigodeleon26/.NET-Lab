@@ -164,7 +164,14 @@ namespace BL.BLs
 			dal.DeleteContrato(id);
 		}
 
-		public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
+        public void cambiarContrato(Contrato contrato, SeguroMedico seguroMedico)
+		{
+			contrato.SeguroMedico = seguroMedico;
+			contrato.FechaInicio = DateTime.UtcNow;
+			updateContrato(contrato);
+        }
+
+        public void ContratarSeguroMedico(long idPaciente, long idSeguroMedico)
 		{
 			var paciente = getPacienteById(idPaciente);
 			var seguroMedico = getSeguroMedicoById(idSeguroMedico);
@@ -194,20 +201,70 @@ namespace BL.BLs
 			}
 		}
 
-		public void activarContrato(long id)
+        public bool contratoEnRefinanciacion(long contratoId)
 		{
-			var contrato = getContratoById(id);
-			if (contrato != null)
-			{
-				contrato.Activo = true;
-				updateContrato(contrato);
-			}
+			return dal.contratoEnRefinanciacion(contratoId);
+        }
+
+        public bool puedeRenovarContrato(long id)
+		{
+			return dal.puedeRenovarContrato(id);
 		}
 
-		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
+        public void activarContrato(long id)
+        {
+            var contrato = getContratoById(id);
+            if (contrato != null)
+            {
+                contrato.Activo = true;
+                updateContrato(contrato);
+            }
+        }
+
+        public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
 		{
 			return dal.GetContratosFiltradosPaginados(numPagina, filtro);
 		}
+
+		public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
+		{
+			return dal.ObtenerUltimasFacturasDelContrato(contratoId, cantidad);
+		}
+
+        public float ObtenerDeudaDeContrato(long contratoId)
+		{
+			return dal.ObtenerDeudaDeContrato(contratoId);
+        }
+
+		public void reactivarContrato(long contratoId, int cantidadCuotas, int interes)
+		{
+			var contrato = getContratoById(contratoId);
+			var deuda = ObtenerDeudaDeContrato(contratoId);
+			if (deuda > 0)
+			{
+                var montoTotalConInteres = deuda * (1 + (interes / 100.0));
+                var cuota = (float)(montoTotalConInteres / cantidadCuotas);
+
+                // Crear las facturas
+                for (int i = 0; i < cantidadCuotas; i++)
+				{
+					var factura = new Factura
+					{
+						Fecha = DateTime.Now.AddMonths(i + 1),
+						Monto = cuota,
+						Pago = false,
+						Descripcion = $"Cuota {i + 1} de {cantidadCuotas} de la deuda del contrato",
+						Paciente = contrato.Paciente,
+						FechaPago = null
+					};
+					addFactura(factura);
+				}
+
+			}
+			contrato.Activo = true;
+			contrato.FechaInicio = DateTime.UtcNow;
+			updateContrato(contrato);
+        }
 
 		#endregion
 
@@ -225,7 +282,12 @@ namespace BL.BLs
 			return dal.GetPrecioById(id);
 		}
 
-		public void addPrecio(Precio precio)
+		public Precio GetPrecioBySeguro(long id)
+        {
+            return dal.GetPrecioBySeguro(id);
+        }
+
+        public void addPrecio(Precio precio)
 		{
 			dal.AddPrecio(precio);
 		}

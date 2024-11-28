@@ -3,13 +3,26 @@ using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AdministrativoWebApi.Controllers
 {
-	[Route("api/[controller]")]
+    public class Request_CambiarContrato
+    {
+        public long IdContratoActual { get; set; }
+        public long IdNuevoSeguroMedico { get; set; }
+    }
+
+    public class ReactivarContratoRequest
+    {
+        public int Cuotas { get; set; }
+        public int Interes { get; set; }
+    }
+
+    [Route("api/[controller]")]
 	[ApiController]
 	public class ContratosController : ControllerBase
 	{
@@ -91,10 +104,24 @@ namespace AdministrativoWebApi.Controllers
 				return NotFound();
 			}
 
+			if (contrato.Activo == false)
+			{
+				return BadRequest("El contrato ya está dado de baja");
+			}
+
 			_blAdministrativo.deleteContrato(id);
 			return NoContent();
 		}
 
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Contrato>), 200)]
+        [ProducesResponseType(204)]
+        [HttpGet("filtradosPaginados")]
+        public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
+        {
+            var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
+            return Ok(contratos);
+        }
 
         // POST api/<ContratosController>/contratar-seguro
         [Authorize(Roles = "Admin, Medico")]
@@ -135,18 +162,79 @@ namespace AdministrativoWebApi.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin, Medico")]
-        [ProducesResponseType(typeof(List<Contrato>), 200)]
-        [ProducesResponseType(204)]
-        [HttpGet("filtradosPaginados")]
-        public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
+		[HttpPost("cambiarContrato")]
+		public IActionResult CambiarContrato([FromBody] Request_CambiarContrato request)
+		{
+			// Validar la existencia del contrato actual
+			var contratoActual = _blAdministrativo.getContratoById(request.IdContratoActual);
+			if (contratoActual == null)
+			{
+				return BadRequest("El contrato actual no existe");
+			}
+
+            // Validar la existencia del nuevo seguro médico
+            var nuevoSeguroMedico = _blAdministrativo.getSeguroMedicoById(request.IdNuevoSeguroMedico);
+			if (nuevoSeguroMedico == null)
+			{
+				return BadRequest("El nuevo seguro médico no existe");
+			}
+
+			if (nuevoSeguroMedico.Id == contratoActual.SeguroMedico.Id)
+			{
+				return BadRequest("El nuevo seguro médico es el mismo que el actual");
+			}
+
+			if (_blAdministrativo.puedeRenovarContrato(contratoActual.Id) == false)
+			{
+				return BadRequest("El contrato no puede ser cambiado, hay pagos pendientes");
+			}
+
+			_blAdministrativo.cambiarContrato(contratoActual, nuevoSeguroMedico);
+
+            return Ok(new { message = "El contrato ha sido actualizado exitosamente" });
+		}
+
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("{id}/getUltimasFacturas")]
+        public IActionResult GetUltimasFacturas(long id)
         {
-            var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
-            if (contratos == null || contratos.Count == 0)
+			var ultimasfacturas = _blAdministrativo.ObtenerUltimasFacturasDelContrato(id, 3);
+            var deuda = _blAdministrativo.ObtenerDeudaDeContrato(id);
+            return Ok(new { ultimasfacturas, deuda });
+        }
+
+        [HttpPost("{id}/reactivarContrato")]
+        public IActionResult ReactivarContrato(long id, [FromBody] ReactivarContratoRequest request)
+        {
+            // Validar el contrato
+            var contrato = _blAdministrativo.getContratoById(id);
+            if (contrato == null)
             {
-                return NoContent();
+                return BadRequest("El contrato no existe");
             }
-            return Ok(contratos);
+
+            if (contrato.Activo)
+            {
+                return BadRequest("El contrato ya está activo");
+            }
+
+            if (request.Cuotas != 6 && request.Cuotas != 12)
+            {
+                return BadRequest("La cantidad de cuotas debe ser 6 o 12");
+            }
+
+            if (request.Interes < 1 || request.Interes > 100)
+            {
+                return BadRequest("El interés debe estar entre 1 y 100");
+            }
+
+            if (_blAdministrativo.contratoEnRefinanciacion(id))
+            {
+                return BadRequest("El contrato ya está en refinanciación");
+            }
+
+            _blAdministrativo.reactivarContrato(id, request.Cuotas, request.Interes);
+            return Ok(new { message = "El contrato ha sido reactivado exitosamente" });
         }
     }
 }

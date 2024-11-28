@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.Services;
 using System.Net;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -177,6 +178,7 @@ namespace AdministrativoWebApi.Controllers
                 <a href='{resetLink}'>Establecer Contraseña</a>
                 <p>Si no puedes hacer clic en el enlace, copia y pega la siguiente URL en tu navegador:</p>
                 <p>{resetLink}</p>
+                <p>Recuerda que debes pagar la primer cuota de tu seguro médico para activar el mismo.</p>
                 <p>Saludos,</p>
                 <p>El equipo de SistemaHCE</p>";
 
@@ -191,8 +193,18 @@ namespace AdministrativoWebApi.Controllers
                     SeguroMedico = seguroMedico,
                     Paciente = nuevoPaciente
                 };
-
                 _blAdministrativo.addContrato(contrato);
+
+                Precio precio = _blAdministrativo.GetPrecioBySeguro(pacienteRequest.SeguroMedicoId);
+                var factura = new Factura()
+                {
+                    Fecha = DateTime.UtcNow,
+                    Monto = precio.PrecioBase,
+                    Pago = false,
+                    Descripcion = "Cuota inicial: Pago de seguro medico",
+                    Paciente = nuevoPaciente
+                };
+                _blAdministrativo.addFactura(factura);
 
                 return CreatedAtAction(nameof(Post), new { id = paciente.Id }, paciente);
             }
@@ -305,10 +317,6 @@ namespace AdministrativoWebApi.Controllers
         public IActionResult GetFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
         {
             var pacientes = _blAdministrativo.GetPacientesFiltradosPaginados(pag, filtro);
-            if (pacientes == null || pacientes.Count == 0)
-            {
-                return NoContent();
-            }
             return Ok(pacientes);
         }
 
@@ -320,14 +328,6 @@ namespace AdministrativoWebApi.Controllers
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        private string FormatearDocumento(string documento)
-        {
-            if (documento.Length == 8)
-            {
-                return $"{documento.Substring(0, 1)}.{documento.Substring(1, 3)}.{documento.Substring(4, 3)}-{documento.Substring(7, 1)}";
-            }
-            return documento;
-        }
         private void ValidarPacienteRequest(PacienteRequest request)
         {
             if (request == null ||

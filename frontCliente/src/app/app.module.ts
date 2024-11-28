@@ -7,7 +7,6 @@ import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptor
 import { RouterModule } from '@angular/router';
 import { UserComponent } from './components/user/user.component';
 import { LoginComponent } from './components/user/login/login.component';
-import { RegisterComponent } from './components/user/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,7 +32,6 @@ import { PaymentSuccessComponent } from './components/pantallas/payment-success/
     AppComponent,
     UserComponent,
     LoginComponent,
-    RegisterComponent,
     DashboardComponent,
     ResetPasswordComponent,
     ConfirmEmailComponent,

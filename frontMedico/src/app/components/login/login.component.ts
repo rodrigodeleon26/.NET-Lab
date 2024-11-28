@@ -26,13 +26,16 @@ export class LoginComponent implements OnInit {
 
     this.form = this.formBuilder.group({
       email: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      role: ['Medico', [Validators.required]] 
     });
   }
 
   onSubmit(): void {
     if (this.form.valid) {
-      this.authService.loginUser(this.form.value)
+      this.isLoading = true;
+      const { email, password, role } = this.form.value;
+      this.authService.loginUser(email, password, role)
       .subscribe({
         next: (res:any) => {
           this.authService.saveToken(res.token, res.refreshToken);
@@ -40,12 +43,15 @@ export class LoginComponent implements OnInit {
           this.toastr.success('Inicio de sesión exitoso', 'Bienvenido');
           this.isLoading = false;
         },
-        error: (err:any) => {
+        error: (err: any) => {
+          this.isLoading = false;
           if (err.status === 400) {
             this.toastr.error(err.error.message, 'Login fallido');
+          } else if (err.status === 403) {
+            this.toastr.error('No tienes permiso para acceder con este rol', 'Error de autenticación');
+          } else {
+            console.log('Error durante el login:\n', err);
           }
-          else
-            console.log('error during login:\n', err);
         }
       });
     }

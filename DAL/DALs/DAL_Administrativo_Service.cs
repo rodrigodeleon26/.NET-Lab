@@ -334,6 +334,11 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public Precio GetPrecioBySeguro(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         public void AddPrecio(Precio precio)
         {
             throw new NotImplementedException();
@@ -697,12 +702,22 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public Precio GetPrecioBySeguro(long id)
+        public bool puedeRenovarContrato(long id)
         {
             throw new NotImplementedException();
         }
 
         public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float ObtenerDeudaDeContrato(long contratoId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool contratoEnRefinanciacion(long contratoId)
         {
             throw new NotImplementedException();
         }

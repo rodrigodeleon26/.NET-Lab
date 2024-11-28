@@ -1,21 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { REFRESH_TOKEN_KEY, TOKEN_KEY } from '../shared/constants';
+import { REFRESH_TOKEN_KEY, TOKEN_KEY, TFA } from '../shared/constants';
 import { environment } from '../shared/constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private twoFactorAuthenticated: boolean = false;
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  registerUser(formData:any){
-    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/register', formData);
-  }
-  
-  loginUser(formData:any){
+  loginUser(email: string, password: string, role: string) {
+    const formData = { email, password, role };
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/login', formData);
   }
 
@@ -29,7 +25,7 @@ export class AuthService {
     const refreshToken = this.getRefreshToken();
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/refreshToken', { token, refreshToken });
   }
-  
+
   forgotPassword(email: string) {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/forgotPassword', { email });
   }
@@ -46,7 +42,7 @@ export class AuthService {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/resendConfirmationEmail', { email });
   }
 
-  generateQrCode(email: string)  {
+  sendQrCodeByEmail(email: string) {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/generateQrCode', { email });
   }
 
@@ -62,30 +58,30 @@ export class AuthService {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/disableTwoFactorAuth', { email });
   }
 
-  isLoggedIn(){
+  isLoggedIn() {
     return this.getToken() != null ? true : false;
   }
 
-  deleteToken(){
+  deleteToken() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
-    this.setTwoFactorAuthenticated(false);
+    localStorage.removeItem(TFA);
   }
 
-  saveToken(token:string, refreshToken:string){
+  saveToken(token: string, refreshToken: string) {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   }
 
-  getToken(){
+  getToken() {
     return localStorage.getItem(TOKEN_KEY);
   }
 
-  getRefreshToken(){
+  getRefreshToken() {
     return localStorage.getItem(REFRESH_TOKEN_KEY);
   }
 
-  getClaims(){
+  getClaims() {
     return JSON.parse(atob(this.getToken()!.split('.')[1]));
   }
 
@@ -105,10 +101,10 @@ export class AuthService {
   }
 
   setTwoFactorAuthenticated(status: boolean) {
-    this.twoFactorAuthenticated = status;
+    localStorage.setItem(TFA, status ? 'true' : 'false');
   }
 
   isTwoFactorAuthenticated(): boolean {
-    return this.twoFactorAuthenticated;
+    return localStorage.getItem(TFA) === 'true';
   }
 }

@@ -6,50 +6,33 @@
     <div class="flex justify-center">
         <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden relative">
 
-            <div class="hidden sm:flex justify-between">
-                <div class="flex justify-start space-x-5 p-5 w-full">
-                    <div class="flex bg-zinc-300 p-2 rounded space-x-1 w-fit">
-                        <input [(ngModel)]="busqueda" type="text" id="busqueda" class="border rounded-md pl-1"
-                            placeholder="Buscar...">
-                        <button
-                            class="bg-gray-claro hover:bg-gray-intermedio rounded-full size-8 flex justify-center items-center"
-                            (click)="buscar()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                        </button>
-                        <button *ngIf="this.busqueda != ''"
-                            class="bg-red-300 hover:bg-red-400 rounded-full size-8 flex justify-center items-center"
-                            (click)="LimpiarBusqueda()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <h1 class="text-center text-xl mt-5 w-full">Contratos</h1>
-
-                <!-- <div class="flex justify-end space-x-5 p-5 w-full">
-                    <button (click)="abrirModalCrear()"
-                        class="bg-blue-intermedio text-white border border-blue-intermedio rounded-md py-1 px-3 hover:bg-blue-oscuro transition duration-300">
+            <div class="hidden sm:flex items-center justify-between w-full p-5">
+                <div class="flex bg-zinc-300 p-2 rounded space-x-1">
+                    <input [(ngModel)]="busqueda" type="text" id="busqueda" class="border rounded-md pl-1"
+                        placeholder="Buscar...">
+                    <button
+                        class="bg-gray-claro hover:bg-gray-intermedio rounded-full size-8 flex justify-center items-center"
+                        (click)="buscar()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="8.5" cy="7" r="4"></circle>
-                            <line x1="20" y1="8" x2="20" y2="14"></line>
-                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                     </button>
-                </div> -->
+                    <button *ngIf="this.busqueda != ''"
+                        class="bg-red-300 hover:bg-red-400 rounded-full size-8 flex justify-center items-center"
+                        (click)="LimpiarBusqueda()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-grow text-center">
+                    <h1 class="text-xl">Contratos</h1>
+                </div>
             </div>
-
             <div class="flex flex-col sm:hidden justify-between">
                 <h1 class="text-center text-xl my-5 w-full">Contratos</h1>
                 <!-- <div class="flex justify-end w-8 h-8 absolute right-5 top-5">
@@ -94,58 +77,77 @@
             </div>
             <div class="flex flex-col p-5 space-y-4">
                 <div class="border-gray-intermedio bg-gray-claro rounded w-full shadow-md">
-                    <table class="table-auto w-full border-collapse border border-gray-oscuro">
-                        <thead>
+                    <table class="table-auto w-full bg-white rounded-lg shadow-md">
+                        <thead class="bg-gray-200">
                             <tr>
-                                <th class="border border-gray-oscuro p-2 hidden md:table-cell">Fecha Inicio</th>
-                                <th class="border border-gray-oscuro p-2">Documento Paciente</th>
-                                <th class="border border-gray-oscuro p-2">Seguro Médico</th>
-                                <th class="border border-gray-oscuro p-2">Activo</th>
-                                <th class="border border-gray-oscuro p-2">Acciones</th>
+                                <th
+                                    class="py-2 text-center font-semibold w-1/12 border-b border-gray-300 hidden md:table-cell">
+                                    Fecha Inicio</th>
+                                <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Documento
+                                    Paciente</th>
+                                <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Seguro Médico
+                                </th>
+                                <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Activo</th>
+                                <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let contrato of contratos" class="hover:bg-gray-200">
-                                <td class="border border-gray-oscuro p-2 hidden md:table-cell">{{ contrato.fechaInicio |
-                                    date }}</td>
-                                <td class="border border-gray-oscuro p-2">{{ contrato.paciente.documento }}</td>
-                                <td class="border border-gray-oscuro p-2">{{ contrato.seguroMedico.nombre }}</td>
-                                <td class="border border-gray-oscuro p-2 text-center">
+                            <tr *ngIf="contratos.length === 0">
+                                <td colspan="5" class="py-2 text-center border-b border-gray-300">No hay contratos
+                                    disponibles</td>
+                            </tr>
+                            <tr *ngFor="let contrato of contratos" class="hover:bg-gray-100">
+                                <td class="py-2 text-center w-1/12 border-b border-gray-300 hidden md:table-cell">{{
+                                    contrato.fechaInicio | date }}</td>
+                                <td class="py-2 text-center w-2/12 border-b border-gray-300">{{
+                                    contrato.paciente.documento }}</td>
+                                <td class="py-2 text-center w-2/12 border-b border-gray-300">{{
+                                    contrato.seguroMedico.nombre }}</td>
+                                <td class="py-2 text-center w-1/12 border-b border-gray-300">
                                     <div [ngClass]="{'bg-green-500 text-white': contrato.activo, 'bg-red-500 text-white': !contrato.activo}"
                                         class="rounded-full w-6 h-6 flex items-center justify-center mx-auto">
                                         <span *ngIf="contrato.activo">✔</span>
                                         <span *ngIf="!contrato.activo">✖</span>
                                     </div>
                                 </td>
-                                <td
-                                    class="border border-gray-oscuro p-2 flex flex-row justify-center items-center">
-                                    <!-- <button (click)="abrirModalVer(contrato.id)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="11" cy="11" r="8"></circle>
-                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                        </svg>
-                                    </button> -->
-                                    <button (click)="abrirModalActualizar(contrato)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34">
-                                            </path>
-                                            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
-                                        </svg>
-                                    </button>
-                                    <button (click)="abrirModalConfirmarBorrado(contrato)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path
-                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                            </path>
-                                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                                        </svg>
-                                    </button>
+                                <td class="py-2 text-center w-2/12 border-b border-gray-300">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <ng-container *ngIf="contrato.activo; else inactivo">
+                                            <button (click)="abrirModalActualizar(contrato)"
+                                                class="mx-1 text-blue-500 hover:text-blue-700">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                    <path
+                                                        d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34">
+                                                    </path>
+                                                    <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                                                </svg>
+                                            </button>
+                                            <button (click)="abrirModalConfirmarBorrado(contrato)"
+                                                class="mx-1 text-red-500 hover:text-red-700">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                                                    <polyline points="8 12 12 16 16 12"></polyline>
+                                                </svg>
+                                            </button>
+                                        </ng-container>
+                                        <ng-template #inactivo>
+                                            <button (click)="activarContrato(contrato)"
+                                                class="mx-1 text-green-500 hover:text-green-700">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                    <line x1="12" y1="16" x2="12" y2="8"></line>
+                                                    <polyline points="8 12 12 8 16 12"></polyline>
+                                                </svg>
+                                            </button>
+                                        </ng-template>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -234,13 +236,16 @@
 </div>
 
 <!-- Modal para confirmar borrado -->
-<div *ngIf="isModalVisibleConfirmarBorrado" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out overflow-y-auto">
-    <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 transform transition-transform duration-300 ease-in-out my-8">
+<div *ngIf="isModalVisibleConfirmarBorrado"
+    class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out overflow-y-auto">
+    <div
+        class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 transform transition-transform duration-300 ease-in-out my-8">
         <!-- Header -->
         <div class="flex justify-between items-center bg-red-500 text-white p-4 rounded-t-lg border-b border-gray-300">
             <h2 class="text-xl">Dar de baja</h2>
             <button (click)="isModalVisibleConfirmarBorrado = false" class="text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -248,18 +253,178 @@
         </div>
         <!-- Body -->
         <div class="p-4">
-            <p>¿Estás seguro de que deseas dar de baja el contrato del paciente con cédula <strong>{{ contratoParaBorrar?.paciente?.documento }}</strong> y seguro médico <strong> {{ contratoParaBorrar?.seguroMedico?.nombre }}</strong>?</p>
+            <p>¿Estás seguro de que deseas dar de baja el contrato del paciente con cédula <strong>{{
+                    contratoParaBorrar?.paciente?.documento }}</strong> y seguro médico <strong> {{
+                    contratoParaBorrar?.seguroMedico?.nombre }}</strong>?</p>
         </div>
         <!-- Footer -->
         <div class="border-t border-gray-300 p-4 flex justify-end space-x-4">
-            <button type="button" (click)="isModalVisibleConfirmarBorrado = false" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
-            <button type="button" (click)="confirmarBorrado()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
+            <button type="button" (click)="isModalVisibleConfirmarBorrado = false"
+                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
+            <button type="button" (click)="confirmarBorrado()"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
                 <span *ngIf="!loadingModal">Borrar</span>
-                <svg *ngIf="loadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg *ngIf="loadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
                 </svg>
             </button>
         </div>
+    </div>
+</div>
+
+<!-- Modal para mostrar las últimas facturas -->
+<div *ngIf="isModalVisibleFacturas"
+    class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out overflow-y-auto">
+    <div
+        class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 transform transition-transform duration-300 ease-in-out my-8">
+        <form [formGroup]="reactivarForm" (ngSubmit)="reactivarContrato()">
+            <!-- Header -->
+            <div
+                class="flex justify-between items-center bg-blue-500 text-white p-4 rounded-t-lg border-b border-gray-300">
+                <h2 class="text-xl">Reactivar Contrato</h2>
+                <button type="button" (click)="cerrarModal()" class="text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="p-4">
+                <div class="flex flex-col p-5 space-y-4">
+                    <div class="border-gray-intermedio bg-gray-claro rounded w-full shadow-md">
+                        <table class="table-auto w-full bg-white rounded-lg shadow-md">
+                            <thead class="bg-gray-200">
+                                <tr class="scale-95">
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">ID</th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Fecha
+                                    </th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Monto
+                                    </th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Pago</th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">Fecha de
+                                        Pago
+                                    </th>
+                                    <th class="py-2 text-center font-semibold w-1/12 border-b border-gray-300">
+                                        Descripción
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="facturas.length === 0">
+                                    <td colspan="6" class="py-2 text-center border-b border-gray-300">No hay facturas
+                                        disponibles</td>
+                                </tr>
+                                <tr *ngFor="let factura of facturas"
+                                    class="hover:bg-gray-100 scale-95 transform transition-transform duration-200 hover:scale-100">
+                                    <td class="py-2 text-center w-1/12 border-b border-gray-300">{{ factura.id }}</td>
+                                    <td class="py-2 text-center w-1/12 border-b border-gray-300">{{ factura.fecha |
+                                        date:'dd/MM/yyyy' }}</td>
+                                    <td class="py-2 text-center w-1/12 border-b border-gray-300">{{ factura.monto |
+                                        currency
+                                        }}</td>
+                                    <td class="py-2 text-center w-1/12 border-b border-gray-300">
+                                        <div class="flex justify-center items-center">
+                                            <ng-container *ngIf="factura.pago; else noPago">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-6 w-6 text-green-500 transform transition-transform duration-200 hover:scale-105"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </ng-container>
+                                            <ng-template #noPago>
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-6 w-6 text-red-500 transform transition-transform duration-200 hover:scale-105"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </ng-template>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 text-center w-1/12 border-b border-gray-300">{{ factura.pago ?
+                                        (factura.fechaPago | date:'dd/MM/yyyy') : '' }}</td>
+                                    <td class="py-2 text-center w-1/12 border-b border-gray-300">Mensualidad
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="border-gray-intermedio bg-gray-claro rounded w-full shadow-md p-4 mt-4">
+                        <p class="text-center text-xl font-semibold"
+                            [ngClass]="{'text-red-600': deuda > 0, 'text-green-600': deuda === 0}">
+                            {{ deuda > 0 ? 'Deuda Total: ' + (deuda | currency) : 'No hay deuda pendiente' }}
+                        </p>
+                    </div>
+
+                    <div *ngIf="deuda > 0">
+                        <div class="flex flex-col md:flex-row md:space-x-4 mt-4 md:justify-between">
+                            <div class="flex flex-col mb-4 md:mb-0 w-full md:w-3/6">
+                                <label for="cuotas" class="text-gray-700">Cantidad de Cuotas</label>
+                                <select id="cuotas" formControlName="cantidadCuotas" class="border rounded-md p-2">
+                                    <option [value]="6">6</option>
+                                    <option [value]="12">12</option>
+                                </select>
+                                <div *ngIf="reactivarForm.get('cantidadCuotas')?.invalid && (reactivarForm.get('cantidadCuotas')?.dirty || reactivarForm.get('cantidadCuotas')?.touched)"
+                                    class="text-red-600">
+                                    <small *ngIf="reactivarForm.get('cantidadCuotas')?.errors?.['required']">La
+                                        cantidad de cuotas es requerida.</small>
+                                </div>
+                            </div>
+                            <div class="flex flex-col mb-4 md:mb-0 w-full md:w-3/6">
+                                <label for="interes" class="text-gray-700">Interés</label>
+                                <input type="number" id="interes" formControlName="interes" min="1" max="100"
+                                    class="border rounded-md p-2" placeholder="Ingrese interés">
+                                <div *ngIf="reactivarForm.get('interes')?.invalid && (reactivarForm.get('interes')?.dirty || reactivarForm.get('interes')?.touched)"
+                                    class="text-red-600">
+                                    <small *ngIf="reactivarForm.get('interes')?.errors?.['required']">El interés es
+                                        requerido.</small>
+                                    <small *ngIf="reactivarForm.get('interes')?.errors?.['min']">El interés debe ser
+                                        al menos 1.</small>
+                                    <small *ngIf="reactivarForm.get('interes')?.errors?.['max']">El interés no puede
+                                        ser mayor a 100.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:space-x-4 mt-4 md:justify-between">
+                            <div class="flex flex-col mb-4 md:mb-0 w-full md:w-3/6">
+                                <div class="border-gray-intermedio bg-gray-claro rounded w-full shadow-md p-4 mt-4">
+                                    <p class="text-center text-xl font-semibold">Cuota: {{ cuota | currency }}</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col w-full md:w-3/6">
+                                <div class="border-gray-intermedio bg-gray-claro rounded w-full shadow-md p-4 mt-4">
+                                    <p class="text-center text-xl font-semibold">PTF: {{ precioTotalFinanciado |
+                                        currency }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="border-t border-gray-300 p-4 flex justify-end space-x-4">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    [disabled]="loadingModal">
+                    <span *ngIf="!loadingModal">Reactivar Contrato</span>
+                    <svg *ngIf="loadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </button>
+                <button type="button" (click)="cerrarModal()"
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cerrar</button>
+            </div>
+        </form>
     </div>
 </div>

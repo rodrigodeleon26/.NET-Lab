@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UserComponent } from './components/user/user.component';
 import { LoginComponent } from './components/user/login/login.component';
-import { RegisterComponent } from './components/user/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ResetPasswordComponent } from './components/user/reset-password/reset-password.component';
 import { ConfirmEmailComponent } from './components/user/confirm-email/confirm-email.component';
@@ -23,7 +22,6 @@ const routes: Routes = [
   { path: '', redirectTo: '/inicio', pathMatch: 'full' },
   { path: '', component: UserComponent,
     children: [
-      { path: 'register', component: RegisterComponent },
       { path: 'login', component: LoginComponent },
       { path: 'resetPassword', component: ResetPasswordComponent },
       { path: 'confirmEmail', component: ConfirmEmailComponent, canActivate: [authGuard] },

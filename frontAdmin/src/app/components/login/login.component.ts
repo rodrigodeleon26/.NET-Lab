@@ -14,10 +14,10 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false;
 
   constructor(
-    public formBuilder: FormBuilder, 
-    private toastr: ToastrService, 
+    public formBuilder: FormBuilder,
+    private toastr: ToastrService,
     private authService: AuthService,
-    private router: Router) {}
+    private router: Router) { }
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
@@ -25,30 +25,35 @@ export class LoginComponent implements OnInit {
     }
 
     this.form = this.formBuilder.group({
-      email: ['', Validators.required],
-      password: ['', Validators.required]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+      role: ['Admin', [Validators.required]] // Asegúrate de incluir el campo de rol
     });
   }
 
-  onSubmit(): void {
+    onSubmit(): void {
     if (this.form.valid) {
-      console.log(this.form.value);
-      this.authService.loginUser(this.form.value)
-      .subscribe({
-        next: (res:any) => {
-          this.authService.saveToken(res.token, res.refreshToken);
-          this.router.navigateByUrl('/listMedicos');
-          this.toastr.success('Inicio de sesión exitoso', 'Bienvenido');
-          this.isLoading = false;
-        },
-        error: (err:any) => {
-          if (err.status === 400) {
-            this.toastr.error(err.error.message, 'Login fallido');
+      this.isLoading = true;
+      const { email, password, role } = this.form.value;
+      this.authService.loginUser(email, password, role)
+        .subscribe({
+          next: (res: any) => {
+            this.authService.saveToken(res.token, res.refreshToken);
+            this.router.navigateByUrl('/listMedicos');
+            this.toastr.success('Inicio de sesión exitoso', 'Bienvenido');
+            this.isLoading = false;
+          },
+          error: (err: any) => {
+            this.isLoading = false;
+            if (err.status === 400) {
+              this.toastr.error(err.error.message, 'Login fallido');
+            } else if (err.status === 403) {
+              this.toastr.error('No tienes permiso para acceder con este rol', 'Error de autenticación');
+            } else {
+              console.log('Error durante el login:\n', err);
+            }
           }
-          else
-            console.log('error during login:\n', err);
-        }
-      });
+        });
     }
   }
 }

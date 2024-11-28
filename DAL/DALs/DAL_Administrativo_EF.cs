@@ -643,19 +643,64 @@ namespace DAL.DALs
                             Nombre = c.SeguroMedico.Nombre
                         }
                     }).ToList();
+			}
+		}
+
+		public bool puedeRenovarContrato(long id)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				var facturas = _dbContext.Facturas
+					.Where(f => f.Paciente.Contrato.Id == id &&
+								f.Descripcion != null &&
+								f.Descripcion.StartsWith("Mensualidad de seguro médico"))
+					.ToList();
+
+				foreach (var factura in facturas)
+				{
+					if (!factura.Pago)
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+
+        public float ObtenerDeudaDeContrato(long contratoId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Where(f => f.Paciente.Contrato.Id == contratoId
+                                && !f.Pago
+                                && f.Descripcion != null
+                                && f.Descripcion.StartsWith("Mensualidad de seguro médico"))
+                    .Sum(f => f.Monto);
             }
         }
 
-
+        public bool contratoEnRefinanciacion(long contratoId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Any(f => f.Paciente.Contrato.Id == contratoId
+                              && !f.Pago
+                              && f.Descripcion != null
+                              && f.Descripcion.StartsWith("Cuota"));
+            }
+        }
         #endregion
 
 
-		/**********************************************************/
-		/**                    Precios                           **/
-		/**********************************************************/
-		#region FUNCTIONES PRECIOS
+        /**********************************************************/
+        /**                    Precios                           **/
+        /**********************************************************/
+        #region FUNCTIONES PRECIOS
 
-		public List<Precio> GetPrecios()
+        public List<Precio> GetPrecios()
 		{
 			using (var _dbContext = new DBContext())
 			{
@@ -1134,6 +1179,7 @@ namespace DAL.DALs
             {
                 var query = _dbContext.Facturas
                     .Include(f => f.PagoPayPal) // Incluir la relación con PagoPayPal
+                    .Where(f => f.PagoPayPal != null) // Excluir las facturas sin PagoPayPal
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(pacienteString))

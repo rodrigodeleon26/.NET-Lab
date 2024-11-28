@@ -30,6 +30,7 @@ namespace AuthWebApi.Controllers
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public string Role { get; set; } // Nuevo campo para el rol
     }
 
     public class RefreshTokenModel
@@ -97,12 +98,18 @@ namespace AuthWebApi.Controllers
 
         [AllowAnonymous]
         private static async Task<IResult> LoginUser(
-            UserManager<AppUsers> userManager,
-            [FromBody] UserLoginModel userLoginModel)
+        UserManager<AppUsers> userManager,
+        [FromBody] UserLoginModel userLoginModel)
         {
             var user = await userManager.FindByEmailAsync(userLoginModel.Email);
             if (user != null && await userManager.CheckPasswordAsync(user, userLoginModel.Password))
             {
+                var roles = await userManager.GetRolesAsync(user);
+                if (!roles.Contains(userLoginModel.Role))
+                {
+                    return Results.StatusCode(403); // Forbidden
+                }
+
                 var tokens = await GenerateTokens(user, userManager);
                 return Results.Ok(tokens);
             }
@@ -265,9 +272,10 @@ namespace AuthWebApi.Controllers
 
         [AllowAnonymous]
         private static async Task<IResult> GenerateQrCode(
-            UserManager<AppUsers> userManager,
-            TwoFactorAuthService twoFactorAuthService,
-            [FromBody] GenerateQrCodeModel generateQrCodeModel)
+        UserManager<AppUsers> userManager,
+        TwoFactorAuthService twoFactorAuthService,
+        EmailService emailService,
+        [FromBody] GenerateQrCodeModel generateQrCodeModel)
         {
             var user = await userManager.FindByEmailAsync(generateQrCodeModel.Email);
             if (user == null)
@@ -281,8 +289,22 @@ namespace AuthWebApi.Controllers
             }
 
             var (qrCodeImageUrl, manualEntrySetupCode) = await twoFactorAuthService.GenerateQrCodeAsync(user);
-            return Results.Ok(new { qrCodeImageUrl, manualEntrySetupCode });
+            Console.WriteLine(qrCodeImageUrl);
+
+            var htmlMessage = $@"
+            <h1>Autenticación de Dos Factores</h1>
+            <p>Hola {user.FullName},</p>
+            <p>Por favor, escanea el siguiente código QR con tu aplicación de autenticación de dos factores (Google Authenticator):</p>
+            <img src='{qrCodeImageUrl}' alt='Código QR' />
+            <p>En caso de que la imagen no cargue, por favor copia y pega el siguiente texto en tu navegador:</p> <p>{qrCodeImageUrl}</p>
+            <p>Saludos,</p>
+            <p>El equipo de SistemaHCE</p>";
+
+            await emailService.SendEmailAsync(user.Email, "Código QR para Autenticación de Dos Factores", htmlMessage);
+
+            return Results.Ok(new { message = "Código QR enviado por email" });
         }
+
 
         [AllowAnonymous]
         private static IResult ValidateTwoFactorCode(
@@ -316,6 +338,7 @@ namespace AuthWebApi.Controllers
         private static async Task<IResult> EnableTwoFactorAuth(
         UserManager<AppUsers> userManager,
         TwoFactorAuthService twoFactorAuthService,
+        EmailService emailService,
         [FromBody] TwoFactorAuthModel twoFactorAuthModel)
         {
             var user = await userManager.FindByEmailAsync(twoFactorAuthModel.Email);
@@ -332,9 +355,22 @@ namespace AuthWebApi.Controllers
             user.TwoFactorEnabled = true;
             await userManager.UpdateAsync(user);
 
+            var (qrCodeImageUrl, manualEntrySetupCode) = await twoFactorAuthService.GenerateQrCodeAsync(user);
+
+            var htmlMessage = $@"
+            <h1>Autenticación de Dos Factores</h1>
+            <p>Hola {user.FullName},</p>
+             <p>Por favor, escanea el siguiente código QR con tu aplicación de autenticación de dos factores (Google Authenticator):</p>
+            <img src='{qrCodeImageUrl}' alt='Código QR' />
+            <p>En caso de que la imagen no cargue, por favor copia y pega el siguiente texto en tu navegador:</p> <p>{qrCodeImageUrl}</p>
+            <p>Saludos,</p>
+            <p>El equipo de SistemaHCE</p>";
+
+            await emailService.SendEmailAsync(user.Email, "Código QR para Autenticación de Dos Factores", htmlMessage);
+
             var tokens = await GenerateTokens(user, userManager);
 
-            return Results.Ok(new { message = "Autenticación de dos factores habilitada", tokens});
+            return Results.Ok(new { message = "Autenticación de dos factores habilitada y código QR enviado por email", tokens });
         }
 
         [AllowAnonymous]
