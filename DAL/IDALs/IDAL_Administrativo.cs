@@ -25,6 +25,8 @@ namespace DAL.IDALs
 		public int CountNotificaciones(long id);
         public bool cedulaDuplicada(string cedula);
         public bool emailDuplicado(string email);
+		List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize);
+		public int countFacturas(long id);
 
         // Seguros Medicos
         public List<SeguroMedico> GetSegurosMedicos();
@@ -59,7 +61,8 @@ namespace DAL.IDALs
 
         // Facturas
         public List<Factura> GetFacturas();
-		public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad);
+		public List<Factura> GetFacturasByPaypal(string paypalOrderId);
+        public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad);
 
         public bool ExisteFacturaParaPacienteEnMes(long pacienteId, int mes, int año);
         public List<Factura> GetFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);

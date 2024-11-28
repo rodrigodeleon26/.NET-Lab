@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CalendariosService } from '../../../services/calendarios.service';
 import { ArticulosService } from '../../../services/articulos.service';
 import { CitaMedicaService } from '../../../services/cita-medica.service';
+import { PacienteService } from '../../../services/paciente.service';
 
 interface CitaMedica {
   id: number;
@@ -37,6 +38,12 @@ export class AgendarseComponent implements OnInit{
   calendarioSeleccionado: any;
   citaSeleccionada: any;
 
+  citaOnline: any;
+  isPresencial: boolean = true;
+  isOnline: boolean = false;
+
+  vinculado: boolean = false;
+
   loading: boolean = false;
   errorMessage: string = '';
   isModalVisible: boolean = false;
@@ -47,7 +54,8 @@ export class AgendarseComponent implements OnInit{
     private toastr: ToastrService,
     private fb: FormBuilder,
     private articulosService: ArticulosService,
-    private citaMedicaService: CitaMedicaService
+    private citaMedicaService: CitaMedicaService,
+    private pacienteService: PacienteService
   ) { 
     const navigation = this.router.getCurrentNavigation();
     this.cedula = navigation?.extras.state?.['cedula'] || '';
@@ -78,7 +86,20 @@ export class AgendarseComponent implements OnInit{
         console.error(error);
       }
     });
-
+    this.pacienteService.obtenerMisDatos(this.cedula).subscribe({
+      next: (paciente) => {
+        console.log(paciente);
+        if (paciente.googleToken !== null) {
+          this.vinculado = true;
+        } else {
+          this.vinculado = false;
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   BuscarAgenda(): void {
@@ -190,12 +211,25 @@ export class AgendarseComponent implements OnInit{
     this.citaSeleccionada = null;
   }
 
+  toggleCheckbox(type: 'presencial' | 'online') {
+    if (type === 'presencial') {
+      this.isOnline = !this.isPresencial; // Desmarcar online si se selecciona presencial
+    } else if (type === 'online') {
+      this.isPresencial = !this.isOnline; // Desmarcar presencial si se selecciona online
+    }
+  }
+
   confirmarAgenda(){
     console.log('Agendando cita');
     console.log(this.calendarioSeleccionado);
     console.log(this.citaSeleccionada);
+    if (this.isOnline) {
+      this.citaOnline = true;
+    } else {
+      this.citaOnline = false;
+    }
     this.loading = true;
-    this.citaMedicaService.AgendarCita(this.cedula, this.calendarioSeleccionado, this.diaBuscado, this.citaSeleccionada.horaInicio, this.buscarAgendaForm.value.articuloId).subscribe({
+    this.citaMedicaService.AgendarCita(this.cedula, this.calendarioSeleccionado, this.diaBuscado, this.citaSeleccionada.horaInicio, this.buscarAgendaForm.value.articuloId, this.citaOnline).subscribe({
       next: (cita) => {
         console.log(cita);
         this.toastr.success('Cita agendada correctamente.');

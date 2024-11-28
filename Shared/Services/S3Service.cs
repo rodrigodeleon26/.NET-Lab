@@ -18,11 +18,12 @@ namespace Shared.Services
             // Obtener las configuraciones de S3 desde la clase GlobalFunctions
             var s3Config = GlobalFunctions.GetS3Config();
 
-            // Establecer las credenciales de AWS
-            var credentials = new BasicAWSCredentials(
-                s3Config["AccessKey"],
-                s3Config["SecretKey"]
-            );
+            // Establecer las credenciales de AWS del .env
+            var key = Environment.GetEnvironmentVariable("S3_KEY");
+            var secret = Environment.GetEnvironmentVariable("S3_SECRET");
+            Console.WriteLine("S3_KEY: " + key);
+            Console.WriteLine("S3_SECRET: " + secret);
+            var credentials = new BasicAWSCredentials(key, secret);
 
             // Convertir la cadena de la región a RegionEndpoint
             var region = RegionEndpoint.GetBySystemName(s3Config["Region"]);
@@ -37,7 +38,7 @@ namespace Shared.Services
             var putRequest = new PutObjectRequest
             {
                 BucketName = _bucketName,
-                Key = fileName, // Nombre del archivo en S3
+                Key = fileName, 
                 InputStream = fileStream,
                 ContentType = contentType,
                 AutoCloseStream = true

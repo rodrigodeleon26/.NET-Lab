@@ -22,10 +22,13 @@ namespace DAL.DALs
     public class DAL_Administrativo_Service : IDAL_Administrativo
     {
         private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DAL_Administrativo_Service(HttpClient httpClient)
+        public DAL_Administrativo_Service(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
+
         }
 
         public Paciente GetPacienteById(long id)
@@ -38,6 +41,17 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+
                 string url = $"https://administrativowebapi:8081/api/Pacientes/{id}";
 
                 var response = _httpClient.GetAsync(url).Result;
@@ -46,7 +60,6 @@ namespace DAL.DALs
                 {
                     var json = response.Content.ReadAsStringAsync().Result;
                     var paciente = JsonConvert.DeserializeObject<Paciente>(json);
-                    Console.WriteLine("nombre:" + paciente.Nombres);
                     return paciente;
                 }
                 else
@@ -71,6 +84,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/dni/{dni}";
 
@@ -114,6 +137,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 string url = $"https://administrativowebapi:8081/api/Pacientes/{paciente.Id}";
 
@@ -160,6 +193,16 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
                 var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones";
 
                 var queryParams = new List<string>
@@ -199,6 +242,16 @@ namespace DAL.DALs
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return 0;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones/count";
 
@@ -664,6 +717,97 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public List<Factura> getHistorialFacturacion(long pacienteId, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{pacienteId}/historialFacturacion";
+
+                var queryParams = new List<string>
+                {
+                    $"pageNumber={pageNumber}",
+                    $"pageSize={pageSize}"
+                };
+
+                var queryString = string.Join("&", queryParams);
+                var fullUrl = $"{url}?{queryString}";
+
+                var response = _httpClient.GetAsync(fullUrl).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<List<Factura>>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las facturas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las facturas: {ex.Message}");
+                return null;
+            }
+        }
+
+        public int countFacturas(long id)
+        {
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return 0;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/historialFacturacion/count";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<int>(responseData);
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las facturas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener las facturas: {ex.Message}");
+                return 0;
+            }
+        }
+
         public IEnumerable<Contrato> GetContratosActivos()
         {
             throw new NotImplementedException();
@@ -694,6 +838,21 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
+        {
+            throw new NotImplementedException();
+        }
+
         public PagoPayPal GetPaypalPagoByOrdenId(string id)
         {
             throw new NotImplementedException();
@@ -719,17 +878,12 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public Factura ObtenerFacturaParaPacienteEnMes(long pacienteId, int mes, int año)
+        public List<Factura> GetFacturasPorCedula(string cedula, int numPagina, bool fechaAsc, bool? estaPago)
         {
             throw new NotImplementedException();
         }
 
-        public List<Factura> ObtenerFacturasEnRangoFechas(long pacienteId, DateTime fechaInicio, DateTime fechaFin)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Factura> ObtenerFacturasNoPagadasParaPaciente(long pacienteId)
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
         {
             throw new NotImplementedException();
         }

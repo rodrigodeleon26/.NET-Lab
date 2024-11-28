@@ -3,71 +3,45 @@ using BL.IBLs;
 using DAL;
 using DAL.DALs;
 using DAL.IDALs;
-using AuthWebApi.Extensions;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using CitaMedicaWebApi.Extensions;
+using DotNetEnv;
+
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowSpecificOrigin",
-            builder =>
-            {
-                builder.WithOrigins("https://localhost:5010", "https://localhost:5011", "https://localhost:5012", "http://localhost:4200")
-                       .AllowAnyHeader()
-                       .AllowAnyMethod();
-            });
-    });
+    // Environment Variables
+    Env.Load();
+
     // Add services to the container.
+    DBContext.UpdateDatabase();
 
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
 
-    /**********************************************************/
-    /** Add Dependencies                                     **/
-    /**********************************************************/
-    #region Inyeccion de dependencias
-
-    builder.Services.ConfigureIdentityOptions()
+    builder.Services.AddSwaggerExplorer()
+                    .InjectDBContext()
+                    .InjectDALandBL()
+                    .AddIdentityHandlersAndStores()
+                    .ConfigureIdentityOptions()
                     .AddIdentityAuth();
-
-    // DALs
-    builder.Services.AddTransient<IDAL_CitasMedicas, DAL_CitasMedicas_EF>();
-    builder.Services.AddTransient<IDAL_HistoriasClinicas, DAL_HistoriasClinicas_Service>();
-    builder.Services.AddTransient<IDAL_Administrativo, DAL_Administrativo_Service>();
-    builder.Services.AddHttpClient<DAL_Administrativo_Service>();
-    builder.Services.AddHttpClient<DAL_HistoriasClinicas_Service>();
-    builder.Services.AddHttpContextAccessor();
-
-    // BLs
-    builder.Services.AddTransient<IBL_CitasMedicas, BL_CitasMedicas>();
-
-    #endregion
 
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    //app.UseHttpsRedirection();
-
-    app.UseCors("AllowSpecificOrigin");
-
-    app.UseAuthorization();
+    app.ConfigureSwaggerExplorer()
+       .ConfigureCORS()
+       .AddIdentityAuthMiddlewares()
+       .UseHttpsRedirection();
 
     app.MapControllers();
+    // Endpoints nativos de Identity
+    //app.MapIdentityApi<AppUsers>();
 
-    DBContext.UpdateDatabase();
 
+    // Este comentario se borra
     app.Run();
-
 }
 catch (Exception ex)
 {

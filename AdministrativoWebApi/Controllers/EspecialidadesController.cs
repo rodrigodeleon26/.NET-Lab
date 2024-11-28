@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -18,6 +19,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<EspecialidadesController>
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(List<Especialidad>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -26,6 +28,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<EspecialidadesController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Especialidad), 200)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -39,6 +42,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<EspecialidadesController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Especialidad), 201)]
         [HttpPost]
         public IActionResult Post([FromBody] Especialidad especialidad)
@@ -53,6 +57,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<EspecialidadesController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] Especialidad especialidad)
         {
@@ -72,6 +77,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // DELETE api/<EspecialidadesController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {

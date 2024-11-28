@@ -70,7 +70,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        ImagenUrl = EncryptionHelper.TryDecrypt(e.ImagenUrl),
+                        ImagenUrl = AES.TryDecrypt(e.ImagenUrl),
                         ConsultaMedicaId = e.ConsultaMedicaId
                     }).ToList(),
                     Recetas = c.Recetas.Select(r => new Receta
@@ -577,7 +577,7 @@ namespace DAL.DALs
                 var encryptedImagenUrl = "";
                 if (imagenUrl != null || imagenUrl != "")
                 {
-                    encryptedImagenUrl = EncryptionHelper.Encrypt(imagenUrl);
+                    encryptedImagenUrl = AES.Encrypt(imagenUrl);
                 }
                 estudioEF.FechaResultado = fechaResultado;
                 estudioEF.ImagenUrl = encryptedImagenUrl;
@@ -602,7 +602,7 @@ namespace DAL.DALs
                         Descripcion = e.Descripcion,
                         FechaRealizado = e.FechaRealizado,
                         FechaResultado = e.FechaResultado,
-                        ImagenUrl = EncryptionHelper.TryDecrypt(e.ImagenUrl)
+                        ImagenUrl = AES.TryDecrypt(e.ImagenUrl)
                     }).ToList()
                 };
             }

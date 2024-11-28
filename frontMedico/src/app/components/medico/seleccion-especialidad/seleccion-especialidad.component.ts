@@ -26,8 +26,9 @@ export class SeleccionEspecialidadComponent {
   }
 
   ngOnInit(): void {
-    this.MedicoService.obtenerMedicoPorId(1).subscribe(medico => {
-      this.especialidades = medico.especialidades;
+    this.MedicoService.obtenerMedicoPorId(1).subscribe(response => {
+      console.log(response);
+      this.especialidades = response.especialidades;
       this.loading = false;
     }); 
   }

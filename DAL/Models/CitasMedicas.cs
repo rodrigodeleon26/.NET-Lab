@@ -23,6 +23,8 @@ namespace DAL.Models
 
         public string? PacienteId { get; set; } // Hacer nullable
 
+        public string? MeetLink { get; set; } // Hacer nullable
+
         public long? ConsultaMedicaId { get; set; } // Hacer nullable
 
         [ForeignKey(nameof(ConsultaMedicaId))]

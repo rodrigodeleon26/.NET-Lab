@@ -20,6 +20,10 @@
 
         public bool? Activo { get; set; } = false;
 
+        public string? GoogleToken { get; set; } = null;
+
+        public string? GoogleRefreshToken { get; set; } = null;
+
         public List<CitaMedica>? CitasMedicas { get; set; } = new List<CitaMedica>();
 
         public List<Factura>? Facturas { get; set; } = new List<Factura>();

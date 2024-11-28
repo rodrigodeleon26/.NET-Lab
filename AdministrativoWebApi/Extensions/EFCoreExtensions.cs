@@ -30,8 +30,6 @@ namespace AuthWebApi.Extensions
             services.AddHttpClient<DAL_HistoriasClinicas_Service>();
             services.AddHttpContextAccessor();
 
-
-
             //  BLs
             services.AddTransient<IBL_Administrativo, BL_Administrativo>();
 

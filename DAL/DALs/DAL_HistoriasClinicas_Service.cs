@@ -76,8 +76,6 @@ namespace DAL.DALs
 
                 var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
 
-                Console.WriteLine($"Token: {token}");
-
                 if (string.IsNullOrEmpty(token))
                 {
                     Console.WriteLine("No se encontró el token de autorización.");

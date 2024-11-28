@@ -511,6 +511,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool validarCalendariosPropios(long medicoId, long calendarioEditId, Calendario calendario)
         {
             throw new NotImplementedException();
@@ -521,6 +526,11 @@ namespace BL.BLs
             throw new NotImplementedException();
         }
 
+        public int countFacturas(long id)
+        {
+            throw new NotImplementedException();
+        }
+        
         public List<Calendario> GetCalendariosByArticuloYFecha(string cedula, long especialidadId, string fecha)
         {
             throw new NotImplementedException();
@@ -547,6 +557,11 @@ namespace BL.BLs
         }
 
         public void AnalizarCitasConHorariosNuevos(Calendario calNuevo, Calendario calViejo)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
         {
             throw new NotImplementedException();
         }

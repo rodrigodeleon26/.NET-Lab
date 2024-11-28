@@ -3,6 +3,7 @@ using DAL.IDALs;
 using DAL.Models;
 using Shared;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace BL.BLs
@@ -99,9 +100,9 @@ namespace BL.BLs
         }
 
         // Crear una nueva cita médica
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline)
         { 
-            return dal.createCitaMedica(nuevaCita, calendarioId, pacienteId);
+            return dal.createCitaMedica(nuevaCita, calendarioId, pacienteId, citaOnline);
         }
 
         // Actualizar una cita médica existente
@@ -172,6 +173,14 @@ namespace BL.BLs
             return dal.CountCitasMedicasByPacienteId(pacienteId, fechaInicio, fechaFin, orden, especialidadesIds);
         }
 
+        public List<CitaMedica> GetCitasMedicasAgendadas(long id)
+        {
+            return dal.GetCitasMedicasAgendadasDelPaciente(id);
+        }
+        public bool CancelarCita(string dni, long id)
+        {
+            return dal.CancelarCita(dni, id);
+        }
         public Paciente getPacienteByCedula(string cedula)
         {
             return dalAdmin.GetPacienteByDNI(cedula);

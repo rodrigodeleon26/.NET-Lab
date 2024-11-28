@@ -13,7 +13,11 @@ import { InicioComponent } from './components/pantallas/inicio/inicio.component'
 import { HistoriaClinicaComponent } from './components/pantallas/historia-clinica/historia-clinica.component';
 import { MisDatosComponent } from './components/pantallas/mis-datos/mis-datos.component';
 import { NotificacionesComponent } from './components/pantallas/notificaciones/notificaciones.component';
+import { CitasComponent } from './components/pantallas/citas/citas.component';
+import { HistorialFacturacionComponent } from './components/pantallas/historial-facturacion/historial-facturacion.component';
 import { AgendarseComponent } from './components/pantallas/agendarse/agendarse.component';
+import { PagoComponent } from './components/pantallas/pago/pago.component';
+import { PaymentSuccessComponent } from './components/pantallas/payment-success/payment-success.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/inicio', pathMatch: 'full' },
@@ -27,11 +31,15 @@ const routes: Routes = [
       { path: 'twoFactorAuth', component: TwoFactorAuthComponent, canActivate: [authGuard] }
     ]
   },
+  { path : 'realizar-pago', component: PagoComponent, canActivate: [authGuard] },
+  { path : 'payment/success', component: PaymentSuccessComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path : 'inicio', component: InicioComponent, canActivate: [authGuard] },
   { path : 'historia-clinica', component: HistoriaClinicaComponent, canActivate: [authGuard] },
   { path : 'mis-datos', component: MisDatosComponent, canActivate: [authGuard] },
   { path : 'notificaciones', component: NotificacionesComponent, canActivate: [authGuard] },
+  { path : 'citas', component: CitasComponent, canActivate: [authGuard] },
+  { path : 'historial-facturacion', component: HistorialFacturacionComponent, canActivate: [authGuard] },
   { path : 'agendarse', component: AgendarseComponent, canActivate: [authGuard] }
 ];
 

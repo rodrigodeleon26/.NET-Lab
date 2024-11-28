@@ -1,5 +1,6 @@
 ﻿using BL.IBLs;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shared;
@@ -23,6 +24,7 @@ namespace PacienteWebApi.Controllers
 
         // TRAE TODAS LAS CITAS MEDICAS DE UNA ESPECIALIDAD. Formato:
         // GET: api/<CitasMedicasController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<CitaMedica>), 200)]
         [HttpGet("especialidad/{espec}/{pag}/{fecha}")]
         public IActionResult Get(string espec, int pag, DateTime fecha)
@@ -32,6 +34,7 @@ namespace PacienteWebApi.Controllers
 
         // TRAE TODAS LAS CITAS MEDICAS DE UNA ESPECIALIDAD. Formato:
         // GET: api/<CitasMedicasController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(bool), 200)]
         [HttpGet("conteo/{espec}/{pag}/{fecha}")]
         public IActionResult Get(string espec, DateTime fecha, int pag)
@@ -41,6 +44,7 @@ namespace PacienteWebApi.Controllers
 
         // TRAE TODAS LAS CITAS MEDICAS. Formato:
         // GET: api/<CitasMedicasController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<CitaMedica>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -50,6 +54,7 @@ namespace PacienteWebApi.Controllers
 
         // TRAE UNA CITA MEDICA. Formato:
         // GET api/<CitasMedicasController>/[idCita]
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(CitaMedica), 200)]
         [ProducesResponseType(404)]
         [HttpGet("{id}")]
@@ -65,6 +70,7 @@ namespace PacienteWebApi.Controllers
 
         // CREA UNA CITA MEDICA. Formato:
         // POST api/<CitasMedicasController>/[idCalendario]/[idPaciente] (con el objeto en el body, sobre todo para la fecha)
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPost("{calendarioId}/{pacienteId}")]
         [ProducesResponseType(typeof(CitaMedica), 201)]
         [ProducesResponseType(400)]
@@ -74,12 +80,14 @@ namespace PacienteWebApi.Controllers
             {
                 return BadRequest();
             }
-            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, pacienteId);
+            bool citaOnline = false;
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, pacienteId, citaOnline);
             return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
         }
 
         // CAMBIA EL ESTADO. Formato:
         // PUT api/<CitasMedicasController>/[idCita]/[estado]
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -100,6 +108,7 @@ namespace PacienteWebApi.Controllers
 
         // ACTUALIZA UNA CITA MEDICA. Formato:
         // PUT api/<CitasMedicasController>/[idCita] (con el objeto en el body)
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -125,6 +134,7 @@ namespace PacienteWebApi.Controllers
 
         // ELIMINA UNA CITA MEDICA DE LA BASE DE DATOS. Formato:
         // DELETE api/<CitasMedicasController>/[idCita]
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [HttpDelete("{id}")]
@@ -142,6 +152,7 @@ namespace PacienteWebApi.Controllers
 
         //OBTENER PAGINADO DE LAS CITAS MEDICAS DE UN PACIENTE
         //GET api/<CitasMedicasController>/paciente/[idPaciente]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(List<CitaMedica>), 200)]
         [HttpGet("paciente/{idPaciente}")]
         public IActionResult GetCitasMedicasByPacienteId(long idPaciente, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, string especialidadesIds)
@@ -153,6 +164,7 @@ namespace PacienteWebApi.Controllers
 
         //OBTENER EL CONTEO DE LAS CITAS MEDICAS DE UN PACIENTE
         //GET api/<CitasMedicasController>/cant/[idPaciente]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(int), 200)]
         [HttpGet("cant/{idPaciente}")]
         public IActionResult CountCitasMedicasByPacienteId(long idPaciente, DateTime? fechaInicio, DateTime? fechaFin, string orden, string especialidadesIds)
@@ -162,19 +174,36 @@ namespace PacienteWebApi.Controllers
             return Ok(_blCitasMedicas.CountCitasMedicasByPacienteId(idPaciente, fechaInicio, fechaFin, orden, especialidadesList));
         }
 
-
-        /*
-         AgendarCita(cedula: string, calendario: any, fecha: string, hora: string): Observable<any[]> {
-            //return this.http.post<any[]>(`${this.apiUrl}/${cedula}/articulo/${articuloId}/fecha/${fecha}`);
-            const data = {
-              cedula: cedula,
-              calendarioId: calendario.id,
-              fecha: fecha,
-              hora: hora
+        //OBTENER CITAS AGENDADAS DEL PACIENTE 
+        //GET api/<CitasMedicasController>/paciente/[id]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
+        [ProducesResponseType(typeof(List<CitaMedica>), 200)]
+        [HttpGet("paciente/{id}/misCitas")]
+        public IActionResult GetCitasMedicasAgendadas(long id)
+        {
+            if (id == null)
+            {
+                return BadRequest();
             }
-            return this.http.post<any[]>(`${this.apiUrl}/agendar`, data);
-          }
-         */
+            return Ok(_blCitasMedicas.GetCitasMedicasAgendadas(id));
+        }
+
+        //Cancelar cita
+        //DELETE api/<CitasMedicasController>/[idCita]/paciente[documento]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(404)]
+        [HttpDelete("{id}/paciente/{documento}")]
+        public IActionResult CancelarCita(string documento, long id)
+        {
+            var citaExistente = _blCitasMedicas.getCitaMedicaById(id);
+            if (citaExistente == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_blCitasMedicas.CancelarCita(documento, id));
+        }
 
         //POST api/<CitasMedicasController>/agendar
         [HttpPost("agendar")]
@@ -192,6 +221,7 @@ namespace PacienteWebApi.Controllers
             string fecha = datosCita.fecha;
             string hora = datosCita.hora;
             long articuloId = datosCita.ArticuloId;
+            bool citaOnline = datosCita.CitaOnline;
 
             if (cedula == null || calendarioId == 0 || fecha == null || hora == null || articuloId == 0)
             {
@@ -236,7 +266,7 @@ namespace PacienteWebApi.Controllers
                 CopagoId = copagoId,
             };
 
-            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, paciente.Id);
+            var citaCreada = _blCitasMedicas.createCitaMedica(nuevaCita, calendarioId, paciente.Id, citaOnline);
             return CreatedAtAction(nameof(Get), new { id = citaCreada.Id }, citaCreada);
         }
     }

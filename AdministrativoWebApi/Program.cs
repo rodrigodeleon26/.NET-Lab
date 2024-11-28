@@ -9,10 +9,17 @@ using RabbitMQ.Client;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using DotNetEnv;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    // Environment Variables
+    Env.Load();
+
+    string key = Environment.GetEnvironmentVariable("AES_KEY");
+    Console.WriteLine("AES_KEY: " + key);
 
     // RabbitMQ
     var factory = new ConnectionFactory { HostName = "rabbitmq" };

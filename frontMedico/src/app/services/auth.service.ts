@@ -13,6 +13,11 @@ export class AuthService {
     return this.http.post(environment.AuthWebApiBaseUrl + '/auth/login', formData);
   }
 
+  logout() {
+    const refreshToken = this.getRefreshToken();
+    return this.http.post(environment.AuthWebApiBaseUrl + '/auth/logout', { refreshToken });
+  }
+
   refreshToken() {
     const token = this.getToken();
     const refreshToken = this.getRefreshToken();

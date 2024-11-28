@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System.Text;
 
-namespace AuthWebApi.Extensions
+namespace CitaMedicaWebApi.Extensions
 {
     public static class IdentityExtensions
     {

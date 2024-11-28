@@ -29,11 +29,18 @@ export class InicioComponent implements OnInit {
     this.router.navigateByUrl('/historia-clinica', navigationExtras);
   }
 
-  verMisDatos(): void {
+  verHistoriaFactura(): void {
     const navigationExtras: NavigationExtras = {
       state: { cedula: this.cedula }
     };
-    this.router.navigateByUrl('/mis-datos', navigationExtras);
+    this.router.navigateByUrl('/realizar-pago', navigationExtras);
+  }
+
+  verMisDatos(): void {
+    const navigationExtras: NavigationExtras = {
+      queryParams: { cedula: this.cedula }
+    };
+    this.router.navigate(['/mis-datos'], navigationExtras);
   }
 
   verNotificaciones(): void {
@@ -43,6 +50,19 @@ export class InicioComponent implements OnInit {
     this.router.navigateByUrl('/notificaciones', navigationExtras);
   }
 
+  verCitas(): void {
+    const navigationExtras: NavigationExtras = {
+      state: { cedula: this.cedula }
+    };
+    this.router.navigateByUrl('/citas', navigationExtras);
+  }
+
+  verHistorialFacturas(): void {
+    const navigationExtras: NavigationExtras = {
+      state: { cedula: this.cedula }
+    };
+    this.router.navigateByUrl('/historial-facturacion', navigationExtras);
+  }
   agendarme(): void {
     const navigationExtras: NavigationExtras = {
       state: { cedula: this.cedula }

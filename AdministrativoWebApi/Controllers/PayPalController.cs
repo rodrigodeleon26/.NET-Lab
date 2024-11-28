@@ -1,5 +1,6 @@
 ﻿using BL.BLs;
 using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using System.Text;
@@ -19,6 +20,7 @@ public class PaymentsController : ControllerBase
         _blAdministrativo = blAdministrativo;
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("pagos")]
     public IActionResult GetPaypalPagos()
     {
@@ -33,6 +35,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("pagos/{id}")]
     public IActionResult GetPaypalPagoById(long id)
     {
@@ -52,6 +55,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("pagos/pororden/{id}")]
     public IActionResult GetPaypalPagoByOrdenId(string id)
     {
@@ -85,6 +89,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpPost("create")]
     public async Task<IActionResult> CreateOrder([FromBody] PaymentRequest request)
     {
@@ -94,8 +99,8 @@ public class PaymentsController : ControllerBase
             PayPalOrderResponse order = await _payPalService.CreateOrderAsync(
                 request.PurchaseUnits, // Lista de purchase_units
                 "USD", // Moneda
-                "https://localhost:4200/cliente/payment/success", // URL éxito
-                "https://localhost:4200/cliente/payment/cancel"   // URL cancelación
+                "http://localhost:4200/cliente/payment/success", // URL éxito
+                "http://localhost:4200/cliente/payment/cancel"   // URL cancelación
             );
 
             var approvalUrl = order.links.FirstOrDefault(link => link.rel == "approve")?.href;
@@ -144,6 +149,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("details/{orderId}")]
     public async Task<IActionResult> GetOrderDetails(string orderId)
     {

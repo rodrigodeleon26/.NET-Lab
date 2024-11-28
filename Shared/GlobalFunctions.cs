@@ -11,7 +11,8 @@ namespace Shared
             "https://localhost:5010",
             "https://localhost:5011",
             "https://localhost:5012",
-            "http://localhost:4200"
+            "http://localhost:4200",
+            "https://localhost"
         };
 
         // Configuración SMTP

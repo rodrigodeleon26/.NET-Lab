@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using System.Net;
@@ -18,16 +19,18 @@ namespace AdministrativoWebApi.Controllers
 			_blAdministrativo = blAdministrativo;
 		}
 
-		// GET: api/<ArticulosController>
-		[ProducesResponseType(typeof(List<Articulo>), 200)]
+        // GET: api/<ArticulosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Articulo>), 200)]
 		[HttpGet]
 		public IActionResult Get()
 		{
 			return Ok(_blAdministrativo.getArticulos());
 		}
 
-		// GET api/<ArticulosController>/5
-		[ProducesResponseType(typeof(Articulo), 200)]
+        // GET api/<ArticulosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Articulo), 200)]
 		[HttpGet("{id}")]
 		public IActionResult Get(long id)
 		{
@@ -39,8 +42,9 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(articulo);
 		}
 
-		// POST api/<ArticulosController>
-		[ProducesResponseType(typeof(Articulo), 201)]
+        // POST api/<ArticulosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Articulo), 201)]
 		[HttpPost]
 		public IActionResult Post([FromBody] Articulo articulo)
 		{
@@ -53,8 +57,9 @@ namespace AdministrativoWebApi.Controllers
 			return CreatedAtAction(nameof(Get), new { id = articulo.Id }, articulo);
 		}
 
-		// PUT api/<ArticulosController>/5
-		[HttpPut("{id}")]
+        // PUT api/<ArticulosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPut("{id}")]
 		public IActionResult Put(long id, [FromBody] Articulo articulo)
 		{
 			if (articulo == null || articulo.Id != id)
@@ -72,8 +77,9 @@ namespace AdministrativoWebApi.Controllers
 			return NoContent();
 		}
 
-		// DELETE api/<ArticulosController>/5
-		[HttpDelete("{id}")]
+        // DELETE api/<ArticulosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpDelete("{id}")]
 		public IActionResult Delete(long id)
 		{
 			var articulo = _blAdministrativo.getArticuloById(id);
@@ -86,8 +92,9 @@ namespace AdministrativoWebApi.Controllers
 			return NoContent();
 		}
 
-		// GET api/<ArticulosController>/filtro/{filtro}
-		[ProducesResponseType(typeof(List<Articulo>), 200)]
+        // GET api/<ArticulosController>/filtro/{filtro}
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Articulo>), 200)]
 		[HttpGet("filtro/{filtro}")]
 		public IActionResult Get(string filtro)
         {

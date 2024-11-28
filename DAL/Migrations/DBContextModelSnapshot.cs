@@ -201,6 +201,9 @@ namespace DAL.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("MeetLink")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PacienteId")
                         .HasColumnType("nvarchar(max)");
 
@@ -560,6 +563,12 @@ namespace DAL.Migrations
 
                     b.Property<DateOnly?>("FechaDeNacimiento")
                         .HasColumnType("date");
+
+                    b.Property<string>("GoogleRefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GoogleToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombres")
                         .IsRequired()

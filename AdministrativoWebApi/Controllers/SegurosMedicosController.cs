@@ -1,5 +1,6 @@
 ﻿using BL.IBLs;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -19,6 +20,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<SegurosMedicosController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<SeguroMedico>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -27,6 +29,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<SegurosMedicosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(SeguroMedico), 200)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -40,6 +43,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<SegurosMedicosController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(SeguroMedico), 201)]
         [HttpPost]
         public IActionResult Post([FromBody] SeguroMedico seguroMedico)
@@ -57,6 +61,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<SegurosMedicosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] SeguroMedico seguroMedico)
         {
@@ -76,6 +81,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // DELETE api/<SegurosMedicosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {

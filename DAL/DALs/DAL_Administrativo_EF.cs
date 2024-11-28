@@ -92,7 +92,8 @@ namespace DAL.DALs
 						FechaDeNacimiento = p.FechaDeNacimiento,
 						Direccion = p.Direccion,
 						Telefono = p.Telefono,
-						Email = p.Email
+						Email = p.Email,
+						GoogleToken = p.GoogleToken,
 					}).ToList();
 			}
 		}
@@ -155,6 +156,7 @@ namespace DAL.DALs
 						Direccion = paciente.Direccion,
 						Telefono = paciente.Telefono,
 						Email = paciente.Email,
+						GoogleToken = paciente.GoogleToken,
 						Contrato = contrato != null ? new Contrato
 						{
 							Id = contrato.Id,
@@ -194,6 +196,7 @@ namespace DAL.DALs
 						Direccion = paciente.Direccion,
 						Telefono = paciente.Telefono,
 						Email = paciente.Email,
+						GoogleToken = paciente.GoogleToken,
 						Contrato = paciente.Contrato != null ? new Contrato
 						{
 							Id = paciente.Contrato.Id,
@@ -315,6 +318,36 @@ namespace DAL.DALs
 			using (var _dbContext = new DBContext())
 			{
 				return _dbContext.Pacientes.Any(p => p.Documento == cedula);
+			}
+		}
+
+		public List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Facturas
+					.Where(f => f.PacienteId == id && f.Pago == true)
+					.OrderByDescending(f => f.Fecha)
+					.Skip((pageNumber - 1) * pageSize)
+					.Take(pageSize)
+					.Select(f => new Factura
+					{
+						Id = f.Id,
+						Fecha = f.Fecha,
+						FechaPago = f.FechaPago,
+						Monto = f.Monto,
+						Pago = f.Pago,
+						Descripcion = f.Descripcion,
+					})
+					.ToList();
+			}
+		}
+
+		public int countFacturas(long id)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Facturas.Count(f => f.PacienteId == id);
 			}
 		}
 
@@ -1012,6 +1045,41 @@ namespace DAL.DALs
 			}
 		}
 
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Facturas
+                    .Where(f => f.PagoPayPal.pagoId == paypalOrderId) // Filtrar por PagoPayPalId
+                    .Select(f => new Factura
+                    {
+                        Id = f.Id,
+                        Fecha = f.Fecha,
+                        Monto = f.Monto,
+                        Pago = f.Pago,
+                        FechaPago = f.FechaPago,
+                        Descripcion = f.Descripcion,
+						PagoPayPal = new PagoPayPal
+                        {
+                            Id = f.PagoPayPal.Id,
+                            linkPago = f.PagoPayPal.linkPago,
+                            pagoId = f.PagoPayPal.pagoId
+                        },
+                        Paciente = new Paciente
+                        {
+                            Id = f.Paciente.Id,
+                            Nombres = f.Paciente.Nombres,
+                            Apellidos = f.Paciente.Apellidos,
+                            Documento = f.Paciente.Documento,
+                            FechaDeNacimiento = f.Paciente.FechaDeNacimiento,
+                            Direccion = f.Paciente.Direccion,
+                            Telefono = f.Paciente.Telefono,
+                            Email = f.Paciente.Email
+                        }
+                    }).ToList();
+            }
+        }
+
         public List<Factura> ObtenerUltimasFacturasDelContrato(long contratoId, int cantidad)
         {
             using (var _dbContext = new DBContext())
@@ -1064,11 +1132,15 @@ namespace DAL.DALs
         {
             using (var _dbContext = new DBContext())
             {
-                var query = _dbContext.Facturas.AsQueryable();
+                var query = _dbContext.Facturas
+                    .Include(f => f.PagoPayPal) // Incluir la relación con PagoPayPal
+                    .AsQueryable();
 
                 if (!string.IsNullOrEmpty(pacienteString))
                 {
-                    query = query.Where(f => f.Paciente.Nombres.Contains(pacienteString) || f.Paciente.Apellidos.Contains(pacienteString) || f.Paciente.Documento.Contains(pacienteString));
+                    query = query.Where(f => f.Paciente.Nombres.Contains(pacienteString) ||
+                                             f.Paciente.Apellidos.Contains(pacienteString) ||
+                                             f.Paciente.Documento.Contains(pacienteString));
                 }
 
                 if (estaPago.HasValue)
@@ -1089,6 +1161,12 @@ namespace DAL.DALs
                         Pago = f.Pago,
                         FechaPago = f.FechaPago,
                         Descripcion = f.Descripcion,
+                        PagoPayPal = f.PagoPayPal == null ? null : new PagoPayPal
+                        {
+                            Id = f.PagoPayPal.Id,
+                            linkPago = f.PagoPayPal.linkPago,
+                            pagoId = f.PagoPayPal.pagoId
+                        },
                         Paciente = new Paciente
                         {
                             Id = f.Paciente.Id,

@@ -25,6 +25,8 @@ namespace BL.IBLs
 		public bool cedulaDuplicada(string cedula);
         List<Notificacion> getNotificaciones(long id, int pageNumber, int pageSize);
 		int CountNotificaciones(long id);
+		List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize);
+		int countFacturas(long id);
 
         // Seguros Medicos
         List<SeguroMedico> getSegurosMedicos();
@@ -57,10 +59,11 @@ namespace BL.IBLs
 		void deleteCopago(long id);
 		long getIdByFilds(Copago copago);
 
-        // Facturas
-        List<Factura> getFacturas();
+		// Facturas
+		List<Factura> getFacturas();
+		public List<Factura> GetFacturasByPaypal(string paypalOrderId);
 
-		List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);
+        List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago);
 		Factura getFacturaById(long id);
 		void addFactura(Factura factura);
 		void updateFactura(Factura factura);

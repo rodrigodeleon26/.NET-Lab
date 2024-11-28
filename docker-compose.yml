@@ -11,6 +11,11 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   citasmedicaswebapi:
     image: ${DOCKER_REGISTRY-}citasmedicaswebapi
@@ -24,6 +29,11 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   historiaclinicawebapi:
     image: ${DOCKER_REGISTRY-}historiaclinicawebapi
@@ -37,6 +47,11 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   authwebapi:
     image: ${DOCKER_REGISTRY-}authwebapi
@@ -50,6 +65,11 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   administrativowebapi:
     image: ${DOCKER_REGISTRY-}administrativowebapi
@@ -63,6 +83,11 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest

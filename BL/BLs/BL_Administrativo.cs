@@ -94,7 +94,17 @@ namespace BL.BLs
 			return dal.CountNotificaciones(id);
 		}
 
-		#endregion
+		public List<Factura> getHistorialFacturacion(long id, int pageNumber, int pageSize)
+		{
+			return dal.getHistorialFacturacion(id, pageNumber, pageSize);
+		}
+
+		public int countFacturas(long id)
+		{
+			return dal.countFacturas(id);
+		}
+
+        #endregion
 
 		//Seguros Medicos
 		#region SEGUROS MEDICOS
@@ -298,7 +308,13 @@ namespace BL.BLs
 			return dal.GetFacturas();
 		}
 
-		public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
+        public List<Factura> GetFacturasByPaypal(string paypalOrderId)
+        {
+            return dal.GetFacturasByPaypal(paypalOrderId);
+        }
+
+
+        public List<Factura> getFacturasPaginadas(int numPagina, string? pacienteString, bool fechaAsc, bool? estaPago)
 		{
 			return dal.GetFacturasPaginadas(numPagina, pacienteString, fechaAsc, estaPago);
 		}

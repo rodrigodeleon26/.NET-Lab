@@ -3,10 +3,15 @@ using AuthWebApi.Extensions;
 using AuthWebApi.Controllers;
 using DAL.Models;
 using RabbitMQ.Client;
+using DotNetEnv;
+
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    // Environment Variables
+    Env.Load();
 
     // RabbitMQ
     var factory = new ConnectionFactory { HostName = "rabbitmq" };

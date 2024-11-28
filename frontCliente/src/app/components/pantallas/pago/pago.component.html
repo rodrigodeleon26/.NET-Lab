@@ -1,0 +1,90 @@
+<div *ngIf="getKeys(facturasAgrupadas).length > 0; else noPagosPendientes" class="mb-4">
+    <div *ngFor="let key of getKeys(facturasAgrupadas)">
+      <!-- Encabezado clickeable para desplegar detalles -->
+      <div class="bg-gray-200 px-4 py-2 cursor-pointer hover:bg-gray-300" 
+           (click)="facturasAgrupadas[key].visible = !facturasAgrupadas[key].visible">
+        <table class="table-auto w-full text-left">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
+              <th class="px-6 py-3 border-b">Fecha de la Mensualidad</th>
+              <th class="px-6 py-3 border-b">Monto Total</th>
+              <th class="px-6 py-3 border-b">Estado</th>
+              <th class="px-6 py-3 border-b">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 border-b text-gray-700">
+                {{ facturasAgrupadas[key].facturas[0]?.fecha | date: 'dd/MM/yyyy' }}
+              </td>
+              <td class="px-6 py-4 border-b text-gray-700 font-semibold">
+                {{ facturasAgrupadas[key].montoTotal }} $
+              </td>
+              <td class="px-6 py-4 border-b text-gray-700">
+                {{ facturasAgrupadas[key].facturas[0]?.pago ? 'PAGO' : 'NO PAGO' }}
+              </td>
+              <td class="px-6 py-4 border-b text-gray-700">
+                <button 
+                  class="mt-2 mb-2 mr-2 ml-2 bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 focus:outline-none flex items-center space-x-2 shadow-md"
+                  (click)="obtenerFactura(facturasAgrupadas[key]); $event.stopPropagation()">
+                  <i class="material-icons text-white text-sm">receipt</i>
+                  <span>Obtener factura</span>
+                </button>
+                <div class="relative">
+                  <button
+                    [disabled]="!puedeRealizarPago(facturasAgrupadas, key)"
+                    class="mt-2 mb-2 mr-2 ml-2 text-white px-3 py-1 rounded-full focus:outline-none flex items-center space-x-2 shadow-md peer"
+                    [class.bg-teal-500]="puedeRealizarPago(facturasAgrupadas, key)"
+                    [class.hover:bg-teal-600]="puedeRealizarPago(facturasAgrupadas, key)"
+                    [class.bg-gray-400]="!puedeRealizarPago(facturasAgrupadas, key)"
+                    [class.hover:bg-gray-400]="!puedeRealizarPago(facturasAgrupadas, key)"
+                    [class.cursor-not-allowed]="!puedeRealizarPago(facturasAgrupadas, key)"
+                    (click)="realizarPago(facturasAgrupadas[key].facturas[0].pagoPayPal.pagoId, facturasAgrupadas[key].facturas[0].pagoPayPal.linkPago); $event.stopPropagation()"
+                  >
+                    <i class="material-icons text-white text-sm">payment</i>
+                    <span>Realizar pago</span>
+                  </button>
+                
+                  <!-- Tooltip -->
+                  <div
+                    *ngIf="!puedeRealizarPago(facturasAgrupadas, key)"
+                    class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-4 py-2 bg-gray-700 text-white text-xs rounded shadow-lg opacity-0 pointer-events-none peer-hover:opacity-100 peer-hover:pointer-events-auto transition-opacity"
+                  >
+                    Debes pagar los meses anteriores primero.
+                  </div>
+                </div>
+                            
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Detalle de Facturas -->
+      <div *ngIf="facturasAgrupadas[key].visible">
+        <table class="table-auto w-full text-left">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
+              <th class="px-6 py-3 border-b">Fecha</th>
+              <th class="px-6 py-3 border-b">Motivo</th>
+              <th class="px-6 py-3 border-b">Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let factura of facturasAgrupadas[key].facturas" class="hover:bg-gray-50">
+              <td class="px-6 py-4 border-b text-gray-700">{{ factura.fecha | date: 'dd/MM/yyyy' }}</td>
+              <td class="px-6 py-4 border-b text-gray-700 font-semibold">{{ factura.descripcion }}</td>
+              <td class="px-6 py-4 border-b text-gray-700 font-semibold">{{ factura.monto }} $</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #noPagosPendientes>
+    <div class="text-center py-8">
+      <p class="text-gray-500 text-lg">No tienes pagos pendientes</p>
+      <p class="text-gray-500 text-lg">¡Estás al día!</p>
+    </div>
+  </ng-template>

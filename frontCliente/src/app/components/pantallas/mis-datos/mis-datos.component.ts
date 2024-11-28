@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { PacienteService } from '../../../services/paciente.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-mis-datos',
@@ -12,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 export class MisDatosComponent implements OnInit {
   cedula: string = '';  
   pacienteForm: FormGroup;
+  vinculadoConGoogle: boolean = false;
 
   maxDate: string;
 
@@ -24,9 +26,11 @@ export class MisDatosComponent implements OnInit {
     private pacienteService: PacienteService,
     private fb: FormBuilder,
     private toastr: ToastrService,
+    private route: ActivatedRoute
   ) {
-    const navigation = this.router.getCurrentNavigation();
-    this.cedula = navigation?.extras.state?.['cedula'] || '';
+    this.route.queryParams.subscribe(params => {
+      this.cedula = params['cedula'] || '';
+    });
     this.pacienteForm = this.fb.group({
       id: [''],
       documento: [{ value: '', disabled: true }, Validators.required],
@@ -44,9 +48,14 @@ export class MisDatosComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
+    console.log('entre');
     this.pacienteService.obtenerMisDatos(this.cedula).subscribe(
       (response) => {
+        console.log(response);
         this.pacienteForm.patchValue(response);
+        if (response.googleToken !== null) {
+          this.vinculadoConGoogle = true;
+        }
         this.loading = false;
       },
       (error) => {
@@ -84,9 +93,51 @@ export class MisDatosComponent implements OnInit {
         this.toastr.success('Datos actualizados correctamente.');
       },
       (error) => {
-        this.loading = false;
-        this.toastr.error('Ocurrió un error al actualizar los datos.');
+        if (
+          error.error?.includes("No puedes actualizar la informacion de otro paciente") ||
+          error.message?.includes("No puedes actualizar la informacion de otro paciente")
+        ) {
+          // Redirige a la ruta de inicio.
+          this.toastr.error('No puedes actualizar la informacion de otro paciente', 'Error');
+          this.router.navigate(['/inicio']);
+        } else {
+          this.loading = false;
+          this.toastr.error('Ocurrió un error al actualizar los datos.');
+        }
       }
     );
+  }
+
+  vincularConGoogle(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const isChecked = inputElement.checked;
+    const patientId = this.pacienteForm.get('id')?.value;
+  
+    if (isChecked) {
+      // El checkbox estaba marcado
+      const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                            "scope=https://www.googleapis.com/auth/calendar.events&" +
+                            "access_type=offline&" +
+                            "include_granted_scopes=true&" +
+                            "response_type=code&" +
+                            "client_id=48134233839-ikthbqdo5edbjju2s0k0c90aab40n7f1.apps.googleusercontent.com&" +
+                            "redirect_uri=https://localhost:5001/api/Pacientes/oauth2callback&" +
+                            "state=" + patientId;
+      console.log(googleAuthUrl);
+      window.location.href = googleAuthUrl;
+    } else {
+      this.loading = true;
+      this.pacienteService.desvincularConGoogle(patientId).subscribe(
+        (response) => {
+          this.vinculadoConGoogle = false;
+          this.loading = false;
+          this.toastr.success('Desvinculación exitosa.');
+        },
+        (error) => {
+          this.loading = false;
+          this.toastr.error('Ocurrió un error al desvincular con Google.');
+        }
+      );
+    }
   }
 }
