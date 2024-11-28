@@ -1,5 +1,6 @@
 ﻿using BL.BLs;
 using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using System.Text;
@@ -19,6 +20,7 @@ public class PaymentsController : ControllerBase
         _blAdministrativo = blAdministrativo;
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("pagos")]
     public IActionResult GetPaypalPagos()
     {
@@ -33,12 +35,33 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("pagos/{id}")]
     public IActionResult GetPaypalPagoById(long id)
     {
         try
         {
             var pago = _blAdministrativo.GetPaypalPagoById(id);
+            if (pago == null)
+            {
+                return NotFound("No se encontró el pago con el ID especificado.");
+            }
+
+            return Ok(pago);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
+    [Authorize(Roles = "Admin, Medico")]
+    [HttpGet("pagos/pororden/{id}")]
+    public IActionResult GetPaypalPagoByOrdenId(string id)
+    {
+        try
+        {
+            var pago = _blAdministrativo.GetPaypalPagoByOrdenId(id);
             if (pago == null)
             {
                 return NotFound("No se encontró el pago con el ID especificado.");
@@ -66,6 +89,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpPost("create")]
     public async Task<IActionResult> CreateOrder([FromBody] PaymentRequest request)
     {
@@ -75,8 +99,8 @@ public class PaymentsController : ControllerBase
             PayPalOrderResponse order = await _payPalService.CreateOrderAsync(
                 request.PurchaseUnits, // Lista de purchase_units
                 "USD", // Moneda
-                "https://localhost:4200/cliente/payment/success", // URL éxito
-                "https://localhost:4200/cliente/payment/cancel"   // URL cancelación
+                "http://localhost:4200/cliente/payment/success", // URL éxito
+                "http://localhost:4200/cliente/payment/cancel"   // URL cancelación
             );
 
             var approvalUrl = order.links.FirstOrDefault(link => link.rel == "approve")?.href;
@@ -87,7 +111,23 @@ public class PaymentsController : ControllerBase
 
             var orderID = order.id;
 
-            return Ok(new { redirectUrl = approvalUrl });
+            PagoPayPal nuevoPago = new PagoPayPal
+            {
+                linkPago = approvalUrl,
+                pagoId = orderID
+            };
+
+            try
+            {
+                _blAdministrativo.AddPaypalPago(nuevoPago);
+                var pagoCreado = _blAdministrativo.GetPaypalPagoByOrdenId(orderID);
+                return Ok(pagoCreado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+
         }
         catch (Exception ex)
         {
@@ -95,12 +135,12 @@ public class PaymentsController : ControllerBase
         }
     }
 
-    [HttpPost("capture")]
-    public async Task<IActionResult> CaptureOrder([FromBody] CaptureRequest request)
+    [HttpPost("capture/{orderId}")]
+    public async Task<IActionResult> CaptureOrder(string orderId)
     {
         try
         {
-            var capture = await _payPalService.CaptureOrderAsync(request.OrderId);
+            var capture = await _payPalService.CaptureOrderAsync(orderId);
             return Ok(capture);
         }
         catch (Exception ex)
@@ -109,6 +149,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Medico")]
     [HttpGet("details/{orderId}")]
     public async Task<IActionResult> GetOrderDetails(string orderId)
     {

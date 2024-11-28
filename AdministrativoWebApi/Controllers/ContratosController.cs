@@ -4,6 +4,7 @@ using Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,16 +35,18 @@ namespace AdministrativoWebApi.Controllers
 			_logger = logger;
 		}
 
-		// GET: api/<ContratosController>
-		[ProducesResponseType(typeof(List<Contrato>), 200)]
+        // GET: api/<ContratosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Contrato>), 200)]
 		[HttpGet]
 		public IActionResult Get()
 		{
 			return Ok(_blAdministrativo.getContratos());
 		}
 
-		// GET api/<ContratosController>/5
-		[ProducesResponseType(typeof(Contrato), 200)]
+        // GET api/<ContratosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Contrato), 200)]
 		[HttpGet("{id}")]
 		public IActionResult Get(long id)
 		{
@@ -55,8 +58,9 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(contrato);
 		}
 
-		// POST api/<ContratosController>
-		[ProducesResponseType(typeof(Contrato), 201)]
+        // POST api/<ContratosController>
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Contrato), 201)]
 		[HttpPost]
 		public IActionResult Post([FromBody] Contrato contrato)
 		{
@@ -69,8 +73,9 @@ namespace AdministrativoWebApi.Controllers
 			return CreatedAtAction(nameof(Get), new { id = contrato.Id }, contrato);
 		}
 
-		// PUT api/<ContratosController>/5
-		[HttpPut("{id}")]
+        // PUT api/<ContratosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPut("{id}")]
 		public IActionResult Put(long id, [FromBody] Contrato contrato)
 		{
 			if (contrato == null || contrato.Id != id)
@@ -85,11 +90,12 @@ namespace AdministrativoWebApi.Controllers
 			}
 
 			_blAdministrativo.updateContrato(contrato);
-			return Ok(new { message = "El contrato ha sido actualizado exitosamente" });
+			return NoContent();
 		}
 
-		// DELETE api/<ContratosController>/5
-		[HttpDelete("{id}")]
+        // DELETE api/<ContratosController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpDelete("{id}")]
 		public IActionResult Delete(long id)
 		{
 			var contrato = _blAdministrativo.getContratoById(id);
@@ -103,60 +109,9 @@ namespace AdministrativoWebApi.Controllers
 				return BadRequest("El contrato ya está dado de baja");
 			}
 
-			contrato.Activo = false;
-			_blAdministrativo.updateContrato(contrato);
-			return Ok(new { message = "El contrato ha sido dado de baja" });
+			_blAdministrativo.deleteContrato(id);
+			return NoContent();
 		}
-
-
-		//      // POST api/<ContratosController>/contratar-seguro
-		//      [HttpPost("/contratar-seguro")]
-		//public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
-		//{
-		//	_logger.LogInformation("Entro a la funcion");
-
-		//	var paciente = _blAdministrativo.getPacienteById(request.IdPaciente);
-		//	var seguro = _blAdministrativo.getSeguroMedicoById(request.IdSeguroMedico);
-
-		//	if (paciente == null)
-		//	{
-		//		return BadRequest("El paciente no existe");
-		//	}
-		//	if (seguro == null)
-		//	{
-		//		return BadRequest("El seguro no existe");
-		//	}
-
-		//	_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
-		//	return NoContent();
-		//}
-
-		// POST api/<ContratosController>/activar-contrato
-		//[HttpPost("activarContrato/{id}")]
-		//public IActionResult ActivarContrato(long id)
-		//{
-		//	var contrato = _blAdministrativo.getContratoById(id);
-
-		//	if (contrato == null)
-		//	{
-		//		return BadRequest("El contrato no existe");
-		//	}
-
-		//	if (contrato.Activo == true)
-		//	{
-		//		return BadRequest("El contrato ya está activo");
-		//	}
-
-		//	if (_blAdministrativo.puedeRenovarContrato(id) == false)
-		//	{
-		//		return BadRequest("El contrato no puede ser activado, hay pagos pendientes");
-		//	}
-
-		//	contrato.Activo = true;
-		//	contrato.FechaInicio = DateTime.Now;
-		//	_blAdministrativo.updateContrato(contrato);
-		//	return Ok(new { message = "El contrato ha sido activado exitosamente" });
-		//}
 
 		[ProducesResponseType(typeof(List<Contrato>), 200)]
 		[ProducesResponseType(204)]
@@ -167,6 +122,45 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(contratos);
 		}
 
+
+        // POST api/<ContratosController>/contratar-seguro
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPost("/contratar-seguro")]
+		public IActionResult ContratarSeguro([FromBody] Request_ContratarSeguro request)
+		{
+			_logger.LogInformation("Entro a la funcion");
+
+			var paciente = _blAdministrativo.getPacienteById(request.IdPaciente);
+			var seguro = _blAdministrativo.getSeguroMedicoById(request.IdSeguroMedico);
+
+			if (paciente == null)
+			{
+				return BadRequest("El paciente no existe");
+			}
+			if (seguro == null)
+			{
+				return BadRequest("El seguro no existe");
+			}
+
+			_blAdministrativo.ContratarSeguroMedico(request.IdPaciente, request.IdSeguroMedico);
+			return NoContent();
+		}
+
+        // POST api/<ContratosController>/activar-contrato
+        [Authorize(Roles = "Admin, Medico")]
+        [HttpPost("/activar-contrato")]
+		public IActionResult ActivarContrato([FromBody] long idContrato)
+        {
+            var contrato = _blAdministrativo.getContratoById(idContrato);
+
+            if (contrato == null)
+            {
+                return BadRequest("El contrato no existe");
+            }
+
+            _blAdministrativo.activarContrato(idContrato);
+            return NoContent();
+        }
 
 		[HttpPost("cambiarContrato")]
 		public IActionResult CambiarContrato([FromBody] Request_CambiarContrato request)
@@ -212,11 +206,6 @@ namespace AdministrativoWebApi.Controllers
         [HttpPost("{id}/reactivarContrato")]
         public IActionResult ReactivarContrato(long id, [FromBody] ReactivarContratoRequest request)
         {
-            Console.WriteLine("Entro a reactivar contrato");
-            Console.WriteLine("id: " + id);
-            Console.WriteLine("cuotas: " + request.Cuotas);
-            Console.WriteLine("interes: " + request.Interes);
-
             // Validar el contrato
             var contrato = _blAdministrativo.getContratoById(id);
             if (contrato == null)
@@ -224,19 +213,16 @@ namespace AdministrativoWebApi.Controllers
                 return BadRequest("El contrato no existe");
             }
 
-            // Validar que el contrato no esté activo
             if (contrato.Activo)
             {
                 return BadRequest("El contrato ya está activo");
             }
 
-            // Validar la cantidad de cuotas
             if (request.Cuotas != 6 && request.Cuotas != 12)
             {
                 return BadRequest("La cantidad de cuotas debe ser 6 o 12");
             }
 
-            // Validar el interés
             if (request.Interes < 1 || request.Interes > 100)
             {
                 return BadRequest("El interés debe estar entre 1 y 100");
@@ -251,5 +237,14 @@ namespace AdministrativoWebApi.Controllers
             return Ok(new { message = "El contrato ha sido reactivado exitosamente" });
         }
 
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Contrato>), 200)]
+        [ProducesResponseType(204)]
+        [HttpGet("filtradosPaginados")]
+        public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
+        {
+            var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
+            return Ok(contratos);
+        }
     }
 }

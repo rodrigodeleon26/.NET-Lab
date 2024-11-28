@@ -7,26 +7,26 @@
         <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
             <div class="flex justify-center p-10">
                 <div class="grid grid-cols-2 gap-6 md:gap-10 md:grid-cols-4">
-                    <button class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                    <button (click)="agendarme()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
                         bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
                         <img src="images/addConsulta.png" class="w-14 h-14 md:w-16 md:h-16" alt="Add Consulta">
-                        <p class="text-lg md:text-xl font-medium text-center">Agendarme consulta</p>
+                        <p class="text-lg md:text-xl font-medium text-center">Agendarme citas</p>
                     </button>
-                    <button class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                    <button (click)="verCitas()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
                         bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
                         <img src="images/lista.png" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
                         <div class="h-1/2 flex items-center">
-                            <p class="text-lg md:text-xl font-medium text-center">Mis consultas</p>
+                            <p class="text-lg md:text-xl font-medium text-center">Mis citas</p>
                         </div>
                     </button>
-                    <button class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                    <button (click)="verHistoriaFactura()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
                         bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
                         <img src="images/recibo.png" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
                         <div class="h-1/2 flex items-center">
                             <p class="text-lg md:text-xl font-medium text-center">Pagar cuota</p>
                         </div>
                     </button>
-                    <button class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                    <button (click)="verHistorialFacturas()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
                         bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
                         <img src="images/historialFacturacion.png" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
                         <p class="text-lg md:text-xl font-medium text-center">Historial facturacion</p>

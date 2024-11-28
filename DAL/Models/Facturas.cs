@@ -30,6 +30,6 @@ namespace DAL.Models
         public long? PagoPayPalId { get; set; }
 
         [ForeignKey(nameof(PagoPayPalId))]
-        public virtual PagosPayPal PagoPayPal { get; set; }
+        public virtual PagosPayPal? PagoPayPal { get; set; }
     }
 }

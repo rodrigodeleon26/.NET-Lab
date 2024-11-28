@@ -17,7 +17,7 @@ namespace DAL.IDALs
         CitaMedica getCitaMedicaById(long id);
 
         // Crear una nueva cita médica
-        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
+        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline);
 
         // Actualizar una cita médica existente
         void updateCitaMedica(CitaMedicaDTO citaActualizada);
@@ -27,5 +27,7 @@ namespace DAL.IDALs
 
         List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
         int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
+        List<CitaMedica> GetCitasMedicasAgendadasDelPaciente(long id);
+        bool CancelarCita(string dni, long id);
     }
 }

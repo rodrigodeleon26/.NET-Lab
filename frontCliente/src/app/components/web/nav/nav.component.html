@@ -7,10 +7,11 @@
                 </h1>
             </div>
         </div>
-        <div class="flex justify-end pr-10 md:pr-20">            
+        <div class="flex justify-end pr-10 md:pr-20 space-x-3 md:space-x-5">            
             <p *ngIf="fullName" class="text-blue-oscuro text-lg font-bold">
                 {{ fullName }}
             </p>
+            <img *ngIf="fullName" (click)="logout()" src="images/logout.png" alt="user" class="w-7 h-7 hover:cursor-pointer">
         </div>
     </div>
 </nav>

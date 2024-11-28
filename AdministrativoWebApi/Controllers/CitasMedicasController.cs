@@ -1,4 +1,5 @@
 ﻿using BL.IBLs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -18,6 +19,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<CitasMedicasController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<CitaMedica>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -26,6 +28,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<CitasMedicasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(CitaMedica), 200)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -39,6 +42,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<CitasMedicasController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(CitaMedica), 201)]
         [HttpPost]
         public IActionResult Post([FromBody] CitaMedica CitaMedica)
@@ -53,6 +57,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<CitasMedicasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] CitaMedica citaMedica)
         {
@@ -72,6 +77,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // DELETE api/<CitasMedicasController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {

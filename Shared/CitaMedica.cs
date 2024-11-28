@@ -18,6 +18,8 @@
         //public ConsultaMedica? ConsultaMedica { get; set; }
 
         public string? PacienteId { get; set; }
+
+        public long CopagoId { get; set; }
     }
 
     public class CitaMedicaDTO

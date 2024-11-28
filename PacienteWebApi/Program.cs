@@ -1,4 +1,3 @@
-using AuthWebApi.Extensions;
 using BL.BLs;
 using BL.IBLs;
 using DAL;
@@ -8,11 +7,16 @@ using PacienteWebApi;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
-using HistoriaClinicaWebApi.Extensions;
+using PacienteWebApi.Extensions;
+using DotNetEnv;
+using Shared;
 
-try 
+try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    // Environment Variables
+    Env.Load();
 
     builder.Services.AddCors(options =>
     {

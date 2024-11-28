@@ -21,8 +21,7 @@ namespace BL.IBLs
         CitaMedicaDTO getCitaMedicaById(long id);
 
         // Método para crear una nueva cita médica
-        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId);
-
+        CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline);
 
         // Método para actualizar una cita médica existente
         void updateCitaMedica(CitaMedicaDTO citaActualizada);
@@ -32,5 +31,10 @@ namespace BL.IBLs
 
         List<CitaMedica> GetCitasMedicasByPacienteId(long pacienteId, int pageNumber, int pageSize, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
         int CountCitasMedicasByPacienteId(long pacienteId, DateTime? fechaInicio, DateTime? fechaFin, string orden, List<long> especialidadesIds);
+        List<CitaMedica> GetCitasMedicasAgendadas(long id);
+        bool CancelarCita(string documento, long id);
+        Paciente getPacienteByCedula(string cedula);
+        Calendario getCalendarioById(long id);
+        long getCopagoBySeguroEspecialidadArticulo(Copago copago);
     }
 }

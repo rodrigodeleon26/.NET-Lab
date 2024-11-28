@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace AuthWebApi.Extensions
+namespace PacienteWebApi.Extensions
 {
     public static class SwaggerExtensions
     {

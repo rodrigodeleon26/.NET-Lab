@@ -4,6 +4,7 @@ import { PacienteService } from '../../../services/paciente.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-mis-datos',
@@ -11,24 +12,27 @@ import { AuthService } from '../../../services/auth.service';
   styleUrl: './mis-datos.component.css'
 })
 export class MisDatosComponent implements OnInit {
-  cedula: string = '';  
+  cedula: string = '';
   pacienteForm: FormGroup;
+  vinculadoConGoogle: boolean = false;
 
   maxDate: string;
 
   errorMessage: string = '';
 
-  loading = false;  
+  loading = false;
 
   constructor(
     private router: Router,
     private pacienteService: PacienteService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) {
-    const navigation = this.router.getCurrentNavigation();
-    this.cedula = navigation?.extras.state?.['cedula'] || '';
+    this.route.queryParams.subscribe(params => {
+      this.cedula = params['cedula'] || '';
+    });
     this.pacienteForm = this.fb.group({
       id: [''],
       documento: [{ value: '', disabled: true }, Validators.required],
@@ -47,9 +51,14 @@ export class MisDatosComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
+    console.log('entre');
     this.pacienteService.obtenerMisDatos(this.cedula).subscribe(
       (response) => {
+        console.log(response);
         this.pacienteForm.patchValue(response);
+        if (response.googleToken !== null) {
+          this.vinculadoConGoogle = true;
+        }
         this.loading = false;
       },
       (error) => {
@@ -67,11 +76,11 @@ export class MisDatosComponent implements OnInit {
     );
   }
 
-    actualizarDatos(): void {
+  actualizarDatos(): void {
     if (this.pacienteForm.pristine) {
       return;
     }
-  
+
     if (!this.pacienteForm.valid) {
       console.log('Formulario no válido:', this.pacienteForm);
       console.log('Errores del formulario:', this.pacienteForm.errors);
@@ -81,19 +90,19 @@ export class MisDatosComponent implements OnInit {
           console.log(`Errores en el control ${key}:`, controlErrors);
         }
       });
-  
+
       this.toastr.error('Por favor, completa los campos requeridos.');
       setTimeout(() => {
         this.errorMessage = '';
       }, 3000);
       return; // Asegúrate de salir de la función si el formulario no es válido
     }
-  
+
     this.loading = true;
     const email = this.authService.getEmail();
     const currentTwoFactorStatus = this.authService.getTwoFactorEnabledStatus();
     const newTwoFactorStatus = this.pacienteForm.get('dobleFactor')?.value;
-  
+
     const updateTwoFactorAuth = new Promise<void>((resolve, reject) => {
       if (newTwoFactorStatus !== currentTwoFactorStatus) {
         if (newTwoFactorStatus) {
@@ -129,7 +138,7 @@ export class MisDatosComponent implements OnInit {
         resolve();
       }
     });
-  
+
     updateTwoFactorAuth.then(() => {
       this.pacienteService.actualizarMisDatos(this.cedula, this.pacienteForm.getRawValue()).subscribe(
         (response) => {
@@ -138,13 +147,55 @@ export class MisDatosComponent implements OnInit {
           this.toastr.success('Datos actualizados correctamente.');
         },
         (error) => {
-          this.loading = false;
-          this.toastr.error('Ocurrió un error al actualizar los datos.');
+          if (
+            error.error?.includes("No puedes actualizar la informacion de otro paciente") ||
+            error.message?.includes("No puedes actualizar la informacion de otro paciente")
+          ) {
+            // Redirige a la ruta de inicio.
+            this.toastr.error('No puedes actualizar la informacion de otro paciente', 'Error');
+            this.router.navigate(['/inicio']);
+          } else {
+            this.loading = false;
+            this.toastr.error('Ocurrió un error al actualizar los datos.');
+          }
         }
       );
     }).catch((error) => {
       this.loading = false;
       console.error('Error al actualizar el doble factor de autenticación:', error);
     });
+  }
+
+  vincularConGoogle(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const isChecked = inputElement.checked;
+    const patientId = this.pacienteForm.get('id')?.value;
+
+    if (isChecked) {
+      // El checkbox estaba marcado
+      const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+        "scope=https://www.googleapis.com/auth/calendar.events&" +
+        "access_type=offline&" +
+        "include_granted_scopes=true&" +
+        "response_type=code&" +
+        "client_id=48134233839-ikthbqdo5edbjju2s0k0c90aab40n7f1.apps.googleusercontent.com&" +
+        "redirect_uri=https://localhost:5001/api/Pacientes/oauth2callback&" +
+        "state=" + patientId;
+      console.log(googleAuthUrl);
+      window.location.href = googleAuthUrl;
+    } else {
+      this.loading = true;
+      this.pacienteService.desvincularConGoogle(patientId).subscribe(
+        (response) => {
+          this.vinculadoConGoogle = false;
+          this.loading = false;
+          this.toastr.success('Desvinculación exitosa.');
+        },
+        (error) => {
+          this.loading = false;
+          this.toastr.error('Ocurrió un error al desvincular con Google.');
+        }
+      );
+    }
   }
 }

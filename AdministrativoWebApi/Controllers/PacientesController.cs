@@ -9,6 +9,7 @@ using Shared;
 using Shared.Services;
 using System.Net;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -44,6 +45,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<PacienteController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Paciente>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -51,8 +53,9 @@ namespace AdministrativoWebApi.Controllers
             return Ok(_blAdministrativo.getPacientes());
         }
 
-		// GET api/<PacienteController>/5
-		[ProducesResponseType(typeof(Paciente), 200)]
+        // GET api/<PacienteController>/5
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Paciente), 200)]
 		[HttpGet("{id}")]
 		public IActionResult Get(long id)
 		{
@@ -65,6 +68,7 @@ namespace AdministrativoWebApi.Controllers
 		}
 
         // GET api/<PacienteController>/12345678
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(Paciente), 200)]
         [HttpGet("dni/{dni}")]
         public IActionResult Get(string dni)
@@ -78,6 +82,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<PacienteController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Paciente), 201)]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PacienteRequest pacienteRequest)
@@ -215,6 +220,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<PacienteController>/5
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] PacienteRequest pacienteRequest)
         {
@@ -273,6 +279,7 @@ namespace AdministrativoWebApi.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, Medico")]
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
@@ -303,6 +310,7 @@ namespace AdministrativoWebApi.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Paciente>), 200)]
         [ProducesResponseType(204)]
         [HttpGet("filtradosPaginados")]
@@ -375,6 +383,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<PacienteController>/12345678/notificaciones
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(List<Notificacion>), 200)]
         [HttpGet("{id}/notificaciones")]
         public IActionResult Get(long id, int pageNumber, int pageSize)
@@ -386,8 +395,9 @@ namespace AdministrativoWebApi.Controllers
 			return Ok(_blAdministrativo.getNotificaciones(id, pageNumber, pageSize));	
         }
 
-		// GET api/<PacienteController>/5/notificaciones/count
-		[ProducesResponseType(typeof(int), 200)]
+        // GET api/<PacienteController>/5/notificaciones/count
+        [Authorize(Roles = "Admin, Medico, Paciente")]
+        [ProducesResponseType(typeof(int), 200)]
 		[HttpGet("{id}/notificaciones/count")]
 		public IActionResult GetCount(long id)
 		{
@@ -397,5 +407,35 @@ namespace AdministrativoWebApi.Controllers
 			}
 			return Ok(_blAdministrativo.CountNotificaciones(id));
 		}
+
+        //GET api/<PacienteController>/5/historialFacturacion
+        [Authorize(Roles = "Admin, Medico, Paciente")]
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("{id}/historialFacturacion")]
+        public IActionResult GetHistorialFacturacion(long id, int pageNumber, int pageSize)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            if (pageNumber < 1 || pageSize < 1 || id == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_blAdministrativo.getHistorialFacturacion(id, pageNumber, pageSize));
+        }
+
+        //GET api/<PacienteController>/5/historialFacturacion/count
+        [Authorize(Roles = "Admin, Medico, Paciente")]
+        [ProducesResponseType(typeof(List<Factura>), 200)]
+        [HttpGet("{id}/historialFacturacion/count")]
+        public IActionResult GetCantFacturas(long id)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_blAdministrativo.countFacturas(id));
+        }
     }
 }

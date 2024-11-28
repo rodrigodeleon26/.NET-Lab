@@ -1,23 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Shared
 {
     public class AES
     {
-        // Clave y IV deben ser de longitud adecuada (16 bytes para AES-128, 32 bytes para AES-256, etc.)
-        private static readonly string key = "vamoPeñarolQuer"; // 16 caracteres para AES-128 (128 bits)
-        private static readonly string iv = "tAmoLeoFernandez";  // 16 caracteres para AES-128 (128 bits)
+        // Leer las claves y IV de las variables de entorno
+        private static readonly string key = Environment.GetEnvironmentVariable("AES_KEY");
+        private static readonly string iv = Environment.GetEnvironmentVariable("AES_IV");
 
         // Función de encriptación
         public static string Encrypt(string plainText)
         {
+            if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(iv))
+            {
+                Console.WriteLine("AES_KEY: " + key);
+                throw new InvalidOperationException("Las claves de encriptación no están configuradas.");
+            }
+
             using (Aes aesAlg = Aes.Create())
             {
+                Console.WriteLine("AES_KEY: " + key);
+                Console.WriteLine("AES_IV: " + iv);
+
                 aesAlg.Key = Encoding.UTF8.GetBytes(key); // Convierte la clave a bytes
                 aesAlg.IV = Encoding.UTF8.GetBytes(iv);   // Convierte el IV a bytes
 
@@ -39,6 +46,11 @@ namespace Shared
         // Función de desencriptación
         public static string Decrypt(string cipherText)
         {
+            if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(iv))
+            {
+                throw new InvalidOperationException("Las claves de desencriptación no están configuradas.");
+            }
+
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Encoding.UTF8.GetBytes(key); // Convierte la clave a bytes
@@ -53,6 +65,18 @@ namespace Shared
                 {
                     return sr.ReadToEnd();  // Lee y devuelve el texto desencriptado
                 }
+            }
+        }
+
+        public static string TryDecrypt(string cipherText)
+        {
+            try
+            {
+                return Decrypt(cipherText);
+            }
+            catch
+            {
+                return cipherText;
             }
         }
     }

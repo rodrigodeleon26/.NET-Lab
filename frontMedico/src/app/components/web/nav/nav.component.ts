@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -14,7 +15,8 @@ export class NavComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -38,5 +40,18 @@ export class NavComponent implements OnInit, OnDestroy {
 
   verElegirEspecialidad(): void {
     this.router.navigate(['/elegir-especialidad']);
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe(
+      (response) => {
+        this.authService.deleteToken();
+        this.fullName = null;
+        this.router.navigate(['login']);
+      },
+      (error) => {
+        this.toastr.error('Error al cerrar sesión');
+      }
+    );
   }
 }

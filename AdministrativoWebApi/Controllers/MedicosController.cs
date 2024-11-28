@@ -1,5 +1,6 @@
 ﻿using BL.IBLs;
 using DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -19,6 +20,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<MedicosController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Medico>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -27,6 +29,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<MedicosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Medico), 200)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -40,6 +43,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<MedicosController>
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Medico), 201)]
         [HttpPost]
         public IActionResult Post([FromBody] Medico Medico)
@@ -54,6 +58,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<MedicosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] Medico Medico)
         {
@@ -73,6 +78,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // DELETE api/<MedicosController>/5
+        [Authorize(Roles = "Admin, Medico")]
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
@@ -87,6 +93,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<MedicosController>/asignarEspecialidad/5/3
+        [Authorize(Roles = "Admin, Medico")]
         [HttpPost("asignarEspecialidad/{medId}/{espId}")]
         public IActionResult AsignarEspecialidad(long medId, long espId)
         {
@@ -99,6 +106,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<MedicosController>/3?hibber
+        [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(List<Medico>), 200)]
         [HttpGet("getMedicosPaginadosYFiltrados/{numPagina}")]
         public IActionResult GetMedicosPaginadosYFiltrados(int numPagina = 1, [FromQuery] string? filtro = null)

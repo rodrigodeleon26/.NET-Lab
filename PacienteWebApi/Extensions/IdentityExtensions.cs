@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared;
 using System.Text;
 
-namespace HistoriaClinicaWebApi.Extensions
+namespace PacienteWebApi.Extensions
 {
     public static class IdentityExtensions
     {

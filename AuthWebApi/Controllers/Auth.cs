@@ -91,7 +91,8 @@ namespace AuthWebApi.Controllers
             app.MapPost("api/auth/generateQrCode", GenerateQrCode); 
             app.MapPost("api/auth/validateTwoFactorCode", ValidateTwoFactorCode);
             app.MapPost("api/auth/enableTwoFactorAuth", EnableTwoFactorAuth); 
-            app.MapPost("api/auth/disableTwoFactorAuth", DisableTwoFactorAuth); 
+            app.MapPost("api/auth/disableTwoFactorAuth", DisableTwoFactorAuth);
+            app.MapPost("api/auth/logout", Logout);
             return app;
         }
 
@@ -453,5 +454,26 @@ namespace AuthWebApi.Controllers
                 return Convert.ToBase64String(randomNumber);
             }
         }
+
+        [AllowAnonymous]
+        private static async Task<IResult> Logout(
+            UserManager<AppUsers> userManager,
+            [FromBody] RefreshTokenModel tokenModel)
+        {
+            var user = await userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == tokenModel.RefreshToken);
+
+            if (user == null)
+            {
+                return Results.BadRequest(new { message = "Usuario no encontrado o token inválido" });
+            }
+
+            // Invalida el RefreshToken
+            user.RefreshToken = null;
+            user.RefreshTokenExpiryTime = DateTime.MinValue;
+            await userManager.UpdateAsync(user);
+
+            return Results.Ok(new { message = "Logout exitoso" });
+        }
+
     }
 }

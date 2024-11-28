@@ -178,13 +178,14 @@ namespace DAL.DALs
                                 Numero = p.Calendario.Consultorio.Numero,
                                 Piso = p.Calendario.Consultorio.Piso
                             }
-                        }
+                        },
+                        CopagoId = p.CopagoId
                     })
                     .FirstOrDefault(); // Obtener la primera cita que coincida con el ID
             }
         }
 
-        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId)
+        public CitaMedica createCitaMedica(CitaMedica nuevaCita, long calendarioId, long pacienteId, bool citaOnline)
         {
             using (var _dbContext = new DBContext())
             {
@@ -208,11 +209,12 @@ namespace DAL.DALs
                     throw new Exception("Ya existe una cita agendada en esa hora para ese dia.");
                 }
 
-                // Verificar si el mismo paciente ya tiene una cita en el mismo calendario y día
+                // Verificar si el mismo paciente ya tiene una cita en el mismo calendario y día con estado Completada, NoAsistida o Agendada
                 // ((Luego tengo que cambiarlo para que solo revise la ESPECIALIDAD, ya que como está permite registrarse dos veces para por ejemplo
                 // el odontologo si son medicos distintos y eso no está bien))
                 var citaPacienteExistente = _dbContext.CitasMedicas
                     .Where(c => c.CalendarioId == calendarioId && c.Fecha.Date == nuevaCita.Fecha.Date)
+                    .Where(c => c.Estado == "Completada" || c.Estado == "NoAsistida" || c.Estado == "Agendada")
                     .AsEnumerable() // Trae los datos a memoria
                     .FirstOrDefault(c => AES.Decrypt(c.PacienteId) == pacienteId.ToString());
 
@@ -221,6 +223,26 @@ namespace DAL.DALs
                     throw new Exception("El paciente ya tiene una cita en el mismo calendario y día.");
                 }
 
+                GoogleMeetEventResult datos = new GoogleMeetEventResult
+                {
+                    HangoutLink = null,
+                    NewAccessToken = null
+                };
+                if (citaOnline == true)
+                {
+                    var token = _dbContext.Pacientes.FirstOrDefault(p => p.Id == pacienteId).GoogleToken;
+                    var refreshToken = _dbContext.Pacientes.FirstOrDefault(p => p.Id == pacienteId).GoogleRefreshToken;
+                    var fechaFin = nuevaCita.Fecha.AddMinutes(calendarioExistente.TiempoCita);
+                    datos = Meet.CreateGoogleMeetEvent(token, nuevaCita.Fecha, fechaFin, refreshToken).GetAwaiter().GetResult();
+                    if (datos.NewAccessToken != null)
+                    {
+                        _dbContext.Pacientes.FirstOrDefault(p => p.Id == pacienteId).GoogleToken = datos.NewAccessToken;
+                        _dbContext.SaveChanges();
+                    }
+                }
+                Console.WriteLine(datos.HangoutLink);
+                Console.WriteLine(datos.NewAccessToken);
+
                 string pacienteIdEncriptado = AES.Encrypt(pacienteId.ToString());
 
                 var citaEntity = new CitasMedicas
@@ -228,7 +250,9 @@ namespace DAL.DALs
                     Fecha = nuevaCita.Fecha,
                     Estado = nuevaCita.Estado ?? "Agendada",
                     PacienteId = pacienteIdEncriptado,
-                    CalendarioId = calendarioId
+                    CalendarioId = calendarioId,
+                    CopagoId = nuevaCita.CopagoId,
+                    MeetLink = datos.HangoutLink
                 };
 
                 _dbContext.CitasMedicas.Add(citaEntity);
@@ -284,6 +308,7 @@ namespace DAL.DALs
                 Console.WriteLine("PacienteId: " + pacienteId);
                 Console.WriteLine("====================================");
                 string IdEncriptada = AES.Encrypt(pacienteId.ToString());
+                Console.WriteLine("IdEncriptada: " + IdEncriptada);
 
                 var query = _dbContext.CitasMedicas
                     .Where(c => c.Estado == "Completada" && c.PacienteId == IdEncriptada);
@@ -358,6 +383,85 @@ namespace DAL.DALs
 
                 // Contar los resultados después de aplicar los filtros
                 return query.Count();
+            }
+        }
+
+        public List<CitaMedica> GetCitasMedicasAgendadasDelPaciente(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                Pacientes paciente = _dbContext.Pacientes.FirstOrDefault(p => p.Id == id);
+
+                if (paciente == null)
+                {
+                    return new List<CitaMedica>();
+                }
+                else
+                {
+                    string idEncriptada = AES.Encrypt(paciente.Id.ToString());
+                    var citas = _dbContext.CitasMedicas
+                        .Where(c => c.PacienteId == idEncriptada && c.Estado == "Agendada" && c.Fecha >= DateTime.Today)
+                        .OrderBy(c => c.Fecha);
+
+                    return citas.Select(c => new CitaMedica
+                    {
+                        Id = c.Id,
+                        Fecha = c.Fecha,
+                        Estado = c.Estado,
+                        Calendario = new Calendario
+                        {
+                            Medico = new Medico
+                            {
+                                Id = c.Calendario.Medico.Id,
+                                Nombres = c.Calendario.Medico.Nombres,
+                                Apellidos = c.Calendario.Medico.Apellidos,
+                                Documento = c.Calendario.Medico.Documento,
+                                Email = c.Calendario.Medico.Email,
+                                Telefono = c.Calendario.Medico.Telefono
+                            },
+                            Especialidad = new Especialidad
+                            {
+                                Id = c.Calendario.Especialidad.Id,
+                                Nombre = c.Calendario.Especialidad.Nombre,
+                                Descripcion = c.Calendario.Especialidad.Descripcion
+                            },
+                            Consultorio = new Consultorio
+                            {
+                                Id = c.Calendario.Consultorio.Id,
+                                Numero = c.Calendario.Consultorio.Numero,
+                                Piso = c.Calendario.Consultorio.Piso
+                            }
+                        }
+                    }).ToList();
+                }
+
+            }
+        }
+
+        public bool CancelarCita(string documento, long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                Pacientes paciente = _dbContext.Pacientes.FirstOrDefault(p => p.Documento == documento);
+
+                if (paciente == null)
+                {
+                    throw new Exception("No se encontró el paciente.");
+                }
+
+                string idEncriptada = AES.Encrypt(paciente.Id.ToString());
+
+                var cita = _dbContext.CitasMedicas.FirstOrDefault(c => c.Id == id && c.PacienteId == idEncriptada);
+
+                if (cita == null)
+                {
+                    throw new Exception("No se encontró la cita médica.");
+                }
+
+                _dbContext.CitasMedicas.Remove(cita);
+                _dbContext.SaveChanges();
+
+                return true;
             }
         }
     }

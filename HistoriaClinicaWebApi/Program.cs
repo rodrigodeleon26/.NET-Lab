@@ -2,10 +2,14 @@ using DAL;
 using HistoriaClinicaWebApi.Extensions;
 using HistoriaClinicaWebApi.Controllers;
 using DAL.Models;
+using DotNetEnv;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    // Environment Variables
+    Env.Load();
 
     // Add services to the container.
     DBContext.UpdateDatabase();

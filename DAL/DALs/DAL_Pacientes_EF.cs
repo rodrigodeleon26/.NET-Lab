@@ -1,5 +1,6 @@
 ﻿using DAL.IDALs;
 using DAL.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -138,6 +139,43 @@ namespace DAL.DALs
                     _dbContext.SaveChanges();
                     return true;
                 }
+            }
+        }
+
+        public async Task<string> GetAccessToken(string pacienteId, string code)
+        {
+            var (token, refreshToken) = await Meet.GetAccessToken(code);
+            long pacienteIdLong = long.Parse(pacienteId);
+            using (var _dbContext = new DBContext())
+            {
+                Console.WriteLine("Entre");
+                var paciente = _dbContext.Pacientes.Find(pacienteIdLong);
+                if (paciente == null)
+                {
+                    throw new Exception("Paciente no encontrado");
+                }
+                paciente.GoogleToken = token;
+                if (refreshToken != null)
+                {
+                    paciente.GoogleRefreshToken = refreshToken;
+                }
+                _dbContext.SaveChanges();
+                return paciente.Documento;
+            }
+        }
+
+        public bool DesvincularGoogle(long id)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var paciente = _dbContext.Pacientes.Find(id);
+                if (paciente == null)
+                {
+                    throw new Exception("Paciente no encontrado");
+                }
+                paciente.GoogleToken = null;
+                _dbContext.SaveChanges();
+                return true;
             }
         }
     }

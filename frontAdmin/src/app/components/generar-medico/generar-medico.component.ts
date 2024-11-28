@@ -365,152 +365,118 @@ export class GenerarMedicoComponent implements OnInit {
     const dias = this.DatosCalendarioForm.value.dias;
     let conflictos = [];
     
-    if(this.calendarioEditId !== null){
-      //en caso de editar, solo chequear los dias nuevos en caso de tener
-      const calendarioComparacion = this.calendariosDelMedico.find((calendario) => calendario.id === this.calendarioEditId);
-      if (calendarioComparacion) {
-        const diasNuevos = dias.filter((dia: string) => !calendarioComparacion.diasSemana.includes(dia));
-
-        conflictos = this.calendariosDelMedico.filter((calendario: any) => {
-          if (diasNuevos.some((dia: string) => calendario.diasSemana.includes(dia))) {
-            console.log('conflicto con calendario en los dias ' + calendario.diasSemana.join(', ') + ' para los dias ' + dias.join(', '));
-            const horaInicioCalendario = new Date(`1970-01-01T${calendario.horaInicio}`).getTime();
-            const horaFinCalendario = new Date(`1970-01-01T${calendario.horaFin}`).getTime();
-            const horaInicioComparar = new Date(`1970-01-01T${horaInicio}`).getTime();
-            const horaFinComparar = new Date(`1970-01-01T${horaFin}`).getTime();
-        
-            if ((horaInicioComparar > horaInicioCalendario && horaInicioComparar < horaFinCalendario) ||
-                (horaFinComparar > horaInicioCalendario && horaFinComparar < horaFinCalendario) ||
-                (horaInicioComparar <= horaInicioCalendario && horaFinComparar >= horaFinCalendario) ||
-                (horaInicioComparar >= horaInicioCalendario && horaFinComparar <= horaFinCalendario)) {
-              console.log('conflicto con calendario en las horas ' + calendario.horaInicio + ' - ' + calendario.horaFin + ' para la hora de inicio ' + horaInicio + ' y hora de fin ' + horaFin);
-              return true;
-            }
-          }
-        
-          return false;
-        });
-      }
-    }
-    else{
-      conflictos = this.calendariosDelMedico.filter((calendario: any) => {
-        //el calendario es nuevo asi que chequear todos los dias
-        if (calendario.diasSemana.some((dia: string) => dias.includes(dia))) {
-          console.log('conflicto con calendario en los dias ' + calendario.diasSemana.join(', ') + ' para los dias ' + dias.join(', '));
-          const horaInicioCalendario = new Date(`1970-01-01T${calendario.horaInicio}`).getTime();
-          const horaFinCalendario = new Date(`1970-01-01T${calendario.horaFin}`).getTime();
-          const horaInicioComparar = new Date(`1970-01-01T${horaInicio}`).getTime();
-          const horaFinComparar = new Date(`1970-01-01T${horaFin}`).getTime();
-      
-          if ((horaInicioComparar > horaInicioCalendario && horaInicioComparar < horaFinCalendario) ||
-              (horaFinComparar > horaInicioCalendario && horaFinComparar < horaFinCalendario) ||
-              (horaInicioComparar <= horaInicioCalendario && horaFinComparar >= horaFinCalendario) ||
-              (horaInicioComparar >= horaInicioCalendario && horaFinComparar <= horaFinCalendario)) {
-            console.log('conflicto con calendario en las horas ' + calendario.horaInicio + ' - ' + calendario.horaFin + ' para la hora de inicio ' + horaInicio + ' y hora de fin ' + horaFin);
-            return true;
-          }
-        }
-      
-        return false;
-      });
-    }
-
-    if (conflictos.length > 0) {
-      this.showErrorModalMessage('El calendario se superpone con otro calendario');
-      return;
-    }
-
     //chequear disponibilidad del consultorio
     //agregar :00 a las horas por compativilidad
     if(Calendario.HoraInicio.length === 5) Calendario.HoraInicio += ':00';
     if(Calendario.HoraFin.length === 5) Calendario.HoraFin += ':00';
-
-    console.log(Calendario);
-    this.calendariosService.checkCalendarioOcupado(Calendario).subscribe({
+    console.log('validando calendarios BACKEND');
+    this.calendariosService.validarCalendariosPropios(this.medicoId, this.calendarioEditId, Calendario).subscribe({
       next: (data) => {
-        if(data == true){
-          console.log('Consultorio ocupado');
-          this.showErrorModalMessage('El consultorio está ocupado en el horario seleccionado');
+        if(data === true){
+          console.log('BACKEND Calendarios propios validados');
+          //EL HORARIO ES VALIDO PARA EL MEDICO
+
+          //CHEQUEAR DISPONIBILIDAD DEL CONSULTORIO
+          this.calendariosService.checkCalendarioOcupado(Calendario).subscribe({
+            next: (data) => {
+              if(data == true){
+                console.log('Consultorio ocupado');
+                this.showErrorModalMessage('El consultorio está ocupado en el horario seleccionado');
+              }
+              else{
+                console.log('Consultorio disponible');
+                //divido segun si es agregar o editar
+                if(this.calendarioEditId !== null){
+      
+                  //editar el calendario
+                  Calendario['Id'] = this.calendarioEditId;
+                  this.calendariosService.updateCalendario(Calendario).subscribe({
+                    next: (data) => {
+                      this.showSuccessMessage('Calendario editado exitosamente');
+                      this.closeEditarModal();
+                      if (this.medicoId) {
+                        let filtrosActuales = [
+                          'PorDefecto', //especialidad
+                          'PorDefecto', //dia
+                          'PorDefecto' //hora
+                        ]
+                        //this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
+                        this.calendariosService.getCalendariosFiltrados(this.medicoId, filtrosActuales).subscribe({
+                          next: (data) => {
+                            this.calendariosDelMedico = data;
+                            this.calendariosShow = data;
+                            this.ordenarCalnedariosPorEspecialidad(this.ordenActualDeCalendariosEspecialidad);
+                          },
+                          error: (error) => {
+                            console.error(error);
+                          }
+                        });
+                      }
+                    },
+                    error: (error) => {
+                      console.error(error);
+                      const errorMessage = this.extractErrorMessage(error);
+                      this.showErrorModalMessage(errorMessage);
+                    }
+                  });
+                }
+                else{
+      
+                  //agregar el calendario
+                  this.calendariosService.addCalendario(Calendario).subscribe({
+                    next: (data) => {
+                      this.showSuccessMessage('Calendario agregado exitosamente');
+                      this.isModalNuevoCalendarioVisible = false;
+                      //remover todo del arreglo de dias
+                      const diasArray: FormArray = this.DatosCalendarioForm.get('dias') as FormArray;
+                      while (diasArray.length !== 0) {
+                        diasArray.removeAt(0);
+                      }
+                      this.DatosCalendarioForm.reset();
+                      if (this.medicoId) {
+      
+                        let filtrosActuales = [
+                          'PorDefecto', //especialidad
+                          'PorDefecto', //dia
+                          'PorDefecto' //hora
+                        ]
+                        //this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
+                        this.calendariosService.getCalendariosFiltrados(this.medicoId, filtrosActuales).subscribe({
+                          next: (data) => {
+                            this.calendariosDelMedico = data;
+                            this.calendariosShow = data;
+                            this.ordenarCalnedariosPorEspecialidad(this.ordenActualDeCalendariosEspecialidad);
+                          },
+                          error: (error) => {
+                            console.error(error);
+                          }
+                        });
+                      }
+                      
+                    },
+                    error: (error) => {
+                      console.error(error);
+                      const errorMessage = this.extractErrorMessage(error);
+                      this.showErrorModalMessage(errorMessage);
+                    }
+                  });
+      
+                }
+              }
+            },
+            error: (error) => {
+              console.error(error);
+              this.showErrorModalMessage(error);
+              return;
+            }
+          });
+
+          return;
         }
         else{
-          console.log('Consultorio disponible');
-          //divido segun si es agregar o editar
-          if(this.calendarioEditId !== null){
-
-            //editar el calendario
-            Calendario['Id'] = this.calendarioEditId;
-            this.calendariosService.updateCalendario(Calendario).subscribe({
-              next: (data) => {
-                this.showSuccessMessage('Calendario editado exitosamente');
-                this.closeEditarModal();
-                if (this.medicoId) {
-                  let filtrosActuales = [
-                    'PorDefecto', //especialidad
-                    'PorDefecto', //dia
-                    'PorDefecto' //hora
-                  ]
-                  //this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
-                  this.calendariosService.getCalendariosFiltrados(this.medicoId, filtrosActuales).subscribe({
-                    next: (data) => {
-                      this.calendariosDelMedico = data;
-                      this.calendariosShow = data;
-                      this.ordenarCalnedariosPorEspecialidad(this.ordenActualDeCalendariosEspecialidad);
-                    },
-                    error: (error) => {
-                      console.error(error);
-                    }
-                  });
-                }
-              },
-              error: (error) => {
-                console.error(error);
-                const errorMessage = this.extractErrorMessage(error);
-                this.showErrorModalMessage(errorMessage);
-              }
-            });
-          }
-          else{
-
-            //agregar el calendario
-            this.calendariosService.addCalendario(Calendario).subscribe({
-              next: (data) => {
-                this.showSuccessMessage('Calendario agregado exitosamente');
-                this.isModalNuevoCalendarioVisible = false;
-                //remover todo del arreglo de dias
-                const diasArray: FormArray = this.DatosCalendarioForm.get('dias') as FormArray;
-                while (diasArray.length !== 0) {
-                  diasArray.removeAt(0);
-                }
-                this.DatosCalendarioForm.reset();
-                if (this.medicoId) {
-
-                  let filtrosActuales = [
-                    'PorDefecto', //especialidad
-                    'PorDefecto', //dia
-                    'PorDefecto' //hora
-                  ]
-                  //this.calendariosService.getCalendariosByMedicoId(this.medicoId).subscribe({
-                  this.calendariosService.getCalendariosFiltrados(this.medicoId, filtrosActuales).subscribe({
-                    next: (data) => {
-                      this.calendariosDelMedico = data;
-                      this.calendariosShow = data;
-                      this.ordenarCalnedariosPorEspecialidad(this.ordenActualDeCalendariosEspecialidad);
-                    },
-                    error: (error) => {
-                      console.error(error);
-                    }
-                  });
-                }
-                
-              },
-              error: (error) => {
-                console.error(error);
-                const errorMessage = this.extractErrorMessage(error);
-                this.showErrorModalMessage(errorMessage);
-              }
-            });
-
-          }
+          console.log('backend Calendarios propios no validados');
+          this.showErrorModalMessage('El calendario se superpone con otro calendario');
+          return;
         }
       },
       error: (error) => {
@@ -518,8 +484,8 @@ export class GenerarMedicoComponent implements OnInit {
         this.showErrorModalMessage(error);
         return;
       }
-    })
-
+    });
+    console.log(Calendario);
   }
 
   private extractErrorMessage(error: any): string {
@@ -613,37 +579,22 @@ export class GenerarMedicoComponent implements OnInit {
   }
 
   aplicarOrdenCalendarios(){
-    let calendarios = [...this.calendariosDelMedico];
-
-    if(this.ordenActualDeCalendariosEspecialidad !== 'PorDefecto'){
-      if(this.ordenActualDeCalendariosEspecialidad === 'Agrupar'){
-        calendarios = calendarios.sort((a, b) => a.especialidad.nombre.localeCompare(b.especialidad.nombre));
-      }
-      else{
-        calendarios = calendarios.filter((calendario) => calendario.especialidad.nombre === this.ordenActualDeCalendariosEspecialidad);  
-      }
-    }
-
-    if(this.ordenActualDeCalendariosDia !== 'PorDefecto'){
-      calendarios = calendarios.filter((calendario) => calendario.diasSemana.includes(this.ordenActualDeCalendariosDia));
-    }
-
-    if(this.ordenActualDeCalendariosHora !== 'PorDefecto'){
-      if(this.ordenActualDeCalendariosHora === 'Ascendente'){
-        calendarios = calendarios.sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
-      }
-      else{
-        calendarios = calendarios.sort((a, b) => b.horaInicio.localeCompare(a.horaInicio));
-      }
-    }
 
     if(this.ordenActualDeCalendariosEspecialidad === 'PorDefecto' && this.ordenActualDeCalendariosDia === 'PorDefecto' && this.ordenActualDeCalendariosHora === 'PorDefecto'){
       console.log('Sin filtros');
       this.calendariosShow = this.calendariosDelMedico;
     }
     else{
-      console.log('Filtrando por dia y especialidad');
-      this.calendariosShow = calendarios;
+      if(this.medicoId != null){
+        this.calendariosService.getCalendariosFiltrados(this.medicoId, [this.ordenActualDeCalendariosEspecialidad, this.ordenActualDeCalendariosDia, this.ordenActualDeCalendariosHora]).subscribe({
+          next: (data) => {
+            this.calendariosShow = data;
+          },
+          error: (error) => {
+            console.error(error);
+          }
+        });
+      }
     }
   }
 

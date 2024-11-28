@@ -11,32 +11,47 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
-  # citasmedicaswebapi:
-  #   image: ${DOCKER_REGISTRY-}citasmedicaswebapi
-  #   build:
-  #     context: .
-  #     dockerfile: CitaMedicaWebApi/Dockerfile
-  #   ports:
-  #     - 5002:8080
-  #     - 5003:8081
-  #   container_name: CitasMedicasWebApi_container
-  #   depends_on:
-  #     sqlserver:
-  #       condition: service_healthy
+  citasmedicaswebapi:
+    image: ${DOCKER_REGISTRY-}citasmedicaswebapi
+    build:
+      context: .
+      dockerfile: CitaMedicaWebApi/Dockerfile
+    ports:
+      - 5002:8080
+      - 5003:8081
+    container_name: CitasMedicasWebApi_container
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
-  # historiaclinicawebapi:
-  #   image: ${DOCKER_REGISTRY-}historiaclinicawebapi
-  #   build:
-  #     context: .
-  #     dockerfile: HistoriaClinicaWebApi/Dockerfile
-  #   ports:
-  #     - 5004:8080
-  #     - 5005:8081
-  #   container_name: HistoriaClinicaWebApi_container
-  #   depends_on:
-  #     sqlserver:
-  #       condition: service_healthy
+  historiaclinicawebapi:
+    image: ${DOCKER_REGISTRY-}historiaclinicawebapi
+    build:
+      context: .
+      dockerfile: HistoriaClinicaWebApi/Dockerfile
+    ports:
+      - 5004:8080
+      - 5005:8081
+    container_name: HistoriaClinicaWebApi_container
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   authwebapi:
     image: ${DOCKER_REGISTRY-}authwebapi
@@ -50,6 +65,11 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   administrativowebapi:
     image: ${DOCKER_REGISTRY-}administrativowebapi
@@ -63,6 +83,11 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+    environment:
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
