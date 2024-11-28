@@ -22,6 +22,7 @@ import { PacientesComponent } from './components/pacientes/pacientes.component';
 import { ContratosComponent } from './components/contratos/contratos.component';
 import { CalendariosComponent } from './components/calendarios/calendarios.component';
 import { FacturasComponent } from './components/facturas/facturas.component';
+import { InicioComponent } from './components/inicio/inicio.component';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import { FacturasComponent } from './components/facturas/facturas.component';
     ContratosComponent,
     CalendariosComponent,
     FacturasComponent,
+    InicioComponent,
   ],
   imports: [
     BrowserModule,

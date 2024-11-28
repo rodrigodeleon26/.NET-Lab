@@ -540,5 +540,15 @@ namespace BL.BLs
         {
             throw new NotImplementedException();
         }
+
+        public void notificarCambiosConsultorio(long calendarioId, long consultorioId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AnalizarCitasConHorariosNuevos(Calendario calNuevo, Calendario calViejo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

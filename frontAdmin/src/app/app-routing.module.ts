@@ -11,12 +11,14 @@ import { PacientesComponent } from './components/pacientes/pacientes.component';
 import { ContratosComponent } from './components/contratos/contratos.component';
 import { CalendariosComponent } from './components/calendarios/calendarios.component';
 import { FacturasComponent } from './components/facturas/facturas.component';
+import { InicioComponent } from './components/inicio/inicio.component';
   
 const routes: Routes = [
   { path: 'login', component: LoginComponent},
 
-  { path: '', redirectTo: '/login', pathMatch: 'full'},
+  { path: '', redirectTo: '/inicio', pathMatch: 'full'},
   //{ path: '**', redirectTo: '/login'},
+  { path: 'inicio', component: InicioComponent },
   { path: 'generarMedico', component: GenerarMedicoComponent },
   { path: 'generarMedico/:id', component: GenerarMedicoComponent },
   { path: 'listMedicos', component: ListMedicosComponent },

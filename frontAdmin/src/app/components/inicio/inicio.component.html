@@ -1,0 +1,70 @@
+<div class="container mx-auto px-4 mt-4 md:mt-12 md:p-0">
+    <div *ngIf="loading" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <p class="text-white text-lg">Cargando...</p>
+    </div>
+    <div class="flex justify-center">
+        <div class="w-full max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
+            <h1 class="w-full text-center mt-4 text-lg md:text-2xl font-medium text-blue-oscuro">
+                PANEL ADMINISTRATIVO
+            </h1>
+            <div class="flex justify-center p-10">
+                <div class="grid grid-cols-2 gap-6 md:gap-10 md:grid-cols-4">
+                    <button (click)="ListMedicos()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <img src="images/clinical_notes.svg" class="w-14 h-14 md:w-16 md:h-16" alt="Add Consulta">
+                        <p class="text-lg md:text-xl font-medium text-center">Medicos</p>
+                    </button>
+                    <button (click)="Especialidades()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <img src="images/stethoscope.svg" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
+                        <div class="h-1/2 flex items-center">
+                            <p class="text-lg md:text-xl font-medium text-center">Especialidades</p>
+                        </div>
+                    </button>
+                    <button (click)="Consultorios()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <img src="images/add_home_work.svg" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
+                        <div class="h-1/2 flex items-center">
+                            <p class="text-lg md:text-xl font-medium text-center">Consultorios</p>
+                        </div>
+                    </button>
+                    <button (click)="Copagos()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <img src="images/checkbook.svg  " class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
+                        <p class="text-lg md:text-xl font-medium text-center">Copagos</p>
+                    </button>
+                    <button (click)="Pacientes()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <img src="images/personal_injury.svg" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
+                        <div class="h-1/2 flex items-center">
+                            <p class="text-lg md:text-xl font-medium text-center">Pacientes</p>
+                        </div>
+                    </button>
+                    <button (click)="Contratos()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <img src="images/contract.svg" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
+                        <p class="text-lg md:text-xl font-medium text-center">Contratos</p>
+                    </button>
+                    <button (click)="Facturas()" class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <img src="images/receipt.svg" class="w-14 h-14 md:w-16 md:h-16" alt="Mis Consultas">
+                        <div class="h-1/2 flex items-center">
+                            <p class="text-lg md:text-xl font-medium text-center">Facturas</p>
+                        </div>
+                    </button>
+                    <!-- <button class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <i class="fas fa-bong text-4xl md:text-5xl"></i>
+                        <p class="text-lg md:text-xl font-medium text-center">VAMO A</p>
+                    </button>
+                    <button class="flex flex-col justify-between items-center rounded-md w-36 h-36 md:w-48 md:h-48
+                        bg-white shadow-md text-blue-oscuro p-5 md:p-8 hover:cursor-pointer hover:brightness-90">
+                        <i class="fas fa-cannabis text-4xl md:text-5xl"></i>
+                        <p class="text-lg md:text-xl font-medium text-center">FUMAR</p>
+                    </button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

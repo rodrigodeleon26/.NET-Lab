@@ -1563,6 +1563,7 @@ namespace DAL.DALs
 						Id = c.Id,
 						Fecha = c.Fecha,
 						Estado = c.Estado,
+						PacienteId = c.PacienteId,
 						Calendario = new Calendario
 						{
 							Id = c.Calendario.Id,
