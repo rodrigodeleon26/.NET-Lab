@@ -211,12 +211,17 @@ namespace BL.BLs
 			return dal.puedeRenovarContrato(id);
 		}
 
-		//public void activarContrato(long id)
-		//{
-		//	dal.activarContrato
-		//}
+        public void activarContrato(long id)
+        {
+            var contrato = getContratoById(id);
+            if (contrato != null)
+            {
+                contrato.Activo = true;
+                updateContrato(contrato);
+            }
+        }
 
-		public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
+        public List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro)
 		{
 			return dal.GetContratosFiltradosPaginados(numPagina, filtro);
 		}
@@ -237,10 +242,11 @@ namespace BL.BLs
 			var deuda = ObtenerDeudaDeContrato(contratoId);
 			if (deuda > 0)
 			{
-				var cuota = (deuda * interes) / cantidadCuotas;
+                var montoTotalConInteres = deuda * (1 + (interes / 100.0));
+                var cuota = (float)(montoTotalConInteres / cantidadCuotas);
 
-				// Crear las facturas
-				for (int i = 0; i < cantidadCuotas; i++)
+                // Crear las facturas
+                for (int i = 0; i < cantidadCuotas; i++)
 				{
 					var factura = new Factura
 					{

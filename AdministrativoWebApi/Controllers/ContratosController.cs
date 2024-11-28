@@ -113,15 +113,15 @@ namespace AdministrativoWebApi.Controllers
 			return NoContent();
 		}
 
-		[ProducesResponseType(typeof(List<Contrato>), 200)]
-		[ProducesResponseType(204)]
-		[HttpGet("filtradosPaginados")]
-		public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
-		{
-			var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
-			return Ok(contratos);
-		}
-
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(List<Contrato>), 200)]
+        [ProducesResponseType(204)]
+        [HttpGet("filtradosPaginados")]
+        public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
+        {
+            var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
+            return Ok(contratos);
+        }
 
         // POST api/<ContratosController>/contratar-seguro
         [Authorize(Roles = "Admin, Medico")]
@@ -235,16 +235,6 @@ namespace AdministrativoWebApi.Controllers
 
             _blAdministrativo.reactivarContrato(id, request.Cuotas, request.Interes);
             return Ok(new { message = "El contrato ha sido reactivado exitosamente" });
-        }
-
-        [Authorize(Roles = "Admin, Medico")]
-        [ProducesResponseType(typeof(List<Contrato>), 200)]
-        [ProducesResponseType(204)]
-        [HttpGet("filtradosPaginados")]
-        public IActionResult GetContratosFiltradosPaginados([FromQuery] int pag = 1, [FromQuery] string filtro = "")
-        {
-            var contratos = _blAdministrativo.GetContratosFiltradosPaginados(pag, filtro);
-            return Ok(contratos);
         }
     }
 }

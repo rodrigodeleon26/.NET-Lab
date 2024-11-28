@@ -41,7 +41,7 @@ namespace BL.IBLs
 		void addContrato(Contrato contrato);
 		void updateContrato(Contrato contrato);
 		void deleteContrato(long id);
-		//void activarContrato(long id);
+		void activarContrato(long id);
 		List<Contrato> GetContratosFiltradosPaginados(int numPagina, string filtro);
 		void cambiarContrato(Contrato contrato, SeguroMedico seguroMedico);
         bool puedeRenovarContrato(long id);
