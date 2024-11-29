@@ -47,7 +47,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{id}";
+                var url = $"http://citasmedicaswebapi:8080/api/CitasMedicas/{id}";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -88,7 +88,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{citaActualizada.Id}";
+                var url = $"http://citasmedicaswebapi:8080/api/CitasMedicas/{citaActualizada.Id}";
 
                 var citaMedicaJson = JsonConvert.SerializeObject(citaActualizada);
                 var content = new StringContent(citaMedicaJson, Encoding.UTF8, "application/json");
@@ -128,7 +128,7 @@ namespace DAL.DALs
 
 
                 // Construcción de la URL con parámetros de la cadena de consulta (query string)
-                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/paciente/{pacienteId}";
+                var url = $"http://citasmedicaswebapi:8080/api/CitasMedicas/paciente/{pacienteId}";
 
                 // Construcción de los parámetros de la cadena de consulta
                 var queryParams = new List<string>
@@ -203,7 +203,7 @@ namespace DAL.DALs
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 // Construcción de la URL con parámetros de la cadena de consulta (query string)
-                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/cant/{pacienteId}";
+                var url = $"http://citasmedicaswebapi:8080/api/CitasMedicas/cant/{pacienteId}";
 
                 // Construcción de los parámetros de la cadena de consulta
                 var queryParams = new List<string>
@@ -301,7 +301,7 @@ namespace DAL.DALs
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 // Construcción de la URL con parámetros de la cadena de consulta (query string)
-                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/paciente/{id}/misCitas";
+                var url = $"http://citasmedicaswebapi:8080/api/CitasMedicas/paciente/{id}/misCitas";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -342,7 +342,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"https://citasmedicaswebapi:8081/api/CitasMedicas/{id}/paciente/{dni}";
+                var url = $"http://citasmedicaswebapi:8080/api/CitasMedicas/{id}/paciente/{dni}";
 
                 var response = _httpClient.DeleteAsync(url).Result;
                 if (response.IsSuccessStatusCode) {

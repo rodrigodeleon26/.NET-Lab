@@ -84,7 +84,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                string url = $"https://historiaclinicawebapi:8081/api/HistoriasClinicas/{id}";
+                string url = $"http://historiaclinicawebapi:8080/api/HistoriasClinicas/{id}";
 
                 var response = _httpClient.GetAsync(url).Result;
 

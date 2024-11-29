@@ -52,7 +52,7 @@ namespace DAL.DALs
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
 
-                string url = $"https://administrativowebapi:8081/api/Pacientes/{id}";
+                string url = $"http://administrativowebapi:8080/api/Pacientes/{id}";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -95,7 +95,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                string url = $"https://administrativowebapi:8081/api/Pacientes/dni/{dni}";
+                string url = $"http://administrativowebapi:8080/api/Pacientes/dni/{dni}";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -148,7 +148,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                string url = $"https://administrativowebapi:8081/api/Pacientes/{paciente.Id}";
+                string url = $"http://administrativowebapi:8080/api/Pacientes/{paciente.Id}";
 
                 var content = new StringContent(JsonConvert.SerializeObject(paciente), Encoding.UTF8, "application/json");
 
@@ -203,7 +203,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones";
+                var url = $"http://administrativowebapi:8080/api/Pacientes/{id}/notificaciones";
 
                 var queryParams = new List<string>
                 {
@@ -253,7 +253,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/notificaciones/count";
+                var url = $"http://administrativowebapi:8080/api/Pacientes/{id}/notificaciones/count";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -369,7 +369,7 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
-                var url = $"https://administrativowebapi:8081/api/Copagos/{id}";
+                var url = $"http://administrativowebapi:8080/api/Copagos/{id}";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -416,7 +416,7 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
-                var url = $"https://administrativowebapi:8081/api/Copagos/getIdByFilds/{copago.SeguroMedico.Id}/{copago.Especialidad.Id}/{copago.Articulo.Id}";
+                var url = $"http://administrativowebapi:8080/api/Copagos/getIdByFilds/{copago.SeguroMedico.Id}/{copago.Especialidad.Id}/{copago.Articulo.Id}";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -457,7 +457,7 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
-                string url = $"https://administrativowebapi:8081/api/Facturas/";
+                string url = $"http://administrativowebapi:8080/api/Facturas/";
 
                 var json = System.Text.Json.JsonSerializer.Serialize(factura);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -566,7 +566,7 @@ namespace DAL.DALs
                 };
                 var _httpClient = new HttpClient(handler);
 
-                var url = $"https://administrativowebapi:8081/api/Calendarios/{id}";
+                var url = $"http://administrativowebapi:8080/api/Calendarios/{id}";
 
                 var response = _httpClient.GetAsync(url).Result;
 
@@ -752,7 +752,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"https://administrativowebapi:8081/api/Pacientes/{pacienteId}/historialFacturacion";
+                var url = $"http://administrativowebapi:8080/api/Pacientes/{pacienteId}/historialFacturacion";
 
                 var queryParams = new List<string>
                 {
@@ -802,7 +802,7 @@ namespace DAL.DALs
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"https://administrativowebapi:8081/api/Pacientes/{id}/historialFacturacion/count";
+                var url = $"http://administrativowebapi:8080/api/Pacientes/{id}/historialFacturacion/count";
 
                 var response = _httpClient.GetAsync(url).Result;
 
