@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class CalendariosService {
 
-  private apiUrl = 'https://localhost:5009/api/Calendarios'; // URL del microservicio
+  private apiUrl = 'https://localhost/gestion/api/Calendarios'; // URL del microservicio
 
   constructor( private http: HttpClient) { }
 
