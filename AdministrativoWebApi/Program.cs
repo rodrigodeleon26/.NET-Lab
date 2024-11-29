@@ -39,7 +39,7 @@ try
     app.ConfigureSwaggerExplorer()
       .ConfigureCORS()
       .AddIdentityAuthMiddlewares()
-      .UseHttpsRedirection();
+      //.UseHttpsRedirection();
 
     app.MapControllers();
 
