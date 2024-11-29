@@ -6,5 +6,5 @@ export const TFA = 'twoFactorAuthenticated';
 
 export const environment = {
     production: false,
-    AuthWebApiBaseUrl: 'https://localhost:5007/api'
+    AuthWebApiBaseUrl: 'https://localhost/auth/api'
   };

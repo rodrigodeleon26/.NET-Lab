@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class PaypalService {
 
-  private apiUrl = 'https://localhost:5009/api/payments'; // Reemplaza con la URL base de tu API
+  private apiUrl = 'https://localhost/gestion/api/payments'; // Reemplaza con la URL base de tu API
 
   constructor(private http: HttpClient) { }
 

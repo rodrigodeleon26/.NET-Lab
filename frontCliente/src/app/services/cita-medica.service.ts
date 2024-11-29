@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CitaMedicaService {
-  private apiUrl = 'https://localhost:5003/api/CitasMedicas';
+  private apiUrl = 'https://localhost/citasmedicas/api/CitasMedicas';
 
   constructor(private http: HttpClient) { }
 
