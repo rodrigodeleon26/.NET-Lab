@@ -103,7 +103,7 @@ export class ConsultaMedicaService {
   }
 
   getEspecialidades(): Observable<any> {
-    const url = `https://localhost:5009/api/Especialidades`;
+    const url = `https://localhost/gestion/api/Especialidades`;
     console.log(url);
     return this.http.get<any>(url);
   }

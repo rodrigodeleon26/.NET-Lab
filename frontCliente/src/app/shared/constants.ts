@@ -1,6 +1,6 @@
-export const TOKEN_KEY = 'token';
+export const TOKEN_KEY = 'token_cliente';
 
-export const REFRESH_TOKEN_KEY = 'refreshToken';
+export const REFRESH_TOKEN_KEY = 'refreshToken_cliente';
 
 export const TFA = 'twoFactorAuthenticated';
 
