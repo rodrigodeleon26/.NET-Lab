@@ -12,6 +12,10 @@ services:
       published: 5001
       protocol: tcp
       mode: ingress
+    volumes:
+      - ./ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./ssl/server.key:/etc/nginx/certs/server.key
+      - ./nginx.conf:/etc/nginx/nginx.conf
     deploy:
       replicas: 2
       restart_policy:
@@ -33,6 +37,10 @@ services:
       published: 5003
       protocol: tcp
       mode: ingress
+    volumes:
+      - ./ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./ssl/server.key:/etc/nginx/certs/server.key
+      - ./nginx.conf:/etc/nginx/nginx.conf
     deploy:
       replicas: 2
       restart_policy:
@@ -54,6 +62,10 @@ services:
       published: 5005
       protocol: tcp
       mode: ingress
+    volumes:
+      - ./ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./ssl/server.key:/etc/nginx/certs/server.key
+      - ./nginx.conf:/etc/nginx/nginx.conf
     deploy:
       replicas: 2
       restart_policy:
@@ -75,6 +87,10 @@ services:
       published: 5007
       protocol: tcp
       mode: ingress
+    volumes:
+      - ./ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./ssl/server.key:/etc/nginx/certs/server.key
+      - ./nginx.conf:/etc/nginx/nginx.conf
     deploy:
       replicas: 2
       restart_policy:
@@ -96,6 +112,10 @@ services:
       published: 5009
       protocol: tcp
       mode: ingress
+    volumes:
+      - ./ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./ssl/server.key:/etc/nginx/certs/server.key
+      - ./nginx.conf:/etc/nginx/nginx.conf
     deploy:
       replicas: 3
       restart_policy:

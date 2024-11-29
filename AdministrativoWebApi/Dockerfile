@@ -7,6 +7,14 @@ EXPOSE 8080
 EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+# Copiar el archivo de configuración Nginx al contenedor
+COPY ../nginx.conf /etc/nginx/nginx.conf
+
+# Copiar los certificados SSL al contenedor
+COPY ../ssl/server.crt /etc/nginx/certs/server.crt
+COPY ../ssl/server.key /etc/nginx/certs/server.key
+
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["AdministrativoWebApi/AdministrativoWebApi.csproj", "AdministrativoWebApi/"]

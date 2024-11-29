@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class FacturaService {
-  private apiUrl = 'https://localhost:5009/api/Facturas'; // URL del microservicio
+  private apiUrl = 'https://localhost/gestion/api/Facturas'; // URL del microservicio
 
   constructor(private http: HttpClient, private router: Router,) {}
 

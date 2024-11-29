@@ -11,6 +11,14 @@ EXPOSE 8081
 # Esta fase se usa para compilar el proyecto de servicio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+
+# Copiar el archivo de configuración Nginx al contenedor
+COPY ../nginx.conf /etc/nginx/nginx.conf
+
+# Copiar los certificados SSL al contenedor
+COPY ../ssl/server.crt /etc/nginx/certs/server.crt
+COPY ../ssl/server.key /etc/nginx/certs/server.key
+
 WORKDIR /src
 COPY ["CitaMedicaWebApi/CitaMedicaWebApi.csproj", "CitaMedicaWebApi/"]
 RUN dotnet restore "./CitaMedicaWebApi/CitaMedicaWebApi.csproj"

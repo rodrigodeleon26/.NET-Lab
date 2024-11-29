@@ -6,14 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ConsultaMedicaService {
-  private apiUrl = 'https://localhost:5005/api/HistoriasClinicas';
+  private apiUrl = 'https://localhost/historiaclinica/api/HistoriasClinicas';
 
   constructor(
     private http: HttpClient
   ) { }
 
   getEspecialidades(): Observable<any> {
-    const url = `https://localhost:5009/api/Especialidades`;
+    const url = `https://localhost/gestion/api/Especialidades`;
     console.log(url);
     return this.http.get<any>(url);
   }
