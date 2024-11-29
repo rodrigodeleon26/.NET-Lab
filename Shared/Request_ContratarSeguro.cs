@@ -20,7 +20,7 @@ namespace Shared
         public long CalendarioId { get; set; }
         public string fecha { get; set; }
         public string hora { get; set; }
-        public long ArticuloId { get; set; }
+        public long EspecialidadId { get; set; }
         public bool CitaOnline { get; set; }
     }
 }

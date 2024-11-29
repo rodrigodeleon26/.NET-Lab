@@ -90,5 +90,24 @@ namespace AdministrativoWebApi.Controllers
             _blAdministrativo.deleteEspecialidad(id);
             return NoContent();
         }
+
+        // GET api/<EspecialidadesController>/EspecialidadesHabilitados/{cedula}
+        [ProducesResponseType(typeof(List<Especialidad>), 200)]
+        [HttpGet("EspecialidadesHabilitados/{cedula}")]
+        public IActionResult GetEspecialidadesHabilitados(string cedula)
+        {
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != cedula)
+            {
+                return Forbid("No puedes ver la informacion de otro usuario");
+            }
+
+            if (cedula == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_blAdministrativo.getEspecialidadesHabilitadas(cedula));
+        }
     }
 }

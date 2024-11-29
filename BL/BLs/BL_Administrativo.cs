@@ -1173,11 +1173,24 @@ namespace BL.BLs
 			foreach(var especialidad in especialidadesParaElArticulo)
 			{
 				//ir agregando los calendarios a la lista
-                var calendarios = dal.GetCalendariosByEspecialidadFecha(especialidad.Id, fechaDate, dia);
+                var calendarios = dal.GetCalendariosByEspecialidadYFecha(especialidad.Id, fechaDate, dia);
                 calendariosParaELArticulo.AddRange(calendarios);
 			}
 
 			return calendariosParaELArticulo;
+        }
+
+        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+        {
+            //segun la fecha conseguir el dia
+            DateTime fechaDate = DateTime.Parse(fecha);
+            string dia = fechaDate.ToString("dddd", new CultureInfo("es-UY"));
+            //poner la primera letra en mayuscula 
+            dia = char.ToUpper(dia[0]) + dia.Substring(1);
+
+            Console.WriteLine("Dia: " + dia);
+
+            return dal.GetCalendariosByEspecialidadYFecha(especialidadId, fechaDate, dia);
         }
 
         #endregion
@@ -1241,12 +1254,35 @@ namespace BL.BLs
 			dal.DeleteEspecialidad(id);
 		}
 
-		#endregion
+        public List<Especialidad> getEspecialidadesHabilitadas(string cedula)
+		{ 
+            Paciente paciente = getPacienteByDNI(cedula);
+            if (paciente == null)
+            {
+                return null;
+            }
 
-		//Articulos
-		#region ARTICULOS
+            Contrato contrato = paciente.Contrato;
+            if (contrato == null || !contrato.Activo)
+            {
+                return null;
+            }
 
-		public List<Articulo> getArticulos()
+            SeguroMedico seguro = contrato.SeguroMedico;
+            if (seguro == null)
+            {
+                return null;
+            }
+
+            return dal.GetEspecialidadesBySeguro(seguro);
+        }
+
+        #endregion
+
+        //Articulos
+        #region ARTICULOS
+
+        public List<Articulo> getArticulos()
 		{
 			return dal.GetArticulos();	
 		}

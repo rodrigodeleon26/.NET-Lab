@@ -1046,7 +1046,7 @@ namespace DAL.DALs
 		{
 			using (var _dbContext = new DBContext())
 			{
-				var copagoExistente = _dbContext.Copagos.FirstOrDefault(c => c.ArticuloId == copago.Articulo.Id && c.SeguroMedicoId == copago.SeguroMedico.Id && c.EspecialidadId == copago.Especialidad.Id);
+				var copagoExistente = _dbContext.Copagos.FirstOrDefault(c => c.SeguroMedicoId == copago.SeguroMedico.Id && c.EspecialidadId == copago.Especialidad.Id);
 				if (copagoExistente != null)
 				{
 					return copagoExistente.Id;
@@ -2070,13 +2070,13 @@ namespace DAL.DALs
             }
         }
 
-        public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				return _dbContext.Calendarios
-					.Where(c => c.Activo)
-					.Where(c => c.EspecialidadId == especialidadId && c.DiasSemanaString.Contains(dia))
+        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                return _dbContext.Calendarios
+                    .Where(c => c.Activo)
+                    .Where(c => c.EspecialidadId == especialidadId && c.DiasSemanaString.Contains(dia))
                     .Select(c => new Calendario
                     {
                         Id = c.Id,
@@ -2107,13 +2107,13 @@ namespace DAL.DALs
                             Descripcion = c.Especialidad.Descripcion
                         },
                         CitasMedicas = c.CitasMedicas
-						.Where(cm => cm.Fecha.Date == fecha.Date)
-						.Select(cm => new CitaMedica
-						{
-							Id = cm.Id,
-							Fecha = cm.Fecha,
-							Estado = cm.Estado
-						}).ToList(),
+                        .Where(cm => cm.Fecha.Date == fecha.Date)
+                        .Select(cm => new CitaMedica
+                        {
+                            Id = cm.Id,
+                            Fecha = cm.Fecha,
+                            Estado = cm.Estado
+                        }).ToList(),
                     }).ToList();
 
             }
@@ -2282,15 +2282,31 @@ namespace DAL.DALs
 			}
 		}
 
-		#endregion
+		public List<Especialidad> GetEspecialidadesBySeguro(SeguroMedico seguro)
+		{
+			using (var _dbContext = new DBContext())
+			{
+				return _dbContext.Copagos
+					.Where(c => c.SeguroMedicoId == seguro.Id)
+					.Select(c => new Especialidad
+					{
+						Id = c.Especialidad.Id,
+						Nombre = c.Especialidad.Nombre,
+						Descripcion = c.Especialidad.Descripcion
+					})
+					.ToList();
+			}
+		}
+
+            #endregion
 
 
-		/**********************************************************/
-		/**                 Articulos                            **/
-		/**********************************************************/
-		#region FUNCTIONES ARTICULOS
+            /**********************************************************/
+            /**                 Articulos                            **/
+            /**********************************************************/
+            #region FUNCTIONES ARTICULOS
 
-		public List<Articulo> GetArticulos()
+            public List<Articulo> GetArticulos()
 		{
 			using (var _dbContext = new DBContext())
 			{

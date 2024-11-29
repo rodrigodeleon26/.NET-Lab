@@ -15,4 +15,9 @@ export class EspecialidadesService {
     console.log('Obteniendo especialidades');
     return this.http.get<any[]>(this.apiUrl);
   }
+
+  getEspecialidadesHabilitadas(cedula: string): Observable<any[]> {
+    console.log('Obteniendo especialidades habilitados');
+    return this.http.get<any[]>(`${this.apiUrl}/EspecialidadesHabilitados/${cedula}`);
+  }
 }

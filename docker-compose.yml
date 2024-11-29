@@ -115,61 +115,61 @@ services:
       - ./ssl/server.key:/etc/nginx/certs/server.key
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      # - citasmedicaswebapi
+      - citasmedicaswebapi
       - pacientewebapi
-      # - historiaclinicawebapi
+      - historiaclinicawebapi
       - administrativowebapi
 
-  # frontenda:
-  #   image: ${DOCKER_REGISTRY-}frontenda
-  #   build:
-  #     context: ./frontAdmin
-  #     dockerfile: Dockerfile  
-  #   ports:
-  #     - "5010:446"
-  #   volumes:
-  #     - ./frontAdmin/ssl/server.crt:/etc/nginx/certs/server.crt
-  #     - ./frontAdmin/ssl/server.key:/etc/nginx/certs/server.key
-  #     - ./frontAdmin/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-  #   depends_on:
-  #     - pacientewebapi
-  #     - citasmedicaswebapi
-  #     - historiaclinicawebapi
-  #     - administrativowebapi
+  frontenda:
+    image: ${DOCKER_REGISTRY-}frontenda
+    build:
+      context: ./frontAdmin
+      dockerfile: Dockerfile  
+    ports:
+      - "5010:446"
+    volumes:
+      - ./frontAdmin/ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./frontAdmin/ssl/server.key:/etc/nginx/certs/server.key
+      - ./frontAdmin/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pacientewebapi
+      - citasmedicaswebapi
+      - historiaclinicawebapi
+      - administrativowebapi
   
-  # frontendm:
-  #   image: ${DOCKER_REGISTRY-}frontendm
-  #   build:
-  #     context: ./frontMedico
-  #     dockerfile: Dockerfile  
-  #   ports:
-  #     - "5011:444"
-  #   volumes:
-  #     - ./frontMedico/ssl/server.crt:/etc/nginx/certs/server.crt
-  #     - ./frontMedico/ssl/server.key:/etc/nginx/certs/server.key
-  #     - ./frontMedico/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-  #   depends_on:
-  #     - pacientewebapi
-  #     - citasmedicaswebapi
-  #     - historiaclinicawebapi
-  #     - administrativowebapi
+  frontendm:
+    image: ${DOCKER_REGISTRY-}frontendm
+    build:
+      context: ./frontMedico
+      dockerfile: Dockerfile  
+    ports:
+      - "5011:444"
+    volumes:
+      - ./frontMedico/ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./frontMedico/ssl/server.key:/etc/nginx/certs/server.key
+      - ./frontMedico/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pacientewebapi
+      - citasmedicaswebapi
+      - historiaclinicawebapi
+      - administrativowebapi
   
-  # frontendc:
-  #   image: ${DOCKER_REGISTRY-}frontendc
-  #   build:
-  #     context: ./frontCliente
-  #     dockerfile: Dockerfile  
-  #   ports:
-  #     - "5012:445"
-  #   volumes:
-  #     - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
-  #     - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
-  #     - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
-  #   depends_on:
-  #     - pacientewebapi
-  #     - citasmedicaswebapi
-  #     - historiaclinicawebapi
-  #     - administrativowebapi
+  frontendc:
+    image: ${DOCKER_REGISTRY-}frontendc
+    build:
+      context: ./frontCliente
+      dockerfile: Dockerfile  
+    ports:
+      - "5012:445"
+    volumes:
+      - ./frontCliente/ssl/server.crt:/etc/nginx/certs/server.crt
+      - ./frontCliente/ssl/server.key:/etc/nginx/certs/server.key
+      - ./frontCliente/ssl/nginx-default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pacientewebapi
+      - citasmedicaswebapi
+      - historiaclinicawebapi
+      - administrativowebapi
       
   rabbitmq:
     image: rabbitmq:3-management-alpine

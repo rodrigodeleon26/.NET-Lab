@@ -1,3 +1,4 @@
+import { EspecialidadesService } from './../../../services/especialidades.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
@@ -34,6 +35,7 @@ export class AgendarseComponent implements OnInit{
   
   calendarios: any[] = [];
   articulos: any[] = [];
+  especialidades: any[] = [];
 
   calendarioSeleccionado: any;
   citaSeleccionada: any;
@@ -55,7 +57,8 @@ export class AgendarseComponent implements OnInit{
     private fb: FormBuilder,
     private articulosService: ArticulosService,
     private citaMedicaService: CitaMedicaService,
-    private pacienteService: PacienteService
+    private pacienteService: PacienteService,
+    private especialidadesService: EspecialidadesService
   ) { 
     const navigation = this.router.getCurrentNavigation();
     this.cedula = navigation?.extras.state?.['cedula'] || '';
@@ -68,7 +71,7 @@ export class AgendarseComponent implements OnInit{
     //this.horaActual = '10:30:00';
 
     this.buscarAgendaForm = this.fb.group({
-      articuloId: [0, [ Validators.required, Validators.min(1)]],
+      especialidadId: [0, [ Validators.required, Validators.min(1)]],
       fecha: ['', [ Validators.required]],
     });
   }
@@ -76,16 +79,17 @@ export class AgendarseComponent implements OnInit{
   ngOnInit(): void {
     this.loading = true;
 
-    this.articulosService.getArticulosDelSeguro(this.cedula).subscribe({
-      next: (articulos) => {
-        console.log(articulos);
-        this.articulos = articulos;
+    this.especialidadesService.getEspecialidadesHabilitadas(this.cedula).subscribe({
+      next: (especialidades) => {
+        console.log(especialidades);
+        this.especialidades = especialidades;
         this.loading = false;
       },
       error: (error) => {
         console.error(error);
       }
     });
+
     this.pacienteService.obtenerMisDatos(this.cedula).subscribe({
       next: (paciente) => {
         console.log(paciente);
@@ -112,7 +116,7 @@ export class AgendarseComponent implements OnInit{
     } 
 
     this.loading = true;
-    this.calendariosService.getCalendariosByArticuloFecha(this.cedula ,this.buscarAgendaForm.value.articuloId, this.buscarAgendaForm.value.fecha).subscribe({
+    this.calendariosService.getCalendariosByEspecialidadFecha(this.cedula ,this.buscarAgendaForm.value.especialidadId, this.buscarAgendaForm.value.fecha).subscribe({
       next: (calendariosRes) => {
         this.calendarios = [];
         calendariosRes.forEach(calendario => {
@@ -229,7 +233,7 @@ export class AgendarseComponent implements OnInit{
       this.citaOnline = false;
     }
     this.loading = true;
-    this.citaMedicaService.AgendarCita(this.cedula, this.calendarioSeleccionado, this.diaBuscado, this.citaSeleccionada.horaInicio, this.buscarAgendaForm.value.articuloId, this.citaOnline).subscribe({
+    this.citaMedicaService.AgendarCita(this.cedula, this.calendarioSeleccionado, this.diaBuscado, this.citaSeleccionada.horaInicio, this.buscarAgendaForm.value.especialidadId, this.citaOnline).subscribe({
       next: (cita) => {
         console.log(cita);
         this.toastr.success('Cita agendada correctamente.');

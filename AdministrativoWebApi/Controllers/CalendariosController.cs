@@ -217,5 +217,25 @@ namespace AdministrativoWebApi.Controllers
 
             return Ok(_blAdministrativo.getCalendariosByArticuloFecha(cedula, articuloId, fecha));
         }
+
+        //get calendarios por especialidad para una fecha
+        // GET api/<CalendariosController>/especialidad/5/fecha/2024-11-24
+        [HttpGet("{cedula}/especialidad/{especialidadId}/fecha/{fecha}")]
+        public IActionResult GetCalendariosByEspecialidadYFecha(string cedula, long especialidadId, string fecha)
+        {
+            if (fecha == null || especialidadId == 0)
+            {
+                return BadRequest();
+            }
+
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+
+            if (dniUsuarioAutenticado == null || dniUsuarioAutenticado != cedula)
+            {
+                return Forbid("No puedes ver la informacion de otro usuario");
+            }
+
+            return Ok(_blAdministrativo.GetCalendariosByEspecialidadYFecha(especialidadId, fecha));
+        }
     }
 }
