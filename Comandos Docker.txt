@@ -1,0 +1,44 @@
+docker login - Logeao a Docker Hub
+docker init - Inicializar Docker Swarm (solo una vez)
+
+Buildearlo en Visual Studio al menos una vez
+
+docker compose build - Hace build del proyecto de .NET
+docker compose push - Pushea las imagenes de la build para que Swarm las pueda usar
+
+docker stack deploy -c docker-swarm-vital.yml HCE - Inicia los servicios vitales.
+docker stack deploy -c docker-swarm-servicios.yml HCE - Inicia los microservicios.
+docker stack deploy -c docker-swarm-nginx.yml HCE - Inicia NGINX.
+docker stack rm NombreStack - Elimina el Stack de Docker Swarm
+
+docker network ls - Listar redes de docker
+docker service ls - Listar servicios docker
+docker service update --force NombreServicio - Reiniciar un servicio de Docker a manopla
+
+
+
+curl -v -X POST "http://localhost/auth/api/auth/login" \
+-H "Content-Type: application/json" \
+-d '{"Email":"admin@gmail.com","Password":"password123"}'
+
+
+
+SET QUOTED_IDENTIFIER ON;
+
+INSERT INTO [HCE].[dbo].[AspNetUsers]
+    ([Id], [UserName], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash],
+    [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled],
+    [LockoutEnd], [LockoutEnabled], [AccessFailedCount], [FullName], [PacienteId], [RefreshToken],
+    [RefreshTokenExpiryTime], [TwoFactorAuthKey], [MedicoId])
+VALUES
+    ('69225179-d778-4be3-ba42-0115fd48e356', 'admin@gmail.com', 'ADMIN@GMAIL.COM',
+    'admin@gmail.com', 'ADMIN@GMAIL.COM', 0,
+    'AQAAAAIAAYagAAAAED6YtqV7aeP4YxKznIo8BXPqHDyoHFtt0MvXVl78qXVguV4G3+eW3crKrEBCeujhWg==',
+    'T6K65UPRSTORQATAHHDAOALJYWCDYJ2T', '44c5a22e-dd3c-4d81-b12b-660eb5459616',
+    NULL, 0, 0, NULL, 1, 0, 'admin@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL);
+GO
+
+
+INSERT INTO [HCE].[dbo].[AspNetUserRoles] ([UserId], [RoleId]) 
+    VALUES
+    ('69225179-d778-4be3-ba42-0115fd48e356', 1);
