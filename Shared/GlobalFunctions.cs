@@ -12,7 +12,14 @@ namespace Shared
             "https://localhost:5011",
             "https://localhost:5012",
             "http://localhost:4200",
-            "https://localhost"
+            "https://localhost",
+            "https://localhost:443",
+            "http://10.0.0.2",
+            "https://10.0.0.2",
+            "http://localhost",
+            "https://nginx",
+            "http://nginx",
+            "https://nginx:443"
         };
 
         // Configuración SMTP

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+    - target: 1433
+      published: 1433
+      protocol: tcp
+      mode: ingress
+    environment:
+      - SA_PASSWORD=Abc*123!
+      - ACCEPT_EULA=Y
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+    - target: 5672
+      published: 5672
+      protocol: tcp
+      mode: ingress
+    - target: 15672
+      published: 15672
+      protocol: tcp
+      mode: ingress
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: overlay
+
+volumes:
+  sqlserver-data:
