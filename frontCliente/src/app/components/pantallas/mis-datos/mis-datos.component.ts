@@ -15,6 +15,9 @@ export class MisDatosComponent implements OnInit {
   cedula: string = '';
   pacienteForm: FormGroup;
   vinculadoConGoogle: boolean = false;
+  dobleFactorHabilitado: boolean = false;
+  qrCodeImage: string | null = null; 
+  isModalVisibleQrCode: boolean = false;
 
   maxDate: string;
 
@@ -42,19 +45,17 @@ export class MisDatosComponent implements OnInit {
       telefono: [''],
       direccion: [''],
       fechaDeNacimiento: [''],
-      dobleFactor: [this.authService.getTwoFactorEnabledStatus()] // Inicializa el control de doble factor de autenticación
     });
 
     const today = new Date();
     this.maxDate = today.toISOString().split('T')[0];
+    this.dobleFactorHabilitado = this.authService.getTwoFactorEnabledStatus();
   }
 
   ngOnInit(): void {
     this.loading = true;
-    console.log('entre');
     this.pacienteService.obtenerMisDatos(this.cedula).subscribe(
       (response) => {
-        console.log(response);
         this.pacienteForm.patchValue(response);
         if (response.googleToken !== null) {
           this.vinculadoConGoogle = true;
@@ -82,8 +83,6 @@ export class MisDatosComponent implements OnInit {
     }
 
     if (!this.pacienteForm.valid) {
-      console.log('Formulario no válido:', this.pacienteForm);
-      console.log('Errores del formulario:', this.pacienteForm.errors);
       Object.keys(this.pacienteForm.controls).forEach(key => {
         const controlErrors = this.pacienteForm.get(key)?.errors;
         if (controlErrors != null) {
@@ -99,71 +98,61 @@ export class MisDatosComponent implements OnInit {
     }
 
     this.loading = true;
-    const email = this.authService.getEmail();
-    const currentTwoFactorStatus = this.authService.getTwoFactorEnabledStatus();
-    const newTwoFactorStatus = this.pacienteForm.get('dobleFactor')?.value;
 
-    const updateTwoFactorAuth = new Promise<void>((resolve, reject) => {
-      if (newTwoFactorStatus !== currentTwoFactorStatus) {
-        if (newTwoFactorStatus) {
-          this.authService.enableTwoFactorAuth(email).subscribe({
-            next: (response: any) => {
-              this.authService.setTwoFactorAuthenticated(true);
-              this.authService.saveToken(response.tokens.token, response.tokens.refreshToken);
-              this.toastr.success(response.message, 'Éxito');
-              resolve();
-            },
-            error: (error) => {
-              this.toastr.error('Error al habilitar el doble factor de autenticación', 'Error');
-              console.error('Error al habilitar el doble factor de autenticación:', error);
-              reject(error);
-            }
-          });
+    this.pacienteService.actualizarMisDatos(this.cedula, this.pacienteForm.getRawValue()).subscribe(
+      (response) => {
+        this.pacienteForm.patchValue(response);
+        this.loading = false;
+        this.toastr.success('Datos actualizados correctamente.');
+      },
+      (error) => {
+        if (error.error?.includes("No puedes actualizar la informacion de otro paciente")) {
+          this.toastr.error('No puedes actualizar la información de otro paciente', 'Error');
+          this.router.navigate(['/inicio']);
         } else {
-          this.authService.disableTwoFactorAuth(email).subscribe({
-            next: (response: any) => {
-              this.authService.setTwoFactorAuthenticated(false);
-              this.authService.saveToken(response.tokens.token, response.tokens.refreshToken);
-              this.toastr.success(response.message, 'Éxito');
-              resolve();
-            },
-            error: (error) => {
-              this.toastr.error('Error al deshabilitar el doble factor de autenticación', 'Error');
-              console.error('Error al deshabilitar el doble factor de autenticación:', error);
-              reject(error);
-            }
-          });
-        }
-      } else {
-        resolve();
-      }
-    });
-
-    updateTwoFactorAuth.then(() => {
-      this.pacienteService.actualizarMisDatos(this.cedula, this.pacienteForm.getRawValue()).subscribe(
-        (response) => {
-          this.pacienteForm.patchValue(response);
           this.loading = false;
-          this.toastr.success('Datos actualizados correctamente.');
+          this.toastr.error('Ocurrió un error al actualizar los datos.');
+        }
+      }
+    );
+  }
+
+  agregar2FA(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const isChecked = inputElement.checked;
+    const email = this.authService.getEmail();
+    
+    if (isChecked) {
+      this.loading = true;
+      this.authService.enableTwoFactorAuth(email).subscribe(
+        (response: any) => {
+          this.dobleFactorHabilitado = true;
+          this.authService.saveToken(response.tokens.token, response.tokens.refreshToken);
+          this.qrCodeImage = response.qrCodeImage;
+          this.loading = false;
+          this.toastr.success('Doble factor de autenticación habilitado.');
+          this.isModalVisibleQrCode = true; // Mostrar el modal
         },
         (error) => {
-          if (
-            error.error?.includes("No puedes actualizar la informacion de otro paciente") ||
-            error.message?.includes("No puedes actualizar la informacion de otro paciente")
-          ) {
-            // Redirige a la ruta de inicio.
-            this.toastr.error('No puedes actualizar la informacion de otro paciente', 'Error');
-            this.router.navigate(['/inicio']);
-          } else {
-            this.loading = false;
-            this.toastr.error('Ocurrió un error al actualizar los datos.');
-          }
+          this.loading = false;
+          this.toastr.error('Ocurrió un error al habilitar el doble factor de autenticación.');
         }
       );
-    }).catch((error) => {
-      this.loading = false;
-      console.error('Error al actualizar el doble factor de autenticación:', error);
-    });
+    } else {
+      this.loading = true;
+      this.authService.disableTwoFactorAuth(email).subscribe(
+        (response: any) => {
+          this.dobleFactorHabilitado = false;
+          this.authService.saveToken(response.tokens.token, response.tokens.refreshToken);
+          this.loading = false;
+          this.toastr.success('Doble factor de autenticación deshabilitado.');
+        },
+        (error) => {
+          this.loading = false;
+          this.toastr.error('Ocurrió un error al deshabilitar el doble factor de autenticación.');
+        }
+      );
+    }
   }
 
   vincularConGoogle(event: Event): void {
