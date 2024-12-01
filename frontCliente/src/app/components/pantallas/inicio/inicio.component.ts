@@ -20,6 +20,8 @@ export class InicioComponent implements OnInit {
   ngOnInit(): void {
     const claims = this.authService.getClaims();
     this.cedula = claims ? claims.cedula : null;
+
+    console.log(this.authService.getClaims());
   }
 
   verHistoriaClinica(): void {

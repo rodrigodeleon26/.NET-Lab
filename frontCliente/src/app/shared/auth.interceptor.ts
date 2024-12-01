@@ -13,8 +13,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService, 
     private router: Router, 
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.authService.getToken();
@@ -53,7 +52,15 @@ export class AuthInterceptor implements HttpInterceptor {
         })
       );
     } else {
-      return next.handle(req);
+      return next.handle(req).pipe(
+        catchError((err: HttpErrorResponse) => {
+          if (err.status === 401) {
+            this.toastr.info('Su sesión ha expirado, por favor inicie sesión nuevamente', 'Sesión expirada');
+            this.router.navigateByUrl('/login');
+          }
+          return throwError(err);
+        })
+      );
     }
   }
 }
