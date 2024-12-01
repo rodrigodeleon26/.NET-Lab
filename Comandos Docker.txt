@@ -16,7 +16,7 @@ docker service ls - Listar servicios docker
 docker service update --force NombreServicio - Reiniciar un servicio de Docker a manopla
 
 ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt
-ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt --host 127.0.0.1 --port 4200
+ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt --port 4200
 
 curl -v -X POST "http://localhost/auth/api/auth/login" \
 -H "Content-Type: application/json" \
