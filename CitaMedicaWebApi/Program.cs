@@ -41,7 +41,9 @@ try
 
 
     // Este comentario se borra
+    Console.WriteLine("CITA ANTES DEL RUN");
     app.Run();
+    Console.WriteLine("CITA DESPUES DEL RUN");
 }
 catch (Exception ex)
 {

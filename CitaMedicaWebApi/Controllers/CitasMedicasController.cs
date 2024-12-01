@@ -206,13 +206,17 @@ namespace PacienteWebApi.Controllers
         }
 
         //POST api/<CitasMedicasController>/agendar
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [HttpPost("agendar")]
         [ProducesResponseType(typeof(CitaMedica), 201)]
         [ProducesResponseType(400)]
         public IActionResult AgendarCita([FromBody] Request_DatosAgendarCita datosCita)
         {
+            Console.WriteLine("entre al conrolador");
+
             if (datosCita == null)
             {
+                Console.WriteLine("datosCita Null");
                 return BadRequest();
             }
 
@@ -220,11 +224,12 @@ namespace PacienteWebApi.Controllers
             long calendarioId = datosCita.CalendarioId;
             string fecha = datosCita.fecha;
             string hora = datosCita.hora;
-            long articuloId = datosCita.ArticuloId;
+            long especialidadId = datosCita.EspecialidadId;
             bool citaOnline = datosCita.CitaOnline;
 
-            if (cedula == null || calendarioId == 0 || fecha == null || hora == null || articuloId == 0)
+            if (cedula == null || calendarioId == 0 || fecha == null || hora == null || especialidadId == 0)
             {
+                Console.WriteLine("algun dato en null");
                 return BadRequest();
             }
 
@@ -247,13 +252,13 @@ namespace PacienteWebApi.Controllers
             }
 
             SeguroMedico seguro = paciente.Contrato.SeguroMedico;
-            Calendario calendario = _blCitasMedicas.getCalendarioById(calendarioId);
+            //Calendario calendario = _blCitasMedicas.getCalendarioById(calendarioId);
 
             Copago copagoSearch = new Copago()
             {
                 SeguroMedico = new SeguroMedico() { Id = seguro.Id },
-                Especialidad = new Especialidad() { Id = calendario.Especialidad.Id },
-                Articulo = new Articulo() { Id = articuloId },
+                Especialidad = new Especialidad() { Id = especialidadId },
+                Articulo = new Articulo() { Id = 0 },
             };
 
             long copagoId = _blCitasMedicas.getCopagoBySeguroEspecialidadArticulo(copagoSearch);

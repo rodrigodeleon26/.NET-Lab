@@ -11,23 +11,25 @@ import { PacientesComponent } from './components/pacientes/pacientes.component';
 import { ContratosComponent } from './components/contratos/contratos.component';
 import { CalendariosComponent } from './components/calendarios/calendarios.component';
 import { FacturasComponent } from './components/facturas/facturas.component';
+import { InicioComponent } from './components/inicio/inicio.component';
+import { authGuard } from './shared/auth.guard';
   
 const routes: Routes = [
   { path: 'login', component: LoginComponent},
 
-  { path: '', redirectTo: '/login', pathMatch: 'full'},
-  //{ path: '**', redirectTo: '/login'},
-  { path: 'generarMedico', component: GenerarMedicoComponent },
-  { path: 'generarMedico/:id', component: GenerarMedicoComponent },
-  { path: 'listMedicos', component: ListMedicosComponent },
-  { path: 'especialidades', component: AddEspecialidadComponent },
-  { path: 'consultorios', component: ConsultoriosComponent },
-  { path: 'copagos', component: CopagosComponent },
-  { path: 'articulos', component: ArticulosComponent },//temporal quizas
-  { path: 'pacientes', component: PacientesComponent},
-  { path: 'contratos', component: ContratosComponent},
-  { path: 'calendarios', component: CalendariosComponent },
-  { path: 'facturas', component: FacturasComponent },
+  { path: '', redirectTo: '/inicio', pathMatch: 'full'},
+  { path: 'inicio', component: InicioComponent, canActivate: [authGuard] },
+  { path: 'generarMedico', component: GenerarMedicoComponent, canActivate: [authGuard] },
+  { path: 'generarMedico/:id', component: GenerarMedicoComponent, canActivate: [authGuard] },
+  { path: 'listMedicos', component: ListMedicosComponent, canActivate: [authGuard] },
+  { path: 'especialidades', component: AddEspecialidadComponent, canActivate: [authGuard] },
+  { path: 'consultorios', component: ConsultoriosComponent, canActivate: [authGuard] },
+  { path: 'copagos', component: CopagosComponent, canActivate: [authGuard] },
+  { path: 'articulos', component: ArticulosComponent, canActivate: [authGuard] },//temporal quizas
+  { path: 'pacientes', component: PacientesComponent, canActivate: [authGuard] },
+  { path: 'contratos', component: ContratosComponent, canActivate: [authGuard] },
+  { path: 'calendarios', component: CalendariosComponent, canActivate: [authGuard] },
+  { path: 'facturas', component: FacturasComponent, canActivate: [authGuard] },
 ];
 
 @NgModule({

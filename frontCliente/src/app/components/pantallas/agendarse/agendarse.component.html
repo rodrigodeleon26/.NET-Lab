@@ -4,41 +4,47 @@
         <p class="text-white text-lg">Cargando...</p>
     </div>
     <div class="flex justify-center">
-        <div class="w-full md:max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">     
+        <div class="w-full md:max-w-6xl bg-gray-claro rounded-lg shadow-xl overflow-hidden">
             <div *ngIf="!loading" class="bg-blue-oscuro p-6 text-white">
                 <h1 class="text-3xl font-bold text-center">Agendarse</h1>
                 <p class="text-center text-sm mt-2">
-                    Selecciones un articulo y fecha para agendarse.
+                    Selecciones una especialidad y fecha para agendarse.
                 </p>
             </div>
             <div class="py-4 space-y-4">
 
-                <!-- seleccion de articulo y fecha -->
-                <div>
-                    <form [formGroup]="buscarAgendaForm" (ngSubmit)="BuscarAgenda()" class="flex justify-center space-x-8">
-
-                        <select name="articulos" id="articulosSelect" formControlName="articuloId" class="p-2 rounded border border-gray-200 shadow">
-                            <option selected disabled value="0">Seleccione un Articulo</option>
-                            <option *ngFor="let articulo of articulos" [value]="articulo.id">{{articulo.nombre}}</option>
+                <!-- seleccion de especialidad y fecha -->
+                <div class="w-full px-4">
+                    <form [formGroup]="buscarAgendaForm" (ngSubmit)="BuscarAgenda()"
+                        class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+                        <select name="especialidades" id="especialidadesSelect" formControlName="especialidadId"
+                            class="p-2 rounded border border-gray-200 shadow w-full md:w-auto">
+                            <option selected disabled value="0">Seleccione una especialidad</option>
+                            <option *ngFor="let especialidad of especialidades" [value]="especialidad.id">
+                                {{especialidad.nombre}}</option>
                         </select>
-        
-                        <input type="date" id="fecha" name="fecha" formControlName="fecha" [min]="today" class="rounded p-2 shadow border border-gray-200">
 
-                        <button type="submit" class="px-6 py-2 h-fit bg-blue-oscuro text-white rounded-lg shadow-md hover:bg-blue-intermedio transition-colors">Buscar</button>
+                        <div class="flex sm:flex-row items-center justify-center space-x-8">
+                            <input type="date" id="fecha" name="fecha" formControlName="fecha" [min]="today"
+                                class="rounded p-2 shadow border border-gray-200 w-full md:w-auto">
+    
+                            <button type="submit"
+                                class="px-6 py-2 h-full bg-blue-oscuro text-white rounded-lg shadow-md hover:bg-blue-intermedio transition-colors w-full md:w-auto">Buscar</button>
+                        </div>
                     </form>
                 </div>
-            
+
                 <div *ngIf="this.calendarios.length == 0">
                     <hr class=" border-gray-300">
                 </div>
 
                 <!-- Listado de calendarios -->
                 <div>
-                    
+
                     <div *ngIf="this.calendarios.length == 0" class="text-center">
                         <p>No hay calendarios para los parametros seleccionados</p>
                     </div>
-                    
+
                     <div *ngFor="let calendario of calendarios">
 
                         <div>
@@ -47,7 +53,8 @@
 
                         <div class="p-4 flex justify-between items-center">
                             <div>
-                                <h2 class="text-xl font-bold">Medico: {{calendario.medico.nombres}} {{calendario.medico.apellidos}}</h2>
+                                <h2 class="text-xl font-bold">Medico: {{calendario.medico.nombres}}
+                                    {{calendario.medico.apellidos}}</h2>
                                 <p class="text-sm">Especialidad: {{calendario.especialidad.nombre}}</p>
                                 <p class="text-sm">{{calendario.fecha | date: 'dd/MM/yyyy'}}</p>
                                 <p class="text-sm">Horario: {{calendario.horaInicio}} - {{calendario.horaFin}}</p>
@@ -57,17 +64,17 @@
                             </div>
                             <div class="flex ">
                                 <!-- linea de tiempo con las citas -->
-                                <div *ngFor="let cita of calendario.citasMedicas; let i = index" 
-                                [ngClass]="{
+                                <div *ngFor="let cita of calendario.citasMedicas; let i = index"
+                                    [ngClass]="{
                                     'rounded-s-md': i === 0,
                                     'rounded-e-md': i === calendario.citasMedicas.length - 1,
                                     'bg-green-300 hover:bg-green-400 cursor-pointer': (cita.estado === 'Disponible' || cita.estado === 'Cancelada') && !HoraMenorAHoraActual(cita.horaInicio), 
                                     'bg-gray-300 hover:bg-gray-400 cursor-not-allowed': cita.estado === 'Completada' || cita.estado === 'NoAsistida' || cita.estado === 'Agendada' || HoraMenorAHoraActual(cita.horaInicio)}"
                                     class="p-2 h-10 min-w-10 w-12 flex items-center justify-center border border-gray-400 transition-colors"
                                     (click)="selectParaAgenda(calendario, cita)">
-                                    {{cita.horaInicio.split(':')[0]}}:{{cita.horaInicio.split(':')[1]}}                                    
-                                </div> 
-                                
+                                    {{cita.horaInicio.split(':')[0]}}:{{cita.horaInicio.split(':')[1]}}
+                                </div>
+
                             </div>
                             <!-- <div class="flex justify-end mt-4">
                                 <button class="px-6 py-2 h-fit bg-blue-oscuro text-white rounded-lg shadow-md hover:bg-blue-intermedio transition-colors">Agendar</button>
@@ -81,44 +88,41 @@
 </div>
 
 <!-- MODAL BORRAR CALENDARIO-->
-<div *ngIf="isModalVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" (click)="cancelarAgenda()">
-	<div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full space-y-2" (click)="$event.stopPropagation()">
+<div *ngIf="isModalVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+    (click)="cancelarAgenda()">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full space-y-2" (click)="$event.stopPropagation()">
         <p class="my-2 text-2xl">Agendar cita para {{this.citaSeleccionada.horaInicio}}</p>
         <hr class=" border-gray-300">
 
         <div class="">
             <div>
-                <p><strong>Medico:</strong> {{calendarioSeleccionado.medico.nombres}} {{calendarioSeleccionado.medico.apellidos}}</p>
+                <p><strong>Medico:</strong> {{calendarioSeleccionado.medico.nombres}}
+                    {{calendarioSeleccionado.medico.apellidos}}</p>
                 <p><strong>Fecha:</strong> {{this.diaBuscado| date: 'dd/MM/yyyy'}}</p>
-                <p><strong>Hora:</strong> {{this.citaSeleccionada.horaInicio}} - {{this.citaSeleccionada.horaFin}}</p>     
+                <p><strong>Hora:</strong> {{this.citaSeleccionada.horaInicio}} - {{this.citaSeleccionada.horaFin}}</p>
             </div>
             <div class="space-x-2 flex">
                 <label for="tipo" class="block"><strong>Tipo:</strong></label>
                 <label class="flex items-center space-x-2">
-                    <input 
-                        type="checkbox" 
-                        [(ngModel)]="isPresencial" 
-                        (change)="toggleCheckbox('presencial')" 
-                        [disabled]="!vinculado"
-                        [checked]="isPresencial" 
-                        class="form-checkbox text-blue-oscuro" />
+                    <input type="checkbox" [(ngModel)]="isPresencial" (change)="toggleCheckbox('presencial')"
+                        [disabled]="!vinculado" [checked]="isPresencial" class="form-checkbox text-blue-oscuro" />
                     <span>Presencial</span>
                 </label>
                 <label class="flex items-center space-x-2">
-                    <input 
-                        type="checkbox" 
-                        [(ngModel)]="isOnline" 
-                        [disabled]="!vinculado"
-                        (change)="toggleCheckbox('online')" 
-                        class="form-checkbox text-blue-oscuro" />
+                    <input type="checkbox" [(ngModel)]="isOnline" [disabled]="!vinculado"
+                        (change)="toggleCheckbox('online')" class="form-checkbox text-blue-oscuro" />
                     <span>Online</span>
                 </label>
             </div>
-            <p *ngIf="!vinculado" class="text-red-500 text-sm">Debe vincularse con google para cita online<br>En la pantalla mis datos tiene la opción</p>
+            <p *ngIf="!vinculado" class="text-red-500 text-sm">Debe vincularse con google para cita online<br>En la
+                pantalla mis datos tiene la opción</p>
         </div>
-		<div class="flex justify-end space-x-4">
-			<button class="bg-blue-oscuro text-white rounded-lg shadow-md hover:bg-blue-intermedio transition-colors font-bold py-2 px-4" (click)="confirmarAgenda()">Confirmar</button>
-			<button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors" (click)="cancelarAgenda()">Cerrar</button>
-		</div>
-	</div>
+        <div class="flex justify-end space-x-4">
+            <button
+                class="bg-blue-oscuro text-white rounded-lg shadow-md hover:bg-blue-intermedio transition-colors font-bold py-2 px-4"
+                (click)="confirmarAgenda()">Confirmar</button>
+            <button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition-colors"
+                (click)="cancelarAgenda()">Cerrar</button>
+        </div>
+    </div>
 </div>

@@ -810,10 +810,148 @@ namespace BL.BLs
 
 		public void updateCalendario(Calendario calendario)
 		{
+			var calViejo = getCalendarioById(calendario.Id);
+
+			if (calViejo.Consultorio.Id != calendario.Consultorio.Id)
+			{
+				//se modifico el consultorio
+				notificarCambiosConsultorio(calendario.Id, calendario.Consultorio.Id);
+			}
+
+			if(calViejo.HoraInicio != calendario.HoraInicio || calViejo.CantidadCitas != calendario.CantidadCitas || calViejo.TiempoCita != calendario.TiempoCita)
+			{
+				AnalizarCitasConHorariosNuevos(calendario, calViejo);
+			}
+
 			dal.UpdateCalendario(calendario);
 		}
 
-		public async void deleteCalendario(long calendarioId)
+		public async void notificarCambiosConsultorio(long calendarioId, long consultorioId)
+		{
+			//notifico a todos los pacientes agendados que el calendario cambio de consultorio
+			Consultorio consultorio = getConsultorioById(consultorioId);
+            var citas = getCitasMedicas()
+                .Where(c => c.Calendario.Id == calendarioId)
+                .Where(c => c.Estado == "Agendada")
+                .ToList();
+            Console.WriteLine("cantidad de citas a notificar" + citas.Count);
+            foreach (var cita in citas)
+            {
+                //Creo la notificacion para el paciente
+                if (cita.PacienteId != null)
+                {
+                    var notificacion = new Notificacion()
+                    {
+                        Mensaje = $"Su Cita medica para la fecha {cita.Fecha} ha cambiado de consultorio, tendrá que asistir al consultorio {consultorio.Numero}, piso {consultorio.Piso}",
+                        FechaEnvio = DateTime.Now,
+                        Visto = false
+                    };
+                    string id = (string)cita.PacienteId;
+                    string IdDesencriptada = AES.Decrypt(id);
+                    notificacion.Paciente.Id = long.Parse(IdDesencriptada);
+                    //dal_Paciente.AddNotificacion(notificacion, id);
+
+
+                    //uso la coneccion a rabbimq para enviar la notificacion a la cola
+                    try
+                    {
+                        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notificacion));
+
+                        //envio la notificacion por rabbit
+                        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "Notificaciones", body: body);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Error al enviar notificación: {ex.Message}");
+                        throw;
+                    }
+
+                }
+            }
+
+        }
+
+        public async void AnalizarCitasConHorariosNuevos(Calendario calNuevo, Calendario calViejo)
+        {
+            var citas = getCitasMedicas()
+                .Where(c => c.Calendario.Id == calNuevo.Id)
+                .Where(c => c.Estado == "Agendada")
+                .ToList();
+            Console.WriteLine("cantidad de citas a borrar: " + citas.Count);
+
+            TimeSpan horaInicio = calNuevo.HoraInicio;
+			TimeSpan horaFin = calNuevo.HoraFin;
+			int tiempoCita = calNuevo.TiempoCita;
+			int cantCitas = calNuevo.CantidadCitas;
+
+            foreach (var cita in citas)
+            {
+                bool cambioHora = false;
+                //verificar la hora inicio sigue coincidiendo con los horarios de el calendario nuevo
+                DateTime fecha = cita.Fecha;
+                TimeSpan horaCita = fecha.TimeOfDay;
+
+                //verificar que la hora de la cita este dentro del rango de horarios del calendario
+                if (horaCita < horaInicio || horaCita > horaFin)
+                {
+                    cambioHora = true;
+                }
+
+				//verificar que la hora de la cita es una hora valida dado el timepo y cantidad de citas
+				TimeSpan horaInicioFor = horaInicio;
+				cambioHora = true;
+				for (int i = 0; i < cantCitas; i++)
+				{
+					//ir sumando la duracion de la cita a la hora de inicio para verificar si la hora de la cita es valida
+					if(horaCita == horaInicioFor)
+                    {
+                        cambioHora = false;
+                        break;
+                    }
+                    horaInicioFor = horaInicioFor.Add(new TimeSpan(0, tiempoCita, 0));
+                }
+
+
+                if (cambioHora)
+                {
+                    cita.Estado = "Cancelada";
+                    updateCitaMedica(cita);
+
+                    //Creo la notificacion para el paciente
+                    if (cita.PacienteId != null)
+                    {
+                        var notificacion = new Notificacion()
+                        {
+                            Mensaje = $"Su Cita medica para la fecha {cita.Fecha} debidó ser cancelada por cambios en el calendario. Por favor agendece nuevamente.",
+                            FechaEnvio = DateTime.Now,
+                            Visto = false
+                        };
+                        string id = (string)cita.PacienteId;
+                        string IdDesencriptada = AES.Decrypt(id);
+                        notificacion.Paciente.Id = long.Parse(IdDesencriptada);
+                        //dal_Paciente.AddNotificacion(notificacion, id);
+
+
+                        //uso la coneccion a rabbimq para enviar la notificacion a la cola
+                        try
+                        {
+                            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notificacion));
+
+                            //envio la notificacion por rabbit
+                            await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "Notificaciones", body: body);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"Error al enviar notificación: {ex.Message}");
+                            throw;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        public async void deleteCalendario(long calendarioId)
 		{
 			//borrar el calendario y cancelar las citas asociadas
 			var citas = getCitasMedicas()
@@ -929,7 +1067,6 @@ namespace BL.BLs
 					}
 				}
 			}
-			_logger.LogInformation("saliendo sin conflictos");
 			return false;
 		}
 
@@ -1036,11 +1173,24 @@ namespace BL.BLs
 			foreach(var especialidad in especialidadesParaElArticulo)
 			{
 				//ir agregando los calendarios a la lista
-                var calendarios = dal.GetCalendariosByEspecialidadFecha(especialidad.Id, fechaDate, dia);
+                var calendarios = dal.GetCalendariosByEspecialidadYFecha(especialidad.Id, fechaDate, dia);
                 calendariosParaELArticulo.AddRange(calendarios);
 			}
 
 			return calendariosParaELArticulo;
+        }
+
+        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, string fecha)
+        {
+            //segun la fecha conseguir el dia
+            DateTime fechaDate = DateTime.Parse(fecha);
+            string dia = fechaDate.ToString("dddd", new CultureInfo("es-UY"));
+            //poner la primera letra en mayuscula 
+            dia = char.ToUpper(dia[0]) + dia.Substring(1);
+
+            Console.WriteLine("Dia: " + dia);
+
+            return dal.GetCalendariosByEspecialidadYFecha(especialidadId, fechaDate, dia);
         }
 
         #endregion
@@ -1104,12 +1254,35 @@ namespace BL.BLs
 			dal.DeleteEspecialidad(id);
 		}
 
-		#endregion
+        public List<Especialidad> getEspecialidadesHabilitadas(string cedula)
+		{ 
+            Paciente paciente = getPacienteByDNI(cedula);
+            if (paciente == null)
+            {
+                return null;
+            }
 
-		//Articulos
-		#region ARTICULOS
+            Contrato contrato = paciente.Contrato;
+            if (contrato == null || !contrato.Activo)
+            {
+                return null;
+            }
 
-		public List<Articulo> getArticulos()
+            SeguroMedico seguro = contrato.SeguroMedico;
+            if (seguro == null)
+            {
+                return null;
+            }
+
+            return dal.GetEspecialidadesBySeguro(seguro);
+        }
+
+        #endregion
+
+        //Articulos
+        #region ARTICULOS
+
+        public List<Articulo> getArticulos()
 		{
 			return dal.GetArticulos();	
 		}

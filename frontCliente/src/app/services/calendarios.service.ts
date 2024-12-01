@@ -14,4 +14,9 @@ export class CalendariosService {
     console.log('Obteniendo especialidades');
     return this.http.get<any[]>(`${this.apiUrl}/${cedula}/articulo/${articuloId}/fecha/${fecha}`);
   }
+
+  getCalendariosByEspecialidadFecha(cedula: string ,especialidadId: string, fecha: string): Observable<any[]> {
+    console.log('Obteniendo especialidades');
+    return this.http.get<any[]>(`${this.apiUrl}/${cedula}/especialidad/${especialidadId}/fecha/${fecha}`);
+  }
 }

@@ -103,7 +103,7 @@ namespace DAL.IDALs
 		public void UpdateCalendario(Calendario calendario);
 		public void DeleteCalendario(long id);
         public List<Calendario> GetCalendariosFiltrados(long medicoId, string filtroEspecialidad, string filtroDia, string filtroHoraInicio);
-		public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia);
+        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia);
 
         // Consultorios
         public List<Consultorio> GetConsultorios();
@@ -119,6 +119,7 @@ namespace DAL.IDALs
 		public void UpdateEspecialidad(Especialidad especialidad);
 		public void DeleteEspecialidad(long id);
 		public List<Especialidad> GetEspecialidadesByArticuloSeguro(long articuloId, long seguroId);
+		public List<Especialidad> GetEspecialidadesBySeguro(SeguroMedico seguro);
 
         // Articulo
         public List<Articulo> GetArticulos();

@@ -903,7 +903,7 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
-        public List<Calendario> GetCalendariosByEspecialidadFecha(long especialidadId, DateTime fecha, string dia)
+        public List<Calendario> GetCalendariosByEspecialidadYFecha(long especialidadId, DateTime fecha, string dia)
         {
             throw new NotImplementedException();
         }
@@ -914,6 +914,11 @@ namespace DAL.DALs
         }
 
         public List<Especialidad> GetEspecialidadesByArticuloSeguro(long articuloId, long seguroId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Especialidad> GetEspecialidadesBySeguro(SeguroMedico seguro)
         {
             throw new NotImplementedException();
         }
