@@ -94,7 +94,7 @@ namespace BL.BLs
             foreach (var cita in citasMedicas)
             {
                 var consulta = dalHistoriasClinicas.getConsultaMedica(cita.ConsultaMedicaId ?? 0);
-                Console.WriteLine($"Consulta encontrada: {consulta?.Descripcion}");
+                //Console.WriteLine($"Consulta encontrada: {consulta?.Descripcion}");
                 consultasMedicasConCitas.Add(new ConsultaMedicaConCitaDTO
                 {
                     ConsultaMedica = consulta,

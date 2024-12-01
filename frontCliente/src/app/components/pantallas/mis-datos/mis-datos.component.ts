@@ -179,7 +179,7 @@ export class MisDatosComponent implements OnInit {
         "include_granted_scopes=true&" +
         "response_type=code&" +
         "client_id=48134233839-ikthbqdo5edbjju2s0k0c90aab40n7f1.apps.googleusercontent.com&" +
-        "redirect_uri=https://localhost:5001/api/Pacientes/oauth2callback&" +
+        "redirect_uri=https://localhost/paciente/api/Pacientes/oauth2callback&" +
         "state=" + patientId;
       console.log(googleAuthUrl);
       window.location.href = googleAuthUrl;

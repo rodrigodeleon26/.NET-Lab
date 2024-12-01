@@ -176,7 +176,7 @@ namespace AuthWebApi.Controllers
 
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var encodedToken = WebUtility.UrlEncode(token);
-            var confirmationLink = $"http://localhost:4200/confirmEmail?&token={encodedToken}";
+            var confirmationLink = $"https://localhost:4200/confirmEmail?&token={encodedToken}";
 
             var htmlMessage = $@"
             <h1>Confirmación de Email</h1>
@@ -231,7 +231,7 @@ namespace AuthWebApi.Controllers
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
             var encodedEmail = WebUtility.UrlEncode(user.Email);
             var encodedToken = WebUtility.UrlEncode(token);
-            var resetLink = $"http://localhost:4200/resetPassword?email={encodedEmail}&token={encodedToken}";
+            var resetLink = $"https://localhost:4200/resetPassword?email={encodedEmail}&token={encodedToken}";
 
             var htmlMessage = $@"
             <h1>Restablecimiento de Contraseña</h1>

@@ -168,7 +168,7 @@ namespace AdministrativoWebApi.Controllers
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var encodedEmail = WebUtility.UrlEncode(user.Email);
                 var encodedToken = WebUtility.UrlEncode(token);
-                var resetLink = $"http://localhost:4201/cliente/resetPassword?email={encodedEmail}&token={encodedToken}";
+                var resetLink = $"https://localhost:4200/cliente/resetPassword?email={encodedEmail}&token={encodedToken}";
 
                 // Construir el mensaje de bienvenida
                 var htmlMessage = $@"

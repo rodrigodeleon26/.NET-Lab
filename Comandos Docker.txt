@@ -1,5 +1,5 @@
 docker login - Logeao a Docker Hub
-docker init - Inicializar Docker Swarm (solo una vez)
+docker swarm init - Inicializar Docker Swarm (solo una vez)
 
 Buildearlo en Visual Studio al menos una vez
 
@@ -9,13 +9,14 @@ docker compose push - Pushea las imagenes de la build para que Swarm las pueda u
 docker stack deploy -c docker-swarm-vital.yml HCE - Inicia los servicios vitales.
 docker stack deploy -c docker-swarm-servicios.yml HCE - Inicia los microservicios.
 docker stack deploy -c docker-swarm-nginx.yml HCE - Inicia NGINX.
-docker stack rm NombreStack - Elimina el Stack de Docker Swarm
+docker stack rm HCE - Elimina el Stack de Docker Swarm
 
 docker network ls - Listar redes de docker
 docker service ls - Listar servicios docker
 docker service update --force NombreServicio - Reiniciar un servicio de Docker a manopla
 
-
+ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt
+ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt --host 127.0.0.1 --port 4200
 
 curl -v -X POST "http://localhost/auth/api/auth/login" \
 -H "Content-Type: application/json" \

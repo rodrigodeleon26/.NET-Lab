@@ -13,7 +13,7 @@ namespace Shared
         private static readonly string _tokenEndpoint = "https://oauth2.googleapis.com/token";
         private static readonly string _clientId = "48134233839-ikthbqdo5edbjju2s0k0c90aab40n7f1.apps.googleusercontent.com";
         private static readonly string _clientSecret = "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";
-        private static readonly string _redirectUri = "https://localhost:5001/api/Pacientes/oauth2callback";
+        private static readonly string _redirectUri = "https://localhost/paciente/api/Pacientes/oauth2callback";
 
         public static async Task<(string accessToken, string refreshToken)> GetAccessToken(string code)
         {

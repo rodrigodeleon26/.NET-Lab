@@ -225,7 +225,7 @@ namespace PacienteWebApi.Controllers
                 var patientId = state;
                 var cedula = await _blPacientes.GetAccessToken(patientId, code);
 
-                var frontendUrl = $"http://localhost:4200/cliente/mis-datos?cedula={cedula}";
+                var frontendUrl = $"https://localhost:4200/cliente/mis-datos?cedula={cedula}";
                 return Redirect(frontendUrl);
             }
             catch (Exception ex)
