@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main-docker-swarm" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main-docker-swarm" ]
 
 jobs:
   build:
@@ -32,3 +32,31 @@ jobs:
         name: dotnet-results-${{ matrix.dotnet-version }}
         path: TestResults-${{ matrix.dotnet-version }}
       if: always()
+
+  ###deploy: ##################### PENDIENTE DE DEPLOY ########################
+  ###  runs-on: ubuntu-latest
+  ###  needs: build  # Dependencia del job de build
+  ###  
+  ###  steps:
+  ###  # Clonar el repositorio (de nuevo para el job de deploy)
+  ###  - uses: actions/checkout@v4
+  ###
+  ###  # Configurar acceso al servidor de destino (SSH)
+  ###  - name: Setup SSH
+  ###    uses: webfactory/ssh-agent@v0.7.0
+  ###    with:
+  ###      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Llave privada para el acceso
+  ###
+  ###  # Desplegar la aplicación
+  ###  - name: Deploy to Server
+  ###    run: |
+  ###      scp -r ./HCE/bin/Release/net8.0/* user@server:/var/www/HCE  # Copia binarios al servidor
+  ###      ssh user@server "sudo systemctl restart hce.service"         # Reinicia el servicio en el servidor
+  ###    env:
+  ###      HOST: ${{ secrets.HOST }}
+  ###      USERNAME: ${{ secrets.USERNAME }}
+  ###      PASSWORD: ${{ secrets.PASSWORD }}
+  ###
+  ###  # Notificar el éxito del despliegue (opcional)
+  ###  - name: Notify Deployment Success
+  ###    run: echo "Deployment completed successfully!"
