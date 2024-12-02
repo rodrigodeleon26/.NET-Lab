@@ -14,10 +14,10 @@ services:
       mode: ingress
     environment:
       - aspnetcore_environment=development
-      - AES_KEY=1234567890123456
-      - AES_IV=1234567890123456
-      - S3_KEY=AKIAT4GVRXPXDNJ4G4HQ
-      - S3_SECRET=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
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
     deploy:
       replicas: 2
       restart_policy:
@@ -41,10 +41,10 @@ services:
       mode: ingress
     environment:
       - aspnetcore_environment=development
-      - AES_KEY=1234567890123456
-      - AES_IV=1234567890123456
-      - S3_KEY=AKIAT4GVRXPXDNJ4G4HQ
-      - S3_SECRET=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
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
     deploy:
       replicas: 2
       restart_policy:
@@ -68,10 +68,10 @@ services:
       mode: ingress
     environment:
       - aspnetcore_environment=development
-      - AES_KEY=1234567890123456
-      - AES_IV=1234567890123456
-      - S3_KEY=AKIAT4GVRXPXDNJ4G4HQ
-      - S3_SECRET=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
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
     deploy:
       replicas: 2
       restart_policy:
@@ -95,10 +95,10 @@ services:
       mode: ingress
     environment:
       - aspnetcore_environment=development
-      - AES_KEY=1234567890123456
-      - AES_IV=1234567890123456
-      - S3_KEY=AKIAT4GVRXPXDNJ4G4HQ
-      - S3_SECRET=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
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
     deploy:
       replicas: 2
       restart_policy:
@@ -122,10 +122,10 @@ services:
       mode: ingress
     environment:
       - aspnetcore_environment=development
-      - AES_KEY=1234567890123456
-      - AES_IV=1234567890123456
-      - S3_KEY=AKIAT4GVRXPXDNJ4G4HQ
-      - S3_SECRET=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
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
     deploy:
       replicas: 3
       restart_policy:
