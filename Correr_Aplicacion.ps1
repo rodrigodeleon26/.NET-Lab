@@ -65,4 +65,17 @@ Wait-For-Containers -stackName "HCE" -timeout 600 -retryDelay 30
 Write-Host "Desplegando configuración de NGINX..."
 docker stack deploy -c docker-swarm-nginx.yml HCE
 
+# Paso 5: Ejecutar ng serve en el directorio frontCliente
+Write-Host "Iniciando servidor Angular en el directorio frontCliente..."
+$env:PATH += ";C:\Users\aperalta\AppData\Roaming\npm"
+Start-Process -FilePath "cmd.exe" -ArgumentList "/k", "cd /d $PWD\\frontCliente && npx ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt --port 4200"
+
+# Paso 6: Ejecutar ng serve en el directorio frontMedico
+Write-Host "Iniciando servidor Angular en el directorio frontMedico..."
+Start-Process -FilePath "cmd.exe" -ArgumentList "/k", "cd /d $PWD\\frontMedico && npx ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt --port 4201"
+
+# Paso 6: Ejecutar ng serve en el directorio frontAdmin
+Write-Host "Iniciando servidor Angular en el directorio frontAdmin..."
+Start-Process -FilePath "cmd.exe" -ArgumentList "/k", "cd /d $PWD\\frontAdmin && npx ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt --port 4202"
+
 Write-Host "Despliegue completado con éxito."
