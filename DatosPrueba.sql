@@ -223,31 +223,31 @@ VALUES
     [RefreshTokenExpiryTime], [TwoFactorAuthKey], [MedicoId]) 
     VALUES
     ('0d4f5539-e556-4e7d-ab34-d536b73ff22a', 'drCarlosM@gmail.com', 'DRCARLOSM@GMAIL.COM', 
-    'drCarlosM@gmail.com', 'DRCARLOSM@GMAIL.COM', 0, 
+    'drCarlosM@gmail.com', 'DRCARLOSM@GMAIL.COM', 1, 
     'AQAAAAIAAYagAAAAEIcFD5R2sndQ0y2AWDcU3/2bjcKucr5DB+p4AGmmrVFbBuYaGjWR0OijvGZx22DYSw==', 
     'Q4SYV7ACHQVGPBOS5XJZIOZLNZPYQZK5', '862b245c-ea41-48c0-b683-51457c17a751', 
     NULL, 0, 0, NULL, 1, 0, 'drCarlosM@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, 3),
     
     ('4af45a2e-d2f6-43ad-8cf8-78b55fc008ed', 'bart.simpson@gmail.com', 'BART.SIMPSON@GMAIL.COM', 
-    'bart.simpson@gmail.com', 'BART.SIMPSON@GMAIL.COM', 0, 
+    'bart.simpson@gmail.com', 'BART.SIMPSON@GMAIL.COM', 1, 
     'AQAAAAIAAYagAAAAEDoH9Fb+YK2GV3yEah14xKWsmZUsZbgAfrn2gdAnZbeY71UXrm51r4fNor1rDpt/Cg==', 
     'XMO3DQ3QG3L2PMW7QOYPRDQMWV5XZIEX', 'db04858e-cfed-4512-838d-3ff199ecc0cc', 
     NULL, 0, 0, NULL, 1, 0, 'bart.simpson@gmail.com', 1, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
     
     ('69225179-d778-4be3-ba42-0115fd48e356', 'admin@gmail.com', 'ADMIN@GMAIL.COM', 
-    'admin@gmail.com', 'ADMIN@GMAIL.COM', 0, 
+    'admin@gmail.com', 'ADMIN@GMAIL.COM', 1, 
     'AQAAAAIAAYagAAAAED6YtqV7aeP4YxKznIo8BXPqHDyoHFtt0MvXVl78qXVguV4G3+eW3crKrEBCeujhWg==', 
     'T6K65UPRSTORQATAHHDAOALJYWCDYJ2T', '44c5a22e-dd3c-4d81-b12b-660eb5459616', 
     NULL, 0, 0, NULL, 1, 0, 'admin@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
     
     ('d581ae5d-cfb3-48d5-9241-1c6d44c6ac18', 'homer.simpson@gmail.com', 'HOMER.SIMPSON@GMAIL.COM', 
-    'homer.simpson@gmail.com', 'HOMER.SIMPSON@GMAIL.COM', 0, 
+    'homer.simpson@gmail.com', 'HOMER.SIMPSON@GMAIL.COM', 1, 
     'AQAAAAIAAYagAAAAEPfTV5QbT76+EvGslgzGbh5D4Usdp5i0aHRD1ZPYwvGYEswa5+N8d26eaQKCS5raEg==', 
     'O3DAJMQMUAXG3JGOBUFICH3Z3CAYMVXL', '65c272cd-3250-4491-85b8-a6732d7ecb4c', 
     NULL, 0, 0, NULL, 1, 0, 'homer.simpson@gmail.com', 2, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
     
     ('f4b2c112-a394-4f31-911b-87a6ea9d6772', 'drJulius@gmail.com', 'DRJULIUS@GMAIL.COM', 
-    'drJulius@gmail.com', 'DRJULIUS@GMAIL.COM', 0, 
+    'drJulius@gmail.com', 'DRJULIUS@GMAIL.COM', 1, 
     'AQAAAAIAAYagAAAAEJa59M6y5a9loDhN0a+nN6xDSAjhWrYsVOuehCYg8TGp2WPWJ0XkTfGiYj8whq6m5Q==', 
     'OACNCEA357TNRQSSKJXY6YZUNYLBSBTQ', 'da50465c-7e62-4d6e-b41d-c8453b02bc68', 
     NULL, 0, 0, NULL, 1, 0, 'drJulius@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, 1);
