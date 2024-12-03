@@ -6,6 +6,7 @@ import { MedicoService } from '../../../services/medico.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, lastValueFrom } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-seleccion-especialidad',
@@ -17,16 +18,20 @@ export class SeleccionEspecialidadComponent {
   successMessage: string = ''; // Mensaje de éxito
   errorMessage: string = ''; // Mensaje de error
   especialidades: any[] = []; // Lista de especialidades
+  idDelMedico: number = 1;
 
   constructor(
     private MedicoService: MedicoService,
+    private authService: AuthService,
     private fb: FormBuilder
   ) {
     
   }
 
   ngOnInit(): void {
-    this.MedicoService.obtenerMedicoPorId(1).subscribe(response => {
+    const claims = this.authService.getClaims();
+    this.idDelMedico = claims ? claims.idDelMedico : null;
+    this.MedicoService.obtenerMedicoPorId(this.idDelMedico).subscribe(response => {
       console.log(response);
       this.especialidades = response.especialidades;
       this.loading = false;

@@ -402,6 +402,7 @@ namespace AuthWebApi.Controllers
                 var db = new DBContext();
                 var medico = db.Medicos.Find(user.MedicoId);
                 claims.AddClaim(new Claim("cedula", medico.Documento));
+                claims.AddClaim(new Claim("idDelMedico", user.MedicoId?.ToString() ?? string.Empty));
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor
