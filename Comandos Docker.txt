@@ -16,6 +16,7 @@ docker service ls - Listar servicios docker
 docker service update --force NombreServicio - Reiniciar un servicio de Docker a manopla
 
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+./Correr_Aplicacion.ps1
 
 ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt
 ng serve --ssl --ssl-key ./ssl/server.key --ssl-cert ./ssl/server.crt --port 4200
