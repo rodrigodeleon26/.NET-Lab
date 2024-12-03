@@ -138,7 +138,7 @@ services:
 
   facturacion-automatica:
     image: mangas330/administrativowebapi
-    entrypoint: ["dotnet", "AdministrativoWebApi.dll", "--facturacion"] # Modificá el entrypoint para correr solo la facturación
+    entrypoint: ["dotnet", "AdministrativoWebApi.dll", "--facturacion"]
     environment:
       - aspnetcore_environment=development
       - AES_KEY=${AES_KEY}
