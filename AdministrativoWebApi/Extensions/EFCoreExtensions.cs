@@ -34,7 +34,6 @@ namespace AuthWebApi.Extensions
             services.AddTransient<IBL_Administrativo, BL_Administrativo>();
 
             // Services
-            services.AddHostedService<FacturacionAutomaticaService>();
             services.AddScoped<PayPalService>();
 
 

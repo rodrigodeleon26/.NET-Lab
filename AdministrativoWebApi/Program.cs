@@ -40,6 +40,15 @@ try
                     .AddIdentityHandlersAndStores()
                     .ConfigureIdentityOptions()
                     .AddIdentityAuth();
+    
+    var isFacturacionMode = args.Contains("--facturacion");
+
+    if (isFacturacionMode)
+    {
+        Console.WriteLine("Contenedor de Facturación Automática activado.");
+
+        builder.Services.AddHostedService<FacturacionAutomaticaService>();
+    }
 
     var app = builder.Build();
 

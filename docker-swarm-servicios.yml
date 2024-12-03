@@ -136,6 +136,25 @@ services:
     networks:
       - HCE_app-network
 
+  facturacion-automatica:
+    image: mangas330/administrativowebapi
+    entrypoint: ["dotnet", "AdministrativoWebApi.dll", "--facturacion"] # Modificá el entrypoint para correr solo la facturación
+    environment:
+      - aspnetcore_environment=development
+      - AES_KEY=${AES_KEY}
+      - AES_IV=${AES_IV}
+      - S3_KEY=${S3_KEY}
+      - S3_SECRET=${S3_SECRET}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - HCE_app-network
+
 networks:
   HCE_app-network:
     external: true
