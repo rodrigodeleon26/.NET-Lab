@@ -42,6 +42,20 @@ namespace AdministrativoWebApi.Controllers
             return Ok(Medico);
         }
 
+        // GET api/<MedicosController>/dni/5
+        [Authorize(Roles = "Admin, Medico")]
+        [ProducesResponseType(typeof(Medico), 200)]
+        [HttpGet("dni/{dni}")]
+        public IActionResult Get(string dni)
+        {
+            var Medico = _blAdministrativo.getMedicoByDocumento(dni);
+            if (Medico == null)
+            {
+                return NotFound();
+            }
+            return Ok(Medico);
+        }
+
         // POST api/<MedicosController>
         [Authorize(Roles = "Admin, Medico")]
         [ProducesResponseType(typeof(Medico), 201)]

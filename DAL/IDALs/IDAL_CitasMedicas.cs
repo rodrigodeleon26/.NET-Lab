@@ -9,7 +9,7 @@ namespace DAL.IDALs
         List<CitaMedica> getCitasMedicas();
 
         // Obtener citas medicas por especialidad
-        List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha);
+        List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha, long medicoId);
 
         bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha);
 

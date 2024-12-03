@@ -29,7 +29,9 @@ namespace PacienteWebApi.Controllers
         [HttpGet("especialidad/{espec}/{pag}/{fecha}")]
         public IActionResult Get(string espec, int pag, DateTime fecha)
         {
-            return Ok(_blCitasMedicas.getCitasMedicasPorEspecialidad(espec, pag, fecha));
+            var dniUsuarioAutenticado = User.Claims.FirstOrDefault(c => c.Type == "cedula")?.Value;
+            Console.WriteLine($"el dni del medico es {dniUsuarioAutenticado}");
+            return Ok(_blCitasMedicas.getCitasMedicasPorEspecialidad(espec, pag, fecha, dniUsuarioAutenticado));
         }
 
         // TRAE TODAS LAS CITAS MEDICAS DE UNA ESPECIALIDAD. Formato:

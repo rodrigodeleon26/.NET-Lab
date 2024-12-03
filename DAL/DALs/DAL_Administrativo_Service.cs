@@ -503,7 +503,45 @@ namespace DAL.DALs
 
         public Medico GetMedicoByDocumento(string ci)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var _httpClient = new HttpClient(handler);
+
+                var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró el token de autorización.");
+                    return null;
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                string url = $"http://administrativowebapi:8080/api/Medicos/dni/{ci}";
+
+                var response = _httpClient.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    var medico = JsonConvert.DeserializeObject<Medico>(json);
+                    return medico;
+                }
+                else
+                {
+                    Console.WriteLine($"Error al obtener medico: {response.StatusCode} - {response.ReasonPhrase}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener medico: {ex.Message}");
+                return null;
+            }
         }
 
         public void AddMedico(Medico medico)

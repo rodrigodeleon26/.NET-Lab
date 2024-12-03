@@ -397,6 +397,13 @@ namespace AuthWebApi.Controllers
                 claims.AddClaim(new Claim("cedula", paciente.Documento));
             }
 
+            if (user.MedicoId != null)
+            { 
+                var db = new DBContext();
+                var medico = db.Medicos.Find(user.MedicoId);
+                claims.AddClaim(new Claim("cedula", medico.Documento));
+            }
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,

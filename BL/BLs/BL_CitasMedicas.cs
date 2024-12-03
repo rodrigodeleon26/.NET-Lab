@@ -48,9 +48,10 @@ namespace BL.BLs
         }
 
         // Citas medicas por especialidad
-        public List<CitaMedicaDTO> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
+        public List<CitaMedicaDTO> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha, string dniUsuarioAutenticado)
         {
-            List<CitaMedica> listaCitas = dal.getCitasMedicasPorEspecialidad(nombreEspecialidad, numPagina, fecha);
+            Medico medico = dalAdmin.GetMedicoByDocumento(dniUsuarioAutenticado);
+            List<CitaMedica> listaCitas = dal.getCitasMedicasPorEspecialidad(nombreEspecialidad, numPagina, fecha, medico.Id);
             List<CitaMedicaDTO> listaCitasDTO = new List<CitaMedicaDTO>();
             foreach (CitaMedica cita in listaCitas)
             {

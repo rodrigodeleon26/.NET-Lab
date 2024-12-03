@@ -360,5 +360,10 @@ namespace DAL.DALs
                 return false;
             }
         }
+
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha, long medicoId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

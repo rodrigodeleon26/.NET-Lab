@@ -61,11 +61,13 @@ namespace DAL.DALs
             }
         }
 
-        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha)
+        public List<CitaMedica> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha, long medicoId)
         {
             using (var _dbContext = new DBContext())
             {
                 var query = _dbContext.CitasMedicas.AsQueryable();
+
+                query = query.Where(p => p.Calendario.Medico.Id == medicoId);
 
                 // Filtra por nombre de especialidad si se proporciona
                 if (!string.IsNullOrEmpty(nombreEspecialidad))

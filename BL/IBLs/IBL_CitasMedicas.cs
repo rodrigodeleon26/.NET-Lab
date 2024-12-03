@@ -13,7 +13,7 @@ namespace BL.IBLs
         List<CitaMedicaDTO> getCitasMedicas();
 
         // Metodo citas medicas por especialidad
-        List<CitaMedicaDTO> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha);
+        List<CitaMedicaDTO> getCitasMedicasPorEspecialidad(string nombreEspecialidad, int numPagina, DateTime? fecha, string dniUsuarioAutenticado);
 
         bool HayMasCitasMedicas(string nombreEspecialidad, int numPagina, DateTime fecha);
 
