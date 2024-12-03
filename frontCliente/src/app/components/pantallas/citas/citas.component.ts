@@ -31,6 +31,7 @@ export class CitasComponent implements OnInit {
     this.loading = true;
     this.pacienteService.obtenerCitas(this.cedula).subscribe(
       (response) => {
+        console.log(response);
         this.citas = response;
         this.loading = false;
       },
@@ -61,11 +62,11 @@ export class CitasComponent implements OnInit {
     this.modalCancelarCita = false;
   }
   cancelarCita() {
+    this.modalCancelarCita = false;
     this.loading = true;
     this.pacienteService.cancelarCita(this.cedula, this.citaId).subscribe(
       (response) => {
         this.citas = this.citas.filter((cita) => cita.id !== this.citaId);
-        this.modalCancelarCita = false;
         this.citaId = 0;
         this.loading = false;
         this.toastr.success('Cita cancelada correctamente', 'Cita cancelada');

@@ -226,7 +226,8 @@ namespace DAL.DALs
                 GoogleMeetEventResult datos = new GoogleMeetEventResult
                 {
                     HangoutLink = null,
-                    NewAccessToken = null
+                    NewAccessToken = null,
+                    eventId = null
                 };
                 if (citaOnline == true)
                 {
@@ -252,7 +253,8 @@ namespace DAL.DALs
                     PacienteId = pacienteIdEncriptado,
                     CalendarioId = calendarioId,
                     CopagoId = nuevaCita.CopagoId,
-                    MeetLink = datos.HangoutLink
+                    MeetLink = datos.HangoutLink,
+                    EventId = datos.eventId
                 };
 
                 _dbContext.CitasMedicas.Add(citaEntity);
@@ -408,6 +410,7 @@ namespace DAL.DALs
                         Id = c.Id,
                         Fecha = c.Fecha,
                         Estado = c.Estado,
+                        MeetLink = c.MeetLink,
                         Calendario = new Calendario
                         {
                             Medico = new Medico
@@ -456,6 +459,13 @@ namespace DAL.DALs
                 if (cita == null)
                 {
                     throw new Exception("No se encontró la cita médica.");
+                }
+                
+                if (cita.MeetLink != null)
+                {
+                    var token = paciente.GoogleToken;
+                    var refreshToken = paciente.GoogleRefreshToken;
+                    Meet.DeleteGoogleCalendarEvent(token, refreshToken, cita.EventId).GetAwaiter().GetResult();
                 }
 
                 _dbContext.CitasMedicas.Remove(cita);
