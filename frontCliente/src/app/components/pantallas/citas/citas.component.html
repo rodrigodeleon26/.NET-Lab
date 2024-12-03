@@ -14,22 +14,29 @@
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Fecha</th>
+                            <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Tipo</th>
                             <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Especialidad</th>
-                            <th class="py-2 text-center font-semibold w-3/12 border-b border-gray-300">Medico</th>
-                            <th class="py-2 text-center font-semibold w-3/12 border-b border-gray-300">Consultorio</th>
+                            <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Medico</th>
+                            <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Consultorio</th>
                             <th class="py-2 text-center font-semibold w-2/12 border-b border-gray-300">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let cita of citas" class="text-center">
-                            <td class="py-2 border-b border-gray-300">{{ cita.fecha | date: 'dd/MM/yyyy' }}</td>
-                            <td class="py-2 border-b border-gray-300">{{ cita.calendario.especialidad.nombre }}</td>
-                            <td class="py-2 border-b border-gray-300">{{ cita.calendario.medico.nombres }} {{ cita.calendario.medico.apellidos }}</td>
-                            <td class="py-2 border-b border-gray-300">
-                                Piso: {{ cita.calendario.consultorio.piso }}<br>
-                                Numero: {{ cita.calendario.consultorio.numero }}
+                            <td class="py-2 border-b border-gray-300 w-2/12">{{ cita.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+                            <td class="py-2 border-b border-gray-300 w-2/12">{{ cita.meetLink ? 'Online' : 'Presencial'  }}</td>
+                            <td class="py-2 border-b border-gray-300 w-2/12">{{ cita.calendario.especialidad.nombre }}</td>
+                            <td class="py-2 border-b border-gray-300 w-2/12">{{ cita.calendario.medico.nombres }} {{ cita.calendario.medico.apellidos }}</td>
+                            <td class="py-2 border-b border-gray-300 w-2/12">
+                                <div *ngIf="cita.meetLink == null">
+                                    Piso: {{ cita.calendario.consultorio.piso }}<br>
+                                    Numero: {{ cita.calendario.consultorio.numero }}
+                                </div>
+                                <div *ngIf="cita.meetLink != null">
+                                    <a href="{{ cita.meetLink }}" target="_blank" class="text-blue-500">Ingresar</a>
+                                </div>
                             </td>
-                            <td class="py-2 border-b border-gray-300">
+                            <td class="py-2 border-b border-gray-300 w-2/12">
                                 <button (click)="modalCancelar(cita.id)" class="bg-red-400 text-white px-3 py-1 rounded-md hover:bg-red-500">Cancelar</button>
                             </td>
                         </tr>
@@ -44,14 +51,17 @@
                     class="absolute top-2 right-2 bg-red-400 text-white px-3 py-1 rounded-md hover:bg-red-500 mt-2">
                     Cancelar
                 </button>
-                <p class="font-semibold text-gray-700">Fecha: <span class="font-normal">{{ cita.fecha | date: 'dd/MM/yyyy' }}</span></p>
+                <p class="font-semibold text-gray-700">Fecha: <span class="font-normal">{{ cita.fecha | date: 'dd/MM/yyyy HH:mm' }}</span></p>
+                <p class="font-semibold text-gray-700">Tipo: <span class="font-normal">{{ cita.meetLink ? 'Online' : 'Presencial'  }}</span></p>
                 <p class="font-semibold text-gray-700">Especialidad: <span class="font-normal">{{ cita.calendario.especialidad.nombre }}</span></p>
                 <p class="font-semibold text-gray-700">Médico: <span class="font-normal">{{ cita.calendario.medico.nombres }} {{ cita.calendario.medico.apellidos }}</span></p>
-                <p class="font-semibold text-gray-700">Consultorio:</p>
-                <ul class="ml-4 list-disc text-gray-600">
-                    <li>Piso: {{ cita.calendario.consultorio.piso }}</li>
-                    <li>Número: {{ cita.calendario.consultorio.numero }}</li>
-                </ul>
+                <p class="font-semibold text-gray-700">Consultorio: <a *ngIf="cita.meetLink != null" href="{{ cita.meetLink }}" target="_blank" class="text-blue-500">Ingresar</a></p>
+                <div *ngIf="cita.meetLink == null">
+                    <ul class="ml-4 list-disc text-gray-600">
+                        <li>Piso: {{ cita.calendario.consultorio.piso }}</li>
+                        <li>Número: {{ cita.calendario.consultorio.numero }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div *ngIf="citas && citas.length === 0" class="p-5">

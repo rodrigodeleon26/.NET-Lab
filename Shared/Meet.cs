@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -147,19 +148,67 @@ namespace Shared
                 var responseContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(responseContent);
                 var createdEvent = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                Console.WriteLine(createdEvent.id?.ToString());
+
 
                 return new GoogleMeetEventResult
                 {
                     HangoutLink = createdEvent.hangoutLink?.ToString() ?? "No se generó enlace de Google Meet.",
-                    NewAccessToken = newAccessToken
+                    NewAccessToken = newAccessToken,
+                    eventId = createdEvent.id?.ToString()
                 };
             }
         }
+
+        public static async Task<bool> DeleteGoogleCalendarEvent(string accessToken, string refreshToken, string eventId)
+        {
+            const string deleteEventEndpoint = "https://www.googleapis.com/calendar/v3/calendars/primary/events/";
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await client.DeleteAsync($"{deleteEventEndpoint}{eventId}");
+
+                string newAccessToken = null;
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        // Si el token expiró, renueva el token
+                        newAccessToken = await RefreshAccessToken(refreshToken);
+
+                        Console.WriteLine(newAccessToken);
+
+                        // Reintenta la operación con el nuevo token
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", newAccessToken);
+                        response = await client.DeleteAsync($"{deleteEventEndpoint}{eventId}");
+
+                        Console.WriteLine(response);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            var errorContent = await response.Content.ReadAsStringAsync();
+                            throw new Exception($"Error al crear el evento con el nuevo token: {response.StatusCode} - {errorContent}");
+                        }
+                    }
+                    else
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"Error al crear el evento: {response.StatusCode} - {errorContent}");
+                    }
+                }
+
+                return true;
+            }
+        }
     }
+
 
     public class GoogleMeetEventResult
     {
         public string HangoutLink { get; set; }
         public string NewAccessToken { get; set; }
+        public string eventId { get; set; }
     }
 }

@@ -8,6 +8,8 @@
 
         public string Estado { get; set; } = "-- Sin Estado --";
 
+        public string? MeetLink { get; set; }
+
         public Calendario Calendario { get; set; } = new Calendario();
 
         public long CalendarioId { get; set; }
