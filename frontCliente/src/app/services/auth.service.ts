@@ -65,7 +65,6 @@ export class AuthService {
   deleteToken() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
-    localStorage.removeItem(TFA);
   }
 
   saveToken(token: string, refreshToken: string) {
@@ -82,7 +81,11 @@ export class AuthService {
   }
 
   getClaims() {
-    return JSON.parse(atob(this.getToken()!.split('.')[1]));
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+    return JSON.parse(atob(token.split('.')[1]));
   }
 
   getEmailConfirmedStatus(): boolean {
@@ -100,11 +103,8 @@ export class AuthService {
     return claims ? claims.TwoFactorEnabled === 'True' : false;
   }
 
-  setTwoFactorAuthenticated(status: boolean) {
-    localStorage.setItem(TFA, status ? 'true' : 'false');
-  }
-
   isTwoFactorAuthenticated(): boolean {
-    return localStorage.getItem(TFA) === 'true';
+    const claims = this.getClaims();
+    return claims ? claims.TwoFactorCodeValid === 'true' : false;
   }
 }
