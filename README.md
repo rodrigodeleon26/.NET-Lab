@@ -20,7 +20,6 @@ Este README detalla las instrucciones necesarias para configurar, desplegar y ej
 - [Uso](#uso)
 - [Solución de Problemas](#solución-de-problemas)
 - [Contribuidores](#contribuidores)
-- [Licencia](#licencia)
 
 ---
 
