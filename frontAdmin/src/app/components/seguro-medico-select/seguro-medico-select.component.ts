@@ -218,25 +218,45 @@ export class SeguroMedicoSelectComponent implements OnInit{
   }
 
   agregarPrecio(){
+    console.log('agregarPrecio');
     if (this.editando === '') {
+      console.log('No hay seguro seleccionado');
       return;
     }
     if (this.DatosPrecioForm.invalid) {
+      console.log('Formulario inválido');
       return;
     }
 
     const formPrecio = this.DatosPrecioForm.value;
 
     //chequear que la fecha no sea anterior a hoy
+    console.log('Fecha seleccionada:', formPrecio.fechaInicio);
     const fechaInicio = new Date(formPrecio.fechaInicio);
-    const today = new Date();
-    if (fechaInicio < today) {
+    const uruguayDate = new Date();
+
+    // Ajustar la fecha seleccionada a la zona horaria local
+    fechaInicio.setMinutes(fechaInicio.getMinutes() + fechaInicio.getTimezoneOffset());
+
+    fechaInicio.setHours(0, 0, 0, 0);
+    uruguayDate.setHours(0, 0, 0, 0);
+
+    if (fechaInicio < uruguayDate) {
+      console.log('Fecha inválida, Today:', uruguayDate, 'Fecha seleccionada:', fechaInicio);
       return;
     }
+
+
+    //const today = new Date();
+    // if (fechaInicio < today) {
+    //   console.log('Fecha inválida, Today:', today, 'Fecha seleccionada:', fechaInicio);
+    //   return;
+    // }
 
     const precios = this.editando.precios;
     const precioExistente = precios.find((precio: { fechaInicio: any; }) => precio.fechaInicio === formPrecio.fechaInicio);
     if (precioExistente) {
+      console.log('Ya existe un precio para la fecha seleccionada');
       return;
     }
 

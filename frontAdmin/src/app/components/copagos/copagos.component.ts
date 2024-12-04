@@ -140,13 +140,18 @@ export class CopagosComponent implements OnInit {
 
     //chequear que la fecha no sea anterior a hoy
     const fechaInicio = new Date(formPrecio.fechaInicio);
-    const fechaString =  fechaInicio.toDateString();
-    
-    if (fechaString < this.today) {
-      this.showErrorMessage('La fecha de inicio no puede ser anterior a hoy');
+    const uruguayDate = new Date();
+
+    // Ajustar la fecha seleccionada a la zona horaria local
+    fechaInicio.setMinutes(fechaInicio.getMinutes() + fechaInicio.getTimezoneOffset());
+
+    fechaInicio.setHours(0, 0, 0, 0);
+    uruguayDate.setHours(0, 0, 0, 0);
+
+    if (fechaInicio < uruguayDate) {
+      console.log('Fecha inválida, Today:', uruguayDate, 'Fecha seleccionada:', fechaInicio);
       return;
     }
-    
 
     //chequear que no haya otro precio con la misma fecha de inicio para ese copago
     const precios = this.copagoVerDetalle.precios;
