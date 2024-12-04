@@ -83,6 +83,10 @@ Si es la primera vez que ejecutas la aplicación o si no ha habido cambios en el
    - Finalmente, despliega el balanceador de carga:
      ```docker stack deploy -c docker-swarm-nginx.yml HCE```
 
+### Fallo de certificados
+
+- Asegúrate de instalar todos los certificados de la aplicación, ya que estos son autofirmados. Estos se encuentran en la carpeta ssl del directorio raíz, así como la carpeta ssl dentro de frontCliente, frontAdmin y frontMedico
+
 ---
 
 ## Contribuidores
