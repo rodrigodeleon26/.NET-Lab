@@ -29,7 +29,7 @@ Antes de comenzar, asegúrate de cumplir con los siguientes requisitos:
 1. **Docker** instalado en tu máquina.
 2. Acceso a una terminal **PowerShell**.
 3. Credenciales de una cuenta de Docker Hub válida, en este caso: `Mangas330`.
-  3. 1. De necesitar utilizar una cuenta diferente de Docker Hub, se puede cambiar el usuario utilizado en los archivos docker-compose.yml, docker-swarm-vital.yml, docker-swarm-servicios.yml y docker-swarm-nginx.yml, cambiando "mangas330/" en las imágenes por el nuevo nombre de usuario.
+  - De necesitar utilizar una cuenta diferente de Docker Hub, se puede cambiar el usuario utilizado en los archivos docker-compose.yml, docker-swarm-vital.yml, docker-swarm-servicios.yml y docker-swarm-nginx.yml, cambiando "mangas330/" en las imágenes por el nuevo nombre de usuario.
 4. Permisos administrativos para modificar políticas de ejecución en PowerShell.
 
 ---
