@@ -181,9 +181,9 @@ VALUES
 INSERT INTO [HCE].[dbo].[Contratos] 
 ([FechaInicio], [Activo], [PacienteId], [SeguroMedicoId]) 
 VALUES
-('2024-01-01', 1, 1, 1), -- Bart con Fonasa
-('2024-01-01', 1, 2, 2), -- Lisa con Jubilados
-('2024-01-01', 1, 3, 3), -- Homer con ISAPRE
+('2024-01-01', 0, 1, 1), -- Bart con Fonasa inactivo
+('2024-01-01', 1, 2, 2), -- Homer con Jubilados
+('2024-01-01', 1, 3, 3), -- Lisa con ISAPRE
 ('2024-01-01', 1, 4, 4); -- Marge con Plan Básico Salud
 
 
@@ -210,17 +210,27 @@ VALUES
 INSERT INTO [HCE].[dbo].[PagosPayPal]
 ([linkPago], [pagoId])
 VALUES
-('https://www.sandbox.paypal.com/checkoutnow?token=9GS265103D526260U', '9GS265103D526260U'); -- id 1
+('https://www.sandbox.paypal.com/checkoutnow?token=9N730399TM3784443', '9N730399TM3784443'); -- id 1
 
 INSERT INTO [HCE].[dbo].[PagosPayPal]
 ([linkPago], [pagoId])
 VALUES
-('https://www.sandbox.paypal.com/checkoutnow?token=0EK60405PR426224F', '0EK60405PR426224F'); -- id 2
+('https://www.sandbox.paypal.com/checkoutnow?token=3BT325782F343883J', '3BT325782F343883J'); -- id 2
 
 INSERT INTO [HCE].[dbo].[PagosPayPal]
 ([linkPago], [pagoId])
 VALUES
-('https://www.sandbox.paypal.com/checkoutnow?token=68M26517X89188006', '68M26517X89188006'); -- id 3
+('https://www.sandbox.paypal.com/checkoutnow?token=6YX60823H5376410F', '6YX60823H5376410F'); -- id 3
+
+INSERT INTO [HCE].[dbo].[PagosPayPal]
+([linkPago], [pagoId])
+VALUES
+('https://www.sandbox.paypal.com/checkoutnow?token=80K32528XF911262D', '80K32528XF911262D'); -- id 4
+
+INSERT INTO [HCE].[dbo].[PagosPayPal]
+([linkPago], [pagoId])
+VALUES
+('https://www.sandbox.paypal.com/checkoutnow?token=86U13026KW492120K', '86U13026KW492120K'); -- id 5 (enero 2025 bart)
 
 
 
@@ -229,9 +239,10 @@ INSERT INTO [HCE].[dbo].[Facturas]
 VALUES
 ('2024-11-04 00:00:00.0000000', 50, 0, NULL, 2, 'Consulta médica general (Completada)', 1), -- Homer consulta 11
 ('2024-12-01 00:00:00.0000000', 250, 0, NULL, 2, 'Mensualidad de seguro médico: Jubilados', 1), -- Homer mensualidad 12
-('2024-12-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 2), -- Bart mensualidad 12
-('2024-11-11 00:00:00.0000000', 150, 0, NULL, 1, 'Consulta medica', 2), -- Bart consulta 11
-('2024-11-01 00:00:00.0000000', 150, 1, '2024-11-03 00:00:00.0000000', 1, 'Mensualidad de seguro médico: Fonasa', 3); -- Bart mensualidad 11
+('2024-12-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 4), -- Bart mensualidad 12
+('2024-11-11 00:00:00.0000000', 150, 0, NULL, 1, 'Consulta medica', 4), -- Bart consulta 11
+('2024-11-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 3); -- Bart mensualidad 11
+('2024-10-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 2); -- Bart mensualidad 10
 
 
 --USARIOS
