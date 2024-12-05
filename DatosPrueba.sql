@@ -241,7 +241,7 @@ VALUES
 ('2024-12-01 00:00:00.0000000', 250, 0, NULL, 2, 'Mensualidad de seguro médico: Jubilados', 1), -- Homer mensualidad 12
 ('2024-12-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 4), -- Bart mensualidad 12
 ('2024-11-11 00:00:00.0000000', 150, 0, NULL, 1, 'Consulta medica', 4), -- Bart consulta 11
-('2024-11-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 3); -- Bart mensualidad 11
+('2024-11-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 3), -- Bart mensualidad 11
 ('2024-10-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 2); -- Bart mensualidad 10
 
 
