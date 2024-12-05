@@ -47,7 +47,7 @@ export class ConfirmEmailComponent implements OnInit {
           this.toastr.success('Correo electrónico confirmado exitosamente.', 'Correo confirmado');
           this.isLoading = false;
           this.authService.saveToken(res.tokens.token, res.tokens.refreshToken);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/inicio']);
         },
         error: (err: any) => {
           this.toastr.error('Error al confirmar el correo electrónico.', 'Error');

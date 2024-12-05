@@ -247,11 +247,11 @@ VALUES
     'Q4SYV7ACHQVGPBOS5XJZIOZLNZPYQZK5', '862b245c-ea41-48c0-b683-51457c17a751', 
     NULL, 0, 0, NULL, 1, 0, 'drCarlosM@gmail.com', NULL, NULL, '0001-01-01 00:00:00.0000000', NULL, 3),
     
-    ('4af45a2e-d2f6-43ad-8cf8-78b55fc008ed', 'bart.simpson@gmail.com', 'BART.SIMPSON@GMAIL.COM', 
-    'bart.simpson@gmail.com', 'BART.SIMPSON@GMAIL.COM', 1, 
+    ('4af45a2e-d2f6-43ad-8cf8-78b55fc008ed', 'bartsimsonnet@gmail.com', 'BARTSIMSONNET@GMAIL.COM', 
+    'bartsimsonnet@gmail.com', 'BARTSIMSONNET@GMAIL.COM', 1, 
     'AQAAAAIAAYagAAAAEDoH9Fb+YK2GV3yEah14xKWsmZUsZbgAfrn2gdAnZbeY71UXrm51r4fNor1rDpt/Cg==', 
     'XMO3DQ3QG3L2PMW7QOYPRDQMWV5XZIEX', 'db04858e-cfed-4512-838d-3ff199ecc0cc', 
-    NULL, 0, 0, NULL, 1, 0, 'bart.simpson@gmail.com', 1, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
+    NULL, 0, 0, NULL, 1, 0, 'bartsimsonnet@gmail.com', 1, NULL, '0001-01-01 00:00:00.0000000', NULL, NULL),
     
     ('69225179-d778-4be3-ba42-0115fd48e356', 'admin@gmail.com', 'ADMIN@GMAIL.COM', 
     'admin@gmail.com', 'ADMIN@GMAIL.COM', 1, 
