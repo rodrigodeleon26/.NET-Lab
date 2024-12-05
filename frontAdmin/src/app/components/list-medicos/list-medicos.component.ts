@@ -29,32 +29,17 @@ export class ListMedicosComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.medicos = [
-      {
-        id: 1,
-        nombres: 'Juan',
-        apellidos: 'Pérez',
-        documento: '12345678',
-        telefono: '0987654321',
-        email: 'juan.perez@example.com'
-      },
-      {
-        id: 2,
-        nombres: 'María',
-        apellidos: 'González',
-        documento: '87654321',
-        telefono: '0987654322',
-        email: 'maria.gonzalez@example.com'
-      },
-      {
-        id: 3,
-        nombres: 'Carlos',
-        apellidos: 'Rodríguez',
-        documento: '11223344',
-        telefono: '0987654323',
-        email: 'carlos.rodriguez@example.com'
-      }
-    ];
+    this.medicos = [];
+    this.medicosService.getMedicosPaginadosYFiltrados(this.paginaActual, '')
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          this.medicos = data;
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
   }
 
   showSuccessMessage(message: string) {
