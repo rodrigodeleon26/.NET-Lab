@@ -26,7 +26,9 @@ export class FacturasComponent implements OnInit {
 
   ngOnInit(): void {
     // Lee los parámetros de la URL
+    console.log("Entro al ngInit");
     this.route.queryParams.subscribe(params => {
+      console.log("Entro al subscribe del init");
       this.pacienteString = params['pacienteString'] || this.pacienteString;
       this.fechaAsc = params['fechaAsc'] === 'true'; // Convierte el parámetro a booleano
       this.estaPago = params['estaPago'] === 'true' ? true : (params['estaPago'] === 'false' ? false : undefined);
@@ -38,8 +40,10 @@ export class FacturasComponent implements OnInit {
 
   cargarFacturas(): void {
     this.loading = true; // Mostrar indicador de carga
+    console.log("Entro al ngInit");
     this.facturasService.getFacturasPaginadas(this.numPagina, this.pacienteString, this.fechaAsc, this.estaPago).subscribe(
       (data) => {
+        console.log("Entro al getFacturas");
         this.facturas = data;
         this.hayMasResultados = data.length === 20;
         this.loading = false; // Ocultar indicador de carga

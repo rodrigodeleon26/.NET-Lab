@@ -20,7 +20,7 @@ public class PaymentsController : ControllerBase
         _blAdministrativo = blAdministrativo;
     }
 
-    [Authorize(Roles = "Admin, Medico")]
+    [Authorize(Roles = "Admin, Medico, Paciente")]
     [HttpGet("pagos")]
     public IActionResult GetPaypalPagos()
     {
@@ -35,7 +35,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Admin, Medico")]
+    [Authorize(Roles = "Admin, Medico, Paciente")]
     [HttpGet("pagos/{id}")]
     public IActionResult GetPaypalPagoById(long id)
     {
@@ -55,7 +55,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Admin, Medico")]
+    [Authorize(Roles = "Admin, Medico, Paciente")]
     [HttpGet("pagos/pororden/{id}")]
     public IActionResult GetPaypalPagoByOrdenId(string id)
     {
@@ -89,7 +89,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Admin, Medico")]
+    [Authorize(Roles = "Admin, Medico, Paciente")]
     [HttpPost("create")]
     public async Task<IActionResult> CreateOrder([FromBody] PaymentRequest request)
     {
@@ -149,7 +149,7 @@ public class PaymentsController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Admin, Medico")]
+    [Authorize(Roles = "Admin, Medico, Paciente")]
     [HttpGet("details/{orderId}")]
     public async Task<IActionResult> GetOrderDetails(string orderId)
     {

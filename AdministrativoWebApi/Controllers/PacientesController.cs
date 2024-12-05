@@ -35,11 +35,13 @@ namespace AdministrativoWebApi.Controllers
         private readonly UserManager<AppUsers> _userManager;
         private readonly DBContext _db;
         private readonly IEmailService emailService;
+        private readonly PayPalService _payPalService;
 
-        public PacientesController(IBL_Administrativo blAdministrativo, UserManager<AppUsers> userManager, DBContext dbContext)
+        public PacientesController(IBL_Administrativo blAdministrativo, UserManager<AppUsers> userManager, DBContext dbContext, PayPalService payPalService)
         {
             _blAdministrativo = blAdministrativo;
             _userManager = userManager;
+            _payPalService = payPalService;
             _db = dbContext;
             emailService = new EmailService();
         }
@@ -150,9 +152,12 @@ namespace AdministrativoWebApi.Controllers
                     FullName = $"{pacienteRequest.Nombres.ToUpper()} {pacienteRequest.Apellidos.ToUpper()}"
                 };
 
-                user.Paciente = _db.Pacientes.Find(paciente.Id);
+                user.Paciente = _db.Pacientes.Find(nuevoPaciente.Id);
+                Console.WriteLine("antes hash");
                 var password = GenerateRandomPassword(8);
+                Console.WriteLine("hash" + password);
                 var result = await _userManager.CreateAsync(user, password);
+                Console.WriteLine("resultl" + result.ToString);
 
                 if (!result.Succeeded)
                 {
@@ -196,15 +201,58 @@ namespace AdministrativoWebApi.Controllers
                 _blAdministrativo.addContrato(contrato);
 
                 Precio precio = _blAdministrativo.GetPrecioBySeguro(pacienteRequest.SeguroMedicoId);
-                var factura = new Factura()
+                
+
+                // Llamar al PayPalService para crear el pago
+                PayPalOrderResponse order = await _payPalService.CreateOrderAsync(
+                    new List<PayPalPurchaseUnit>
+                    {
+                        new PayPalPurchaseUnit
+                        {
+                            reference_id = paciente.Id.ToString(),
+                            description = "Cuota inicial: Pago de seguro médico",
+                            amount = new PayPalAmount
+                            {
+                                currency_code = "USD",
+                                value = precio.PrecioBase.ToString()
+                            }
+                        }
+                    },
+                    "USD",
+                    "https://localhost:4200/cliente/payment/success",
+                    "https://localhost:4200/cliente/payment/cancel"
+                );
+
+                var approvalUrl = order.links.FirstOrDefault(link => link.rel == "approve")?.href;
+                if (approvalUrl == null)
                 {
-                    Fecha = DateTime.UtcNow,
-                    Monto = precio.PrecioBase,
-                    Pago = false,
-                    Descripcion = "Cuota inicial: Pago de seguro medico",
-                    Paciente = nuevoPaciente
+                    return BadRequest("No se pudo obtener la URL de aprobación.");
+                }
+
+                var nuevoPago = new PagoPayPal
+                {
+                    linkPago = approvalUrl,
+                    pagoId = order.id
                 };
+
+                _blAdministrativo.AddPaypalPago(nuevoPago);
+
+                var pagoCreado = _blAdministrativo.GetPaypalPagoByOrdenId(order.id);
+
+                var factura = new Factura
+                {
+                    Fecha = DateTime.Now,
+                    Monto = precio.PrecioBase,
+                    Descripcion = "Cuota inicial: Pago de seguro médico",
+                    FechaPago = null,
+                    Pago = false,
+                    Paciente = nuevoPaciente,
+                    PagoPayPal = pagoCreado
+                };
+
+
                 _blAdministrativo.addFactura(factura);
+                Console.WriteLine("Sale del add factura");
 
                 return CreatedAtAction(nameof(Post), new { id = paciente.Id }, paciente);
             }
@@ -215,7 +263,13 @@ namespace AdministrativoWebApi.Controllers
             catch (Exception ex)
             {
                 // Manejo genérico de errores
-                return StatusCode(500, new { code = "Error Interno", description = ex.Message });
+                var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : "No hay InnerException";
+                return StatusCode(500, new
+                {
+                    code = "Error Interno",
+                    description = ex.Message,
+                    innerException = innerExceptionMessage
+                });
             }
         }
 

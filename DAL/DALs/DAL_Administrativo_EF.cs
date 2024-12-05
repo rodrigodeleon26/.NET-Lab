@@ -1261,27 +1261,33 @@ namespace DAL.DALs
         }
 
         public void AddFactura(Factura factura)
-		{
-			using (var _dbContext = new DBContext())
-			{
-				Console.WriteLine("en el dal");
-				var nuevaFactura = new Facturas
-				{
-					Fecha = factura.Fecha,
-					Monto = factura.Monto,
-					Pago = factura.Pago,
-					FechaPago = factura.FechaPago,
+        {
+            using (var _dbContext = new DBContext())
+            {
+                Console.WriteLine("en el dal" + factura.Monto);
+                var nuevaFactura = new Facturas
+                {
+                    Fecha = factura.Fecha,
+                    Monto = factura.Monto,
+                    Pago = factura.Pago,
+                    FechaPago = factura.FechaPago,
                     Descripcion = factura.Descripcion,
                     PacienteId = factura.Paciente.Id,
+                    PagoPayPalId = null,
                 };
-				if(factura.PagoPayPal != null)
+                Console.WriteLine("en el dal" + nuevaFactura.Id);
+                if(factura.PagoPayPal.Id != 0)
                 {
+                    Console.WriteLine("en el if adentro" + factura.PagoPayPal.Id);
                     nuevaFactura.PagoPayPalId = factura.PagoPayPal.Id;
                 }
+                Console.WriteLine("en el dal desoyes if");
                 _dbContext.Facturas.Add(nuevaFactura);
-				_dbContext.SaveChanges();
-			}
-		}
+                Console.WriteLine("en el dal despues add");
+                _dbContext.SaveChanges();
+                Console.WriteLine("en el dal despues save");
+            }
+        }
 
 		public void UpdateFactura(Factura factura)
 		{

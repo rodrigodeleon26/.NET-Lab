@@ -145,7 +145,7 @@ INSERT INTO [HCE].[dbo].[Consultorios] ([Numero], [Piso]) VALUES
 INSERT INTO [HCE].[dbo].[Calendarios] 
 ([HoraInicio], [HoraFin], [TiempoCita], [CantidadCitas], [DiasSemanaString], [EspecialidadId], [MedicoId], [ConsultorioId], [Activo]) 
 VALUES
-('08:00:00', '12:00:00', 30, 8, 'Lunes,Martes,Miércoles,Jueves,Viernes', 1, 1, 1, 1), -- Dr. Hibbert, Medicina General, Consultorio ID 1
+('08:00:00', '12:00:00', 30, 8, 'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado', 1, 1, 1, 1), -- Dr. Hibbert, Medicina General, Consultorio ID 1
 ('13:00:00', '17:00:00', 30, 8, 'Lunes,Martes,Miércoles,Jueves,Viernes', 2, 1, 2, 1), -- Dr. Hibbert, Pediatría, Consultorio ID 2
 ('09:00:00', '12:00:00', 20, 9, 'Lunes,Miércoles,Viernes', 1, 3, 3, 1), -- Dr. Martinez, Medicina General, Consultorio ID 3
 ('14:00:00', '18:00:00', 15, 16, 'Lunes,Martes,Miércoles,Jueves', 3, 4, 4, 1), -- Dr. Gomez, Cardiología, Consultorio ID 4
@@ -157,26 +157,25 @@ INSERT INTO [HCE].[dbo].[Pacientes]
 ([Nombres], [Apellidos], [Documento], [FechaDeNacimiento], [Direccion], [Telefono], [Email], [Activo]) 
 VALUES
 ('Bart', 'Simpson', 12345678, '2010-04-01', '742 Evergreen Terrace', '0987654321', 'bart.simpson@gmail.com', 1),
-('Lisa', 'Simpson', 12345679, '2012-05-09', '742 Evergreen Terrace', '0987654322', 'lisa.simpson@gmail.com', 1),
 ('Homer', 'Simpson', 12345677, '1980-03-24', '742 Evergreen Terrace', '0987654323', 'homer.simpson@gmail.com', 1),
+('Lisa', 'Simpson', 12345679, '2012-05-09', '742 Evergreen Terrace', '0987654322', 'lisa.simpson@gmail.com', 1),
 ('Marge', 'Simpson', 12345676, '1982-01-12', '742 Evergreen Terrace', '0987654324', 'marge.simpson@gmail.com', 1);
 
 -- Consultas Médicas
 INSERT INTO [HCE].[dbo].[ConsultasMedicas] ([Descripcion], [Diagnostico]) VALUES
 ('Consulta por dolor de cabeza frecuente', 'Migraña'),
 ('Chequeo general de salud', 'Sin anomalías'),
-('Control de presión arterial', 'Hipertensión leve'),
-('Consulta por alergias estacionales', 'Rinitis alérgica');
+('Control de presión arterial', 'Hipertensión leve');
 
 -- Citas Médicas
 INSERT INTO [HCE].[dbo].[CitasMedicas] 
 ([Fecha], [Estado], [CalendarioId], [PacienteId], [ConsultoriosId], [ConsultaMedicaId], [CopagoId]) 
 VALUES
-('2024-11-25', 'Agendada', 1, '/10cIUdzDO3tytL3Yho9ag==', 1, NULL, 1), -- Bart con Dr. Hibbert
-('2024-11-25', 'Agendada', 2, 'Go7VHi3N4zKeiat5JVD3iA==', 2, NULL, 3), -- Lisa con Dr. Hibbert
-('2024-11-04', 'Completada', 3, 'aQULuBr6EuROmP+nxxFh3g==', 3, null, 1), -- Homer con Dr. Martinez
-('2024-11-05', 'NoAsistida', 5, 'XdyhuZxt25cNLk4Qd3c+6Q==', 4, NULL, 6), -- Marge con Dr. Gomez
-('2024-11-26', 'Cancelada', 1, '/10cIUdzDO3tytL3Yho9ag==', 5, NULL, 1); -- Bart con Dr. Fernandez
+('2024-12-07T08:30:00', 'Agendada', 1, 'm4R0rUAW4REnW0XPhHfDCw==', 1, NULL, 1), -- Bart con Dr. Hibbert
+('2024-12-05T09:30:00', 'Completada', 3, '3xJQi2TwslfHECDe7X6Ewg==', 3, 1, 1), -- Homer con Dr. Martinez
+('2024-12-04T09:30:00', 'Completada', 3, 'm4R0rUAW4REnW0XPhHfDCw==', 3, 2, 1), -- Bart con Dr. Martinez
+('2024-12-03T09:30:00', 'Completada', 3, 'm4R0rUAW4REnW0XPhHfDCw==', 3, 3, 1), -- Bart con Dr. Martinez
+('2024-12-05T10:30:00', 'Agendada', 1, 'm4R0rUAW4REnW0XPhHfDCw==', 5, NULL, 1); -- Bart con Dr. Fernandez
 
 -- Contratos
 INSERT INTO [HCE].[dbo].[Contratos] 
@@ -199,20 +198,40 @@ INSERT INTO [HCE].[dbo].[Recetas]
 VALUES
 ('2024-12-01', 'Paracetamol', 20, 'Cada 8 horas', 1),
 ('2024-12-15', 'Ibuprofeno', 15, 'Cada 12 horas', 2),
-('2024-11-30', 'Loratadina', 10, 'Diaria', 4);
+('2024-11-30', 'Loratadina', 10, 'Diaria', 3);
 
 -- Estudios
 INSERT INTO [HCE].[dbo].[Estudios] 
 ([Nombre], [Descripcion], [FechaRealizado], [FechaResultado], [ImagenUrl], [ConsultaMedicaId]) 
 VALUES
-('Radiografía', 'Estudio de rayos X para evaluar fracturas', '2024-11-03', '2024-11-04', 'http://example.com/radiografia.jpg', 1),
-('Análisis de Sangre', 'Evaluación general de salud', '2024-11-03', '2024-11-05', 'http://example.com/analisis-sangre.jpg', 2);
+('Radiografía', 'Estudio de rayos X para evaluar fracturas', '2024-11-03', '2024-11-04', 'mtQbL/FQaymYId8LfgxxlfAuwvZc7q7uOsuocpnc8ChxePPB4F4JKiDLH171FX+f3mEbK+dQwjQmtTRunBy0mA==', 1),
+('Análisis de Sangre', 'Evaluación general de salud', '2024-11-03', '2024-11-05', 'mtQbL/FQaymYId8LfgxxlfAuwvZc7q7uOsuocpnc8ChxePPB4F4JKiDLH171FX+f3mEbK+dQwjQmtTRunBy0mA==', 1);
+
+INSERT INTO [HCE].[dbo].[PagosPayPal]
+([linkPago], [pagoId])
+VALUES
+('https://www.sandbox.paypal.com/checkoutnow?token=9GS265103D526260U', '9GS265103D526260U'); -- id 1
+
+INSERT INTO [HCE].[dbo].[PagosPayPal]
+([linkPago], [pagoId])
+VALUES
+('https://www.sandbox.paypal.com/checkoutnow?token=0EK60405PR426224F', '0EK60405PR426224F'); -- id 2
+
+INSERT INTO [HCE].[dbo].[PagosPayPal]
+([linkPago], [pagoId])
+VALUES
+('https://www.sandbox.paypal.com/checkoutnow?token=68M26517X89188006', '68M26517X89188006'); -- id 3
+
+
 
 INSERT INTO [HCE].[dbo].[Facturas] 
 ([Fecha], [Monto], [Pago], [FechaPago], [PacienteId], [Descripcion], [PagoPayPalId]) 
 VALUES
-('2024-11-04 00:00:00.0000000', 300, 0, NULL, 3, 'Consulta médica general (Completada)', NULL), -- Homer con Dr. Martinez
-('2024-11-05 00:00:00.0000000', 150, 0, NULL, 4, 'Consulta médica general (No Asistida)', NULL); -- Marge con Dr. Gomez
+('2024-11-04 00:00:00.0000000', 50, 0, NULL, 2, 'Consulta médica general (Completada)', 1), -- Homer consulta 11
+('2024-12-01 00:00:00.0000000', 250, 0, NULL, 2, 'Mensualidad de seguro médico: Jubilados', 1), -- Homer mensualidad 12
+('2024-12-01 00:00:00.0000000', 150, 0, NULL, 1, 'Mensualidad de seguro médico: Fonasa', 2), -- Bart mensualidad 12
+('2024-11-11 00:00:00.0000000', 150, 0, NULL, 1, 'Consulta medica', 2), -- Bart consulta 11
+('2024-11-01 00:00:00.0000000', 150, 1, '2024-11-03 00:00:00.0000000', 1, 'Mensualidad de seguro médico: Fonasa', 3); -- Bart mensualidad 11
 
 
 --USARIOS

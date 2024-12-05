@@ -19,7 +19,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET: api/<FacturasController>
-        [Authorize(Roles = "Admin, Medico")]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(List<Factura>), 200)]
         [HttpGet]
         public IActionResult Get()
@@ -55,7 +55,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // GET api/<FacturasController>/5
-        [Authorize(Roles = "Admin, Medico")]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(Factura), 200)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -69,7 +69,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // POST api/<FacturasController>
-        [Authorize(Roles = "Admin, Medico")]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [ProducesResponseType(typeof(Factura), 201)]
         [HttpPost]
         public IActionResult Post([FromBody] Factura factura)
@@ -85,7 +85,7 @@ namespace AdministrativoWebApi.Controllers
         }
 
         // PUT api/<FacturasController>/5
-        [Authorize(Roles = "Admin, Medico")]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] Factura factura)
         {
@@ -119,7 +119,7 @@ namespace AdministrativoWebApi.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin, Medico")]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [HttpGet("pdf/{id}")]
         public IActionResult GetFacturaPdf(long id)
         {
@@ -141,7 +141,7 @@ namespace AdministrativoWebApi.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, Medico")]
+        [Authorize(Roles = "Admin, Medico, Paciente")]
         [HttpPost("pdf/lista")]
         public IActionResult GetMultipleFacturasPdf([FromBody] List<long> ids)
         {

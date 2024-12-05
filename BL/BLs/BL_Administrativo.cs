@@ -569,9 +569,9 @@ namespace BL.BLs
 			var boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
 
 			document.Add(new Paragraph("FACTURA", titleFont) { Alignment = Element.ALIGN_CENTER });
-			document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
-			document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
-			document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("HISTORIA CLINICA ELECTRONICA", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("Treinta y Tres 634", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("RUT 270124501019", regularFont) { Alignment = Element.ALIGN_CENTER });
 			document.Add(new Paragraph("\n"));
 
 			// Información del cliente
@@ -641,9 +641,9 @@ namespace BL.BLs
 
 			// Encabezado del documento
 			document.Add(new Paragraph("FACTURAS", titleFont) { Alignment = Element.ALIGN_CENTER });
-			document.Add(new Paragraph("ASOCIACIÓN MÉDICA SAN JOSÉ", regularFont) { Alignment = Element.ALIGN_CENTER });
-			document.Add(new Paragraph("Treinta y Tres 633", regularFont) { Alignment = Element.ALIGN_CENTER });
-			document.Add(new Paragraph("RUT 170114500018", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("HISTORIA CLINICA ELECTRONICA", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("Treinta y Tres 634", regularFont) { Alignment = Element.ALIGN_CENTER });
+			document.Add(new Paragraph("RUT 270124501019", regularFont) { Alignment = Element.ALIGN_CENTER });
 			document.Add(new Paragraph("\n"));
 
 			// Inicializar tabla
