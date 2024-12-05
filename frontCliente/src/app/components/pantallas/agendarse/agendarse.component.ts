@@ -196,7 +196,7 @@ export class AgendarseComponent implements OnInit{
     if (this.diaBuscado !== this.today) {
       return false;
     }
-    return parseInt(hora.split(':')[0]) < parseInt(this.horaActual.split(':')[0]);
+    return parseInt(hora.split(':')[0]) <= parseInt(this.horaActual.split(':')[0]);
   }
 
   selectParaAgenda(calendario: any, cita: any){
