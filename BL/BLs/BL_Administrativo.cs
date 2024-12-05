@@ -161,8 +161,13 @@ namespace BL.BLs
 
 		public void deleteContrato(long id)
 		{
-			dal.DeleteContrato(id);
-		}
+			Contrato contrato = getContratoById(id);
+			if (contrato != null)
+			{
+				contrato.Activo = false;
+			}
+            updateContrato(contrato);
+        }
 
         public void cambiarContrato(Contrato contrato, SeguroMedico seguroMedico)
 		{
@@ -240,8 +245,10 @@ namespace BL.BLs
 		{
 			var contrato = getContratoById(contratoId);
 			var deuda = ObtenerDeudaDeContrato(contratoId);
-			if (deuda > 0)
+            if (deuda > 0)
 			{
+				dal.actualizarFacturasRefinanciadas(contratoId);	
+
                 var montoTotalConInteres = deuda * (1 + (interes / 100.0));
                 var cuota = (float)(montoTotalConInteres / cantidadCuotas);
 

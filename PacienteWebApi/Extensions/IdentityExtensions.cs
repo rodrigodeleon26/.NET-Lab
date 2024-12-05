@@ -57,7 +57,9 @@ namespace PacienteWebApi.Extensions
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey())),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ValidateLifetime = true, // Validar la expiración del token
+                    ClockSkew = TimeSpan.Zero // Opcional: para reducir la tolerancia de tiempo
                 };
             });
             //services.AddAuthorization(options =>

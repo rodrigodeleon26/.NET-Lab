@@ -692,6 +692,26 @@ namespace DAL.DALs
                               && f.Descripcion.StartsWith("Cuota"));
             }
         }
+
+        public void actualizarFacturasRefinanciadas(long contratoId)
+        {
+            using (var _dbContext = new DBContext())
+            {
+                var facturas = _dbContext.Facturas
+                    .Where(f => f.Paciente.Contrato.Id == contratoId
+                                && !f.Pago)
+                    .ToList();
+
+                foreach (var factura in facturas)
+                {
+                    factura.Pago = true;
+                }
+
+                _dbContext.SaveChanges();
+            }
+        }
+
+
         #endregion
 
 

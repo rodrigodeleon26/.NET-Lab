@@ -96,7 +96,7 @@ namespace AuthWebApi.Controllers
             return app;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> LoginUser(
         UserManager<AppUsers> userManager,
         [FromBody] UserLoginModel userLoginModel)
@@ -122,10 +122,10 @@ namespace AuthWebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> RefreshToken(
-            UserManager<AppUsers> userManager,
-            [FromBody] RefreshTokenModel tokenRefreshModel)
+        UserManager<AppUsers> userManager,
+        [FromBody] RefreshTokenModel tokenRefreshModel)
         {
             var user = await userManager.Users.SingleOrDefaultAsync(u => u.RefreshToken == tokenRefreshModel.RefreshToken);
 
@@ -139,6 +139,16 @@ namespace AuthWebApi.Controllers
 
             try
             {
+                // Decodificar el token sin validarlo para verificar su tiempo de expiración
+                var jwtToken = tokenHandler.ReadJwtToken(tokenRefreshModel.Token);
+                if (jwtToken.ValidTo <= DateTime.UtcNow)
+                {
+                    // El token ha expirado, pero el refresh token es válido, así que generamos nuevos tokens
+                    var tokens = await GenerateTokens(user, userManager);
+                    return Results.Ok(tokens);
+                }
+
+                // Validar el token si no ha expirado
                 var principal = tokenHandler.ValidateToken(tokenRefreshModel.Token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -146,14 +156,12 @@ namespace AuthWebApi.Controllers
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
-                    //ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
-                var jwtToken = (JwtSecurityToken)validatedToken;
-                var expiration = jwtToken.ValidTo;
-
-                var tokens = await GenerateTokens(user, userManager);
-                return Results.Ok(tokens);
+                // Generar nuevos tokens
+                var newTokens = await GenerateTokens(user, userManager);
+                return Results.Ok(newTokens);
             }
             catch (SecurityTokenException ex)
             {
@@ -165,7 +173,8 @@ namespace AuthWebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+
+        //[AllowAnonymous]
         private static async Task<IResult> ResendConfirmationEmail(
             UserManager<AppUsers> userManager,
             EmailService emailService,
@@ -196,7 +205,7 @@ namespace AuthWebApi.Controllers
             return Results.Ok(new { message = "Email de confirmación enviado" });
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> ConfirmEmail(
             UserManager<AppUsers> userManager,
             [FromBody] ConfirmEmailModel confirmEmailModel)
@@ -219,7 +228,7 @@ namespace AuthWebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> ForgotPassword(
             UserManager<AppUsers> userManager,
             EmailService emailService,
@@ -251,7 +260,7 @@ namespace AuthWebApi.Controllers
             return Results.Ok(new { message = "Email de restablecimiento de contraseña enviado" });
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> ResetPassword(
             UserManager<AppUsers> userManager,
             [FromBody] ResetPasswordModel resetPasswordModel)
@@ -273,7 +282,7 @@ namespace AuthWebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> GenerateQrCode(
            UserManager<AppUsers> userManager,
            TwoFactorAuthService twoFactorAuthService,
@@ -295,7 +304,7 @@ namespace AuthWebApi.Controllers
         }
 
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> ValidateTwoFactorCode(
         UserManager<AppUsers> userManager,
         TwoFactorAuthService twoFactorAuthService,
@@ -324,7 +333,7 @@ namespace AuthWebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> EnableTwoFactorAuth(
         UserManager<AppUsers> userManager,
         TwoFactorAuthService twoFactorAuthService,
@@ -351,7 +360,7 @@ namespace AuthWebApi.Controllers
             return Results.Ok(new { message = "Autenticación de dos factores habilitada", tokens, qrCodeImage = qrCodeImageBase64 });
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> DisableTwoFactorAuth(
             UserManager<AppUsers> userManager,
             [FromBody] TwoFactorAuthModel twoFactorAuthModel)
@@ -417,7 +426,7 @@ namespace AuthWebApi.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddMinutes(30),
+                Expires = DateTime.UtcNow.AddSeconds(30),
                 SigningCredentials = new SigningCredentials(
                     signInKey,
                     SecurityAlgorithms.HmacSha256Signature
@@ -430,7 +439,7 @@ namespace AuthWebApi.Controllers
             // Generar el refresh token
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(12);
             await userManager.UpdateAsync(user);
 
             return new { token, refreshToken };
@@ -446,7 +455,7 @@ namespace AuthWebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         private static async Task<IResult> Logout(
             UserManager<AppUsers> userManager,
             [FromBody] RefreshTokenModel tokenModel)

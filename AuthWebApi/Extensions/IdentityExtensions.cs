@@ -57,7 +57,9 @@ namespace AuthWebApi.Extensions
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GlobalFunctions.GetSecretKey())),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
             //services.AddAuthorization(options =>
@@ -66,7 +68,7 @@ namespace AuthWebApi.Extensions
             //        .RequireAuthenticatedUser()
             //        .Build());
 
-            //  Acá agrego politicas en caso de que precise
+            //Acá agrego politicas en caso de que precise
 
             services.AddAuthorization();
             return services;

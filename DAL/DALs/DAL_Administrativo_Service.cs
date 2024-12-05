@@ -750,6 +750,11 @@ namespace DAL.DALs
             throw new NotImplementedException();
         }
 
+        public void actualizarFacturasRefinanciadas(long contratoId)
+        {
+            throw new NotImplementedException();
+        }
+
         public float ObtenerDeudaDeContrato(long contratoId)
         {
             throw new NotImplementedException();

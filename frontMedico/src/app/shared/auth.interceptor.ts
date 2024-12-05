@@ -52,15 +52,7 @@ export class AuthInterceptor implements HttpInterceptor {
         })
       );
     } else {
-      return next.handle(req).pipe(
-        catchError((err: HttpErrorResponse) => {
-          if (err.status === 401) {
-            this.toastr.info('Su sesión ha expirado, por favor inicie sesión nuevamente', 'Sesión expirada');
-            this.router.navigateByUrl('/login');
-          }
-          return throwError(err);
-        })
-      );
+      return next.handle(req);
     }
   }
 }

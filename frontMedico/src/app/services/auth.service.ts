@@ -47,8 +47,12 @@ export class AuthService {
     return localStorage.getItem(REFRESH_TOKEN_KEY);
   }
 
-  getClaims(){
-    return JSON.parse(atob(this.getToken()!.split('.')[1]));
+  getClaims() {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+    return JSON.parse(atob(token.split('.')[1]));
   }
   
 }
