@@ -17,5 +17,7 @@
         public List<Calendario> Calendarios { get; set; } = new List<Calendario>();
 
         public List<Especialidad> Especialidades { get; set; } = new List<Especialidad>();
+
+        public string Contrasena { get; set; } = "-- Sin Contraseña --";
     }
 }

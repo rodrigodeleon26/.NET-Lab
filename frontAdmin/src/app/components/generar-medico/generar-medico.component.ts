@@ -54,6 +54,7 @@ export class GenerarMedicoComponent implements OnInit {
       documento: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       email: ['', [Validators.required, Validators.email]],
+      contrasena: ['', Validators.required],
       especialidades: this.fb.array([]),
     });
 
@@ -223,6 +224,7 @@ export class GenerarMedicoComponent implements OnInit {
         Documento: this.DatosMedicoForm.value.documento,
         Telefono: this.DatosMedicoForm.value.telefono,
         Email: this.DatosMedicoForm.value.email,
+        Contrasena: this.DatosMedicoForm.value.contrasena,
         //guardar especialidades como un arreglo de objetos con el id de la especialidad
         Especialidades: this.DatosMedicoForm.value.especialidades.map((id: string) => ({ id })),
       }

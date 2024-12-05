@@ -101,7 +101,9 @@ namespace AuthWebApi.Controllers
         UserManager<AppUsers> userManager,
         [FromBody] UserLoginModel userLoginModel)
         {
+            Console.WriteLine("en el controlador");
             var user = await userManager.FindByEmailAsync(userLoginModel.Email);
+            Console.WriteLine("se encontro ususario:" + user != null);
             if (user != null && await userManager.CheckPasswordAsync(user, userLoginModel.Password))
             {
                 var roles = await userManager.GetRolesAsync(user);
@@ -110,6 +112,7 @@ namespace AuthWebApi.Controllers
                     return Results.StatusCode(403); // Forbidden
                 }
 
+                Console.WriteLine("se encontro rol:" + roles.Contains(userLoginModel.Role));
                 var tokens = await GenerateTokens(user, userManager);
                 return Results.Ok(tokens);
             }
