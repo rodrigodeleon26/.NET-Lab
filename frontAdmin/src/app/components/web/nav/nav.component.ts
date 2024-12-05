@@ -34,6 +34,10 @@ export class NavComponent implements OnInit, OnDestroy {
     }
   }
 
+  irInicio(): void {
+    this.router.navigate(['inicio']);
+  }
+
   logout(): void {
     this.authService.logout().subscribe(
       (response) => {
