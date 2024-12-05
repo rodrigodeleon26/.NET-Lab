@@ -293,12 +293,12 @@ namespace AuthWebApi.Controllers
 
 
         [AllowAnonymous]
-        private static IResult ValidateTwoFactorCode(
-            UserManager<AppUsers> userManager,
-            TwoFactorAuthService twoFactorAuthService,
-            [FromBody] TwoFactorCodeModel twoFactorCodeModel)
+        private static async Task<IResult> ValidateTwoFactorCode(
+        UserManager<AppUsers> userManager,
+        TwoFactorAuthService twoFactorAuthService,
+        [FromBody] TwoFactorCodeModel twoFactorCodeModel)
         {
-            var user = userManager.FindByEmailAsync(twoFactorCodeModel.Email).Result;
+            var user = await userManager.FindByEmailAsync(twoFactorCodeModel.Email);
             if (user == null)
             {
                 return Results.BadRequest(new { message = "Usuario no encontrado" });
@@ -312,7 +312,8 @@ namespace AuthWebApi.Controllers
             var isValid = twoFactorAuthService.ValidateTwoFactorCode(user, twoFactorCodeModel.Code);
             if (isValid)
             {
-                return Results.Ok(new { message = "Código 2FA válido" });
+                var tokens = await GenerateTokens(user, userManager, true);
+                return Results.Ok(new { message = "Código 2FA válido", tokens });
             }
             else
             {
@@ -372,7 +373,7 @@ namespace AuthWebApi.Controllers
             return Results.Ok(new { message = "Autenticación de dos factores desactivada", tokens });
         }
 
-        private static async Task<object> GenerateTokens(AppUsers user, UserManager<AppUsers> userManager)
+        private static async Task<object> GenerateTokens(AppUsers user, UserManager<AppUsers> userManager, bool isTwoFactorCodeValid = false)
         {
             var roles = await userManager.GetRolesAsync(user);
 
@@ -389,6 +390,11 @@ namespace AuthWebApi.Controllers
                 new Claim("emailConfirmed", user.EmailConfirmed.ToString()),
                 new Claim("TwoFactorEnabled", user.TwoFactorEnabled.ToString())
             });
+
+            if (isTwoFactorCodeValid)
+            {
+                claims.AddClaim(new Claim("TwoFactorCodeValid", "true"));
+            }
 
             if (user.PacienteId != null)
             { 
